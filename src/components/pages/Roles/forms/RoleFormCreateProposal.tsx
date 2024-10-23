@@ -4,7 +4,7 @@ import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { formatUnits, Hex } from 'viem';
+import { formatUnits, Hex, getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
@@ -91,6 +91,25 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             cause: roleHat,
           });
         }
+        const roleTerms =
+          roleHat.roleTerms?.map(term => {
+            if (
+              !term.termEndDate ||
+              term.nominee === undefined ||
+              term.newStatus === undefined ||
+              term.termNumber === undefined
+            ) {
+              throw new Error('Role term missing data', {
+                cause: term,
+              });
+            }
+            return {
+              termEndDate: term.termEndDate,
+              nominee: getAddress(term.nominee), // TODO: do we know that this is an address?
+              termNumber: term.termNumber,
+              newStatus: term.newStatus,
+            };
+          }) || [];
 
         return {
           ...roleHat,
@@ -99,6 +118,8 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           name: roleHat.name,
           description: roleHat.description,
           wearer: roleHat.wearer,
+          roleTerms,
+          isTermed: roleHat.isTermed ?? false,
           payments: roleHat.payments
             ? roleHat.payments.map(payment => {
                 if (!payment.startDate || !payment.endDate || !payment.amount || !payment.asset) {

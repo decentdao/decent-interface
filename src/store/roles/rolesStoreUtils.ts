@@ -1,6 +1,7 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, getContract } from 'viem';
+import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
+import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
 import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 
@@ -21,15 +22,19 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
+  eligibility?: Address;
   payments?: SablierPayment[];
 }
 
 interface DecentTopHat extends DecentHat {}
 
-interface DecentAdminHat extends DecentHat {}
+interface DecentAdminHat extends DecentHat {
+  wearer?: Address;
+}
 
 interface RolesStoreData {
   hatsTreeId: undefined | null | number;
+  decentHatsAddress: Address | null | undefined;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
   contextChainId: number | null;
@@ -37,6 +42,9 @@ interface RolesStoreData {
 
 export interface DecentRoleHat extends DecentHat {
   wearerAddress: Address;
+  eligibility?: Address;
+  roleTerms: { nominee: Address; termEndDate: Date; termNumber: number }[];
+  isTermed: boolean;
 }
 
 export interface DecentTree {
@@ -131,6 +139,7 @@ const getHatMetadata = (hat: Hat) => {
 export const initialHatsStore: RolesStoreData = {
   hatsTreeId: undefined,
   hatsTree: undefined,
+  decentHatsAddress: undefined,
   streamsFetched: false,
   contextChainId: null,
 };
@@ -208,12 +217,13 @@ export const sanitize = async (
     publicClient,
   });
 
-  const adminHat: DecentHat = {
+  const adminHat: DecentAdminHat = {
     id: rawAdminHat.id,
     prettyId: rawAdminHat.prettyId ?? '',
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
+    wearer: rawAdminHat.wearers?.length ? rawAdminHat.wearers[0].id : undefined,
   };
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
@@ -234,7 +244,45 @@ export const sanitize = async (
       tokenId: BigInt(rawHat.id),
       publicClient,
     });
-
+    let roleTerms: {
+      nominee: Address;
+      termEndDate: Date;
+      termNumber: number;
+    }[] = [];
+    let isTermed: boolean = false;
+    if (rawHat.eligibility) {
+      // @dev check if the eligibility is an election contract
+      try {
+        const electionContract = getContract({
+          abi: HatsElectionsEligibilityAbi,
+          address: rawHat.eligibility,
+          client: publicClient,
+        });
+        const rawTerms = await electionContract.getEvents.ElectionCompleted({
+          fromBlock: 0n,
+        });
+        roleTerms = rawTerms
+          .map(term => {
+            const nominee = term.args.winners?.[0];
+            const termEnd = term.args.termEnd;
+            if (!nominee) {
+              throw new Error('No nominee in the election');
+            }
+            if (!termEnd) {
+              throw new Error('No term end in the election');
+            }
+            return {
+              nominee: getAddress(nominee),
+              termEndDate: new Date(Number(termEnd.toString()) * 1000),
+            };
+          })
+          .sort((a, b) => a.termEndDate.getTime() - b.termEndDate.getTime())
+          .map((term, index) => ({ ...term, termNumber: index + 1 }));
+        isTermed = true;
+      } catch {
+        console.error('Failed to get election terms or not a valid election contract');
+      }
+    }
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
@@ -242,6 +290,9 @@ export const sanitize = async (
       description: hatMetadata.description,
       wearerAddress: rawHat.wearers![0].id,
       smartAddress: roleHatSmartAddress,
+      eligibility: rawHat.eligibility,
+      roleTerms,
+      isTermed,
     });
   }
 

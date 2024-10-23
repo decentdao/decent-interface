@@ -1,15 +1,23 @@
-import { abis } from '@fractal-framework/fractal-contracts';
+import {
+  HatsModulesClient,
+  HATS_MODULES_FACTORY_ADDRESS,
+  HATS_MODULES_FACTORY_ABI,
+  checkAndEncodeArgs,
+} from '@hatsprotocol/modules-sdk';
 import { FormikHelpers } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { DecentHatsTempAbi } from '../../assets/abi/DecentHatsTempAbi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
+import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
+
 import {
   EditBadgeStatus,
   HatStruct,
@@ -17,9 +25,12 @@ import {
   RoleFormValues,
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
+  TermedParams,
 } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
+import { getRandomBytes } from '../../helpers';
+import { generateSalt } from '../../models/helpers/utils';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -41,11 +52,13 @@ export default function useCreateRoles() {
     chain,
     contracts: {
       hatsProtocol,
-      decentHatsMasterCopy,
       hatsAccount1ofNMasterCopy,
       erc6551Registry,
       keyValuePairs,
       sablierV2LockupLinear,
+      decentHatsMasterCopy,
+      decentAutonomousAdminMasterCopy,
+      zodiacModuleProxyFactory,
     },
   } = useNetworkConfig();
 
@@ -57,6 +70,16 @@ export default function useCreateRoles() {
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
   const navigate = useNavigate();
+
+  const hatsModulesClient = useMemo(() => {
+    if (!publicClient) {
+      return null;
+    }
+    const client = new HatsModulesClient({
+      publicClient,
+    });
+    return client;
+  }, [publicClient]);
 
   const hatsDetailsBuilder = useCallback((data: { name: string; description: string }) => {
     return JSON.stringify({
@@ -74,7 +97,13 @@ export default function useCreateRoles() {
   );
 
   const createHatStruct = useCallback(
-    async (name: string, description: string, wearer: Address) => {
+    async (
+      name: string,
+      description: string,
+      wearer: Address,
+      isTermed: boolean,
+      termedParams: TermedParams[],
+    ) => {
       const details = await uploadHatDescription(
         hatsDetailsBuilder({
           name: name,
@@ -86,8 +115,10 @@ export default function useCreateRoles() {
         maxSupply: 1,
         details,
         imageURI: '',
-        isMutable: true,
+        isMutable: !isTermed,
         wearer: wearer,
+        isTermed,
+        termedParams,
       };
 
       return newHat;
@@ -107,8 +138,10 @@ export default function useCreateRoles() {
         cliffTimestamp: number;
         endTimestamp: number;
       }[],
+      isTermed: boolean,
+      termedParams: TermedParams[],
     ) => {
-      const newHat = await createHatStruct(name, description, wearer);
+      const newHat = await createHatStruct(name, description, wearer, isTermed, termedParams);
 
       if (daoAddress === null) {
         throw new Error('Can not create Hat Struct (with payments) without DAO Address');
@@ -160,6 +193,23 @@ export default function useCreateRoles() {
     },
     [],
   );
+  const parseRoleTermsFromFormRoleTerms = useCallback(
+    (formRoleTerms: { termEndDate?: Date; nominee?: string }[]) => {
+      return formRoleTerms.map(term => {
+        if (term.termEndDate === undefined) {
+          throw new Error('Term end date of added Role is undefined.');
+        }
+        if (term.nominee === undefined) {
+          throw new Error('Nominee of added Role is undefined.');
+        }
+        return {
+          termEndDateTs: BigInt(term.termEndDate.getTime() / 1000),
+          nominatedWearers: [getAddress(term.nominee)],
+        };
+      });
+    },
+    [],
+  );
 
   const createHatStructsForNewTreeFromRolesFormValues = useCallback(
     async (modifiedRoles: RoleHatFormValueEdited[]) => {
@@ -172,19 +222,31 @@ export default function useCreateRoles() {
           if (role.wearer === undefined) {
             throw new Error('Hat wearer of added hat is undefined.');
           }
-
           const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments ?? []);
+
+          const roleTerms = parseRoleTermsFromFormRoleTerms(role.roleTerms ?? []);
+
+          // @note for new termed roles, we set the first wearer to the first nominee
+          const wearer = role.isTermed
+            ? getAddress(roleTerms[0].nominatedWearers[0])
+            : getAddress(role.wearer);
 
           return createHatStructWithPayments(
             role.name,
             role.description,
-            getAddress(role.wearer),
+            wearer,
             sablierPayments,
+            role.isTermed ?? false,
+            roleTerms,
           );
         }),
       );
     },
-    [createHatStructWithPayments, parseSablierPaymentsFromFormRolePayments],
+    [
+      createHatStructWithPayments,
+      parseSablierPaymentsFromFormRolePayments,
+      parseRoleTermsFromFormRoleTerms,
+    ],
   );
 
   const predictSmartAccount = useCallback(
@@ -192,6 +254,7 @@ export default function useCreateRoles() {
       if (!publicClient) {
         throw new Error('Public client is not set');
       }
+
       return predictAccountAddress({
         implementation: hatsAccount1ofNMasterCopy,
         chainId: BigInt(chain.id),
@@ -210,17 +273,16 @@ export default function useCreateRoles() {
         throw new Error('Can not create top hat without DAO Address');
       }
 
-      const decentHatsAddress = getAddress(decentHatsMasterCopy);
       const enableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'enableModule',
-        args: [decentHatsAddress],
+        args: [decentHatsMasterCopy],
       });
 
       const disableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'disableModule',
-        args: [SENTINEL_MODULE, decentHatsAddress],
+        args: [SENTINEL_MODULE, decentHatsMasterCopy],
       });
 
       const topHatDetails = await uploadHatDescription(
@@ -236,19 +298,30 @@ export default function useCreateRoles() {
         }),
       );
 
-      const adminHat: HatStructWithPayments = {
+      const adminHat = {
         maxSupply: 1,
         details: adminHatDetails,
         imageURI: '',
         isMutable: true,
         wearer: zeroAddress,
         sablierParams: [],
+        isTermed: false,
+        termedParams: [],
       };
 
+      if (!hatsModulesClient) {
+        throw new Error('Cannot create Roles proposal without hatsModulesClient');
+      }
+      await hatsModulesClient.prepare();
+      // @note for now the id argument seems to be the implementation address rather than the module id
+      const module = hatsModulesClient.getModuleById('0xd3b916a8F0C4f9D1d5B6Af29c3C012dbd4f3149E');
+      if (!module) {
+        throw new Error('Could not find module');
+      }
       const addedHats = await createHatStructsForNewTreeFromRolesFormValues(modifiedHats);
-
       const createAndDeclareTreeData = encodeFunctionData({
-        abi: abis.DecentHats_0_1_0,
+        // @todo replace with published abi from package
+        abi: DecentHatsTempAbi,
         functionName: 'createAndDeclareTree',
         args: [
           {
@@ -260,12 +333,16 @@ export default function useCreateRoles() {
             topHatImageURI: '',
             adminHat,
             hats: addedHats,
+            hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
+            hatsElectionEligibilityImplementation: getAddress(module.implementationAddress),
+            moduleProxyFactory: zodiacModuleProxyFactory,
+            decentAutonomousAdminMasterCopy: decentAutonomousAdminMasterCopy,
           },
         ],
       });
 
       return {
-        targets: [daoAddress, decentHatsAddress, daoAddress],
+        targets: [daoAddress, decentHatsMasterCopy, daoAddress],
         calldatas: [enableModuleData, createAndDeclareTreeData, disableModuleData],
         metaData: proposalMetadata,
         values: [0n, 0n, 0n],
@@ -275,6 +352,7 @@ export default function useCreateRoles() {
       daoAddress,
       daoName,
       decentHatsMasterCopy,
+      decentAutonomousAdminMasterCopy,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsDetailsBuilder,
@@ -282,7 +360,62 @@ export default function useCreateRoles() {
       keyValuePairs,
       uploadHatDescription,
       createHatStructsForNewTreeFromRolesFormValues,
+      hatsModulesClient,
+      zodiacModuleProxyFactory,
     ],
+  );
+
+  const createEligibilityModuleTx = useCallback(
+    async (hatId: bigint, firstTermEnd: bigint, adminHatId: bigint) => {
+      if (!hatsModulesClient) {
+        throw new Error('Cannot create Roles proposal without hatsModulesClient');
+      }
+      await hatsModulesClient.prepare();
+      const module = hatsModulesClient.getModuleById('0xd3b916a8F0C4f9D1d5B6Af29c3C012dbd4f3149E');
+      if (!module) {
+        throw new Error('Could not find module');
+      }
+
+      const immutableArgs = [adminHatId, 0n];
+      // @todo: add args termEndDateTs
+      const { encodedImmutableArgs, encodedMutableArgs } = checkAndEncodeArgs({
+        module,
+        immutableArgs,
+        mutableArgs: [firstTermEnd],
+      });
+
+      const salt = BigInt(generateSalt(encodedMutableArgs, getRandomBytes()));
+      const createElectionEligibilityInstanceTx = {
+        calldata: encodeFunctionData({
+          abi: HATS_MODULES_FACTORY_ABI,
+          functionName: 'createHatsModule',
+          args: [
+            getAddress(module.implementationAddress),
+            BigInt(hatId),
+            encodedImmutableArgs,
+            encodedMutableArgs,
+            salt,
+          ],
+        }),
+      };
+      const predictedElectionEligibilityInstance = await hatsModulesClient.predictHatsModuleAddress(
+        {
+          moduleId: getAddress(module.id),
+          hatId: hatId,
+          immutableArgs: immutableArgs,
+          saltNonce: salt,
+        },
+      );
+
+      return {
+        electionDeployModuleTx: {
+          calldata: createElectionEligibilityInstanceTx.calldata,
+          targetAddress: HATS_MODULES_FACTORY_ADDRESS,
+        },
+        predictedElectionEligibilityInstance: predictedElectionEligibilityInstance,
+      };
+    },
+    [hatsModulesClient],
   );
 
   const createNewHatTx = useCallback(
@@ -299,6 +432,8 @@ export default function useCreateRoles() {
         formRole.name,
         formRole.description,
         getAddress(formRole.wearer),
+        false,
+        [],
       );
 
       return {
@@ -320,6 +455,74 @@ export default function useCreateRoles() {
       };
     },
     [createHatStruct, hatsProtocol],
+  );
+  const createNewTermedHatTxs = useCallback(
+    async (formRole: RoleHatFormValueEdited, adminHatId: bigint, topHatAccount: Address) => {
+      if (formRole.name === undefined || formRole.description === undefined) {
+        throw new Error('Name or description of added Role is undefined.');
+      }
+
+      if (formRole.wearer === undefined) {
+        throw new Error('Member of added Role is undefined.');
+      }
+      if (formRole.roleTerms === undefined || formRole.roleTerms.length === 0) {
+        throw new Error('Role terms of added Role is undefined.');
+      }
+      const roleTerms = parseRoleTermsFromFormRoleTerms(formRole.roleTerms);
+
+      let firstWearer = getAddress(formRole.wearer);
+      let txData: { calldata: Hex; targetAddress: Address }[] = [];
+
+      const { electionDeployModuleTx, predictedElectionEligibilityInstance } =
+        await createEligibilityModuleTx(
+          BigInt(formRole.id),
+          // @todo fix this to be the correct term end date
+          roleTerms[0].termEndDateTs,
+          adminHatId,
+        );
+      txData.push(electionDeployModuleTx);
+      const eligibilityModule = predictedElectionEligibilityInstance;
+      firstWearer = getAddress(roleTerms[0].nominatedWearers[0]);
+
+      const hatStruct = await createHatStruct(
+        formRole.name,
+        formRole.description,
+        getAddress(firstWearer),
+        true,
+        roleTerms,
+      );
+
+      txData.push({
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'createHat',
+          args: [
+            adminHatId, // adminHatId
+            hatStruct.details, // details
+            hatStruct.maxSupply, // maxSupply
+            eligibilityModule, // eligibilityModule
+            topHatAccount, // toggleModule
+            !formRole.isTermed ? hatStruct.isMutable : false, // isMutable
+            hatStruct.wearer, // wearer
+          ],
+        }),
+        targetAddress: hatsProtocol,
+      });
+
+      // create transactions to start first term right away
+      txData.push({
+        calldata: encodeFunctionData({
+          abi: HatsElectionsEligibilityAbi,
+          functionName: 'elect',
+          // @todo fix this to be the correct term end date
+          args: [roleTerms[0].termEndDateTs, [hatStruct.wearer]],
+        }),
+        targetAddress: eligibilityModule,
+      });
+
+      return txData;
+    },
+    [createHatStruct, hatsProtocol, createEligibilityModuleTx, parseRoleTermsFromFormRoleTerms],
   );
 
   const mintHatTx = useCallback(
@@ -420,6 +623,10 @@ export default function useCreateRoles() {
         throw new Error('Cannot prepare transactions without hats tree or DAO address');
       }
 
+      if (!publicClient) {
+        throw new Error('Cannot prepare transactions without public client');
+      }
+
       const topHatAccount = hatsTree.topHat.smartAddress;
       const adminHatId = BigInt(hatsTree.adminHat.id);
 
@@ -476,11 +683,15 @@ export default function useCreateRoles() {
             hatsCount: hatsTree.roleHatsTotalCount + newHatCount,
           });
           newHatCount++;
-
-          allTxs.push(await createNewHatTx(formHat, adminHatId, topHatAccount));
+          if (formHat.isTermed) {
+            allTxs.push(...(await createNewTermedHatTxs(formHat, adminHatId, topHatAccount)));
+          } else {
+            allTxs.push(await createNewHatTx(formHat, adminHatId, topHatAccount));
+          }
           allTxs.push(mintHatTx(newHatId, formHat));
           allTxs.push(createSmartAccountTx(BigInt(newHatId)));
 
+          // if there are streams to create
           const newStreams = getNewStreamsFromFormHat(formHat);
 
           if (newStreams.length > 0) {
@@ -585,7 +796,7 @@ export default function useCreateRoles() {
               targetAddress: hatsProtocol,
             });
           }
-          if (formHat.editedRole.fieldNames.includes('member')) {
+          if (formHat.editedRole.fieldNames.includes('member') && !formHat.isTermed) {
             const newWearer = getAddress(formHat.wearer);
             if (formHat.smartAddress === undefined) {
               throw new Error('Cannot prepare transactions for edited role without smart address');
@@ -649,8 +860,7 @@ export default function useCreateRoles() {
               });
             }
           }
-
-          if (formHat.editedRole.fieldNames.includes('payments')) {
+          if (formHat.editedRole.fieldNames.includes('payments') && !formHat.isTermed) {
             const cancelledStreamsOnHat = getCancelledStreamsFromFormHat(formHat);
             if (cancelledStreamsOnHat.length) {
               // This role edit includes stream cancels. In case there are any unclaimed funds on these streams,
@@ -722,6 +932,124 @@ export default function useCreateRoles() {
               allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
             }
           }
+          if (formHat.editedRole.fieldNames.includes('term')) {
+            if (formHat.isTermed) {
+              // @note {assumption}: We are only dealing with the next term here
+              const latestTerm = formHat.roleTerms?.pop();
+
+              if (!latestTerm) {
+                throw new Error('No term data found');
+              }
+              if (latestTerm.termEndDate === undefined) {
+                throw new Error('Term end date of added Role is undefined.');
+              }
+              if (latestTerm.nominee === undefined) {
+                throw new Error('Nominee of added Role is undefined.');
+              }
+              // @note {assumption}: We have already determined the eligibility address is the election module
+              // @todo double check assumption
+              if (formHat.eligibility === undefined) {
+                throw new Error(
+                  'Cannot prepare transactions for edited role without eligibility address',
+                );
+              }
+              if (formHat.smartAddress === undefined) {
+                throw new Error(
+                  'Cannot prepare transactions for edited role without smart address',
+                );
+              }
+              const originalHat = getHat(formHat.id);
+              if (!originalHat) {
+                throw new Error('Cannot find original hat');
+              }
+
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsElectionsEligibilityAbi,
+                  functionName: 'setNextTerm',
+                  // @todo fix this to be the latest term end date
+                  args: [BigInt(Date.now())],
+                }),
+                targetAddress: formHat.eligibility,
+              });
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsElectionsEligibilityAbi,
+                  functionName: 'elect',
+                  // @todo fix this to be the latest term end date
+                  args: [BigInt(Date.now()), [getAddress(latestTerm.nominee)]],
+                }),
+                targetAddress: formHat.eligibility,
+              });
+
+              // @note {assumption at proposal creation}: previous term is on going
+              // const previousTerm = formHat.roleTerms?.[formHat.roleTerms.length - 2];
+              // @todo fix this to be the previous term end date
+              if (Date.now() ?? 0 < Date.now()) {
+                allTxs.push({
+                  calldata: encodeFunctionData({
+                    abi: HatsElectionsEligibilityAbi,
+                    functionName: 'startNextTerm',
+                    args: [],
+                  }),
+                  targetAddress: formHat.eligibility,
+                });
+                // flush funds from previous term
+                // @note {assumption}: no stream should need to be cancelled if past previous term
+                const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFromHat(formHat);
+                if (streamsWithFundsToClaim.length) {
+                  for (const stream of streamsWithFundsToClaim) {
+                    if (!stream.streamId || !stream.contractAddress) {
+                      throw new Error(
+                        'Stream ID and Stream ContractAddress is required for flush stream transaction',
+                      );
+                    }
+                    // transfer hat to DAO
+                    allTxs.push({
+                      calldata: encodeFunctionData({
+                        abi: HatsAbi,
+                        functionName: 'transferHat',
+                        args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+                      }),
+                      targetAddress: hatsProtocol,
+                    });
+                    const flushStreamTxCalldata = prepareFlushStreamTxs({
+                      streamId: stream.streamId,
+                      to: originalHat.wearerAddress,
+                      smartAccount: formHat.smartAddress,
+                    });
+
+                    allTxs.push(...flushStreamTxCalldata);
+                  }
+                }
+                if (streamsWithFundsToClaim.length) {
+                  // transfer hat to nominee from DAO
+                  allTxs.push({
+                    calldata: encodeFunctionData({
+                      abi: HatsAbi,
+                      functionName: 'transferHat',
+                      args: [BigInt(formHat.id), daoAddress, getAddress(latestTerm.nominee)],
+                    }),
+                    targetAddress: hatsProtocol,
+                  });
+                } else {
+                  // transfer hat to nominee from wearer
+                  allTxs.push({
+                    calldata: encodeFunctionData({
+                      abi: HatsAbi,
+                      functionName: 'transferHat',
+                      args: [
+                        BigInt(formHat.id),
+                        getAddress(formHat.wearer),
+                        getAddress(latestTerm.nominee),
+                      ],
+                    }),
+                    targetAddress: hatsProtocol,
+                  });
+                }
+              }
+            }
+          }
         } else {
           throw new Error('Invalid Edited Status');
         }
@@ -737,6 +1065,7 @@ export default function useCreateRoles() {
     [
       createBatchLinearStreamCreationTx,
       createNewHatTx,
+      createNewTermedHatTxs,
       createSmartAccountTx,
       daoAddress,
       getActiveStreamsFromFormHat,
@@ -753,6 +1082,7 @@ export default function useCreateRoles() {
       prepareCancelStreamTxs,
       prepareFlushStreamTxs,
       uploadHatDescription,
+      publicClient,
     ],
   );
 

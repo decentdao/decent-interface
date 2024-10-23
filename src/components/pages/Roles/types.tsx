@@ -62,17 +62,25 @@ export enum EditBadgeStatus {
   Updated,
   New,
   Removed,
+  NewTermedRole,
 }
 export const BadgeStatus: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Updated]: 'updated',
   [EditBadgeStatus.New]: 'new',
   [EditBadgeStatus.Removed]: 'removed',
+  [EditBadgeStatus.NewTermedRole]: 'newTermedRole',
 };
 export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Updated]: 'lilac-0',
   [EditBadgeStatus.New]: 'celery--2',
   [EditBadgeStatus.Removed]: 'red-1',
+  [EditBadgeStatus.NewTermedRole]: 'celery--2',
 };
+
+export interface TermedParams {
+  termEndDateTs: bigint;
+  nominatedWearers: Address[];
+}
 
 export interface HatStruct {
   maxSupply: 1; // No more than this number of wearers. Hardcode to 1
@@ -80,6 +88,8 @@ export interface HatStruct {
   imageURI: string;
   isMutable: boolean; // true
   wearer: Address;
+  isTermed: boolean;
+  termedParams: TermedParams[];
 }
 
 export interface HatStructWithPayments extends HatStruct {
@@ -101,7 +111,7 @@ export interface EditedRole {
 }
 
 export interface RoleHatFormValue
-  extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments'>> {
+  extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments' | 'roleTerms'>> {
   id: Hex;
   wearer?: string;
   // Not a user-input field.
@@ -111,6 +121,13 @@ export interface RoleHatFormValue
   // form specific state
   editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;
+  isTermed?: boolean;
+  roleTerms?: {
+    newStatus?: 'current' | 'next';
+    nominee?: string;
+    termEndDate?: Date;
+    termNumber: number;
+  }[];
 }
 
 export interface RoleHatFormValueEdited extends RoleHatFormValue {
@@ -133,6 +150,8 @@ export type PreparedNewStreamData = {
   totalAmount: bigint;
   assetAddress: Address;
 };
+
+// export const HATS_ADDRESS: Address = '0x0000000000000000000000000000000000004a75';
 
 export interface RoleDetailsDrawerProps {
   roleHat: RoleDetailsDrawerRoleHatProp | RoleDetailsDrawerEditingRoleHatProp;

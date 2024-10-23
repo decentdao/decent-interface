@@ -10,6 +10,7 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
+import RoleFormMember from './RoleFormMember';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
@@ -66,11 +67,15 @@ export default function RoleFormTabs({
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
+          <Tab>{t('member')}</Tab>
           <Tab>{t('payments')}</Tab>
         </TabList>
         <TabPanels my="1.75rem">
           <TabPanel>
             <RoleFormInfo />
+          </TabPanel>
+          <TabPanel>
+            <RoleFormMember />
           </TabPanel>
           <TabPanel>
             <RoleFormPaymentStreams />

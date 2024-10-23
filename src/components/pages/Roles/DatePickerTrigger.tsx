@@ -30,7 +30,9 @@ export function DatePickerTrigger({ selectedDate, disabled }: DatePickerTriggerP
         boxSize="24px"
         color="neutral-5"
       />
-      <Text color={disabled ? 'neutral-7' : undefined}>{selectedDateStr ?? t('select')}</Text>
+      <Text color={disabled ? 'neutral-7' : selectedDateStr ? 'white-0' : 'neutral-5'}>
+        {selectedDateStr ?? t('select')}
+      </Text>
     </Flex>
   );
 }
