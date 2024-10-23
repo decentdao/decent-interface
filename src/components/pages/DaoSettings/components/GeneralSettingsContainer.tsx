@@ -122,39 +122,50 @@ export function GeneralSettingsContainer() {
 
   return (
     <SettingsSection
-      title={t('daoMetadataName')}
-      headerRight={
-        canUserCreateProposal && (
-          <Button
-            variant="secondary"
-            size="sm"
-            isDisabled={name === daoName}
-            onClick={handleEditDAOName}
-          >
-            {t('proposeChanges')}
-          </Button>
-        )
-      }
+      title={t('daoSettingsGeneral')}
       descriptionHeader={t('daoMetadataDescriptionTitle')}
       descriptionContent={t('daoMetadataDescriptionText')}
     >
-      <InputComponent
-        isRequired={false}
-        onChange={e => setName(e.target.value)}
-        disabled={!userHasVotingWeight}
-        value={name}
-        placeholder="Amazing DAO"
-        testId="daoSettings.name"
-        gridContainerProps={{
-          display: 'inline-flex',
-          flexWrap: 'wrap',
-          flex: '1',
-          width: '100%',
-        }}
-        inputContainerProps={{
-          width: '100%',
-        }}
-      />
+      <Flex
+        flexDir="column"
+        mt="2rem"
+      >
+        <Flex justifyContent="space-between">
+          <Text textStyle="display-lg">{t('daoMetadataName')}</Text>
+          {canUserCreateProposal && (
+            <Button
+              variant="secondary"
+              size="sm"
+              isDisabled={name === daoName}
+              onClick={handleEditDAOName}
+            >
+              {t('proposeChanges')}
+            </Button>
+          )}
+        </Flex>
+        <Divider
+          my="1rem"
+          w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+          mx={{ base: '-0.75rem', md: '-1.5rem' }}
+        />
+        <InputComponent
+          isRequired={false}
+          onChange={e => setName(e.target.value)}
+          disabled={!userHasVotingWeight}
+          value={name}
+          placeholder="Amazing DAO"
+          testId="daoSettings.name"
+          gridContainerProps={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            flex: '1',
+            width: '100%',
+          }}
+          inputContainerProps={{
+            width: '100%',
+          }}
+        />
+      </Flex>
       <Flex
         flexDir="column"
         mt="2rem"

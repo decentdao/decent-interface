@@ -1,17 +1,14 @@
-import { Flex } from '@chakra-ui/react';
+import { Flex, Hide, Show } from '@chakra-ui/react';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { GovernanceType } from '../../../types';
+import { Card } from '../../ui/cards/Card';
 import { BarLoader } from '../../ui/loaders/BarLoader';
-import { ERC20TokenContainer } from './components/ERC20TokenContainer';
-import { ERC721TokensContainer } from './components/ERC721TokensContainer';
 import { GeneralSettingsContainer } from './components/GeneralSettingsContainer';
+import GovernanceContainer from './components/GovernanceContainer';
 import { ModulesContainer } from './components/ModulesContainer';
-import { SignersContainer } from './components/Signers/SignersContainer';
 
 export function DAOSettingsContent() {
   const {
     node: { safe },
-    governance: { type },
   } = useFractal();
 
   if (!safe) {
@@ -28,19 +25,20 @@ export function DAOSettingsContent() {
   }
 
   return (
-    <Flex
-      flexDir="column"
-      gap="3rem"
-    >
-      <GeneralSettingsContainer />
-      {type === GovernanceType.AZORIUS_ERC20 ? (
-        <ERC20TokenContainer />
-      ) : type === GovernanceType.AZORIUS_ERC721 ? (
-        <ERC721TokensContainer />
-      ) : type === GovernanceType.MULTISIG ? (
-        <SignersContainer />
-      ) : null}
-      <ModulesContainer />
-    </Flex>
+    <>
+      <Show below="md">
+        <Card>List of settings for mobile</Card>
+      </Show>
+      <Hide below="md">
+        <Flex
+          flexDir="column"
+          gap="3rem"
+        >
+          <GeneralSettingsContainer />
+          <GovernanceContainer />
+          <ModulesContainer />
+        </Flex>
+      </Hide>
+    </>
   );
 }
