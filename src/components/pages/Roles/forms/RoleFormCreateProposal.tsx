@@ -204,7 +204,10 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               >
                 <CustomNonceInput
                   nonce={values.customNonce}
-                  onChange={newNonce => setFieldValue('customNonce', newNonce)}
+                  onChange={newNonce => {
+                    if (newNonce === undefined) return;
+                    setFieldValue('customNonce', Number(newNonce));
+                  }}
                 />
               </Flex>
             )}

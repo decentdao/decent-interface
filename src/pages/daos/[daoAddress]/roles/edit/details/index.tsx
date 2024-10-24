@@ -14,7 +14,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { ArrowLeft, DotsThree, Trash } from '@phosphor-icons/react';
-import { FieldArray } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -141,6 +140,7 @@ export default function RoleEditDetails() {
   const navigate = useNavigate();
   const {
     formik: { values, setFieldValue, touched, setTouched },
+    FieldArray,
   } = useTypesafeFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
@@ -239,6 +239,7 @@ export default function RoleEditDetails() {
           </Hide>
         </>
       )}
+      {/* @ts-expect-error TODO: fix this, figure out why non-optional "hats" is causing issues */}
       <FieldArray name="hats">
         {({ push }: { push: (roleHatFormValue: RoleHatFormValue) => void }) => (
           <>
