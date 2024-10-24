@@ -217,7 +217,7 @@ export default function useCreateRoles() {
       args: [SENTINEL_MODULE, decentHatsAddress],
     });
 
-    return { decentHatsAddress, enableDecentHatsModuleData, disableDecentHatsModuleData };
+    return { enableDecentHatsModuleData, disableDecentHatsModuleData };
   }, [decentHatsMasterCopy]);
 
   const prepareCreateTopHatProposalData = useCallback(
@@ -226,7 +226,7 @@ export default function useCreateRoles() {
         throw new Error('Can not create top hat without DAO Address');
       }
 
-      const { decentHatsAddress, enableDecentHatsModuleData, disableDecentHatsModuleData } =
+      const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
         getEnableDisableDecentHatsModuleData();
 
       const topHatDetails = await uploadHatDescription(
@@ -271,7 +271,7 @@ export default function useCreateRoles() {
       });
 
       return {
-        targets: [daoAddress, decentHatsAddress, daoAddress],
+        targets: [daoAddress, getAddress(decentHatsMasterCopy), daoAddress],
         calldatas: [
           enableDecentHatsModuleData,
           createAndDeclareTreeData,
@@ -292,6 +292,7 @@ export default function useCreateRoles() {
       hatsAccount1ofNMasterCopy,
       erc6551Registry,
       keyValuePairs,
+      decentHatsMasterCopy,
     ],
   );
 
@@ -324,7 +325,7 @@ export default function useCreateRoles() {
         parseSablierPaymentsFromFormRolePayments(formRole.payments ?? []),
       );
 
-      const { decentHatsAddress, enableDecentHatsModuleData, disableDecentHatsModuleData } =
+      const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
         getEnableDisableDecentHatsModuleData();
 
       const createNewRoleData = encodeFunctionData({
@@ -505,6 +506,8 @@ export default function useCreateRoles() {
         ],
       });
 
+      const decentHatsAddress = getAddress(decentHatsMasterCopy);
+
       // Transfer top hat to the DecentHats module so it is authorised to create hats on the tree
       const transferTopHatToDecentHatsData = encodeFunctionData({
         abi: HatsAbi,
@@ -540,6 +543,7 @@ export default function useCreateRoles() {
       hatsProtocol,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
+      decentHatsMasterCopy,
     ],
   );
 
@@ -612,11 +616,13 @@ export default function useCreateRoles() {
       // for each modified role
       //
       // New Role
-      //   - allTxs.push(createHatAndAccountAndMintAndStreams). This will:
+      //   - Transfer the top hat to the DecentHats module, so it can create new hats on the safe's behalf
+      //   - allTxs.push(createRoleHat). This will:
       //       - create hat,
       //       - mint hat,
       //       - create smart account for the hat,
       //       - create new streams on the hat if any added
+      //  - createRoleHat will transfer the top hat back to the safe
       // Deleted Role
       //   - for each inactive stream with funds to claim
       //     - allTxs.push(flush stream transaction data)
