@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
@@ -29,7 +28,7 @@ import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import { predictAccountAddress, predictHatId } from './../../store/roles/rolesStoreUtils';
+import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
 
 export default function useCreateRoles() {
   const {
@@ -108,11 +107,11 @@ export default function useCreateRoles() {
         endTimestamp: number;
       }[],
     ) => {
-      const newHat = await createHatStruct(name, description, wearer);
-
       if (daoAddress === null) {
         throw new Error('Can not create Hat Struct (with payments) without DAO Address');
       }
+
+      const newHat = await createHatStruct(name, description, wearer);
 
       const newHatWithPayments: HatStructWithPayments = {
         ...newHat,
@@ -204,24 +203,31 @@ export default function useCreateRoles() {
     [publicClient, hatsAccount1ofNMasterCopy, chain.id, hatsProtocol, erc6551Registry],
   );
 
+  const getEnableDisableDecentHatsModuleData = useCallback(() => {
+    const decentHatsAddress = getAddress(decentHatsMasterCopy);
+    const enableDecentHatsModuleData = encodeFunctionData({
+      abi: GnosisSafeL2,
+      functionName: 'enableModule',
+      args: [decentHatsAddress],
+    });
+
+    const disableDecentHatsModuleData = encodeFunctionData({
+      abi: GnosisSafeL2,
+      functionName: 'disableModule',
+      args: [SENTINEL_MODULE, decentHatsAddress],
+    });
+
+    return { decentHatsAddress, enableDecentHatsModuleData, disableDecentHatsModuleData };
+  }, [decentHatsMasterCopy]);
+
   const prepareCreateTopHatProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
       if (!daoAddress) {
         throw new Error('Can not create top hat without DAO Address');
       }
 
-      const decentHatsAddress = getAddress(decentHatsMasterCopy);
-      const enableModuleData = encodeFunctionData({
-        abi: GnosisSafeL2,
-        functionName: 'enableModule',
-        args: [decentHatsAddress],
-      });
-
-      const disableModuleData = encodeFunctionData({
-        abi: GnosisSafeL2,
-        functionName: 'disableModule',
-        args: [SENTINEL_MODULE, decentHatsAddress],
-      });
+      const { decentHatsAddress, enableDecentHatsModuleData, disableDecentHatsModuleData } =
+        getEnableDisableDecentHatsModuleData();
 
       const topHatDetails = await uploadHatDescription(
         hatsDetailsBuilder({
@@ -266,98 +272,275 @@ export default function useCreateRoles() {
 
       return {
         targets: [daoAddress, decentHatsAddress, daoAddress],
-        calldatas: [enableModuleData, createAndDeclareTreeData, disableModuleData],
+        calldatas: [
+          enableDecentHatsModuleData,
+          createAndDeclareTreeData,
+          disableDecentHatsModuleData,
+        ],
         metaData: proposalMetadata,
         values: [0n, 0n, 0n],
       };
     },
     [
       daoAddress,
-      daoName,
-      decentHatsMasterCopy,
-      erc6551Registry,
-      hatsAccount1ofNMasterCopy,
-      hatsDetailsBuilder,
-      hatsProtocol,
-      keyValuePairs,
+      getEnableDisableDecentHatsModuleData,
       uploadHatDescription,
+      hatsDetailsBuilder,
+      daoName,
       createHatStructsForNewTreeFromRolesFormValues,
+      hatsProtocol,
+      hatsAccount1ofNMasterCopy,
+      erc6551Registry,
+      keyValuePairs,
     ],
   );
 
-  const createNewHatTx = useCallback(
-    async (formRole: RoleHatFormValueEdited, adminHatId: bigint, topHatSmartAccount: Address) => {
+  const prepareNewHatTxs = useCallback(
+    async (formRole: RoleHatFormValueEdited) => {
       if (formRole.name === undefined || formRole.description === undefined) {
-        throw new Error('Name or description of added Role is undefined.');
+        throw new Error('Role name or description is undefined.');
       }
 
       if (formRole.wearer === undefined) {
-        throw new Error('Member of added Role is undefined.');
+        throw new Error('Role member is undefined.');
       }
 
-      const hatStruct = await createHatStruct(
+      if (!hatsTree) {
+        throw new Error('Cannot create new hat without hats tree');
+      }
+
+      if (!daoAddress) {
+        throw new Error('Cannot create new hat without DAO address');
+      }
+
+      if (!formRole.resolvedWearer) {
+        throw new Error('Cannot create new hat without resolved wearer');
+      }
+
+      const hatStruct = await createHatStructWithPayments(
         formRole.name,
         formRole.description,
-        getAddress(formRole.wearer),
+        formRole.resolvedWearer,
+        parseSablierPaymentsFromFormRolePayments(formRole.payments ?? []),
       );
 
-      return {
-        calldata: encodeFunctionData({
-          abi: HatsAbi,
-          functionName: 'createHat',
-          args: [
-            adminHatId, // adminHatId
-            hatStruct.details, // details
-            hatStruct.maxSupply, // maxSupply
-            // methinks these next two properties can/should be a "dead" (0x0000...4a75) address
-            topHatSmartAccount, // eligibilityModule
-            topHatSmartAccount, // toggleModule
-            hatStruct.isMutable, // isMutable
-            hatStruct.wearer, // wearer
-          ],
-        }),
-        targetAddress: hatsProtocol,
-      };
-    },
-    [createHatStruct, hatsProtocol],
-  );
+      const { decentHatsAddress, enableDecentHatsModuleData, disableDecentHatsModuleData } =
+        getEnableDisableDecentHatsModuleData();
 
-  const mintHatTx = useCallback(
-    (newHatId: bigint, formHat: RoleHatFormValueEdited) => {
-      if (formHat.wearer === undefined) {
-        throw new Error('Hat wearer of added hat is undefined.');
-      }
+      const createNewRoleData = encodeFunctionData({
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'contract IHats',
+                name: 'hatsProtocol',
+                type: 'address',
+              },
+              {
+                internalType: 'uint256',
+                name: 'adminHatId',
+                type: 'uint256',
+              },
+              {
+                components: [
+                  {
+                    internalType: 'uint32',
+                    name: 'maxSupply',
+                    type: 'uint32',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'details',
+                    type: 'string',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'imageURI',
+                    type: 'string',
+                  },
+                  {
+                    internalType: 'bool',
+                    name: 'isMutable',
+                    type: 'bool',
+                  },
+                  {
+                    internalType: 'address',
+                    name: 'wearer',
+                    type: 'address',
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: 'contract ISablierV2LockupLinear',
+                        name: 'sablier',
+                        type: 'address',
+                      },
+                      {
+                        internalType: 'address',
+                        name: 'sender',
+                        type: 'address',
+                      },
+                      {
+                        internalType: 'uint128',
+                        name: 'totalAmount',
+                        type: 'uint128',
+                      },
+                      {
+                        internalType: 'address',
+                        name: 'asset',
+                        type: 'address',
+                      },
+                      {
+                        internalType: 'bool',
+                        name: 'cancelable',
+                        type: 'bool',
+                      },
+                      {
+                        internalType: 'bool',
+                        name: 'transferable',
+                        type: 'bool',
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: 'uint40',
+                            name: 'start',
+                            type: 'uint40',
+                          },
+                          {
+                            internalType: 'uint40',
+                            name: 'cliff',
+                            type: 'uint40',
+                          },
+                          {
+                            internalType: 'uint40',
+                            name: 'end',
+                            type: 'uint40',
+                          },
+                        ],
+                        internalType: 'struct LockupLinear.Timestamps',
+                        name: 'timestamps',
+                        type: 'tuple',
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: 'address',
+                            name: 'account',
+                            type: 'address',
+                          },
+                          {
+                            internalType: 'uint256',
+                            name: 'fee',
+                            type: 'uint256',
+                          },
+                        ],
+                        internalType: 'struct LockupLinear.Broker',
+                        name: 'broker',
+                        type: 'tuple',
+                      },
+                    ],
+                    internalType: 'struct DecentHats_0_1_0.SablierStreamParams[]',
+                    name: 'sablierParams',
+                    type: 'tuple[]',
+                  },
+                ],
+                internalType: 'struct DecentHats_0_1_0.Hat',
+                name: 'hat',
+                type: 'tuple',
+              },
+              {
+                internalType: 'uint256',
+                name: 'topHatId',
+                type: 'uint256',
+              },
+              {
+                internalType: 'address',
+                name: 'topHatAccount',
+                type: 'address',
+              },
+              {
+                internalType: 'contract IERC6551Registry',
+                name: 'registry',
+                type: 'address',
+              },
+              {
+                internalType: 'address',
+                name: 'hatsAccountImplementation',
+                type: 'address',
+              },
+              {
+                internalType: 'bytes32',
+                name: 'salt',
+                type: 'bytes32',
+              },
+            ],
+            name: 'createRoleHat',
+            outputs: [
+              {
+                internalType: 'uint256',
+                name: 'hatId',
+                type: 'uint256',
+              },
+              {
+                internalType: 'address',
+                name: 'accountAddress',
+                type: 'address',
+              },
+            ],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+        ],
+        functionName: 'createRoleHat',
+        args: [
+          hatsProtocol,
+          BigInt(hatsTree.adminHat.id),
+          hatStruct,
+          BigInt(hatsTree.topHat.id),
+          hatsTree.topHat.smartAddress,
+          erc6551Registry,
+          hatsAccount1ofNMasterCopy,
+          ERC6551_REGISTRY_SALT,
+        ],
+      });
 
-      return {
-        calldata: encodeFunctionData({
-          abi: HatsAbi,
-          functionName: 'mintHat',
-          args: [newHatId, getAddress(formHat.wearer)],
-        }),
-        targetAddress: hatsProtocol,
-      };
-    },
-    [hatsProtocol],
-  );
+      // Transfer top hat to the DecentHats module so it is authorised to create hats on the tree
+      const transferTopHatToDecentHatsData = encodeFunctionData({
+        abi: HatsAbi,
+        functionName: 'transferHat',
+        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsAddress],
+      });
 
-  const createSmartAccountTx = useCallback(
-    (newHatId: bigint) => {
-      return {
-        calldata: encodeFunctionData({
-          abi: ERC6551RegistryAbi,
-          functionName: 'createAccount',
-          args: [
-            hatsAccount1ofNMasterCopy,
-            ERC6551_REGISTRY_SALT,
-            BigInt(chain.id),
-            hatsProtocol,
-            newHatId,
-          ],
-        }),
-        targetAddress: erc6551Registry,
-      };
+      return [
+        {
+          targetAddress: hatsProtocol,
+          calldata: transferTopHatToDecentHatsData,
+        },
+        {
+          targetAddress: daoAddress,
+          calldata: enableDecentHatsModuleData,
+        },
+        {
+          targetAddress: decentHatsAddress,
+          calldata: createNewRoleData,
+        },
+        {
+          targetAddress: daoAddress,
+          calldata: disableDecentHatsModuleData,
+        },
+      ];
     },
-    [chain.id, erc6551Registry, hatsAccount1ofNMasterCopy, hatsProtocol],
+    [
+      hatsTree,
+      daoAddress,
+      createHatStructWithPayments,
+      parseSablierPaymentsFromFormRolePayments,
+      getEnableDisableDecentHatsModuleData,
+      hatsProtocol,
+      erc6551Registry,
+      hatsAccount1ofNMasterCopy,
+    ],
   );
 
   const createBatchLinearStreamCreationTx = useCallback(
@@ -421,7 +604,6 @@ export default function useCreateRoles() {
       }
 
       const topHatAccount = hatsTree.topHat.smartAddress;
-      const adminHatId = BigInt(hatsTree.adminHat.id);
 
       const allTxs: { calldata: Hex; targetAddress: Address }[] = [];
 
@@ -430,11 +612,11 @@ export default function useCreateRoles() {
       // for each modified role
       //
       // New Role
-      //   - allTxs.push(create hat)
-      //   - allTxs.push(mint hat)
-      //   - allTxs.push(create smart account)
-      //   - does it have any streams?
-      //     - allTxs.push(create new streams transactions datas)
+      //   - allTxs.push(createHatAndAccountAndMintAndStreams). This will:
+      //       - create hat,
+      //       - mint hat,
+      //       - create smart account for the hat,
+      //       - create new streams on the hat if any added
       // Deleted Role
       //   - for each inactive stream with funds to claim
       //     - allTxs.push(flush stream transaction data)
@@ -454,10 +636,6 @@ export default function useCreateRoles() {
       //   - for each new stream
       //     - allTxs.push(create new stream transactions datas)
 
-      // we need to keep track of how many new hats there are,
-      // so that we can correctly predict the hatId for the "create new role" transaction
-      let newHatCount = 0;
-
       for (let index = 0; index < modifiedHats.length; index++) {
         const formHat = modifiedHats[index];
         if (
@@ -471,27 +649,7 @@ export default function useCreateRoles() {
         }
 
         if (formHat.editedRole.status === EditBadgeStatus.New) {
-          const newHatId = predictHatId({
-            adminHatId: hatsTree.adminHat.id,
-            hatsCount: hatsTree.roleHatsTotalCount + newHatCount,
-          });
-          newHatCount++;
-
-          allTxs.push(await createNewHatTx(formHat, adminHatId, topHatAccount));
-          allTxs.push(mintHatTx(newHatId, formHat));
-          allTxs.push(createSmartAccountTx(BigInt(newHatId)));
-
-          const newStreams = getNewStreamsFromFormHat(formHat);
-
-          if (newStreams.length > 0) {
-            const newPredictedHatSmartAccount = await predictSmartAccount(newHatId);
-            const newStreamTxData = createBatchLinearStreamCreationTx(
-              newStreams,
-              newPredictedHatSmartAccount,
-            );
-            allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
-            allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
-          }
+          allTxs.push(...(await prepareNewHatTxs(formHat)));
         } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
           if (formHat.smartAddress === undefined) {
             throw new Error(
@@ -735,24 +893,22 @@ export default function useCreateRoles() {
       };
     },
     [
-      createBatchLinearStreamCreationTx,
-      createNewHatTx,
-      createSmartAccountTx,
-      daoAddress,
-      getActiveStreamsFromFormHat,
-      getCancelledStreamsFromFormHat,
-      getHat,
-      getNewStreamsFromFormHat,
-      getStreamsWithFundsToClaimFromFormHat,
-      getStreamsWithFundsToClaimFromFromHat,
-      hatsDetailsBuilder,
-      hatsProtocol,
       hatsTree,
-      mintHatTx,
-      predictSmartAccount,
-      prepareCancelStreamTxs,
+      daoAddress,
+      prepareNewHatTxs,
+      getHat,
+      hatsProtocol,
+      getStreamsWithFundsToClaimFromFormHat,
+      getActiveStreamsFromFormHat,
       prepareFlushStreamTxs,
+      prepareCancelStreamTxs,
       uploadHatDescription,
+      hatsDetailsBuilder,
+      getStreamsWithFundsToClaimFromFromHat,
+      getCancelledStreamsFromFormHat,
+      getNewStreamsFromFormHat,
+      predictSmartAccount,
+      createBatchLinearStreamCreationTx,
     ],
   );
 
