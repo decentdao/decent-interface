@@ -218,11 +218,14 @@ export const sanitize = async (
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
 
-  const rawRoleHatsPruned = rawRoleHats.filter(rawHat => rawHat.status === true);
-
   let roleHats: DecentRoleHat[] = [];
 
-  for (const rawHat of rawRoleHatsPruned) {
+  for (const rawHat of rawRoleHats) {
+    if (rawHat.status !== true || !rawHat.wearers || rawHat.wearers.length !== 1) {
+      // Ignore hats that do not have exactly one wearer
+      continue;
+    }
+
     const hatMetadata = getHatMetadata(rawHat);
     const roleHatSmartAddress = await predictAccountAddress({
       implementation: hatsAccountImplementation,
@@ -232,11 +235,6 @@ export const sanitize = async (
       tokenId: BigInt(rawHat.id),
       publicClient,
     });
-
-    if (!rawHat.wearers || rawHat.wearers.length !== 1) {
-      // Ignore hats that do not have exactly one wearer
-      continue;
-    }
 
     roleHats.push({
       id: rawHat.id,
