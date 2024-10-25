@@ -14,6 +14,7 @@ import {
 import { CaretDown, CheckCircle } from '@phosphor-icons/react';
 import { FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
@@ -75,13 +76,11 @@ function AssetsList({ formIndex }: { formIndex: number }) {
             justifyContent="space-between"
             w="full"
             onClick={() => {
-              // @ts-expect-error TODO: fix this, why is the expected type `never`?
               setFieldValue(`roleEditing.payments.${formIndex}.asset`, {
-                address: asset.tokenAddress,
+                name: asset.name,
+                address: getAddress(asset.tokenAddress),
                 symbol: asset.symbol,
-                logo: asset.logo,
-                balance: asset.balance,
-                balanceFormatted: asset.balanceFormatted,
+                logo: asset.logo ?? '',
                 decimals: asset.decimals,
               });
             }}
@@ -303,7 +302,6 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   value={field.value?.bigintValue}
                   parentFormikValue={values?.roleEditing?.payments?.[formIndex]?.amount}
                   onChange={valuePair => {
-                    // @ts-expect-error TODO: fix this, why is the expected type `never`?
                     setFieldValue(`roleEditing.payments.${formIndex}.amount`, valuePair, true);
                   }}
                   decimalPlaces={values?.roleEditing?.payments?.[formIndex]?.asset?.decimals}

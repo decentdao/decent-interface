@@ -31,7 +31,6 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
     const startDate = type === 'startDate' ? date : payment.startDate;
     const endDate = type === 'endDate' ? date : payment.endDate;
 
-    // @ts-expect-error TODO: fix this, why is the expected type `never`?
     setFieldValue(`roleEditing.payments.${formIndex}`, {
       ...payment,
       startDate,
@@ -41,7 +40,6 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
     // If this date change interferes with the cliff date, reset the cliff date
     const cliffDate = payment.cliffDate;
     if (cliffDate && ((startDate && startDate >= cliffDate) || (endDate && endDate <= cliffDate))) {
-      // @ts-expect-error TODO: fix this, why is the expected type `never`?
       setFieldValue(`roleEditing.payments.${formIndex}.cliffDate`, undefined);
     }
   };
@@ -94,7 +92,6 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
             minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
             maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
             onChange={(date: Date) => {
-              // @ts-expect-error TODO: fix this, why is the expected type `never`?
               setFieldValue(`roleEditing.payments.${formIndex}.cliffDate`, date);
             }}
             disabled={disabled}
@@ -135,7 +132,6 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       return;
     }
 
-    // @ts-expect-error TODO: fix this, why is the expected type `never`?
     setFieldValue(`roleEditing.payments.${formIndex}`, { ...payment, isCancelling: true });
     cancelModal();
     setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
@@ -213,15 +209,16 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
             {isDevMode() && (
               <Button
                 onClick={() => {
+                  if (payment === undefined) {
+                    return;
+                  }
                   const nowDate = new Date();
-                  // @ts-expect-error TODO: fix this, why is the expected type `never`?
                   setFieldValue(`roleEditing.payments.${formIndex}`, {
                     ...payment,
                     amount: {
                       value: '100',
                       bigintValue: 100000000000000000000n,
                     },
-                    decimals: 18,
                     startDate: addMinutes(nowDate, 1),
                     endDate: addMinutes(nowDate, 10),
                   });

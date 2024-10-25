@@ -71,7 +71,6 @@ export function RoleFormPaymentStreams() {
                       : undefined
                   }
                   onCancel={() => {
-                    // @ts-expect-error TODO: fix this, why is the expected type `never`?
                     setFieldValue(`roleEditing.payments.${index}`, {
                       ...payment,
                       isCancelling: true,
