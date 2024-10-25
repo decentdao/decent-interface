@@ -1,10 +1,52 @@
-import { getContract, Hex, PublicClient } from 'viem';
+import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
+import { Address, getContract, Hex, PublicClient } from 'viem';
 import { create } from 'zustand';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
-import { DecentRoleHat, initialHatsStore, RolesStore, sanitize } from './rolesStoreUtils';
+import { BigIntValuePair } from '../../types';
+import { DecentRoleHat, DecentTree, initialHatsStore, sanitize } from './rolesStoreUtils';
 
-const useRolesStore = create<RolesStore>()((set, get) => ({
+const useRolesStore = create<{
+  hatsTreeId: undefined | null | number;
+  hatsTree: undefined | null | DecentTree;
+  streamsFetched: boolean;
+  contextChainId: number | null;
+  getHat: (hatId: Hex) => DecentRoleHat | null;
+  getPayment: (
+    hatId: Hex,
+    streamId: string,
+  ) => {
+    streamId: string;
+    contractAddress: Address;
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate: Date | undefined;
+    isStreaming: () => boolean;
+    isCancellable: () => boolean;
+    withdrawableAmount: bigint;
+    isCancelled: boolean;
+  } | null;
+  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
+  setHatsTree: (params: {
+    hatsTree: Tree | null | undefined;
+    chainId: bigint;
+    hatsProtocol: Address;
+    erc6551Registry: Address;
+    hatsAccountImplementation: Address;
+    publicClient: PublicClient;
+  }) => Promise<void>;
+  refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
+  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
+  resetHatsStore: () => void;
+}>()((set, get) => ({
   ...initialHatsStore,
   getHat: hatId => {
     const matches = get().hatsTree?.roleHats.filter(h => h.id === hatId);

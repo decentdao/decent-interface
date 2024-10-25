@@ -56,48 +56,6 @@ export interface DecentTree {
   roleHats: DecentRoleHat[];
 }
 
-export interface RolesStore {
-  hatsTreeId: undefined | null | number;
-  hatsTree: undefined | null | DecentTree;
-  streamsFetched: boolean;
-  contextChainId: number | null;
-  getHat: (hatId: Hex) => DecentRoleHat | null;
-  getPayment: (
-    hatId: Hex,
-    streamId: string,
-  ) => {
-    streamId: string;
-    contractAddress: Address;
-    asset: {
-      address: Address;
-      name: string;
-      symbol: string;
-      decimals: number;
-      logo: string;
-    };
-    amount: BigIntValuePair;
-    startDate: Date;
-    endDate: Date;
-    cliffDate: Date | undefined;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
-    withdrawableAmount: bigint;
-    isCancelled: boolean;
-  } | null;
-  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
-  setHatsTree: (params: {
-    hatsTree: Tree | null | undefined;
-    chainId: bigint;
-    hatsProtocol: Address;
-    erc6551Registry: Address;
-    hatsAccountImplementation: Address;
-    publicClient: PublicClient;
-  }) => Promise<void>;
-  refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
-  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
-  resetHatsStore: () => void;
-}
-
 const appearsExactlyNumberOfTimes = (
   str: string | undefined,
   char: string,
