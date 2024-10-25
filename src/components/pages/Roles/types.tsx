@@ -3,27 +3,23 @@ import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 
-export interface SablierPayment {
-  streamId: string;
-  contractAddress: Address;
-  asset: {
+export interface SablierPaymentFormValues {
+  streamId?: string;
+  contractAddress?: Address;
+  asset?: {
     address: Address;
     name: string;
     symbol: string;
     decimals: number;
     logo: string;
   };
-  amount: BigIntValuePair;
-  startDate: Date;
-  endDate: Date;
-  cliffDate: Date | undefined;
-  isStreaming: () => boolean;
-  isCancellable: () => boolean;
-  withdrawableAmount: bigint;
-  isCancelled: boolean;
-}
+  amount?: BigIntValuePair;
+  startDate?: Date;
+  endDate?: Date;
+  cliffDate?: Date | undefined;
+  withdrawableAmount?: bigint;
+  isCancelled?: boolean;
 
-export interface SablierPaymentFormValues extends Partial<SablierPayment> {
   isStreaming: () => boolean;
   isCancellable: () => boolean;
   isCancelling?: boolean;
@@ -47,10 +43,25 @@ export interface RoleEditProps
 export interface RoleDetailsDrawerRoleHatProp
   extends Omit<DecentRoleHat, 'payments' | 'smartAddress'> {
   smartAddress?: Address;
-  payments?: (Omit<SablierPayment, 'contractAddress' | 'streamId'> & {
+  payments?: {
     contractAddress?: Address;
     streamId?: string;
-  })[];
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate: Date | undefined;
+    isStreaming: () => boolean;
+    isCancellable: () => boolean;
+    withdrawableAmount: bigint;
+    isCancelled: boolean;
+  }[];
 }
 
 export interface RoleDetailsDrawerEditingRoleHatProp

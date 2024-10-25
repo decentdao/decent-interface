@@ -1,8 +1,8 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
-import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
+import { BigIntValuePair } from '../../types';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -21,7 +21,25 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
-  payments?: SablierPayment[];
+  payments?: {
+    streamId: string;
+    contractAddress: Address;
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate: Date | undefined;
+    isStreaming: () => boolean;
+    isCancellable: () => boolean;
+    withdrawableAmount: bigint;
+    isCancelled: boolean;
+  }[];
 }
 
 interface DecentTopHat extends DecentHat {}
@@ -47,7 +65,28 @@ export interface DecentTree {
 
 export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
-  getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
+  getPayment: (
+    hatId: Hex,
+    streamId: string,
+  ) => {
+    streamId: string;
+    contractAddress: Address;
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate: Date | undefined;
+    isStreaming: () => boolean;
+    isCancellable: () => boolean;
+    withdrawableAmount: bigint;
+    isCancelled: boolean;
+  } | null;
   setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
   setHatsTree: (params: {
     hatsTree: Tree | null | undefined;
