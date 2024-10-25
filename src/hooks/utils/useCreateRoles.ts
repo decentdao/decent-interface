@@ -11,7 +11,6 @@ import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
   EditBadgeStatus,
-  HatStruct,
   HatStructWithPayments,
   RoleFormValues,
   RoleHatFormValueEdited,
@@ -80,8 +79,8 @@ export default function useCreateRoles() {
         }),
       );
 
-      const newHat: HatStruct = {
-        maxSupply: 1,
+      const newHat = {
+        maxSupply: 1 as const,
         details,
         imageURI: '',
         isMutable: true,
