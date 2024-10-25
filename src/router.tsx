@@ -1,9 +1,9 @@
 import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
-import { GeneralSettingsContainer } from './components/pages/DaoSettings/components/GeneralSettingsContainer';
-import GovernanceContainer from './components/pages/DaoSettings/components/GovernanceContainer';
-import { ModulesContainer } from './components/pages/DaoSettings/components/ModulesContainer';
-import PermissionsContainer from './components/pages/DaoSettings/components/PermissionsContainer';
+import DAOGeneralSettingsPage from './components/pages/DaoSettings/DAOGeneralSettingsPage';
+import DAOGovernanceSettingsPage from './components/pages/DaoSettings/DAOGovernanceSettingsPage';
+import DAOModulesSettingsPage from './components/pages/DaoSettings/DAOModulesSettingsPage';
+import DAOPermissionsSettingsPage from './components/pages/DaoSettings/DAOPermissionsSettingsPage';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
@@ -188,19 +188,19 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
                 },
                 {
                   path: 'general',
-                  element: <GeneralSettingsContainer />,
+                  element: <DAOGeneralSettingsPage />,
                 },
                 {
                   path: 'governance',
-                  element: <GovernanceContainer />,
+                  element: <DAOGovernanceSettingsPage />,
                 },
                 {
                   path: 'modules-and-guard',
-                  element: <ModulesContainer />,
+                  element: <DAOModulesSettingsPage />,
                 },
                 {
                   path: 'permissions',
-                  element: <PermissionsContainer />,
+                  element: <DAOPermissionsSettingsPage />,
                 },
               ],
             },

@@ -39,15 +39,21 @@ export const useERC721LinearStrategy = () => {
       client: publicClient,
     });
 
-    const [votingPeriodBlocks, quorumThreshold, timeLockPeriod] = await Promise.all([
-      erc721LinearVotingContract.read.votingPeriod(),
-      erc721LinearVotingContract.read.quorumThreshold(),
-      azoriusContract.read.timelockPeriod(),
-    ]);
+    const [votingPeriodBlocks, quorumThreshold, proposerThreshold, timeLockPeriod] =
+      await Promise.all([
+        erc721LinearVotingContract.read.votingPeriod(),
+        erc721LinearVotingContract.read.quorumThreshold(),
+        erc721LinearVotingContract.read.proposerThreshold(),
+        azoriusContract.read.timelockPeriod(),
+      ]);
 
     const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, publicClient);
     const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, publicClient);
     const votingData = {
+      proposerThreshold: {
+        value: proposerThreshold,
+        formatted: proposerThreshold.toString(),
+      },
       votingPeriod: {
         value: BigInt(votingPeriodValue),
         formatted: getTimeDuration(votingPeriodValue),

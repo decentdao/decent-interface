@@ -1,32 +1,40 @@
 import { Flex } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { GovernanceType } from '../../../../types';
+import { InfoGovernance } from '../../DaoDashboard/Info/InfoGovernance';
 import { ERC20TokenContainer } from './ERC20TokenContainer';
 import { ERC721TokensContainer } from './ERC721TokensContainer';
 import { SettingsSection } from './SettingsSection';
 import { SignersContainer } from './Signers/SignersContainer';
 
 export default function GovernanceContainer() {
-  const {
-    governance: { type },
-  } = useFractal();
+  const { t } = useTranslation('settings');
+  const { governance } = useFractal();
+  const { type } = governance;
+  const isERC20Governance = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721Governance = type === GovernanceType.AZORIUS_ERC721;
+  const isMultisigGovernance = type === GovernanceType.MULTISIG;
+
   return (
     <Flex
       flexDirection="column"
       gap="3rem"
     >
-      <SettingsSection
-        title="Governance"
-        descriptionHeader="blah blah governance and token"
-        descriptionContent="blah blah governance long ass description"
-      >
-        I am going to show quorum, voting period, timelock period, execution period
-      </SettingsSection>
-      {type === GovernanceType.AZORIUS_ERC20 ? (
+      {(isERC20Governance || isERC721Governance) && (
+        <SettingsSection
+          title={t('daoSettingsGovernance')}
+          descriptionHeader={t('governanceParametersTitle')}
+          descriptionContent={t('governanceParametersDescription')}
+        >
+          <InfoGovernance showTitle={false} />
+        </SettingsSection>
+      )}
+      {isERC20Governance ? (
         <ERC20TokenContainer />
-      ) : type === GovernanceType.AZORIUS_ERC721 ? (
+      ) : isERC721Governance ? (
         <ERC721TokensContainer />
-      ) : type === GovernanceType.MULTISIG ? (
+      ) : isMultisigGovernance ? (
         <SignersContainer />
       ) : null}
     </Flex>

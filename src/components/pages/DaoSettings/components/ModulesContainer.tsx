@@ -18,7 +18,7 @@ export function ModulesContainer() {
 
   return (
     <SettingsSection
-      title={t('modulesTitle')}
+      title={t('daoModulesAndGuard')}
       descriptionHeader={t('modulesAndGuardsTitle')}
       descriptionContent={
         <>
