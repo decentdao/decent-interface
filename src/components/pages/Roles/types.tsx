@@ -3,33 +3,6 @@ import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 
-export interface RoleEditProps {
-  handleRoleClick: () => void;
-  name?: string;
-  editStatus?: EditBadgeStatus;
-  wearerAddress?: Address;
-  payments?: {
-    streamId: string;
-    contractAddress: Address;
-    asset: {
-      address: Address;
-      name: string;
-      symbol: string;
-      decimals: number;
-      logo: string;
-    };
-    amount: BigIntValuePair;
-    startDate: Date;
-    endDate: Date;
-    cliffDate?: Date;
-    withdrawableAmount: bigint;
-    isCancelled: boolean;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
-    isCancelling: boolean;
-  }[];
-}
-
 export interface RoleDetailsDrawerRoleHatProp
   extends Omit<DecentRoleHat, 'payments' | 'smartAddress'> {
   smartAddress?: Address;
