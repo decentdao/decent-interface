@@ -52,7 +52,7 @@
   "years": "Years",
   "days": "Days",
   "hours": "Hours",
-  "cliff": "Cliff",
+  "cliff": "Cliff Date",
   "cliffSubTitle": "How long until the assets are claimable?",
   "activePayments": "Active Payments",
   "payments": "Payments",
@@ -111,5 +111,9 @@
   "roleInfoErrorTermEndDateInvalid": "Invalid end date.",
   "roleInfoErrorTermEndDateRequired": "End date is required.",
   "addTerm": "Add Term",
-  "termEndDate": "Term End Date"
+  "termEndDate": "Term End Date",
+  "date": "Date",
+  "assignPayment": "Assign Payment to Term",
+  "assignPaymentTooltip": "Assign this payment to a specific term.",
+  "selectTerm": "Select Term"
 }

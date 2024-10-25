@@ -12,6 +12,7 @@ import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormMember from './RoleFormMember';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
+import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 
@@ -59,7 +60,13 @@ export default function RoleFormTabs({
   if (!daoAddress) return null;
 
   if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
-    return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
+    if (values.roleEditing?.isTermed) {
+      return (
+        <RoleFormPaymentStreamTermed formIndex={values.roleEditing?.roleEditingPaymentIndex} />
+      );
+    } else {
+      return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
+    }
   }
 
   return (
