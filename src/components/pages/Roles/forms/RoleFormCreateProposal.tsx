@@ -4,12 +4,13 @@ import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { formatUnits, Hex } from 'viem';
+import { formatUnits, Hex, Address } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { DecentRoleHat } from '../../../../store/roles/rolesStoreUtils';
 import { Card } from '../../../ui/cards/Card';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
@@ -19,7 +20,7 @@ import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-import { EditedRole, RoleDetailsDrawerEditingRoleHatProp, RoleFormValues } from '../types';
+import { EditedRole, RoleFormValues } from '../types';
 
 function SendAssetsAction({
   index,
@@ -69,7 +70,12 @@ function SendAssetsAction({
 }
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
-  const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerEditingRoleHatProp>();
+  const [drawerViewingRole, setDrawerViewingRole] = useState<
+    Omit<DecentRoleHat, 'smartAddress' | 'wearerAddress'> & {
+      smartAddress?: Address;
+      wearer: string;
+    }
+  >();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
   const {
     values,
@@ -79,7 +85,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   } = useFormikContext<RoleFormValues>();
 
   const editedRoles = useMemo<
-    (RoleDetailsDrawerEditingRoleHatProp & {
+    (Omit<DecentRoleHat, 'smartAddress' | 'wearerAddress'> & {
+      smartAddress?: Address;
+      wearer: string;
       editedRole: EditedRole;
     })[]
   >(() => {

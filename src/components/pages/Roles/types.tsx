@@ -3,15 +3,6 @@ import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 
-interface RoleDetailsDrawerRoleHatProp extends Omit<DecentRoleHat, 'smartAddress'> {
-  smartAddress?: Address;
-}
-
-export interface RoleDetailsDrawerEditingRoleHatProp
-  extends Omit<RoleDetailsDrawerRoleHatProp, 'wearerAddress'> {
-  wearer: string;
-}
-
 export enum EditBadgeStatus {
   Updated,
   New,
@@ -96,7 +87,12 @@ export interface RoleFormValues {
 }
 
 export interface RoleDetailsDrawerProps {
-  roleHat: RoleDetailsDrawerRoleHatProp | RoleDetailsDrawerEditingRoleHatProp;
+  roleHat:
+    | (Omit<DecentRoleHat, 'smartAddress'> & { smartAddress?: Address })
+    | (Omit<DecentRoleHat, 'smartAddress' | 'wearerAddress'> & {
+        smartAddress?: Address;
+        wearer: string;
+      });
   onOpen?: () => void;
   onClose: () => void;
   onEdit: (hatId: Hex) => void;
