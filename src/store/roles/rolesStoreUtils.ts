@@ -1,5 +1,5 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, getContract } from 'viem';
+import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
@@ -13,15 +13,6 @@ export class DecentHatsError extends Error {
       Error.captureStackTrace(this, DecentHatsError);
     }
   }
-}
-
-export interface PredictAccountParams {
-  implementation: Address;
-  chainId: bigint;
-  tokenContract: Address;
-  tokenId: bigint;
-  registryAddress: Address;
-  publicClient: PublicClient;
 }
 
 interface DecentHat {
@@ -45,14 +36,13 @@ interface RolesStoreData {
 }
 
 export interface DecentRoleHat extends DecentHat {
-  wearer: Address;
+  wearerAddress: Address;
 }
 
 export interface DecentTree {
   topHat: DecentTopHat;
   adminHat: DecentAdminHat;
   roleHats: DecentRoleHat[];
-  roleHatsTotalCount: number;
 }
 
 export interface RolesStore extends RolesStoreData {
@@ -144,7 +134,14 @@ export const initialHatsStore: RolesStoreData = {
   contextChainId: null,
 };
 
-export const predictAccountAddress = async (params: PredictAccountParams) => {
+export const predictAccountAddress = async (params: {
+  implementation: Address;
+  chainId: bigint;
+  tokenContract: Address;
+  tokenId: bigint;
+  registryAddress: Address;
+  publicClient: PublicClient;
+}) => {
   const { implementation, chainId, tokenContract, tokenId, registryAddress, publicClient } = params;
 
   const erc6551RegistryContract = getContract({
@@ -218,15 +215,22 @@ export const sanitize = async (
     smartAddress: adminHatSmartAddress,
   };
 
-  const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
-
-  const rawRoleHatsPruned = rawRoleHats
-    .filter(rawHat => rawHat.status === true)
-    .filter(h => h.wearers !== undefined && h.wearers.length === 1);
-
   let roleHats: DecentRoleHat[] = [];
 
-  for (const rawHat of rawRoleHatsPruned) {
+  for (const rawHat of hatsTree.hats) {
+    if (
+      !appearsExactlyNumberOfTimes(rawHat.prettyId, '.', 2) ||
+      rawHat.status !== true ||
+      !rawHat.wearers ||
+      rawHat.wearers.length !== 1
+    ) {
+      // Ignore hats that do not
+      // - exist as a child of the Admin Hat
+      // - are not active
+      // - have exactly one wearer
+      continue;
+    }
+
     const hatMetadata = getHatMetadata(rawHat);
     const roleHatSmartAddress = await predictAccountAddress({
       implementation: hatsAccountImplementation,
@@ -242,7 +246,7 @@ export const sanitize = async (
       prettyId: rawHat.prettyId ?? '',
       name: hatMetadata.name,
       description: hatMetadata.description,
-      wearer: rawHat.wearers![0].id,
+      wearerAddress: getAddress(rawHat.wearers[0].id),
       smartAddress: roleHatSmartAddress,
     });
   }
@@ -251,35 +255,21 @@ export const sanitize = async (
     topHat,
     adminHat,
     roleHats,
-    roleHatsTotalCount: rawRoleHats.length,
   };
 
   return decentTree;
-};
-
-export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {
-  // 1 byte = 8 bits = 2 string characters
-  const adminLevelBinary = adminHatId.slice(0, 14); // Top Admin ID 1 byte 0x + 4 bytes (tree ID) + next **16 bits** (admin level ID)
-
-  // Each next level is next **16 bits**
-  // Since we're operating only with direct child of top level admin - we don't care about nested levels
-  // @dev At least for now?
-  const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
-
-  // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
-  return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
-};
-
-export const isActive = (payment: { isCancelled?: boolean; endDate?: Date }) => {
-  const now = new Date();
-  // A payment is active if it's not cancelled and its end date is in the future (or it doesn't have an end date yet)
-  return !payment.isCancelled && (payment.endDate === undefined || payment.endDate > now);
 };
 
 export const paymentSorterByActiveStatus = (
   a: { isCancelled?: boolean; endDate?: Date },
   b: { isCancelled?: boolean; endDate?: Date },
 ) => {
+  const isActive = (payment: { isCancelled?: boolean; endDate?: Date }) => {
+    const now = new Date();
+    // A payment is active if it's not cancelled and its end date is in the future (or it doesn't have an end date yet)
+    return !payment.isCancelled && (payment.endDate === undefined || payment.endDate > now);
+  };
+
   const aIsActive = isActive(a);
   const bIsActive = isActive(b);
 
@@ -293,6 +283,7 @@ export const paymentSorterByActiveStatus = (
   // If both are active or both inactive, maintain the current order
   return 0;
 };
+
 export const paymentSorterByStartDate = (a: { startDate?: Date }, b: { startDate?: Date }) => {
   if (!a?.startDate) return 1; // No start date, move this payment last
   if (!b?.startDate) return -1; // No start date, move b last

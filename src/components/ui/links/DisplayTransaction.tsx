@@ -1,6 +1,6 @@
 import { Flex, Text, Icon } from '@chakra-ui/react';
 import { ArrowUpRight } from '@phosphor-icons/react';
-import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import EtherscanLink from './EtherscanLink';
 
 export default function DisplayTransaction({

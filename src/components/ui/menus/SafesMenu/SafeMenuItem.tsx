@@ -1,12 +1,12 @@
 import { Box, Button, Flex, Image, MenuItem, Spacer, Text } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { useGetDAOName } from '../../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../../hooks/utils/useAvatar';
-import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useGetSafeName } from '../../../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
@@ -30,17 +30,15 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
     },
   });
 
-  const { daoName } = useGetDAOName({
-    address: address,
-    chainId: getChainIdFromPrefix(network),
-  });
+  const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
+  const [safeName, setSafeName] = useState<string>();
 
-  const { displayName: accountDisplayName } = useDisplayName(
-    address,
-    false,
-    getChainIdFromPrefix(network),
-  );
-  const avatarURL = useAvatar(accountDisplayName);
+  useEffect(() => {
+    getSafeName(address).then(setSafeName);
+  }, [address, getSafeName]);
+
+  // if by chance the safe name is an ENS name, let's attempt to get the avatar for that
+  const avatarURL = useAvatar(safeName ?? '');
 
   const { t } = useTranslation('dashboard');
 
@@ -75,7 +73,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
             color="white-0"
             textStyle="button-base"
           >
-            {daoName ?? t('loadingFavorite')}
+            {safeName ?? t('loadingFavorite')}
           </Text>
         </Flex>
 

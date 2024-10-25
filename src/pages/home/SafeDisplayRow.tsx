@@ -1,14 +1,14 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
-import { useGetDAOName } from '../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
-import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../hooks/utils/useGetAccountName';
+import { useGetSafeName } from '../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
@@ -24,19 +24,17 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
     },
   });
 
-  const { daoName } = useGetDAOName({
-    address: getAddress(address),
-    chainId: getChainIdFromPrefix(network),
-  });
+  const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
+  const [safeName, setSafeName] = useState<string>();
+
+  useEffect(() => {
+    getSafeName(address).then(setSafeName);
+  }, [address, getSafeName]);
 
   const { t } = useTranslation('dashboard');
 
-  const { displayName: accountDisplayName } = useDisplayName(
-    address,
-    false,
-    getChainIdFromPrefix(network),
-  );
-  const avatarURL = useAvatar(accountDisplayName);
+  // if the safe name is an ENS name, let's attempt to get the avatar for that
+  const avatarURL = useAvatar(safeName ?? '');
 
   const onClickNav = () => {
     if (onClick) onClick();
@@ -77,10 +75,10 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
       />
       <Flex flexDir="column">
         <Text
-          color={daoName ? nameColor : 'neutral-6'}
+          color={safeName ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'label-base' : 'button-base'}
         >
-          {daoName ?? t('loadingFavorite')}
+          {safeName ?? t('loadingFavorite')}
         </Text>
         {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
       </Flex>

@@ -1,6 +1,6 @@
 import { Divider, HStack, Flex, Text, Image, Box } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
 import { NFTBalance } from '../../../../types';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
 

@@ -3,7 +3,7 @@ import { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { CONTENT_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import AddressCopier from '../../links/AddressCopier';

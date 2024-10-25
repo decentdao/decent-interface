@@ -4,7 +4,7 @@ import { Field, FieldAttributes, FormikErrors } from 'formik';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
-import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { BigIntValuePair, ERC721TokenConfig, ICreationStepProps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';

@@ -3,14 +3,14 @@ import { Download } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Address, encodeFunctionData, getAddress, getContract } from 'viem';
+import { Address, encodeFunctionData, getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin } from '../../../utils';
 import Avatar, { AvatarSize } from '../page/Header/Avatar';
@@ -41,7 +41,7 @@ export default function PaymentWithdrawModal({
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
-  const { displayName: accountDisplayName } = useDisplayName(
+  const { displayName: accountDisplayName } = useGetAccountName(
     withdrawInformation.roleHatWearerAddress,
   );
   const avatarURL = useAvatar(accountDisplayName);
@@ -68,7 +68,7 @@ export default function PaymentWithdrawModal({
         let hatsAccountCalldata = encodeFunctionData({
           abi: SablierV2LockupLinearAbi,
           functionName: 'withdrawMax',
-          args: [bigIntStreamId, getAddress(withdrawInformation.roleHatWearerAddress)],
+          args: [bigIntStreamId, withdrawInformation.roleHatWearerAddress],
         });
         withdrawToast = toast.loading(t('withdrawPendingMessage'));
         const txHash = await hatsAccountContract.write.execute([

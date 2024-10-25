@@ -2,11 +2,9 @@ import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { CaretCircleRight, CaretRight } from '@phosphor-icons/react';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { getAddress, zeroAddress } from 'viem';
-import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
+import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { getChainIdFromPrefix } from '../../../utils/url';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -18,15 +16,12 @@ export function AvatarAndRoleName({
   name,
   paymentsCount,
 }: {
-  wearerAddress: string | undefined;
+  wearerAddress: Address | undefined;
   name?: string;
   paymentsCount?: number;
 }) {
-  const { addressPrefix } = useNetworkConfig();
-  const { daoName: accountDisplayName } = useGetDAOName({
-    address: getAddress(wearerAddress || zeroAddress),
-    chainId: getChainIdFromPrefix(addressPrefix),
-  });
+  const { displayName } = useGetAccountName(wearerAddress);
+
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);
 
@@ -59,7 +54,7 @@ export function AvatarAndRoleName({
           textStyle="button-small"
           color="neutral-7"
         >
-          {wearerAddress ? accountDisplayName : t('unassigned')}
+          {displayName ?? t('unassigned')}
         </Text>
         {paymentsCount !== undefined && (
           <Flex
@@ -178,13 +173,12 @@ export function RoleCard({
   paymentsCount,
   editStatus,
   handleRoleClick,
-  hatId,
 }: RoleProps) {
   return (
     <Card
       mb="1rem"
       cursor="pointer"
-      onClick={() => handleRoleClick(hatId)}
+      onClick={handleRoleClick}
     >
       <Flex justifyContent="space-between">
         <AvatarAndRoleName
@@ -257,6 +251,7 @@ export function RoleCardShort({
     <Card
       onClick={handleRoleClick}
       cursor="pointer"
+      my="0.5rem"
     >
       <Flex justifyContent="space-between">
         <Text
