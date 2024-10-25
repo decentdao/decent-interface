@@ -211,7 +211,7 @@ export function RolesRowEdit({
   editStatus?: EditBadgeStatus;
   wearerAddress?: Address;
   payments: {
-    isStreaming: () => boolean;
+    isStreaming: boolean;
   }[];
 }) {
   const isRemovedRole = editStatus === EditBadgeStatus.Removed;
@@ -234,7 +234,7 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentsColumn paymentsCount={payments.filter(p => p.isStreaming()).length} />
+      <PaymentsColumn paymentsCount={payments.filter(p => p.isStreaming).length} />
     </Tr>
   );
 }
@@ -274,7 +274,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearerAddress}
                 handleRoleClick={() => handleRoleClick(role.id)}
-                paymentsCount={role.payments.filter(p => p.isStreaming()).length}
+                paymentsCount={role.payments.filter(p => p.isStreaming).length}
               />
             ))}
           </Tbody>
@@ -313,8 +313,8 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state

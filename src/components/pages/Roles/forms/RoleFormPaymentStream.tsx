@@ -44,8 +44,8 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -165,8 +165,8 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -202,8 +202,8 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -224,7 +224,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   );
 
   const canBeCancelled = existingPayment
-    ? existingPayment.isCancellable() && !payment?.isCancelling
+    ? existingPayment.isCancellable && !payment?.isCancelling
     : false;
 
   const cancelModal = useDecentModal(ModalType.NONE);

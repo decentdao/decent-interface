@@ -67,8 +67,8 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -101,8 +101,8 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -230,8 +230,8 @@ export default function RoleEditDetails() {
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -264,8 +264,8 @@ export default function RoleEditDetails() {
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -308,8 +308,8 @@ export default function RoleEditDetails() {
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -342,8 +342,8 @@ export default function RoleEditDetails() {
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -474,8 +474,8 @@ export default function RoleEditDetails() {
               cliffDate?: Date;
               withdrawableAmount: bigint;
               isCancelled: boolean;
-              isStreaming: () => boolean;
-              isCancellable: () => boolean;
+              isStreaming: boolean;
+              isCancellable: boolean;
               isCancelling: boolean;
             }[];
             // form specific state
