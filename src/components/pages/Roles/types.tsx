@@ -9,33 +9,8 @@ export interface RoleEditProps {
   editStatus?: EditBadgeStatus;
   wearerAddress?: Address;
   payments?: {
-    streamId?: string;
-    contractAddress?: Address;
-    asset?: {
-      address: Address;
-      name: string;
-      symbol: string;
-      decimals: number;
-      logo: string;
-    };
-    amount?: BigIntValuePair;
-    startDate?: Date;
-    endDate?: Date;
-    cliffDate?: Date | undefined;
-    withdrawableAmount?: bigint;
-    isCancelled?: boolean;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
-    isCancelling?: boolean;
-  }[];
-}
-
-export interface RoleDetailsDrawerRoleHatProp
-  extends Omit<DecentRoleHat, 'payments' | 'smartAddress'> {
-  smartAddress?: Address;
-  payments?: {
-    contractAddress?: Address;
-    streamId?: string;
+    streamId: string;
+    contractAddress: Address;
     asset: {
       address: Address;
       name: string;
@@ -46,7 +21,32 @@ export interface RoleDetailsDrawerRoleHatProp
     amount: BigIntValuePair;
     startDate: Date;
     endDate: Date;
-    cliffDate: Date | undefined;
+    cliffDate?: Date;
+    withdrawableAmount: bigint;
+    isCancelled: boolean;
+    isStreaming: () => boolean;
+    isCancellable: () => boolean;
+    isCancelling: boolean;
+  }[];
+}
+
+export interface RoleDetailsDrawerRoleHatProp
+  extends Omit<DecentRoleHat, 'payments' | 'smartAddress'> {
+  smartAddress?: Address;
+  payments?: {
+    contractAddress: Address;
+    streamId: string;
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
     isStreaming: () => boolean;
     isCancellable: () => boolean;
     withdrawableAmount: bigint;
@@ -109,24 +109,24 @@ export interface RoleHatFormValue
   // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
   resolvedWearer?: Address;
   payments?: {
-    streamId?: string;
-    contractAddress?: Address;
-    asset?: {
+    streamId: string;
+    contractAddress: Address;
+    asset: {
       address: Address;
       name: string;
       symbol: string;
       decimals: number;
       logo: string;
     };
-    amount?: BigIntValuePair;
-    startDate?: Date;
-    endDate?: Date;
-    cliffDate?: Date | undefined;
-    withdrawableAmount?: bigint;
-    isCancelled?: boolean;
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
+    withdrawableAmount: bigint;
+    isCancelled: boolean;
     isStreaming: () => boolean;
     isCancellable: () => boolean;
-    isCancelling?: boolean;
+    isCancelling: boolean;
   }[];
   // form specific state
   editedRole?: EditedRole;

@@ -10,7 +10,7 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { EditBadgeStatus, RoleEditProps } from './types';
+import { EditBadgeStatus } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -97,33 +97,29 @@ function Payment({
   payment,
 }: {
   payment: {
-    asset?: {
+    asset: {
       address: Address;
       name: string;
       symbol: string;
       decimals: number;
       logo: string;
     };
-    amount?: BigIntValuePair;
-    startDate?: Date;
-    endDate?: Date;
-    cliffDate?: Date | undefined;
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
   };
 }) {
   const { t } = useTranslation(['roles']);
   const format = ['years', 'days', 'hours'];
-  const endDate =
-    payment.endDate &&
-    payment.startDate &&
-    formatDuration(
-      intervalToDuration({
-        start: payment.startDate,
-        end: payment.endDate,
-      }),
-      { format },
-    );
+  const endDate = formatDuration(
+    intervalToDuration({
+      start: payment.startDate,
+      end: payment.endDate,
+    }),
+    { format },
+  );
   const cliffDate =
-    payment.startDate &&
     payment.cliffDate &&
     formatDuration(
       intervalToDuration({
@@ -152,13 +148,13 @@ function Payment({
           my="0.5rem"
         >
           <Image
-            src={payment.asset?.logo}
+            src={payment.asset.logo}
             fallbackSrc="/images/coin-icon-default.svg"
-            alt={payment.asset?.symbol}
+            alt={payment.asset.symbol}
             w="1.25rem"
             h="1.25rem"
           />
-          {payment.amount?.value}
+          {payment.amount.value}
           <EtherscanLink
             color="white-0"
             _hover={{ bg: 'transparent' }}
@@ -169,7 +165,7 @@ function Payment({
             type="token"
             wordBreak="break-word"
           >
-            {payment.asset?.symbol}
+            {payment.asset.symbol}
           </EtherscanLink>
           <Flex
             flexDir="column"
@@ -226,7 +222,25 @@ export function RoleCardEdit({
   payments,
   editStatus,
   handleRoleClick,
-}: RoleEditProps) {
+}: {
+  handleRoleClick: () => void;
+  name?: string;
+  editStatus?: EditBadgeStatus;
+  wearerAddress?: Address;
+  payments?: {
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
+  }[];
+}) {
   const isRemovedRole = editStatus === EditBadgeStatus.Removed;
   return (
     <Card
