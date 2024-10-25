@@ -38,8 +38,8 @@ export function useProposalCountdown(proposal: FractalProposal) {
     governanceDispatch: action.dispatch,
   });
 
-  let updateStateInterval = useRef<NodeJS.Timer | undefined>();
-  let countdownInterval = useRef<NodeJS.Timer | undefined>();
+  let updateStateInterval = useRef<ReturnType<typeof setInterval> | undefined>();
+  let countdownInterval = useRef<ReturnType<typeof setInterval> | undefined>();
   useEffect(() => {
     // if it's not a state that requires a countdown, clear the interval and return
     if (
