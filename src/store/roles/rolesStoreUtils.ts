@@ -1,5 +1,5 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, getContract } from 'viem';
+import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
@@ -218,13 +218,14 @@ export const sanitize = async (
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
 
-  const rawRoleHatsPruned = rawRoleHats
-    .filter(rawHat => rawHat.status === true)
-    .filter(h => h.wearers !== undefined && h.wearers.length === 1);
-
   let roleHats: DecentRoleHat[] = [];
 
-  for (const rawHat of rawRoleHatsPruned) {
+  for (const rawHat of rawRoleHats) {
+    if (rawHat.status !== true || !rawHat.wearers || rawHat.wearers.length !== 1) {
+      // Ignore hats that do not have exactly one wearer
+      continue;
+    }
+
     const hatMetadata = getHatMetadata(rawHat);
     const roleHatSmartAddress = await predictAccountAddress({
       implementation: hatsAccountImplementation,
@@ -240,7 +241,7 @@ export const sanitize = async (
       prettyId: rawHat.prettyId ?? '',
       name: hatMetadata.name,
       description: hatMetadata.description,
-      wearerAddress: rawHat.wearers![0].id,
+      wearerAddress: getAddress(rawHat.wearers[0].id),
       smartAddress: roleHatSmartAddress,
     });
   }
