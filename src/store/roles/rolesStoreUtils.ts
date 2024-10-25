@@ -43,7 +43,6 @@ export interface DecentTree {
   topHat: DecentTopHat;
   adminHat: DecentAdminHat;
   roleHats: DecentRoleHat[];
-  roleHatsTotalCount: number;
 }
 
 export interface RolesStore extends RolesStoreData {
@@ -250,7 +249,6 @@ export const sanitize = async (
     topHat,
     adminHat,
     roleHats,
-    roleHatsTotalCount: rawRoleHats.length,
   };
 
   return decentTree;
