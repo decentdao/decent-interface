@@ -239,7 +239,6 @@ export default function RoleEditDetails() {
           </Hide>
         </>
       )}
-      {/* @ts-expect-error TODO: fix this, figure out why non-optional "hats" is causing issues */}
       <FieldArray name="hats">
         {({ push }: { push: (roleHatFormValue: RoleHatFormValue) => void }) => (
           <>

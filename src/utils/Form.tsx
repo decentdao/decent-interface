@@ -73,10 +73,6 @@ type DeepPropertyType<
     ? TT[P]
     : never;
 
-type ObjectKeys<T> = {
-  [K in keyof T]: T[K] extends object ? K : never;
-}[keyof T];
-
 type DeepKeysPrefix<T, TPrefix> = TPrefix extends keyof T & (number | string)
   ? `${TPrefix}.${DeepKeys<T[TPrefix]> & string}`
   : never;
@@ -86,7 +82,7 @@ type DeepKeys<T> = unknown extends T
   : T extends readonly any[]
     ? DeepKeysPrefix<T, keyof T>
     : T extends object
-      ? Exclude<keyof T, ObjectKeys<T>> | DeepKeysPrefix<T, keyof T>
+      ? (keyof T & string) | DeepKeysPrefix<T, keyof T & string>
       : never;
 
 type DeepValue<T, TProp> =
