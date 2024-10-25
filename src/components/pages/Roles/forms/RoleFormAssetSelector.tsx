@@ -27,7 +27,7 @@ import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues } from '../types';
 
-function AssetsList({ fieldName, formIndex }: { fieldName: string; formIndex: number }) {
+function AssetsList({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation('roles');
   const {
     treasury: { assetsFungible },
@@ -75,7 +75,8 @@ function AssetsList({ fieldName, formIndex }: { fieldName: string; formIndex: nu
             justifyContent="space-between"
             w="full"
             onClick={() => {
-              setFieldValue(fieldName, {
+              // @ts-expect-error TODO: fix this, why is the expected type `never`?
+              setFieldValue(`roleEditing.payments.${formIndex}.asset`, {
                 address: asset.tokenAddress,
                 symbol: asset.symbol,
                 logo: asset.logo,
@@ -159,7 +160,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         isDisabled={disabled}
       >
         <Field name={`roleEditing.payments.${formIndex}.asset`}>
-          {({ field }) => (
+          {() => (
             <Menu
               placement="bottom-end"
               offset={[0, 8]}
@@ -239,10 +240,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                         padding="0.25rem"
                         mt="-1rem"
                       >
-                        <AssetsList
-                          fieldName={field.name}
-                          formIndex={formIndex}
-                        />
+                        <AssetsList formIndex={formIndex} />
                       </Flex>
                     </DraggableDrawer>
                   </Show>
@@ -272,10 +270,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                           mx="-0.25rem"
                           width="calc(100% + 0.5rem)"
                         />
-                        <AssetsList
-                          fieldName={field.name}
-                          formIndex={formIndex}
-                        />
+                        <AssetsList formIndex={formIndex} />
                       </EaseOutComponent>
                     </MenuList>
                   </Show>
@@ -308,11 +303,12 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   value={field.value?.bigintValue}
                   parentFormikValue={values?.roleEditing?.payments?.[formIndex]?.amount}
                   onChange={valuePair => {
-                    setFieldValue(field.name, valuePair, true);
+                    // @ts-expect-error TODO: fix this, why is the expected type `never`?
+                    setFieldValue(`roleEditing.payments.${formIndex}.amount`, valuePair, true);
                   }}
                   decimalPlaces={values?.roleEditing?.payments?.[formIndex]?.asset?.decimals}
                   onBlur={() => {
-                    setFieldTouched(field.name, true);
+                    setFieldTouched(`roleEditing.payments.${formIndex}.amount`, true);
                   }}
                   cursor={disabled ? 'not-allowed' : 'pointer'}
                   placeholder="0"

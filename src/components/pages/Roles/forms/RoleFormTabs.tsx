@@ -92,12 +92,11 @@ export default function RoleFormTabs({
             if (hatIndex === -1) {
               pushRole({ ...roleUpdated });
             } else {
-              setFieldValue(
-                `hats.${hatIndex}`,
-                isRoleUpdated || editedRoleData.status === EditBadgeStatus.New
-                  ? roleUpdated
-                  : existingRoleHat,
-              );
+              if (isRoleUpdated || editedRoleData.status === EditBadgeStatus.New) {
+                setFieldValue(`hats.${hatIndex}`, roleUpdated);
+              } else if (existingRoleHat !== undefined) {
+                setFieldValue(`hats.${hatIndex}`, existingRoleHat);
+              }
             }
             setFieldValue('roleEditing', undefined);
             setTouched({});
