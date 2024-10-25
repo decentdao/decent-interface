@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Address, isAddress } from 'viem';
+import { Address, getAddress, isAddress } from 'viem';
 import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
 
@@ -21,7 +21,7 @@ const useAddress = (addressInput: string) => {
     setIsLoading(true);
 
     if (isAddress(addressInput)) {
-      setAddress(addressInput);
+      setAddress(getAddress(addressInput));
       setIsValid(true);
       setIsLoading(false);
       return;
