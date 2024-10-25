@@ -451,11 +451,11 @@ export default function useCreateRoles() {
       //
       // New Role
       //   - Transfer the top hat to the DecentHats module, so it can create new hats on the safe's behalf
-      //   - allTxs.push(createRoleHat). This will:
-      //       - create hat,
-      //       - mint hat,
-      //       - create smart account for the hat,
-      //       - create new streams on the hat if any added
+      //   - allTxs.push(createRoleHat). This will (in the DecentHats contract):
+      //     - create hat,
+      //     - mint hat,
+      //     - create smart account for the hat,
+      //     - create new streams on the hat if any added
       //  - createRoleHat will transfer the top hat back to the safe
       // Deleted Role
       //   - for each inactive stream with funds to claim
