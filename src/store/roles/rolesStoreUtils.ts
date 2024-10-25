@@ -215,13 +215,19 @@ export const sanitize = async (
     smartAddress: adminHatSmartAddress,
   };
 
-  const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
-
   let roleHats: DecentRoleHat[] = [];
 
-  for (const rawHat of rawRoleHats) {
-    if (rawHat.status !== true || !rawHat.wearers || rawHat.wearers.length !== 1) {
-      // Ignore hats that do not have exactly one wearer
+  for (const rawHat of hatsTree.hats) {
+    if (
+      !appearsExactlyNumberOfTimes(rawHat.prettyId, '.', 2) ||
+      rawHat.status !== true ||
+      !rawHat.wearers ||
+      rawHat.wearers.length !== 1
+    ) {
+      // Ignore hats that do not
+      // - exist as a child of the Admin Hat
+      // - are not active
+      // - have exactly one wearer
       continue;
     }
 
