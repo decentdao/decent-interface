@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import RoleFormCreateProposal from '../../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
-import { RoleFormValues } from '../../../../../../components/pages/Roles/types';
+import { RoleHatFormValue } from '../../../../../../components/pages/Roles/types';
 import PageHeader from '../../../../../../components/ui/page/Header/PageHeader';
 import { SIDEBAR_WIDTH, useHeaderHeight } from '../../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../../constants/routes';
@@ -20,7 +20,9 @@ export default function EditProposalSummary() {
   } = useFractal();
   const { t } = useTranslation(['roles', 'breadcrumbs']);
   const { addressPrefix } = useNetworkConfig();
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<{
+    hats: RoleHatFormValue[];
+  }>();
 
   // @dev redirects back to roles edit page if no roles are edited (user refresh)
   useEffect(() => {

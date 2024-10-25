@@ -19,7 +19,7 @@ import '../../../assets/css/Calendar.css';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { DatePickerTrigger } from '../../pages/Roles/DatePickerTrigger';
-import { RoleFormValues } from '../../pages/Roles/types';
+import { RoleHatFormValue } from '../../pages/Roles/types';
 import DraggableDrawer from '../containers/DraggableDrawer';
 import Divider from './Divider';
 
@@ -99,7 +99,9 @@ function DecentDatePickerContainer({
   disabled: boolean;
 }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<{
+    roleEditing?: RoleHatFormValue;
+  }>();
   const selectedDate = values.roleEditing?.payments?.[formIndex]?.[type];
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
@@ -207,7 +209,9 @@ export function DecentDatePicker({
   formIndex: number;
   disabled: boolean;
 }) {
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<{
+    roleEditing?: RoleHatFormValue;
+  }>();
 
   const selectedDate = useMemo(() => {
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return null;
@@ -265,7 +269,9 @@ export function DecentDatePickerRange({
   formIndex: number;
   disabled: boolean;
 }) {
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<{
+    roleEditing?: RoleHatFormValue;
+  }>();
 
   const selectedRange: [DateOrNull, DateOrNull] = useMemo(() => {
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return [null, null];

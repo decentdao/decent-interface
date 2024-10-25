@@ -2,9 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import * as Yup from 'yup';
-import { RoleFormValues, RoleHatFormValue } from '../../../components/pages/Roles/types';
+import { RoleHatFormValue } from '../../../components/pages/Roles/types';
+import { SendAssetsData } from '../../../components/ui/modals/SendAssetsModal';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { BigIntValuePair } from '../../../types';
+import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -72,7 +73,13 @@ export const useRolesSchema = () => {
 
   const rolesSchema = useMemo(
     () =>
-      Yup.object<RoleFormValues>().shape({
+      Yup.object<{
+        proposalMetadata: CreateProposalMetadata;
+        hats: RoleHatFormValue[];
+        roleEditing?: RoleHatFormValue;
+        customNonce?: number;
+        actions: SendAssetsData[];
+      }>().shape({
         roleEditing: Yup.object()
           .default(undefined)
           .nullable()

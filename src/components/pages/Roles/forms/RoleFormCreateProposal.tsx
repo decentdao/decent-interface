@@ -11,6 +11,7 @@ import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentRoleHat } from '../../../../store/roles/rolesStoreUtils';
+import { CreateProposalMetadata } from '../../../../types';
 import { Card } from '../../../ui/cards/Card';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
@@ -20,7 +21,7 @@ import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-import { EditedRole, RoleFormValues } from '../types';
+import { EditedRole, RoleHatFormValue } from '../types';
 
 function SendAssetsAction({
   index,
@@ -82,7 +83,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     setFieldValue: setFieldValueTopLevel,
     isSubmitting,
     submitForm,
-  } = useFormikContext<RoleFormValues>();
+  } = useFormikContext<{
+    proposalMetadata: CreateProposalMetadata;
+    hats: RoleHatFormValue[];
+    customNonce?: number;
+    actions: SendAssetsData[];
+  }>();
 
   const editedRoles = useMemo<
     (Omit<DecentRoleHat, 'smartAddress' | 'wearerAddress'> & {
@@ -167,7 +173,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             {({
               field,
               form: { setFieldValue, setFieldTouched },
-            }: FieldProps<string, RoleFormValues>) => (
+            }: FieldProps<
+              string,
+              {
+                proposalMetadata: CreateProposalMetadata;
+              }
+            >) => (
               <LabelWrapper label={t('proposalTitle', { ns: 'proposal' })}>
                 <InputComponent
                   value={field.value}
@@ -191,7 +202,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             {({
               field,
               form: { setFieldValue, setFieldTouched },
-            }: FieldProps<string, RoleFormValues>) => (
+            }: FieldProps<
+              string,
+              {
+                proposalMetadata: CreateProposalMetadata;
+              }
+            >) => (
               <LabelWrapper label={t('proposalDescription', { ns: 'proposal' })}>
                 <TextareaComponent
                   value={field.value}
@@ -212,7 +228,14 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
 
         <FormControl>
           <Field name="customNonce">
-            {({ form: { setFieldValue } }: FieldProps<string, RoleFormValues>) => (
+            {({
+              form: { setFieldValue },
+            }: FieldProps<
+              string,
+              {
+                customNonce?: number;
+              }
+            >) => (
               <Flex
                 w="100%"
                 justifyContent="flex-end"

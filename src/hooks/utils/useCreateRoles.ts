@@ -9,12 +9,8 @@ import { usePublicClient } from 'wagmi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
-import {
-  EditBadgeStatus,
-  RoleFormValues,
-  RoleHatFormValue,
-  EditedRole,
-} from '../../components/pages/Roles/types';
+import { EditBadgeStatus, RoleHatFormValue, EditedRole } from '../../components/pages/Roles/types';
+import { SendAssetsData } from '../../components/ui/modals/SendAssetsModal';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -801,7 +797,19 @@ export default function useCreateRoles() {
   );
 
   const createEditRolesProposal = useCallback(
-    async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
+    async (
+      values: {
+        proposalMetadata: CreateProposalMetadata;
+        hats: RoleHatFormValue[];
+        customNonce?: number;
+        actions: SendAssetsData[];
+      },
+      formikHelpers: FormikHelpers<{
+        proposalMetadata: CreateProposalMetadata;
+        hats: RoleHatFormValue[];
+        actions: SendAssetsData[];
+      }>,
+    ) => {
       if (!publicClient) {
         throw new Error('Cannot create Roles proposal without public client');
       }

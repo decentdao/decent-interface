@@ -1,7 +1,6 @@
 import { Address, Hex } from 'viem';
 import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
-import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
-import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
+import { BigIntValuePair } from '../../../types';
 
 export enum EditBadgeStatus {
   Updated,
@@ -54,14 +53,6 @@ export interface RoleHatFormValue
   // form specific state
   editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;
-}
-
-export interface RoleFormValues {
-  proposalMetadata: CreateProposalMetadata;
-  hats: RoleHatFormValue[];
-  roleEditing?: RoleHatFormValue;
-  customNonce?: number;
-  actions: SendAssetsData[];
 }
 
 export interface RoleDetailsDrawerProps {
