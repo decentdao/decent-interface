@@ -7,11 +7,12 @@ import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { DecentTree } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
+import { BigIntValuePair } from '../../../types';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading } from './RolePageCard';
-import { EditBadgeStatus, RoleHatFormValue } from './types';
+import { EditBadgeStatus, EditedRole } from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -290,7 +291,40 @@ export function RolesTable({
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
   const { hatsTree } = useRolesStore();
   const { values, setFieldValue } = useFormikContext<{
-    hats: RoleHatFormValue[];
+    hats: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }[];
   }>();
   if (hatsTree === undefined) {
     return <RoleCardLoading />;

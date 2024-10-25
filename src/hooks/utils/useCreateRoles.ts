@@ -9,7 +9,7 @@ import { usePublicClient } from 'wagmi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
-import { EditBadgeStatus, RoleHatFormValue, EditedRole } from '../../components/pages/Roles/types';
+import { EditBadgeStatus, EditedRole } from '../../components/pages/Roles/types';
 import { SendAssetsData } from '../../components/ui/modals/SendAssetsModal';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -169,7 +169,42 @@ export default function useCreateRoles() {
   );
 
   const createHatStructsForNewTreeFromRolesFormValues = useCallback(
-    async (modifiedRoles: (RoleHatFormValue & { editedRole: EditedRole })[]) => {
+    async (
+      modifiedRoles: {
+        prettyId?: string;
+        name?: string;
+        description?: string;
+        smartAddress?: Address;
+        id: Hex;
+        wearer?: string;
+        // Not a user-input field.
+        // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+        resolvedWearer?: Address;
+        payments?: {
+          streamId: string;
+          contractAddress: Address;
+          asset: {
+            address: Address;
+            name: string;
+            symbol: string;
+            decimals: number;
+            logo: string;
+          };
+          amount: BigIntValuePair;
+          startDate: Date;
+          endDate: Date;
+          cliffDate?: Date;
+          withdrawableAmount: bigint;
+          isCancelled: boolean;
+          isStreaming: () => boolean;
+          isCancellable: () => boolean;
+          isCancelling: boolean;
+        }[];
+        // form specific state
+        editedRole: EditedRole;
+        roleEditingPaymentIndex?: number;
+      }[],
+    ) => {
       return Promise.all(
         modifiedRoles.map(role => {
           if (role.name === undefined || role.description === undefined) {
@@ -230,7 +265,40 @@ export default function useCreateRoles() {
   const prepareCreateTopHatProposalData = useCallback(
     async (
       proposalMetadata: CreateProposalMetadata,
-      modifiedHats: (RoleHatFormValue & { editedRole: EditedRole })[],
+      modifiedHats: {
+        prettyId?: string;
+        name?: string;
+        description?: string;
+        smartAddress?: Address;
+        id: Hex;
+        wearer?: string;
+        // Not a user-input field.
+        // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+        resolvedWearer?: Address;
+        payments?: {
+          streamId: string;
+          contractAddress: Address;
+          asset: {
+            address: Address;
+            name: string;
+            symbol: string;
+            decimals: number;
+            logo: string;
+          };
+          amount: BigIntValuePair;
+          startDate: Date;
+          endDate: Date;
+          cliffDate?: Date;
+          withdrawableAmount: bigint;
+          isCancelled: boolean;
+          isStreaming: () => boolean;
+          isCancellable: () => boolean;
+          isCancelling: boolean;
+        }[];
+        // form specific state
+        editedRole: EditedRole;
+        roleEditingPaymentIndex?: number;
+      }[],
     ) => {
       if (!daoAddress) {
         throw new Error('Can not create top hat without DAO Address');
@@ -307,7 +375,40 @@ export default function useCreateRoles() {
   );
 
   const prepareNewHatTxs = useCallback(
-    async (formRole: RoleHatFormValue & { editedRole: EditedRole }) => {
+    async (formRole: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }) => {
       if (formRole.name === undefined || formRole.description === undefined) {
         throw new Error('Role name or description is undefined.');
       }
@@ -438,7 +539,40 @@ export default function useCreateRoles() {
   );
 
   const getStreamsWithFundsToClaimFromFromHat = useCallback(
-    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+    (formHat: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }) => {
       return (formHat.payments ?? []).filter(
         payment => (payment?.withdrawableAmount ?? 0n) > 0n && !payment.isCancelling,
       );
@@ -447,28 +581,160 @@ export default function useCreateRoles() {
   );
 
   const getNewStreamsFromFormHat = useCallback(
-    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+    (formHat: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }) => {
       return (formHat.payments ?? []).filter(payment => !payment.streamId);
     },
     [],
   );
 
   const getCancelledStreamsFromFormHat = useCallback(
-    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+    (formHat: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }) => {
       return (formHat.payments ?? []).filter(payment => payment.isCancelling && !!payment.streamId);
     },
     [],
   );
 
   const getStreamsWithFundsToClaimFromFormHat = useCallback(
-    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+    (formHat: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }) => {
       return (formHat.payments ?? []).filter(payment => (payment?.withdrawableAmount ?? 0n) > 0n);
     },
     [],
   );
 
   const getActiveStreamsFromFormHat = useCallback(
-    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+    (formHat: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }) => {
       return (formHat.payments ?? []).filter(
         payment => !payment.isCancelled && !!payment.endDate && payment.endDate > new Date(),
       );
@@ -479,7 +745,40 @@ export default function useCreateRoles() {
   const prepareCreateRolesModificationsProposalData = useCallback(
     async (
       proposalMetadata: CreateProposalMetadata,
-      modifiedHats: (RoleHatFormValue & { editedRole: EditedRole })[],
+      modifiedHats: {
+        prettyId?: string;
+        name?: string;
+        description?: string;
+        smartAddress?: Address;
+        id: Hex;
+        wearer?: string;
+        // Not a user-input field.
+        // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+        resolvedWearer?: Address;
+        payments?: {
+          streamId: string;
+          contractAddress: Address;
+          asset: {
+            address: Address;
+            name: string;
+            symbol: string;
+            decimals: number;
+            logo: string;
+          };
+          amount: BigIntValuePair;
+          startDate: Date;
+          endDate: Date;
+          cliffDate?: Date;
+          withdrawableAmount: bigint;
+          isCancelled: boolean;
+          isStreaming: () => boolean;
+          isCancellable: () => boolean;
+          isCancelling: boolean;
+        }[];
+        // form specific state
+        editedRole: EditedRole;
+        roleEditingPaymentIndex?: number;
+      }[],
     ) => {
       if (!hatsTree || !daoAddress) {
         throw new Error('Cannot prepare transactions without hats tree or DAO address');
@@ -800,13 +1099,79 @@ export default function useCreateRoles() {
     async (
       values: {
         proposalMetadata: CreateProposalMetadata;
-        hats: RoleHatFormValue[];
+        hats: {
+          prettyId?: string;
+          name?: string;
+          description?: string;
+          smartAddress?: Address;
+          id: Hex;
+          wearer?: string;
+          // Not a user-input field.
+          // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+          resolvedWearer?: Address;
+          payments?: {
+            streamId: string;
+            contractAddress: Address;
+            asset: {
+              address: Address;
+              name: string;
+              symbol: string;
+              decimals: number;
+              logo: string;
+            };
+            amount: BigIntValuePair;
+            startDate: Date;
+            endDate: Date;
+            cliffDate?: Date;
+            withdrawableAmount: bigint;
+            isCancelled: boolean;
+            isStreaming: () => boolean;
+            isCancellable: () => boolean;
+            isCancelling: boolean;
+          }[];
+          // form specific state
+          editedRole?: EditedRole;
+          roleEditingPaymentIndex?: number;
+        }[];
         customNonce?: number;
         actions: SendAssetsData[];
       },
       formikHelpers: FormikHelpers<{
         proposalMetadata: CreateProposalMetadata;
-        hats: RoleHatFormValue[];
+        hats: {
+          prettyId?: string;
+          name?: string;
+          description?: string;
+          smartAddress?: Address;
+          id: Hex;
+          wearer?: string;
+          // Not a user-input field.
+          // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+          resolvedWearer?: Address;
+          payments?: {
+            streamId: string;
+            contractAddress: Address;
+            asset: {
+              address: Address;
+              name: string;
+              symbol: string;
+              decimals: number;
+              logo: string;
+            };
+            amount: BigIntValuePair;
+            startDate: Date;
+            endDate: Date;
+            cliffDate?: Date;
+            withdrawableAmount: bigint;
+            isCancelled: boolean;
+            isStreaming: () => boolean;
+            isCancellable: () => boolean;
+            isCancelling: boolean;
+          }[];
+          // form specific state
+          editedRole?: EditedRole;
+          roleEditingPaymentIndex?: number;
+        }[];
         actions: SendAssetsData[];
       }>,
     ) => {
@@ -822,7 +1187,40 @@ export default function useCreateRoles() {
       setSubmitting(true);
 
       // filter to hats that have been modified, or whose payments have been modified (ie includes `editedRole` prop)
-      const modifiedHats: (RoleHatFormValue & { editedRole: EditedRole })[] = (
+      const modifiedHats: {
+        prettyId?: string;
+        name?: string;
+        description?: string;
+        smartAddress?: Address;
+        id: Hex;
+        wearer?: string;
+        // Not a user-input field.
+        // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+        resolvedWearer?: Address;
+        payments?: {
+          streamId: string;
+          contractAddress: Address;
+          asset: {
+            address: Address;
+            name: string;
+            symbol: string;
+            decimals: number;
+            logo: string;
+          };
+          amount: BigIntValuePair;
+          startDate: Date;
+          endDate: Date;
+          cliffDate?: Date;
+          withdrawableAmount: bigint;
+          isCancelled: boolean;
+          isStreaming: () => boolean;
+          isCancellable: () => boolean;
+          isCancelling: boolean;
+        }[];
+        // form specific state
+        editedRole: EditedRole;
+        roleEditingPaymentIndex?: number;
+      }[] = (
         await Promise.all(
           values.hats.map(async hat => {
             if (hat.editedRole === undefined) {

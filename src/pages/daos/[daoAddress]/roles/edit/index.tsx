@@ -5,11 +5,11 @@ import { Formik } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Hex, toHex } from 'viem';
+import { Address, Hex, toHex } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RoleCardLoading } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { EditBadgeStatus, RoleHatFormValue } from '../../../../../components/pages/Roles/types';
+import { EditBadgeStatus, EditedRole } from '../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
 import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
@@ -24,7 +24,7 @@ import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
-import { CreateProposalMetadata } from '../../../../../types';
+import { BigIntValuePair, CreateProposalMetadata } from '../../../../../types';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
@@ -48,7 +48,9 @@ function RolesEdit() {
     formValues,
   }: {
     formValues: {
-      hats: RoleHatFormValue[];
+      hats: {
+        editedRole?: EditedRole;
+      }[];
     };
   }) {
     const filteredHats = formValues.hats.filter(hat => !!hat.editedRole);
@@ -110,7 +112,40 @@ function RolesEdit() {
   return (
     <Formik<{
       proposalMetadata: CreateProposalMetadata;
-      hats: RoleHatFormValue[];
+      hats: {
+        prettyId?: string;
+        name?: string;
+        description?: string;
+        smartAddress?: Address;
+        id: Hex;
+        wearer?: string;
+        // Not a user-input field.
+        // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+        resolvedWearer?: Address;
+        payments?: {
+          streamId: string;
+          contractAddress: Address;
+          asset: {
+            address: Address;
+            name: string;
+            symbol: string;
+            decimals: number;
+            logo: string;
+          };
+          amount: BigIntValuePair;
+          startDate: Date;
+          endDate: Date;
+          cliffDate?: Date;
+          withdrawableAmount: bigint;
+          isCancelled: boolean;
+          isStreaming: () => boolean;
+          isCancellable: () => boolean;
+          isCancelling: boolean;
+        }[];
+        // form specific state
+        editedRole?: EditedRole;
+        roleEditingPaymentIndex?: number;
+      }[];
       actions: SendAssetsData[];
     }>
       initialValues={initialValues}

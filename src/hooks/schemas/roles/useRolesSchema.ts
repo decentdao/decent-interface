@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
+import { Address, getAddress, Hex } from 'viem';
 import * as Yup from 'yup';
-import { RoleHatFormValue } from '../../../components/pages/Roles/types';
+import { EditedRole } from '../../../components/pages/Roles/types';
 import { SendAssetsData } from '../../../components/ui/modals/SendAssetsModal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
@@ -45,8 +45,78 @@ export const useRolesSchema = () => {
             streamId?: string;
             amount?: BigIntValuePair;
           }[] = formContext.hats
-            .filter((hat: RoleHatFormValue) => hat.id === currentRoleHat.id)
-            .map((hat: RoleHatFormValue) => hat.payments ?? [])
+            .filter(
+              (hat: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments?: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: () => boolean;
+                  isCancellable: () => boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              }) => hat.id === currentRoleHat.id,
+            )
+            .map(
+              (hat: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments?: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: () => boolean;
+                  isCancellable: () => boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              }) => hat.payments ?? [],
+            )
             .flat();
 
           const totalPendingAmounts = [
@@ -75,8 +145,74 @@ export const useRolesSchema = () => {
     () =>
       Yup.object<{
         proposalMetadata: CreateProposalMetadata;
-        hats: RoleHatFormValue[];
-        roleEditing?: RoleHatFormValue;
+        hats: {
+          prettyId?: string;
+          name?: string;
+          description?: string;
+          smartAddress?: Address;
+          id: Hex;
+          wearer?: string;
+          // Not a user-input field.
+          // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+          resolvedWearer?: Address;
+          payments?: {
+            streamId: string;
+            contractAddress: Address;
+            asset: {
+              address: Address;
+              name: string;
+              symbol: string;
+              decimals: number;
+              logo: string;
+            };
+            amount: BigIntValuePair;
+            startDate: Date;
+            endDate: Date;
+            cliffDate?: Date;
+            withdrawableAmount: bigint;
+            isCancelled: boolean;
+            isStreaming: () => boolean;
+            isCancellable: () => boolean;
+            isCancelling: boolean;
+          }[];
+          // form specific state
+          editedRole?: EditedRole;
+          roleEditingPaymentIndex?: number;
+        }[];
+        roleEditing?: {
+          prettyId?: string;
+          name?: string;
+          description?: string;
+          smartAddress?: Address;
+          id: Hex;
+          wearer?: string;
+          // Not a user-input field.
+          // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+          resolvedWearer?: Address;
+          payments?: {
+            streamId: string;
+            contractAddress: Address;
+            asset: {
+              address: Address;
+              name: string;
+              symbol: string;
+              decimals: number;
+              logo: string;
+            };
+            amount: BigIntValuePair;
+            startDate: Date;
+            endDate: Date;
+            cliffDate?: Date;
+            withdrawableAmount: bigint;
+            isCancelled: boolean;
+            isStreaming: () => boolean;
+            isCancellable: () => boolean;
+            isCancelling: boolean;
+          }[];
+          // form specific state
+          editedRole?: EditedRole;
+          roleEditingPaymentIndex?: number;
+        };
         customNonce?: number;
         actions: SendAssetsData[];
       }>().shape({
@@ -84,7 +220,40 @@ export const useRolesSchema = () => {
           .default(undefined)
           .nullable()
           .when({
-            is: (roleEditing: RoleHatFormValue) => roleEditing !== undefined,
+            is: (roleEditing: {
+              prettyId?: string;
+              name?: string;
+              description?: string;
+              smartAddress?: Address;
+              id: Hex;
+              wearer?: string;
+              // Not a user-input field.
+              // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+              resolvedWearer?: Address;
+              payments?: {
+                streamId: string;
+                contractAddress: Address;
+                asset: {
+                  address: Address;
+                  name: string;
+                  symbol: string;
+                  decimals: number;
+                  logo: string;
+                };
+                amount: BigIntValuePair;
+                startDate: Date;
+                endDate: Date;
+                cliffDate?: Date;
+                withdrawableAmount: bigint;
+                isCancelled: boolean;
+                isStreaming: () => boolean;
+                isCancellable: () => boolean;
+                isCancelling: boolean;
+              }[];
+              // form specific state
+              editedRole?: EditedRole;
+              roleEditingPaymentIndex?: number;
+            }) => roleEditing !== undefined,
             then: _roleEditingSchema =>
               _roleEditingSchema.shape({
                 name: Yup.string().required(t('roleInfoErrorNameRequired')),

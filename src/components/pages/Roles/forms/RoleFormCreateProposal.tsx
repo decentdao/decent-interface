@@ -11,7 +11,7 @@ import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentRoleHat } from '../../../../store/roles/rolesStoreUtils';
-import { CreateProposalMetadata } from '../../../../types';
+import { BigIntValuePair, CreateProposalMetadata } from '../../../../types';
 import { Card } from '../../../ui/cards/Card';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
@@ -21,7 +21,7 @@ import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-import { EditedRole, RoleHatFormValue } from '../types';
+import { EditedRole } from '../types';
 
 function SendAssetsAction({
   index,
@@ -85,7 +85,40 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     submitForm,
   } = useFormikContext<{
     proposalMetadata: CreateProposalMetadata;
-    hats: RoleHatFormValue[];
+    hats: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }[];
     customNonce?: number;
     actions: SendAssetsData[];
   }>();

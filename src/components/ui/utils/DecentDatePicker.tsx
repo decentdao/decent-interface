@@ -16,10 +16,12 @@ import { ReactNode, useMemo, useState } from 'react';
 import { Calendar } from 'react-calendar';
 import { useTranslation } from 'react-i18next';
 import '../../../assets/css/Calendar.css';
+import { Address, Hex } from 'viem';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
+import { BigIntValuePair } from '../../../types';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { DatePickerTrigger } from '../../pages/Roles/DatePickerTrigger';
-import { RoleHatFormValue } from '../../pages/Roles/types';
+import { EditedRole } from '../../pages/Roles/types';
 import DraggableDrawer from '../containers/DraggableDrawer';
 import Divider from './Divider';
 
@@ -100,7 +102,40 @@ function DecentDatePickerContainer({
 }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { values } = useFormikContext<{
-    roleEditing?: RoleHatFormValue;
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
   }>();
   const selectedDate = values.roleEditing?.payments?.[formIndex]?.[type];
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
@@ -210,7 +245,40 @@ export function DecentDatePicker({
   disabled: boolean;
 }) {
   const { values } = useFormikContext<{
-    roleEditing?: RoleHatFormValue;
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
   }>();
 
   const selectedDate = useMemo(() => {
@@ -270,7 +338,40 @@ export function DecentDatePickerRange({
   disabled: boolean;
 }) {
   const { values } = useFormikContext<{
-    roleEditing?: RoleHatFormValue;
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
   }>();
 
   const selectedRange: [DateOrNull, DateOrNull] = useMemo(() => {

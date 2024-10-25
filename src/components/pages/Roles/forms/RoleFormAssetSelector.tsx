@@ -14,6 +14,7 @@ import {
 import { CaretDown, CheckCircle } from '@phosphor-icons/react';
 import { Field, FieldInputProps, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { Address, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../../types';
@@ -25,7 +26,7 @@ import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
-import { RoleHatFormValue } from '../types';
+import { EditedRole } from '../types';
 
 function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; formIndex: number }) {
   const { t } = useTranslation('roles');
@@ -38,7 +39,40 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
   const { values, setFieldValue } = useFormikContext<{
-    roleEditing?: RoleHatFormValue;
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
   }>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
@@ -147,7 +181,40 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
 export function AssetSelector({ formIndex, disabled }: { formIndex: number; disabled?: boolean }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
   const { values, setFieldValue } = useFormikContext<{
-    roleEditing?: RoleHatFormValue;
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
   }>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
@@ -164,8 +231,74 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
             string,
             {
               proposalMetadata: CreateProposalMetadata;
-              hats: RoleHatFormValue[];
-              roleEditing?: RoleHatFormValue;
+              hats: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments?: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: () => boolean;
+                  isCancellable: () => boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              }[];
+              roleEditing?: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments?: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: () => boolean;
+                  isCancellable: () => boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              };
               customNonce?: number;
               actions: SendAssetsData[];
             }
@@ -308,8 +441,74 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
             BigIntValuePair,
             {
               proposalMetadata: CreateProposalMetadata;
-              hats: RoleHatFormValue[];
-              roleEditing?: RoleHatFormValue;
+              hats: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments?: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: () => boolean;
+                  isCancellable: () => boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              }[];
+              roleEditing?: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments?: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: () => boolean;
+                  isCancellable: () => boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              };
               customNonce?: number;
               actions: SendAssetsData[];
             }
