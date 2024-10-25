@@ -239,18 +239,19 @@ function TypesafeFormikProvider<T extends Record<string, unknown>>({
 
 // -------------------- ENTRY POINT ---------------------------------------------
 
-export function useTypesafeFormikContext<
+function useTypesafeFormikContext<
   T extends Record<string, unknown>,
 >(): TypesafeFormikContextReturnType<T> {
   const context = useContext(TypesafeFormikContext);
   if (context === undefined) {
     throw new Error('useTypesafeFormikContext must be used within a TypesafeFormikProvider');
   }
+
   // @ts-expect-error
   return context as TypesafeFormikContextReturnType<T>;
 }
 
-export function makeForm<Values extends Record<string, unknown>>({
+function makeForm<Values extends Record<string, unknown>>({
   validate,
 }: {
   validate: ValidationFunction<Values>;
@@ -282,3 +283,5 @@ export function makeForm<Values extends Record<string, unknown>>({
     FieldArray: typesafeFieldArrayFactory<Values>(),
   };
 }
+
+export { makeForm, useTypesafeFormikContext };
