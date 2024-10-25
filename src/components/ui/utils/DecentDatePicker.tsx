@@ -112,7 +112,7 @@ function DecentDatePickerContainer({
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {
@@ -137,7 +137,7 @@ function DecentDatePickerContainer({
       roleEditingPaymentIndex?: number;
     };
   }>();
-  const selectedDate = values.roleEditing?.payments?.[formIndex]?.[type];
+  const selectedDate = values.roleEditing?.payments[formIndex]?.[type];
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
   return (
@@ -255,7 +255,7 @@ export function DecentDatePicker({
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {
@@ -284,7 +284,7 @@ export function DecentDatePicker({
   const selectedDate = useMemo(() => {
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return null;
     const paymentIndex = values.roleEditing.roleEditingPaymentIndex;
-    return values.roleEditing?.payments?.[paymentIndex ?? 0]?.startDate ?? null;
+    return values.roleEditing?.payments[paymentIndex ?? 0]?.startDate ?? null;
   }, [values.roleEditing?.payments, values.roleEditing?.roleEditingPaymentIndex]);
 
   const isTodaySelected = () => {
@@ -348,7 +348,7 @@ export function DecentDatePickerRange({
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {
@@ -378,15 +378,15 @@ export function DecentDatePickerRange({
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return [null, null];
     const paymentIndex = values.roleEditing.roleEditingPaymentIndex;
     return [
-      values.roleEditing?.payments?.[paymentIndex]?.startDate ?? null,
-      values.roleEditing?.payments?.[paymentIndex]?.endDate ?? null,
+      values.roleEditing?.payments[paymentIndex]?.startDate ?? null,
+      values.roleEditing?.payments[paymentIndex]?.endDate ?? null,
     ];
   }, [values.roleEditing?.payments, values.roleEditing?.roleEditingPaymentIndex]);
 
   const isTodaySelected = () => {
     const paymentIndex = values.roleEditing?.roleEditingPaymentIndex;
-    const startDate = values.roleEditing?.payments?.[paymentIndex ?? 0]?.startDate;
-    const endDate = values.roleEditing?.payments?.[paymentIndex ?? 0]?.endDate;
+    const startDate = values.roleEditing?.payments[paymentIndex ?? 0]?.startDate;
+    const endDate = values.roleEditing?.payments[paymentIndex ?? 0]?.endDate;
     return (!!startDate && isToday(startDate)) || (!!endDate && isToday(endDate));
   };
   return (

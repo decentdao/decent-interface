@@ -21,7 +21,7 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
-  payments?: {
+  payments: {
     streamId: string;
     contractAddress: Address;
     asset: {
@@ -124,7 +124,6 @@ const getHatMetadata = (hat: Hat) => {
 export const initialHatsStore = {
   hatsTreeId: undefined,
   hatsTree: undefined,
-  streamsFetched: false,
   contextChainId: null,
 };
 
@@ -187,6 +186,7 @@ export const sanitize = async (
     name: topHatMetadata.name,
     description: topHatMetadata.description,
     smartAddress: topHatSmartAddress,
+    payments: [],
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
@@ -207,6 +207,7 @@ export const sanitize = async (
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
+    payments: [],
   };
 
   let roleHats: DecentRoleHat[] = [];
@@ -242,6 +243,7 @@ export const sanitize = async (
       description: hatMetadata.description,
       wearerAddress: getAddress(rawHat.wearers[0].id),
       smartAddress: roleHatSmartAddress,
+      payments: [],
     });
   }
 

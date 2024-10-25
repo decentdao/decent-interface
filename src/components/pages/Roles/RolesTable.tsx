@@ -126,7 +126,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
   );
 }
 
-function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
+function PaymentsColumn({ paymentsCount }: { paymentsCount: number }) {
   const { t } = useTranslation('common');
   return (
     <Td
@@ -136,7 +136,7 @@ function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
       color="neutral-5"
       textStyle="body-base"
     >
-      {paymentsCount !== undefined ? (
+      {paymentsCount > 0 ? (
         <Box
           as="span"
           display="inline-block"
@@ -169,7 +169,7 @@ export function RolesRow({
   handleRoleClick: () => void;
   name: string;
   wearerAddress?: Address;
-  paymentsCount?: number;
+  paymentsCount: number;
 }) {
   return (
     <Tr
@@ -210,7 +210,7 @@ export function RolesRowEdit({
   name?: string;
   editStatus?: EditBadgeStatus;
   wearerAddress?: Address;
-  payments?: {
+  payments: {
     isStreaming: () => boolean;
   }[];
 }) {
@@ -234,7 +234,7 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentsColumn paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined} />
+      <PaymentsColumn paymentsCount={payments.filter(p => p.isStreaming()).length} />
     </Tr>
   );
 }
@@ -274,7 +274,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearerAddress}
                 handleRoleClick={() => handleRoleClick(role.id)}
-                paymentsCount={role.payments?.filter(p => p.isStreaming()).length || undefined}
+                paymentsCount={role.payments.filter(p => p.isStreaming()).length}
               />
             ))}
           </Tbody>
@@ -297,7 +297,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {

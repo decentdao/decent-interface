@@ -9,7 +9,6 @@ import { DecentRoleHat, DecentTree, initialHatsStore, sanitize } from './rolesSt
 const useRolesStore = create<{
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
-  streamsFetched: boolean;
   contextChainId: number | null;
   getHat: (hatId: Hex) => DecentRoleHat | null;
   getPayment: (
@@ -86,9 +85,9 @@ const useRolesStore = create<{
       // if `hatsTreeId` is null or undefined,
       // set `hatsTree` to that same value
       if (typeof hatsTreeId !== 'number') {
-        return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false, contextChainId: null };
+        return { hatsTreeId, hatsTree: hatsTreeId, contextChainId: null };
       }
-      return { hatsTreeId, streamsFetched: false, contextChainId };
+      return { hatsTreeId, contextChainId };
     }),
   setHatsTree: async params => {
     const hatsTree = await sanitize(
@@ -124,7 +123,7 @@ const useRolesStore = create<{
           if (roleHat.id !== hatId) return roleHat;
           return {
             ...roleHat,
-            payments: roleHat.payments?.map(p =>
+            payments: roleHat.payments.map(p =>
               p.streamId === streamId ? { ...p, withdrawableAmount: newWithdrawableAmount } : p,
             ),
           };
@@ -141,7 +140,7 @@ const useRolesStore = create<{
       roleHats: updatedRoles,
     };
 
-    set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
+    set(() => ({ hatsTree: updatedDecentTree }));
   },
   resetHatsStore: () => set(() => initialHatsStore),
 }));

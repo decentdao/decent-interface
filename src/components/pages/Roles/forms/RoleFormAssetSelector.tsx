@@ -49,7 +49,7 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {
@@ -74,7 +74,7 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
       roleEditingPaymentIndex?: number;
     };
   }>();
-  const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
+  const selectedAsset = values.roleEditing?.payments[formIndex]?.asset;
 
   if (fungibleAssetsWithBalance.length === 0) {
     return (
@@ -191,7 +191,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {
@@ -216,7 +216,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
       roleEditingPaymentIndex?: number;
     };
   }>();
-  const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
+  const selectedAsset = values.roleEditing?.payments[formIndex]?.asset;
 
   return (
     <>
@@ -241,7 +241,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                 // Not a user-input field.
                 // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
                 resolvedWearer?: Address;
-                payments?: {
+                payments: {
                   streamId: string;
                   contractAddress: Address;
                   asset: {
@@ -275,7 +275,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                 // Not a user-input field.
                 // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
                 resolvedWearer?: Address;
-                payments?: {
+                payments: {
                   streamId: string;
                   contractAddress: Address;
                   asset: {
@@ -451,7 +451,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                 // Not a user-input field.
                 // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
                 resolvedWearer?: Address;
-                payments?: {
+                payments: {
                   streamId: string;
                   contractAddress: Address;
                   asset: {
@@ -485,7 +485,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                 // Not a user-input field.
                 // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
                 resolvedWearer?: Address;
-                payments?: {
+                payments: {
                   streamId: string;
                   contractAddress: Address;
                   asset: {
@@ -515,7 +515,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
           >) => {
             const paymentAmountBigIntError = meta.error as FormikErrors<BigIntValuePair>;
             const paymentAmountBigIntTouched = meta.touched;
-            const inputDisabled = !values?.roleEditing?.payments?.[formIndex]?.asset || disabled;
+            const inputDisabled = !values?.roleEditing?.payments[formIndex]?.asset || disabled;
             return (
               <LabelWrapper
                 label={t('totalAmount')}
@@ -528,11 +528,11 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                 <BigIntInput
                   isDisabled={inputDisabled}
                   value={field.value?.bigintValue}
-                  parentFormikValue={values?.roleEditing?.payments?.[formIndex]?.amount}
+                  parentFormikValue={values?.roleEditing?.payments[formIndex]?.amount}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);
                   }}
-                  decimalPlaces={values?.roleEditing?.payments?.[formIndex]?.asset?.decimals}
+                  decimalPlaces={values?.roleEditing?.payments[formIndex]?.asset?.decimals}
                   onBlur={() => {
                     setFieldTouched(field.name, true);
                   }}

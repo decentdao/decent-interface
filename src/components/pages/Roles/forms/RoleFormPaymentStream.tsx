@@ -28,7 +28,7 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {
@@ -53,7 +53,7 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
       roleEditingPaymentIndex?: number;
     };
   }>();
-  const payment = values.roleEditing?.payments?.[formIndex];
+  const payment = values.roleEditing?.payments[formIndex];
 
   // Show cliff date picker if both start and end dates are set and if there is at least a day between them
   const showCliffDatePicker =
@@ -78,8 +78,8 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
     }
   };
 
-  const selectedStartDate = values.roleEditing?.payments?.[formIndex]?.startDate;
-  const selectedEndDate = values.roleEditing?.payments?.[formIndex]?.endDate;
+  const selectedStartDate = values.roleEditing?.payments[formIndex]?.startDate;
+  const selectedEndDate = values.roleEditing?.payments[formIndex]?.endDate;
 
   return (
     <Box>
@@ -149,7 +149,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {
@@ -186,7 +186,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {
@@ -213,10 +213,10 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   )?.payments;
   const hatId = values.roleEditing?.id;
   const payment = useMemo(
-    () => values.roleEditing?.payments?.[formIndex],
+    () => values.roleEditing?.payments[formIndex],
     [formIndex, values.roleEditing?.payments],
   );
-  const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
+  const streamId = values.roleEditing?.payments[formIndex]?.streamId;
 
   const existingPayment = useMemo(
     () => (!!streamId && !!hatId ? getPayment(hatId, streamId) : undefined),
