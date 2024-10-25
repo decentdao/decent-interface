@@ -30,6 +30,13 @@ export function RoleFormPaymentStreams() {
     [payments],
   );
 
+  const isTermsAvailable = values.roleEditing?.roleTerms?.some(term => {
+    if (!term.termEndDate) {
+      return false;
+    }
+    return term.termEndDate > new Date();
+  });
+
   return (
     <FieldArray name="roleEditing.payments">
       {({ push: pushPayment }: { push: (streamFormValue: SablierPaymentFormValues) => void }) => (
@@ -37,6 +44,7 @@ export function RoleFormPaymentStreams() {
           <Button
             variant="secondary"
             size="sm"
+            isDisabled={values.roleEditing?.isTermed ? !isTermsAvailable : false}
             leftIcon={<Plus size="1rem" />}
             iconSpacing={0}
             onClick={async () => {
