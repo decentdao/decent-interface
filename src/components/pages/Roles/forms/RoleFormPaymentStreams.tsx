@@ -37,6 +37,20 @@ export function RoleFormPaymentStreams() {
     return term.termEndDate > new Date();
   });
 
+  const roleTerms = useMemo(() => {
+    const terms =
+      values.roleEditing?.roleTerms?.map(term => {
+        if (!term.termEndDate) {
+          return undefined;
+        }
+        return {
+          termEndDate: term.termEndDate,
+          termNumber: term.termNumber,
+        };
+      }) || [];
+    return terms.filter(term => term !== undefined);
+  }, [values.roleEditing?.roleTerms]);
+
   return (
     <FieldArray name="roleEditing.payments">
       {({ push: pushPayment }: { push: (streamFormValue: SablierPaymentFormValues) => void }) => (
@@ -83,6 +97,7 @@ export function RoleFormPaymentStreams() {
                     cancelModal();
                     setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
                   }}
+                  roleTerms={roleTerms}
                   payment={{
                     streamId: payment.streamId,
                     amount: payment.amount,
