@@ -204,17 +204,16 @@ export default function useCreateRoles() {
   );
 
   const getEnableDisableDecentHatsModuleData = useCallback(() => {
-    const decentHatsAddress = getAddress(decentHatsMasterCopy);
     const enableDecentHatsModuleData = encodeFunctionData({
       abi: GnosisSafeL2,
       functionName: 'enableModule',
-      args: [decentHatsAddress],
+      args: [decentHatsMasterCopy],
     });
 
     const disableDecentHatsModuleData = encodeFunctionData({
       abi: GnosisSafeL2,
       functionName: 'disableModule',
-      args: [SENTINEL_MODULE, decentHatsAddress],
+      args: [SENTINEL_MODULE, decentHatsMasterCopy],
     });
 
     return { enableDecentHatsModuleData, disableDecentHatsModuleData };
@@ -271,7 +270,7 @@ export default function useCreateRoles() {
       });
 
       return {
-        targets: [daoAddress, getAddress(decentHatsMasterCopy), daoAddress],
+        targets: [daoAddress, decentHatsMasterCopy, daoAddress],
         calldatas: [
           enableDecentHatsModuleData,
           createAndDeclareTreeData,
@@ -343,13 +342,11 @@ export default function useCreateRoles() {
         ],
       });
 
-      const decentHatsAddress = getAddress(decentHatsMasterCopy);
-
       // Transfer top hat to the DecentHats module so it is authorised to create hats on the tree
       const transferTopHatToDecentHatsData = encodeFunctionData({
         abi: HatsAbi,
         functionName: 'transferHat',
-        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsAddress],
+        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsMasterCopy],
       });
 
       return [
@@ -362,7 +359,7 @@ export default function useCreateRoles() {
           calldata: enableDecentHatsModuleData,
         },
         {
-          targetAddress: decentHatsAddress,
+          targetAddress: decentHatsMasterCopy,
           calldata: createNewRoleData,
         },
         {
