@@ -56,14 +56,11 @@ export interface DecentTree {
   roleHats: DecentRoleHat[];
 }
 
-interface RolesStoreData {
+export interface RolesStore {
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
   contextChainId: number | null;
-}
-
-export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
   getPayment: (
     hatId: Hex,
@@ -166,7 +163,7 @@ const getHatMetadata = (hat: Hat) => {
   return metadata;
 };
 
-export const initialHatsStore: RolesStoreData = {
+export const initialHatsStore = {
   hatsTreeId: undefined,
   hatsTree: undefined,
   streamsFetched: false,
