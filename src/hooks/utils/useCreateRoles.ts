@@ -11,7 +11,7 @@ import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
   EditBadgeStatus,
-  HatStructWithPayments,
+  // HatStructWithPayments,
   RoleFormValues,
   RoleHatFormValueEdited,
 } from '../../components/pages/Roles/types';
@@ -111,7 +111,7 @@ export default function useCreateRoles() {
 
       const newHat = await createHatStruct(name, description, wearer);
 
-      const newHatWithPayments: HatStructWithPayments = {
+      const newHatWithPayments = {
         ...newHat,
         sablierParams: payments.map(payment => ({
           sablier: sablierV2LockupLinear,
@@ -253,7 +253,7 @@ export default function useCreateRoles() {
         }),
       );
 
-      const adminHat: HatStructWithPayments = {
+      const adminHat = {
         maxSupply: 1,
         details: adminHatDetails,
         imageURI: '',
