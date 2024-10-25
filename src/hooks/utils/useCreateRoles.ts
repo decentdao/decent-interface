@@ -15,7 +15,6 @@ import {
   HatStructWithPayments,
   RoleFormValues,
   RoleHatFormValueEdited,
-  SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -23,7 +22,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../store/roles/useRolesStore';
-import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
+import { BigIntValuePair, CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
@@ -137,7 +136,21 @@ export default function useCreateRoles() {
   );
 
   const parseSablierPaymentsFromFormRolePayments = useCallback(
-    (payments: SablierPaymentFormValues[]) => {
+    (
+      payments: {
+        asset?: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount?: BigIntValuePair;
+        startDate?: Date;
+        endDate?: Date;
+        cliffDate?: Date;
+      }[],
+    ) => {
       return payments.map(payment => {
         if (
           !payment.amount?.bigintValue ||
@@ -382,7 +395,22 @@ export default function useCreateRoles() {
   );
 
   const createBatchLinearStreamCreationTx = useCallback(
-    (formStreams: SablierPaymentFormValues[], roleSmartAccountAddress: Address) => {
+    (
+      formStreams: {
+        asset?: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount?: BigIntValuePair;
+        startDate?: Date;
+        endDate?: Date;
+        cliffDate?: Date;
+      }[],
+      roleSmartAccountAddress: Address,
+    ) => {
       const preparedStreams = formStreams.map(stream => {
         if (
           !stream.asset ||

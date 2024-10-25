@@ -11,7 +11,7 @@ import {
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';
-import { RoleFormValues, SablierPaymentFormValues } from '../types';
+import { RoleFormValues } from '../types';
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
@@ -32,7 +32,15 @@ export function RoleFormPaymentStreams() {
 
   return (
     <FieldArray name="roleEditing.payments">
-      {({ push: pushPayment }: { push: (streamFormValue: SablierPaymentFormValues) => void }) => (
+      {({
+        push: pushPayment,
+      }: {
+        push: (streamFormValue: {
+          isStreaming: () => boolean;
+          isCancellable: () => boolean;
+          isCancelling?: boolean;
+        }) => void;
+      }) => (
         <Box>
           <Button
             variant="secondary"

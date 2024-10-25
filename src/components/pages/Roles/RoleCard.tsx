@@ -5,11 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { BigIntValuePair } from '../../../types';
 import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { EditBadgeStatus, RoleEditProps, SablierPaymentFormValues } from './types';
+import { EditBadgeStatus, RoleEditProps } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -92,7 +93,23 @@ export function AvatarAndRoleName({
   );
 }
 
-function Payment({ payment }: { payment: SablierPaymentFormValues }) {
+function Payment({
+  payment,
+}: {
+  payment: {
+    asset?: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount?: BigIntValuePair;
+    startDate?: Date;
+    endDate?: Date;
+    cliffDate?: Date | undefined;
+  };
+}) {
   const { t } = useTranslation(['roles']);
   const format = ['years', 'days', 'hours'];
   const endDate =
