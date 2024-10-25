@@ -11,7 +11,7 @@ import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading } from './RolePageCard';
-import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps } from './types';
+import { EditBadgeStatus, RoleEditProps, RoleFormValues } from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -159,7 +159,17 @@ function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
   );
 }
 
-export function RolesRow({ name, wearerAddress, paymentsCount, handleRoleClick }: RoleProps) {
+export function RolesRow({
+  name,
+  wearerAddress,
+  paymentsCount,
+  handleRoleClick,
+}: {
+  handleRoleClick: () => void;
+  name: string;
+  wearerAddress?: Address;
+  paymentsCount?: number;
+}) {
   return (
     <Tr
       sx={{

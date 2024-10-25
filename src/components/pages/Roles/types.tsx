@@ -25,18 +25,11 @@ export interface SablierPaymentFormValues {
   isCancelling?: boolean;
 }
 
-export interface RoleProps {
-  editStatus?: EditBadgeStatus;
+export interface RoleEditProps {
   handleRoleClick: () => void;
-  name: string;
-  wearerAddress?: Address;
-  paymentsCount?: number;
-}
-
-export interface RoleEditProps
-  extends Omit<RoleProps, 'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name'> {
   name?: string;
-  handleRoleClick: () => void;
+  editStatus?: EditBadgeStatus;
+  wearerAddress?: Address;
   payments?: SablierPaymentFormValues[];
 }
 
