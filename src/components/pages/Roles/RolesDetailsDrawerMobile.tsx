@@ -2,9 +2,11 @@ import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, Hex } from 'viem';
 import useAddress from '../../../hooks/utils/useAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
+  DecentRoleHat,
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
@@ -14,7 +16,6 @@ import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { RoleDetailsDrawerProps } from './types';
 
 export default function RolesDetailsDrawerMobile({
   roleHat,
@@ -22,7 +23,18 @@ export default function RolesDetailsDrawerMobile({
   onOpen,
   isOpen = true,
   onEdit,
-}: RoleDetailsDrawerProps) {
+}: {
+  roleHat:
+    | (Omit<DecentRoleHat, 'smartAddress'> & { smartAddress?: Address })
+    | (Omit<DecentRoleHat, 'smartAddress' | 'wearerAddress'> & {
+        smartAddress?: Address;
+        wearer: string;
+      });
+  onOpen?: () => void;
+  onClose: () => void;
+  onEdit: (hatId: Hex) => void;
+  isOpen?: boolean;
+}) {
   const {
     node: { daoAddress },
   } = useFractal();

@@ -13,12 +13,14 @@ import {
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, Hex } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
+  DecentRoleHat,
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
@@ -27,7 +29,6 @@ import { BarLoader } from '../../ui/loaders/BarLoader';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { RoleDetailsDrawerProps } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -51,7 +52,17 @@ export default function RolesDetailsDrawer({
   onClose,
   isOpen = true,
   onEdit,
-}: RoleDetailsDrawerProps) {
+}: {
+  roleHat:
+    | (Omit<DecentRoleHat, 'smartAddress'> & { smartAddress?: Address })
+    | (Omit<DecentRoleHat, 'smartAddress' | 'wearerAddress'> & {
+        smartAddress?: Address;
+        wearer: string;
+      });
+  onClose: () => void;
+  onEdit: (hatId: Hex) => void;
+  isOpen?: boolean;
+}) {
   const {
     node: { daoAddress },
   } = useFractal();
