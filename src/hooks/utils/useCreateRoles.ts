@@ -11,9 +11,9 @@ import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
   EditBadgeStatus,
-  // HatStructWithPayments,
   RoleFormValues,
-  RoleHatFormValueEdited,
+  RoleHatFormValue,
+  EditedRole,
 } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -173,7 +173,7 @@ export default function useCreateRoles() {
   );
 
   const createHatStructsForNewTreeFromRolesFormValues = useCallback(
-    async (modifiedRoles: RoleHatFormValueEdited[]) => {
+    async (modifiedRoles: (RoleHatFormValue & { editedRole: EditedRole })[]) => {
       return Promise.all(
         modifiedRoles.map(role => {
           if (role.name === undefined || role.description === undefined) {
@@ -232,7 +232,10 @@ export default function useCreateRoles() {
   }, [decentHatsMasterCopy]);
 
   const prepareCreateTopHatProposalData = useCallback(
-    async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
+    async (
+      proposalMetadata: CreateProposalMetadata,
+      modifiedHats: (RoleHatFormValue & { editedRole: EditedRole })[],
+    ) => {
       if (!daoAddress) {
         throw new Error('Can not create top hat without DAO Address');
       }
@@ -308,7 +311,7 @@ export default function useCreateRoles() {
   );
 
   const prepareNewHatTxs = useCallback(
-    async (formRole: RoleHatFormValueEdited) => {
+    async (formRole: RoleHatFormValue & { editedRole: EditedRole }) => {
       if (formRole.name === undefined || formRole.description === undefined) {
         throw new Error('Role name or description is undefined.');
       }
@@ -438,32 +441,50 @@ export default function useCreateRoles() {
     [prepareBatchLinearStreamCreation],
   );
 
-  const getStreamsWithFundsToClaimFromFromHat = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(
-      payment => (payment?.withdrawableAmount ?? 0n) > 0n && !payment.isCancelling,
-    );
-  }, []);
+  const getStreamsWithFundsToClaimFromFromHat = useCallback(
+    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+      return (formHat.payments ?? []).filter(
+        payment => (payment?.withdrawableAmount ?? 0n) > 0n && !payment.isCancelling,
+      );
+    },
+    [],
+  );
 
-  const getNewStreamsFromFormHat = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(payment => !payment.streamId);
-  }, []);
+  const getNewStreamsFromFormHat = useCallback(
+    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+      return (formHat.payments ?? []).filter(payment => !payment.streamId);
+    },
+    [],
+  );
 
-  const getCancelledStreamsFromFormHat = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(payment => payment.isCancelling && !!payment.streamId);
-  }, []);
+  const getCancelledStreamsFromFormHat = useCallback(
+    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+      return (formHat.payments ?? []).filter(payment => payment.isCancelling && !!payment.streamId);
+    },
+    [],
+  );
 
-  const getStreamsWithFundsToClaimFromFormHat = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(payment => (payment?.withdrawableAmount ?? 0n) > 0n);
-  }, []);
+  const getStreamsWithFundsToClaimFromFormHat = useCallback(
+    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+      return (formHat.payments ?? []).filter(payment => (payment?.withdrawableAmount ?? 0n) > 0n);
+    },
+    [],
+  );
 
-  const getActiveStreamsFromFormHat = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(
-      payment => !payment.isCancelled && !!payment.endDate && payment.endDate > new Date(),
-    );
-  }, []);
+  const getActiveStreamsFromFormHat = useCallback(
+    (formHat: RoleHatFormValue & { editedRole: EditedRole }) => {
+      return (formHat.payments ?? []).filter(
+        payment => !payment.isCancelled && !!payment.endDate && payment.endDate > new Date(),
+      );
+    },
+    [],
+  );
 
   const prepareCreateRolesModificationsProposalData = useCallback(
-    async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
+    async (
+      proposalMetadata: CreateProposalMetadata,
+      modifiedHats: (RoleHatFormValue & { editedRole: EditedRole })[],
+    ) => {
       if (!hatsTree || !daoAddress) {
         throw new Error('Cannot prepare transactions without hats tree or DAO address');
       }
@@ -793,7 +814,7 @@ export default function useCreateRoles() {
       setSubmitting(true);
 
       // filter to hats that have been modified, or whose payments have been modified (ie includes `editedRole` prop)
-      const modifiedHats: RoleHatFormValueEdited[] = (
+      const modifiedHats: (RoleHatFormValue & { editedRole: EditedRole })[] = (
         await Promise.all(
           values.hats.map(async hat => {
             if (hat.editedRole === undefined) {

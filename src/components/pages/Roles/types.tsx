@@ -56,10 +56,6 @@ export interface RoleHatFormValue
   roleEditingPaymentIndex?: number;
 }
 
-export interface RoleHatFormValueEdited extends RoleHatFormValue {
-  editedRole: EditedRole;
-}
-
 export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
   hats: RoleHatFormValue[];
