@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import { Address, Hex, encodeFunctionData, erc20Abi, zeroAddress, getAddress } from 'viem';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
-import { PreparedNewStreamData } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { SENTINEL_MODULE } from '../../utils/address';
@@ -53,7 +52,19 @@ export default function useCreateSablierStream() {
   );
 
   const prepareLinearStream = useCallback(
-    ({ totalAmount, recipient, startDateTs, endDateTs, cliffDateTs }: PreparedNewStreamData) => {
+    ({
+      totalAmount,
+      recipient,
+      startDateTs,
+      endDateTs,
+      cliffDateTs,
+    }: {
+      recipient: Address;
+      startDateTs: number;
+      endDateTs: number;
+      cliffDateTs: number;
+      totalAmount: bigint;
+    }) => {
       if (startDateTs >= endDateTs) {
         throw new Error('Start date of the stream can not be larger than end date');
       }
@@ -165,7 +176,15 @@ export default function useCreateSablierStream() {
   );
 
   const prepareBatchLinearStreamCreation = useCallback(
-    (paymentStreams: PreparedNewStreamData[]) => {
+    (
+      paymentStreams: {
+        recipient: Address;
+        startDateTs: number;
+        endDateTs: number;
+        cliffDateTs: number;
+        totalAmount: bigint;
+      }[],
+    ) => {
       const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
       const preparedTokenApprovalsTransactions: { calldata: Hex; targetAddress: Address }[] = [];
 

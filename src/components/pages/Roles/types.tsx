@@ -125,15 +125,6 @@ export interface RoleFormValues {
   actions: SendAssetsData[];
 }
 
-export type PreparedNewStreamData = {
-  recipient: Address;
-  startDateTs: number;
-  endDateTs: number;
-  cliffDateTs: number;
-  totalAmount: bigint;
-  assetAddress: Address;
-};
-
 export interface RoleDetailsDrawerProps {
   roleHat: RoleDetailsDrawerRoleHatProp | RoleDetailsDrawerEditingRoleHatProp;
   onOpen?: () => void;
