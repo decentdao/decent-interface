@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
-import { useTypesafeFormikContext } from '../../../../utils/Form';
+import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';

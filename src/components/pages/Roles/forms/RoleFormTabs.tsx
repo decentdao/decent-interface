@@ -7,7 +7,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
-import { useTypesafeFormikContext } from '../../../../utils/Form';
+import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';

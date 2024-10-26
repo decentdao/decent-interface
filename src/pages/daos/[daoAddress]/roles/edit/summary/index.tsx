@@ -10,7 +10,7 @@ import { SIDEBAR_WIDTH, useHeaderHeight } from '../../../../../../constants/comm
 import { DAO_ROUTES } from '../../../../../../constants/routes';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useTypesafeFormikContext } from '../../../../../../utils/Form';
+import { useTypesafeFormikContext } from '../../../../../../utils/TypesafeForm';
 
 export default function EditProposalSummary() {
   const headerHeight = useHeaderHeight();

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { DecentTree } from '../../../../store/roles/rolesStoreUtils';
-import { useTypesafeFormikContext } from '../../../../utils/Form';
+import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
 
 const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boolean) => {

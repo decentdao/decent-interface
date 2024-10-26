@@ -7,7 +7,7 @@ import {
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
 } from '../../../../store/roles/rolesStoreUtils';
-import { useTypesafeFormikContext } from '../../../../utils/Form';
+import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';

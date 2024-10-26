@@ -19,7 +19,7 @@ import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
 import { formatCoin, formatUSD } from '../../../../utils';
-import { useTypesafeFormikContext } from '../../../../utils/Form';
+import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';

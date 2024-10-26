@@ -38,7 +38,7 @@ import { useNavigationBlocker } from '../../../../../../hooks/utils/useNavigatio
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../../store/roles/useRolesStore';
-import { useTypesafeFormikContext } from '../../../../../../utils/Form';
+import { useTypesafeFormikContext } from '../../../../../../utils/TypesafeForm';
 import { UnsavedChangesWarningContent } from '../unsavedChangesWarningContent';
 
 function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void }) {
