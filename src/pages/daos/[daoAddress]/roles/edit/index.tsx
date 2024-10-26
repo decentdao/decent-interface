@@ -22,7 +22,7 @@ import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
-import { makeForm } from '../../../../../utils/Form';
+import { makeTypesafeForm } from '../../../../../utils/Form';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
@@ -95,7 +95,7 @@ function RolesEdit() {
   const hatsTreeLoading = hatsTree === undefined;
   const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
 
-  const { Formik } = makeForm<RoleFormValues>(rolesSchema);
+  const { Formik } = makeTypesafeForm<RoleFormValues>();
 
   return (
     <Formik

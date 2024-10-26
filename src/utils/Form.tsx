@@ -94,10 +94,6 @@ type DeepValue<T, TProp> =
 
 // -------------------- FORMIK ---------------------------------------------
 
-type ValidationFunction<Values> = (
-  values: Values,
-) => Promise<Record<string, any>> | Record<string, any>;
-
 type TypesafeFormikProps<Values> = Omit<FormikProps<Values>, FormikSetters> &
   OverriddenFormikSetters<Values>;
 
@@ -111,18 +107,15 @@ type TypesafeFormikFormComponent<FormValues extends Record<string, unknown>> = R
   }
 >;
 
-function typesafeFormikFactory<Values extends Record<string, unknown>>(
-  validate: ValidationFunction<Values>,
-): TypesafeFormikFormComponent<Values> {
+function typesafeFormikFactory<
+  Values extends Record<string, unknown>,
+>(): TypesafeFormikFormComponent<Values> {
   return function CustomFormik({
     children,
     ...props
   }: TypesafeFormikConfig<Values> & { initialValues?: Values }) {
     return (
-      <Formik<Values>
-        validate={validate}
-        {...props}
-      >
+      <Formik<Values> {...props}>
         {form => children && typeof children === 'function' && children(form)}
       </Formik>
     );
@@ -251,16 +244,12 @@ function useTypesafeFormikContext<
   return context as TypesafeFormikContextReturnType<T>;
 }
 
-function makeForm<Values extends Record<string, unknown>>({
-  validate,
-}: {
-  validate: ValidationFunction<Values>;
-}): {
+function makeTypesafeForm<Values extends Record<string, unknown>>(): {
   Formik: TypesafeFormikFormComponent<Values>;
   Field: TypesafeFieldComponent<Values>;
   FieldArray: TypesafeFieldArrayComponent<Values>;
 } {
-  const FormikComponent = typesafeFormikFactory(validate);
+  const FormikComponent = typesafeFormikFactory<Values>();
 
   function WrappedFormik({
     children,
@@ -284,4 +273,4 @@ function makeForm<Values extends Record<string, unknown>>({
   };
 }
 
-export { makeForm, useTypesafeFormikContext };
+export { makeTypesafeForm, useTypesafeFormikContext };
