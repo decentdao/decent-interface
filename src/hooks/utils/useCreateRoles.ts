@@ -51,6 +51,7 @@ export default function useCreateRoles() {
       decentHatsMasterCopy,
       decentAutonomousAdminMasterCopy,
       zodiacModuleProxyFactory,
+      hatsElectionsEligibilityImplementationAddress,
     },
   } = useNetworkConfig();
 
@@ -313,7 +314,9 @@ export default function useCreateRoles() {
       }
       await hatsModulesClient.prepare();
       // @note for now the id argument seems to be the implementation address rather than the module id
-      const module = hatsModulesClient.getModuleById('0xd3b916a8F0C4f9D1d5B6Af29c3C012dbd4f3149E');
+      const module = hatsModulesClient.getModuleByImplementation(
+        hatsElectionsEligibilityImplementationAddress,
+      );
       if (!module) {
         throw new Error('Could not find module');
       }
@@ -356,6 +359,7 @@ export default function useCreateRoles() {
       daoName,
       decentHatsMasterCopy,
       decentAutonomousAdminMasterCopy,
+      hatsElectionsEligibilityImplementationAddress,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsDetailsBuilder,
