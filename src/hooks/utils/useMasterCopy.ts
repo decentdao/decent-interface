@@ -31,8 +31,16 @@ export function useMasterCopy() {
     [linearVotingErc721MasterCopy],
   );
 
-  const isLinearVotingErc20WithWhitelisting = useCallback((masterCopyAddress: Address) => masterCopyAddress === linearVotingErc20HatsWhitelistingMasterCopy, [linearVotingErc20HatsWhitelistingMasterCopy]);
-  const isLinearVotingErc721WithWhitelisting = useCallback((masterCopyAddress: Address) => masterCopyAddress === linearVotingErc721HatsWhitelistingMasterCopy, [linearVotingErc721HatsWhitelistingMasterCopy]);
+  const isLinearVotingErc20WithWhitelisting = useCallback(
+    (masterCopyAddress: Address) =>
+      masterCopyAddress === linearVotingErc20HatsWhitelistingMasterCopy,
+    [linearVotingErc20HatsWhitelistingMasterCopy],
+  );
+  const isLinearVotingErc721WithWhitelisting = useCallback(
+    (masterCopyAddress: Address) =>
+      masterCopyAddress === linearVotingErc721HatsWhitelistingMasterCopy,
+    [linearVotingErc721HatsWhitelistingMasterCopy],
+  );
   const isFreezeGuardMultisig = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === freezeGuardMultisigMasterCopy,
     [freezeGuardMultisigMasterCopy],
@@ -114,7 +122,8 @@ export function useMasterCopy() {
         isLinearVotingErc20: isLinearVotingErc20(masterCopyAddress),
         isLinearVotingErc721: isLinearVotingErc721(masterCopyAddress),
         isLinearVotingErc20WithWhitelisting: isLinearVotingErc20WithWhitelisting(masterCopyAddress),
-        isLinearVotingErc721WithWhitelisting: isLinearVotingErc721WithWhitelisting(masterCopyAddress),
+        isLinearVotingErc721WithWhitelisting:
+          isLinearVotingErc721WithWhitelisting(masterCopyAddress),
         isFreezeGuardMultisig: isFreezeGuardMultisig(masterCopyAddress),
         isFreezeVotingMultisig: isFreezeVotingMultisig(masterCopyAddress),
         isFreezeVotingErc721: isFreezeVotingErc721(masterCopyAddress),
