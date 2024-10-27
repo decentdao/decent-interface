@@ -1,3 +1,4 @@
+import { HatsModulesClient } from '@hatsprotocol/modules-sdk';
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
@@ -168,7 +169,28 @@ export const predictAccountAddress = async (params: {
   ]);
 };
 
-const getRoleHatTerms = async (rawHat: Hat, publicClient: PublicClient) => {
+const isElectionEligibilityModule = async (
+  eligibility: Address | undefined,
+  hatsElectionsImplementation: Address,
+  publicClient: PublicClient,
+) => {
+  if (eligibility === undefined) return false;
+
+  const hatsModuleClient = new HatsModulesClient({
+    publicClient,
+  });
+  hatsModuleClient.prepare();
+
+  const possibleElectionModule = await hatsModuleClient.getModuleByInstance(eligibility);
+  if (possibleElectionModule === undefined) return false;
+  return possibleElectionModule.implementationAddress === hatsElectionsImplementation;
+};
+
+const getRoleHatTerms = async (
+  rawHat: Hat,
+  hatsElectionsImplementation: Address,
+  publicClient: PublicClient,
+) => {
   let roleTerms: {
     nominee: Address;
     termEndDate: Date;
@@ -176,7 +198,14 @@ const getRoleHatTerms = async (rawHat: Hat, publicClient: PublicClient) => {
   }[] = [];
   let isTermed: boolean = false;
 
-  if (rawHat.eligibility) {
+  if (
+    rawHat.eligibility &&
+    (await isElectionEligibilityModule(
+      rawHat.eligibility,
+      hatsElectionsImplementation,
+      publicClient,
+    ))
+  ) {
     // @dev check if the eligibility is an election contract
     try {
       const electionContract = getContract({
@@ -216,6 +245,7 @@ const getRoleHatTerms = async (rawHat: Hat, publicClient: PublicClient) => {
 export const sanitize = async (
   hatsTree: undefined | null | Tree,
   hatsAccountImplementation: Address,
+  hatsElectionsImplementation: Address,
   erc6551Registry: Address,
   hats: Address,
   chainId: bigint,
@@ -295,7 +325,11 @@ export const sanitize = async (
       tokenId: BigInt(rawHat.id),
       publicClient,
     });
-    const { roleTerms, isTermed } = await getRoleHatTerms(rawHat, publicClient);
+    const { roleTerms, isTermed } = await getRoleHatTerms(
+      rawHat,
+      hatsElectionsImplementation,
+      publicClient,
+    );
 
     roleHats.push({
       id: rawHat.id,
