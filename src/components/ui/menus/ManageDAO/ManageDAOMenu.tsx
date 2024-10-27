@@ -15,7 +15,7 @@ import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
-import useVotingStrategyAddress from '../../../../hooks/utils/useVotingStrategyAddress';
+import useVotingStrategiesAddresses from '../../../../hooks/utils/useVotingStrategiesAddresses';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
@@ -60,7 +60,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     parentAddress,
     childSafeInfo: node,
   });
-  const { getVotingStrategyAddress } = useVotingStrategyAddress();
+  const { getVotingStrategies } = useVotingStrategiesAddresses();
 
   useEffect(() => {
     const loadGovernanceType = async () => {
@@ -71,13 +71,18 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
       } else {
         if (node?.fractalModules) {
           let result = GovernanceType.MULTISIG;
-          const votingContractAddress = await getVotingStrategyAddress();
-          if (votingContractAddress) {
-            const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress);
-
-            if (masterCopyData.isLinearVotingErc20) {
+          const votingStrategies = await getVotingStrategies();
+          if (votingStrategies) {
+            const latestVotingStrategy = votingStrategies[votingStrategies.length - 1];
+            if (
+              latestVotingStrategy.isLinearVotingErc20 ||
+              latestVotingStrategy.isLinearVotingErc20WithWhitelisting
+            ) {
               result = GovernanceType.AZORIUS_ERC20;
-            } else if (masterCopyData.isLinearVotingErc721) {
+            } else if (
+              latestVotingStrategy.isLinearVotingErc721 ||
+              latestVotingStrategy.isLinearVotingErc721WithWhitelisting
+            ) {
               result = GovernanceType.AZORIUS_ERC721;
             }
           }
@@ -89,7 +94,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
 
     loadGovernanceType();
   }, [
-    getVotingStrategyAddress,
+    getVotingStrategies,
     getZodiacModuleProxyMasterCopyData,
     node?.fractalModules,
     node.safe,

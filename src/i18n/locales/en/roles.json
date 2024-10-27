@@ -16,6 +16,10 @@
   "removed": "Removed",
   "save": "Save",
   "roleDescription": "Role Description",
+  "canCreateProposals": "Can Create Proposals",
+  "permissions": "Permissions",
+  "permissionsProposals": "Proposals",
+  "permissionsProposalsTooltip": "Can create proposals.",
   "amount": "Amount",
   "starting": "Starting",
   "ending": "Ending",
@@ -91,5 +95,6 @@
   "cancelPaymentInfoMessage": "These values can’t be edited. To update them, please cancel this payment and create a new one.",
   "cancellingPaymentInfoMessage": "This payment is marked for cancelling and thus can not be edited.",
   "confirmCancelPaymentTitle": "Are you sure you want to cancel this payment?",
-  "confirmCancelPaymentBody": "This action cannot be undone."
+  "confirmCancelPaymentBody": "This action cannot be undone.",
+  "invalidHatsTreeIdMessage": "Hats Tree ID is not valid"
 }

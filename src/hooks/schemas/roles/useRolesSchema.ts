@@ -82,6 +82,7 @@ export const useRolesSchema = () => {
                 wearer: Yup.string()
                   .required(t('roleInfoErrorMemberRequired'))
                   .test(addressValidationTest),
+                canCreateProposals: Yup.boolean(),
                 payments: Yup.array().of(
                   Yup.object()
                     .default(undefined)

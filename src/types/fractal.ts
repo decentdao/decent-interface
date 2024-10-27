@@ -1,4 +1,4 @@
-import { TransferResponse, TokenInfoResponse } from '@safe-global/api-kit';
+import { TokenInfoResponse, TransferResponse } from '@safe-global/api-kit';
 import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types';
 import { Dispatch } from 'react';
 import { Address } from 'viem';
@@ -10,17 +10,17 @@ import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
-import { ProposalData, MultisigProposal, AzoriusProposal } from './daoProposal';
+import { AzoriusProposal, MultisigProposal, ProposalData } from './daoProposal';
 import { ProposalTemplate } from './proposalBuilder';
 import { SafeInfoResponseWithGuard } from './safeGlobal';
 import { BIFormattedPair } from './votingFungibleToken';
 import {
   DefiBalance,
   NFTBalance,
+  SnapshotProposal,
   TokenBalance,
   TokenEventType,
   TransferType,
-  SnapshotProposal,
 } from '.';
 /**
  * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
@@ -185,7 +185,9 @@ export interface Fractal {
 
 export interface FractalGovernanceContracts {
   linearVotingErc20Address?: Address;
+  linearVotingErc20WithHatsWhitelistingAddress?: Address;
   linearVotingErc721Address?: Address;
+  linearVotingErc721WithHatsWhitelistingAddress?: Address;
   moduleAzoriusAddress?: Address;
   votesTokenAddress?: Address;
   lockReleaseAddress?: Address;

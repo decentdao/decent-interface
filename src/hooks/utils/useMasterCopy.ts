@@ -3,17 +3,16 @@ import { useCallback } from 'react';
 import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-// import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
-// import { getValue, setValue } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
   const {
-    // chain,
     contracts: {
       zodiacModuleProxyFactory,
       zodiacModuleProxyFactoryOld,
       linearVotingErc20MasterCopy,
+      linearVotingErc20HatsWhitelistingMasterCopy,
       linearVotingErc721MasterCopy,
+      linearVotingErc721HatsWhitelistingMasterCopy,
       moduleFractalMasterCopy,
       moduleAzoriusMasterCopy,
       freezeGuardMultisigMasterCopy,
@@ -31,6 +30,9 @@ export function useMasterCopy() {
     (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc721MasterCopy,
     [linearVotingErc721MasterCopy],
   );
+
+  const isLinearVotingErc20WithWhitelisting = useCallback((masterCopyAddress: Address) => masterCopyAddress === linearVotingErc20HatsWhitelistingMasterCopy, [linearVotingErc20HatsWhitelistingMasterCopy]);
+  const isLinearVotingErc721WithWhitelisting = useCallback((masterCopyAddress: Address) => masterCopyAddress === linearVotingErc721HatsWhitelistingMasterCopy, [linearVotingErc721HatsWhitelistingMasterCopy]);
   const isFreezeGuardMultisig = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === freezeGuardMultisigMasterCopy,
     [freezeGuardMultisigMasterCopy],
@@ -61,13 +63,6 @@ export function useMasterCopy() {
         return [zeroAddress, null] as const;
       }
 
-      // const cachedValue = getValue({
-      //   cacheName: CacheKeys.MASTER_COPY,
-      //   chainId: chain.id,
-      //   proxyAddress,
-      // });
-      // if (cachedValue) return [cachedValue, null] as const;
-
       const moduleProxyFactoryContract = getContract({
         abi: abis.ModuleProxyFactory,
         address: moduleProxyFactoryContractAddress,
@@ -79,15 +74,6 @@ export function useMasterCopy() {
         .then(proxiesCreated => {
           // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
           if (proxiesCreated.length === 0) {
-            // setValue(
-            //   {
-            //     cacheName: CacheKeys.MASTER_COPY,
-            //     chainId: chain.id,
-            //     proxyAddress,
-            //   },
-            //   zeroAddress,
-            //   CacheExpiry.ONE_WEEK,
-            // );
             return [zeroAddress, 'No proxies created'] as const;
           }
 
@@ -95,15 +81,6 @@ export function useMasterCopy() {
           if (!masterCopyAddress) {
             return [zeroAddress, 'No master copy address'] as const;
           }
-
-          // setValue(
-          //   {
-          //     cacheName: CacheKeys.MASTER_COPY,
-          //     chainId: chain.id,
-          //     proxyAddress,
-          //   },
-          //   masterCopyAddress,
-          // );
           return [masterCopyAddress, null] as const;
         })
         .catch(() => {
@@ -136,6 +113,8 @@ export function useMasterCopy() {
         address: masterCopyAddress,
         isLinearVotingErc20: isLinearVotingErc20(masterCopyAddress),
         isLinearVotingErc721: isLinearVotingErc721(masterCopyAddress),
+        isLinearVotingErc20WithWhitelisting: isLinearVotingErc20WithWhitelisting(masterCopyAddress),
+        isLinearVotingErc721WithWhitelisting: isLinearVotingErc721WithWhitelisting(masterCopyAddress),
         isFreezeGuardMultisig: isFreezeGuardMultisig(masterCopyAddress),
         isFreezeVotingMultisig: isFreezeVotingMultisig(masterCopyAddress),
         isFreezeVotingErc721: isFreezeVotingErc721(masterCopyAddress),
@@ -150,6 +129,8 @@ export function useMasterCopy() {
       isFreezeVotingMultisig,
       isLinearVotingErc20,
       isLinearVotingErc721,
+      isLinearVotingErc20WithWhitelisting,
+      isLinearVotingErc721WithWhitelisting,
       isModuleAzorius,
       isModuleFractal,
       zodiacModuleProxyFactory,

@@ -111,6 +111,7 @@ export interface RoleHatFormValue
   // form specific state
   editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;
+  canCreateProposals: boolean;
 }
 
 export interface RoleHatFormValueEdited extends RoleHatFormValue {
