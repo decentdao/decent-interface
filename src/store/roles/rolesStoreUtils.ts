@@ -64,6 +64,7 @@ export interface RolesStore extends RolesStoreData {
     hatsProtocol: Address;
     erc6551Registry: Address;
     hatsAccountImplementation: Address;
+    hatsElectionsImplementation: Address;
     publicClient: PublicClient;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;

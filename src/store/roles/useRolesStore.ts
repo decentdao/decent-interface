@@ -52,6 +52,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
     const hatsTree = await sanitize(
       params.hatsTree,
       params.hatsAccountImplementation,
+      params.hatsElectionsImplementation,
       params.erc6551Registry,
       params.hatsProtocol,
       params.chainId,

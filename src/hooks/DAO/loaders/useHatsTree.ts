@@ -34,6 +34,7 @@ const useHatsTree = () => {
       hatsProtocol,
       erc6551Registry,
       hatsAccount1ofNMasterCopy: hatsAccountImplementation,
+      hatsElectionsEligibilityImplementationAddress: hatsElectionsImplementation,
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
@@ -109,6 +110,7 @@ const useHatsTree = () => {
             hatsProtocol: hatsProtocol,
             erc6551Registry,
             hatsAccountImplementation,
+            hatsElectionsImplementation,
             publicClient,
           });
         } catch (e) {
@@ -123,6 +125,7 @@ const useHatsTree = () => {
           hatsProtocol: hatsProtocol,
           erc6551Registry,
           hatsAccountImplementation,
+          hatsElectionsImplementation,
           publicClient,
         });
         const message = 'Hats Tree ID is not valid';
@@ -142,6 +145,7 @@ const useHatsTree = () => {
     contextChainId,
     erc6551Registry,
     hatsAccountImplementation,
+    hatsElectionsImplementation,
     hatsProtocol,
     hatsTreeId,
     ipfsClient,
