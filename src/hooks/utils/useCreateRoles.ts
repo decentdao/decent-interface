@@ -97,12 +97,9 @@ export default function useCreateRoles() {
         return;
       }
       const azoriusGovernance = governance as AzoriusGovernance;
+      const { votingStrategy, votesToken, erc721Tokens } = azoriusGovernance;
       if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
-        if (
-          !azoriusGovernance.votesToken ||
-          !azoriusGovernance.votingStrategy?.votingPeriod ||
-          !azoriusGovernance.votingStrategy.quorumPercentage
-        ) {
+        if (!votesToken || !votingStrategy?.votingPeriod || !votingStrategy.quorumPercentage) {
           return;
         }
 
@@ -121,10 +118,10 @@ export default function useCreateRoles() {
           ),
           [
             daoAddress, // owner
-            azoriusGovernance.votesToken.address, // governance token
+            votesToken.address, // governance token
             moduleAzoriusAddress, // Azorius module
-            Number(azoriusGovernance.votingStrategy.votingPeriod.value),
-            (azoriusGovernance.votingStrategy.quorumPercentage.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
+            Number(votingStrategy.votingPeriod.value),
+            (votingStrategy.quorumPercentage.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
             500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
             hatsProtocol,
             whitelistedHatsIds,
@@ -150,11 +147,7 @@ export default function useCreateRoles() {
           targetAddress: zodiacModuleProxyFactory,
         };
       } else if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC721) {
-        if (
-          !azoriusGovernance.erc721Tokens ||
-          !azoriusGovernance.votingStrategy?.votingPeriod ||
-          !azoriusGovernance.votingStrategy.quorumThreshold
-        ) {
+        if (!erc721Tokens || !votingStrategy?.votingPeriod || !votingStrategy.quorumThreshold) {
           return;
         }
 
@@ -173,11 +166,11 @@ export default function useCreateRoles() {
           ),
           [
             daoAddress, // owner
-            azoriusGovernance.erc721Tokens.map(token => token.address), // governance tokens addresses
-            azoriusGovernance.erc721Tokens.map(token => token.votingWeight), // governance tokens weights
+            erc721Tokens.map(token => token.address), // governance tokens addresses
+            erc721Tokens.map(token => token.votingWeight), // governance tokens weights
             moduleAzoriusAddress, // Azorius module
-            Number(azoriusGovernance.votingStrategy.votingPeriod.value),
-            (azoriusGovernance.votingStrategy.quorumThreshold.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
+            Number(votingStrategy.votingPeriod.value),
+            (votingStrategy.quorumThreshold.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
             500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
             hatsProtocol,
             whitelistedHatsIds,
