@@ -5,6 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
+import { GovernanceType } from '../../../../types';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -12,6 +15,10 @@ import { RoleFormValues } from '../types';
 
 export default function RoleFormInfo() {
   const { t } = useTranslation('roles');
+  const {
+    governance: { type },
+  } = useFractal();
+  const { hatsTree, hatsTreeId } = useRolesStore();
 
   const [roleWearerString, setRoleWearerString] = useState<string>('');
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
@@ -120,29 +127,34 @@ export default function RoleFormInfo() {
           </Field>
         </FormControl>
       </Box>
-      <FormControl mt={4}>
-        <Field name="roleEditing.canCreateProposals">
-          {({ field }: FieldProps<string, RoleFormValues>) => (
-            <Flex
-              justifyContent="space-between"
-              alignItems="center"
-              padding={4}
-              borderRadius={8}
-              border="1px solid"
-              borderColor="neutral-3"
-            >
-              <Text>{t('canCreateProposals')}</Text>
-              <Switch
-                size="md"
-                variant="secondary"
-                onChange={() => setFieldValue(field.name, !values.roleEditing?.canCreateProposals)}
-                isChecked={values.roleEditing?.canCreateProposals}
-                isDisabled={!values.roleEditing}
-              />
-            </Flex>
-          )}
-        </Field>
-      </FormControl>
+      {/* @dev - deploying whitelisting voting strategy is feasible from UI/UX standpoint only when Safe has Azorius module AND hatsTree been created already */}
+      {type !== GovernanceType.MULTISIG && !!hatsTree && !!hatsTreeId && (
+        <FormControl mt={4}>
+          <Field name="roleEditing.canCreateProposals">
+            {({ field }: FieldProps<string, RoleFormValues>) => (
+              <Flex
+                justifyContent="space-between"
+                alignItems="center"
+                padding={4}
+                borderRadius={8}
+                border="1px solid"
+                borderColor="neutral-3"
+              >
+                <Text>{t('canCreateProposals')}</Text>
+                <Switch
+                  size="md"
+                  variant="secondary"
+                  onChange={() =>
+                    setFieldValue(field.name, !values.roleEditing?.canCreateProposals)
+                  }
+                  isChecked={values.roleEditing?.canCreateProposals}
+                  isDisabled={!values.roleEditing}
+                />
+              </Flex>
+            )}
+          </Field>
+        </FormControl>
+      )}
     </>
   );
 }
