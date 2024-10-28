@@ -12,7 +12,6 @@ import { toast } from 'sonner';
 import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { DecentHatsTempAbi } from '../../assets/abi/DecentHatsTempAbi';
-import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
@@ -27,7 +26,6 @@ import {
   SablierPaymentFormValues,
   TermedParams,
 } from '../../components/pages/Roles/types';
-import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { getRandomBytes } from '../../helpers';
 import { generateSalt } from '../../models/helpers/utils';
@@ -472,17 +470,18 @@ export default function useCreateRoles() {
         getEnableDisableDecentHatsModuleData();
 
       const createNewRoleData = encodeFunctionData({
-        abi: abis.DecentHats_0_1_0,
+        abi: DecentHatsTempAbi,
         functionName: 'createRoleHat',
         args: [
-          hatsProtocol,
-          BigInt(hatsTree.adminHat.id),
-          hatStruct,
-          BigInt(hatsTree.topHat.id),
-          hatsTree.topHat.smartAddress,
-          erc6551Registry,
-          hatsAccount1ofNMasterCopy,
-          ERC6551_REGISTRY_SALT,
+          {
+            hatsProtocol,
+            adminHatId: BigInt(hatsTree.adminHat.id),
+            hat: hatStruct,
+            topHatId: BigInt(hatsTree.topHat.id),
+            topHatAccount: hatsTree.topHat.smartAddress,
+            registry: erc6551Registry,
+            hatsAccountImplementation: hatsAccount1ofNMasterCopy,
+          },
         ],
       });
 
