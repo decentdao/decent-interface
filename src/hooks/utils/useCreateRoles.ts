@@ -369,16 +369,9 @@ export default function useCreateRoles() {
       keyValuePairs,
       getEnableDisableDecentHatsModuleData,
       uploadHatDescription,
-      hatsDetailsBuilder,
-      daoName,
       createHatStructsForNewTreeFromRolesFormValues,
       hatsModulesClient,
       zodiacModuleProxyFactory,
-      hatsProtocol,
-      hatsAccount1ofNMasterCopy,
-      erc6551Registry,
-      keyValuePairs,
-      decentHatsMasterCopy,
     ],
   );
 
