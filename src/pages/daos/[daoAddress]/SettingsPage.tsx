@@ -16,7 +16,7 @@ export function SettingsPage() {
 
   const { t } = useTranslation('breadcrumbs');
   const {
-    node: { daoAddress, daoName },
+    node: { daoAddress },
   } = useFractal();
 
   const HEADER_HEIGHT = useHeaderHeight();
@@ -31,10 +31,7 @@ export function SettingsPage() {
   return (
     <Box>
       <PageHeader
-        title={t('headerTitle', {
-          daoName,
-          subject: t('settings'),
-        })}
+        title={t('settings')}
         breadcrumbs={[
           {
             terminus: t('settings'),

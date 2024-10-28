@@ -1,5 +1,9 @@
 import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
+import { GeneralSettingsContainer } from './components/pages/DaoSettings/components/GeneralSettingsContainer';
+import GovernanceContainer from './components/pages/DaoSettings/components/GovernanceContainer';
+import { ModulesContainer } from './components/pages/DaoSettings/components/ModulesContainer';
+import PermissionsContainer from './components/pages/DaoSettings/components/PermissionsContainer';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
@@ -177,7 +181,28 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.settings.path,
-              element: <SettingsPage />,
+              children: [
+                {
+                  index: true,
+                  element: <SettingsPage />,
+                },
+                {
+                  path: 'general',
+                  element: <GeneralSettingsContainer />,
+                },
+                {
+                  path: 'governance',
+                  element: <GovernanceContainer />,
+                },
+                {
+                  path: 'modules-and-guard',
+                  element: <ModulesContainer />,
+                },
+                {
+                  path: 'permissions',
+                  element: <PermissionsContainer />,
+                },
+              ],
             },
             {
               path: DAO_ROUTES.treasury.path,

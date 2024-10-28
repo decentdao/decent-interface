@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { ChangeEventHandler, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,10 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { ProposalExecuteData } from '../../../../types';
 import { validateENSName } from '../../../../utils/url';
 import { InputComponent } from '../../../ui/forms/InputComponent';
+import Divider from '../../../ui/utils/Divider';
 import { SettingsSection } from './SettingsSection';
 
-export function MetadataContainer() {
+export function GeneralSettingsContainer() {
   const [name, setName] = useState('');
   const [snapshotENS, setSnapshotENS] = useState('');
   const [snapshotENSValid, setSnapshotENSValid] = useState<boolean>();
@@ -121,24 +122,56 @@ export function MetadataContainer() {
 
   return (
     <SettingsSection
-      title={t('daoMetadataName')}
-      headerRight={
-        canUserCreateProposal && (
-          <Button
-            variant="secondary"
-            size="sm"
-            isDisabled={name === daoName}
-            onClick={handleEditDAOName}
-          >
-            {t('proposeChanges')}
-          </Button>
-        )
-      }
+      title={t('daoSettingsGeneral')}
       descriptionHeader={t('daoMetadataDescriptionTitle')}
       descriptionContent={t('daoMetadataDescriptionText')}
-      nestedSection={{
-        title: t('daoMetadataSnapshot'),
-        headerRight: canUserCreateProposal && (
+    >
+      <Flex
+        flexDir="column"
+        mt="2rem"
+      >
+        <Flex justifyContent="space-between">
+          <Text textStyle="display-lg">{t('daoMetadataName')}</Text>
+          {canUserCreateProposal && (
+            <Button
+              variant="secondary"
+              size="sm"
+              isDisabled={name === daoName}
+              onClick={handleEditDAOName}
+            >
+              {t('proposeChanges')}
+            </Button>
+          )}
+        </Flex>
+        <Divider
+          my="1rem"
+          w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+          mx={{ base: '-0.75rem', md: '-1.5rem' }}
+        />
+        <InputComponent
+          isRequired={false}
+          onChange={e => setName(e.target.value)}
+          disabled={!userHasVotingWeight}
+          value={name}
+          placeholder="Amazing DAO"
+          testId="daoSettings.name"
+          gridContainerProps={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            flex: '1',
+            width: '100%',
+          }}
+          inputContainerProps={{
+            width: '100%',
+          }}
+        />
+      </Flex>
+      <Flex
+        flexDir="column"
+        mt="2rem"
+      >
+        <Flex justifyContent="space-between">
+          <Text textStyle="display-lg">{t('daoMetadataSnapshot')}</Text>
           <Button
             variant="secondary"
             size="sm"
@@ -147,45 +180,30 @@ export function MetadataContainer() {
           >
             {t('proposeChanges')}
           </Button>
-        ),
-        children: (
-          <InputComponent
-            isRequired={false}
-            onChange={handleSnapshotENSChange}
-            value={snapshotENS}
-            disabled={!userHasVotingWeight}
-            placeholder="example.eth"
-            testId="daoSettings.snapshotENS"
-            gridContainerProps={{
-              display: 'inline-flex',
-              flexWrap: 'wrap',
-              flex: '1',
-              width: '100%',
-            }}
-            inputContainerProps={{
-              width: '100%',
-            }}
-          />
-        ),
-      }}
-    >
-      <InputComponent
-        isRequired={false}
-        onChange={e => setName(e.target.value)}
-        disabled={!userHasVotingWeight}
-        value={name}
-        placeholder="Amazing DAO"
-        testId="daoSettings.name"
-        gridContainerProps={{
-          display: 'inline-flex',
-          flexWrap: 'wrap',
-          flex: '1',
-          width: '100%',
-        }}
-        inputContainerProps={{
-          width: '100%',
-        }}
-      />
+        </Flex>
+        <Divider
+          my="1rem"
+          w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+          mx={{ base: '-0.75rem', md: '-1.5rem' }}
+        />
+        <InputComponent
+          isRequired={false}
+          onChange={handleSnapshotENSChange}
+          value={snapshotENS}
+          disabled={!userHasVotingWeight}
+          placeholder="example.eth"
+          testId="daoSettings.snapshotENS"
+          gridContainerProps={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            flex: '1',
+            width: '100%',
+          }}
+          inputContainerProps={{
+            width: '100%',
+          }}
+        />
+      </Flex>
     </SettingsSection>
   );
 }
