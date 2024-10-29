@@ -24,7 +24,7 @@ function SettingsLink({
   const paths = location.pathname.split('/');
   const isMobile = useBreakpointValue({ base: true, md: false });
   const isIndexSettingsPage = paths.length === 2;
-  
+
   return (
     <Box
       as={Link}
@@ -32,7 +32,7 @@ function SettingsLink({
       borderRadius={{ md: '0.5rem' }}
       transition="all ease-out 300ms"
       _hover={{ bgColor: 'neutral-3' }}
-      bg={(isCurrentPath || (!isMobile && isIndexSettingsPage))? 'white-alpha-04' : 'transparent'}
+      bg={isCurrentPath || (!isMobile && isIndexSettingsPage) ? 'white-alpha-04' : 'transparent'}
       p={{ base: 0, md: '0.5rem' }}
     >
       <Flex

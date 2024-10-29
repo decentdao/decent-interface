@@ -23,7 +23,7 @@ export default function SafePermissionsSettingsPage() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken } = azoriusGovernance;
-  
+
   return (
     <>
       <Show below="md">
