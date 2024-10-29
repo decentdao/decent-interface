@@ -137,6 +137,19 @@ export const initialHatsStore: RolesStoreData = {
   contextChainId: null,
 };
 
+export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {
+  // 1 byte = 8 bits = 2 string characters
+  const adminLevelBinary = adminHatId.slice(0, 14); // Top Admin ID 1 byte 0x + 4 bytes (tree ID) + next **16 bits** (admin level ID)
+
+  // Each next level is next **16 bits**
+  // Since we're operating only with direct child of top level admin - we don't care about nested levels
+  // @dev At least for now?
+  const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
+
+  // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
+  return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
+};
+
 export const predictAccountAddress = async (params: {
   implementation: Address;
   chainId: bigint;
