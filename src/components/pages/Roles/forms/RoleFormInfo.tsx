@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
+import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -17,7 +18,10 @@ export default function RoleFormInfo() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { setFieldValue, values },
+    Field,
+  } = useTypesafeFormikContext<RoleFormValues>();
 
   useEffect(() => {
     if (isValidWearerAddress) {
@@ -51,7 +55,7 @@ export default function RoleFormInfo() {
                   setFieldValue(field.name, e.target.value);
                 }}
                 onBlur={() => {
-                  setFieldTouched(field.name, true);
+                  setFieldTouched('roleEditing.wearer', true);
                 }}
                 testId="role-name"
                 placeholder={t('roleName')}
