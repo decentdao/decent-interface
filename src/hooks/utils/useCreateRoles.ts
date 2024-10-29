@@ -563,35 +563,6 @@ export default function useCreateRoles() {
   );
 
   const createBatchLinearStreamCreationTx = useCallback(
-    (formStreams: SablierPaymentFormValues[], roleSmartAccountAddress: Address) => {
-      const preparedStreams = formStreams.map(stream => {
-        if (
-          !stream.asset ||
-          !stream.startDate ||
-          !stream.endDate ||
-          !stream.amount?.bigintValue ||
-          stream.amount.bigintValue <= 0n
-        ) {
-          throw new Error('Form Values inValid', {
-            cause: stream,
-          });
-        }
-
-        return {
-          recipient: roleSmartAccountAddress,
-          startDateTs: Math.floor(stream.startDate.getTime() / 1000),
-          endDateTs: Math.ceil(stream.endDate.getTime() / 1000),
-          cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
-          totalAmount: stream.amount.bigintValue,
-          assetAddress: stream.asset.address,
-        };
-      });
-
-      return prepareBatchLinearStreamCreation(preparedStreams);
-    },
-    [prepareBatchLinearStreamCreation],
-  );
-  const createBatchTermedLinearStreamCreationTx = useCallback(
     (formStreams: (SablierPaymentFormValues & { recipient: Address })[]) => {
       const preparedStreams = formStreams.map(stream => {
         if (
@@ -744,8 +715,7 @@ export default function useCreateRoles() {
         }
         const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
         const newStreamTxData = createBatchLinearStreamCreationTx(
-          newStreamsOnHat,
-          newPredictedHatSmartAccount,
+          newStreamsOnHat.map(stream => ({ ...stream, recipient: newPredictedHatSmartAccount })),
         );
         paymentTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
         paymentTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
@@ -779,7 +749,7 @@ export default function useCreateRoles() {
       const paymentTxs = [];
       const newStreamsOnHat = getNewStreamsFromFormHat(formHat);
       if (newStreamsOnHat.length) {
-        const newStreamTxData = createBatchTermedLinearStreamCreationTx(
+        const newStreamTxData = createBatchLinearStreamCreationTx(
           getPaymentTermRecipients(formHat),
         );
         paymentTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
@@ -788,7 +758,7 @@ export default function useCreateRoles() {
       return paymentTxs;
     },
     [
-      createBatchTermedLinearStreamCreationTx,
+      createBatchLinearStreamCreationTx,
       daoAddress,
       getNewStreamsFromFormHat,
       getPaymentTermRecipients,
