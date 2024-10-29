@@ -2,9 +2,9 @@ import { Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../types';
+import { StyledBox } from '../../ui/containers/StyledBox';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
 import { BarLoader } from '../../ui/loaders/BarLoader';
-import { SettingsSection } from './SettingsSection';
 
 export function ERC721TokensContainer() {
   const { t } = useTranslation(['settings']);
@@ -14,7 +14,8 @@ export function ERC721TokensContainer() {
   const { erc721Tokens } = azoriusGovernance;
 
   return (
-    <SettingsSection title={t('governanceERC721TokenTitle')}>
+    <StyledBox width="100%">
+      <Text>{t('governanceERC721TokenTitle')}</Text>
       {erc721Tokens ? (
         <Flex flexWrap="wrap">
           <Grid
@@ -96,6 +97,6 @@ export function ERC721TokensContainer() {
           <BarLoader />
         </Flex>
       )}
-    </SettingsSection>
+    </StyledBox>
   );
 }

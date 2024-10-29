@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { StyledBox } from '../../../ui/containers/StyledBox';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';
-import { SettingsSection } from '../SettingsSection';
 
 function Signer({
   signer,
@@ -104,10 +104,10 @@ export function SignersContainer() {
   }, [account, signers]);
 
   return (
-    <SettingsSection
-      title={t('signers', { ns: 'common' })}
-      headerRight={
-        userIsSigner && (
+    <StyledBox width="100%">
+      <Flex justifyContent="space-between">
+        <Text>{t('signers', { ns: 'common' })}</Text>
+        {userIsSigner && (
           <Flex gap="0.5rem">
             <Button
               variant="secondary"
@@ -121,9 +121,8 @@ export function SignersContainer() {
               </Show>
             </Button>
           </Flex>
-        )
-      }
-    >
+        )}
+      </Flex>
       {signers &&
         signers.map(signer => (
           <Signer
@@ -134,6 +133,6 @@ export function SignersContainer() {
             threshold={safe?.threshold}
           />
         ))}
-    </SettingsSection>
+    </StyledBox>
   );
 }

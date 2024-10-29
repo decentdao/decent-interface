@@ -1,17 +1,22 @@
-import { Flex, Hide, Show } from '@chakra-ui/react';
+import { Flex, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { zeroAddress } from 'viem';
 import { InfoGovernance } from '../../../../../components/pages/DaoDashboard/Info/InfoGovernance';
 import { ERC20TokenContainer } from '../../../../../components/pages/SafeSettings/ERC20TokenContainer';
 import { ERC721TokensContainer } from '../../../../../components/pages/SafeSettings/ERC721TokensContainer';
-import { SettingsSection } from '../../../../../components/pages/SafeSettings/SettingsSection';
 import { SignersContainer } from '../../../../../components/pages/SafeSettings/Signers/SignersContainer';
+import { StyledBox } from '../../../../../components/ui/containers/StyledBox';
 import NestedPageHeader from '../../../../../components/ui/page/Header/NestedPageHeader';
+import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { GovernanceType } from '../../../../../types';
 
 export default function SafeGovernanceSettingsPage() {
   const { t } = useTranslation('settings');
+  const { addressPrefix } = useNetworkConfig();
   const {
+    node: { daoAddress },
     governance: { type },
   } = useFractal();
 
@@ -29,17 +34,19 @@ export default function SafeGovernanceSettingsPage() {
         <NestedPageHeader
           title={t('daoSettingsGovernance')}
           backButtonText={t('settings')}
+          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
         />
       </Show>
-      <Hide below="md"></Hide>
       <Flex
         flexDirection="column"
         gap="3rem"
+        width="100%"
       >
         {(isERC20Governance || isERC721Governance) && (
-          <SettingsSection title={t('daoSettingsGovernance')}>
+          <StyledBox width="100%">
+            <Text textStyle="display-lg">{t('daoSettingsGovernance')}</Text>
             <InfoGovernance showTitle={false} />
-          </SettingsSection>
+          </StyledBox>
         )}
         {isERC20Governance ? (
           <ERC20TokenContainer />

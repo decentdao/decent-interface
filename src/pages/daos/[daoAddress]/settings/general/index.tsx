@@ -1,13 +1,14 @@
-import { Button, Divider, Flex, Hide, Show, Text } from '@chakra-ui/react';
+import { Button, Flex, Show, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { ChangeEventHandler, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { encodeFunctionData } from 'viem';
-import { SettingsSection } from '../../../../../components/pages/SafeSettings/SettingsSection';
+import { encodeFunctionData, zeroAddress } from 'viem';
+import { StyledBox } from '../../../../../components/ui/containers/StyledBox';
 import { InputComponent } from '../../../../../components/ui/forms/InputComponent';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import NestedPageHeader from '../../../../../components/ui/page/Header/NestedPageHeader';
+import Divider from '../../../../../components/ui/utils/Divider';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
@@ -127,14 +128,14 @@ export default function SafeGeneralSettingsPage() {
         <NestedPageHeader
           title={t('daoSettingsGeneral')}
           backButtonText={t('settings')}
+          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
         />
       </Show>
-      <Hide below="md"></Hide>
       {!!safe ? (
-        <SettingsSection title={t('daoSettingsGeneral')}>
+        <StyledBox w="100%">
           <Flex
             flexDir="column"
-            mt="2rem"
+            gap="1rem"
           >
             <Flex justifyContent="space-between">
               <Text textStyle="display-lg">{t('daoMetadataName')}</Text>
@@ -149,11 +150,6 @@ export default function SafeGeneralSettingsPage() {
                 </Button>
               )}
             </Flex>
-            <Divider
-              my="1rem"
-              w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
-              mx={{ base: '-0.75rem', md: '-1.5rem' }}
-            />
             <InputComponent
               isRequired={false}
               onChange={e => setName(e.target.value)}
@@ -171,10 +167,16 @@ export default function SafeGeneralSettingsPage() {
                 width: '100%',
               }}
             />
+            <Divider
+              my="1rem"
+              w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+              mx={{ base: '-0.75rem', md: '-1.5rem' }}
+            />
           </Flex>
           <Flex
             flexDir="column"
-            mt="2rem"
+            gap="1rem"
+            mt="1rem"
           >
             <Flex justifyContent="space-between">
               <Text textStyle="display-lg">{t('daoMetadataSnapshot')}</Text>
@@ -187,11 +189,6 @@ export default function SafeGeneralSettingsPage() {
                 {t('proposeChanges')}
               </Button>
             </Flex>
-            <Divider
-              my="1rem"
-              w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
-              mx={{ base: '-0.75rem', md: '-1.5rem' }}
-            />
             <InputComponent
               isRequired={false}
               onChange={handleSnapshotENSChange}
@@ -210,7 +207,7 @@ export default function SafeGeneralSettingsPage() {
               }}
             />
           </Flex>
-        </SettingsSection>
+        </StyledBox>
       ) : (
         <Flex
           h="8.5rem"

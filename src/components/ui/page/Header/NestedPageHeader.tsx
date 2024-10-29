@@ -1,14 +1,14 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { PropsWithChildren } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function NestedPageHeader({
   title,
   backButtonText,
+  backButtonHref,
   children,
-}: PropsWithChildren<{ title: string; backButtonText: string }>) {
-  const navigate = useNavigate();
+}: PropsWithChildren<{ title: string; backButtonText: string; backButtonHref: string }>) {
   return (
     <Flex
       py={6}
@@ -17,9 +17,10 @@ export default function NestedPageHeader({
     >
       <Button
         variant="link"
+        as={Link}
+        to={backButtonHref}
         color="neutral-7"
         padding={0}
-        onClick={() => navigate(-1)}
         leftIcon={<ArrowLeft />}
         width="25%"
       >

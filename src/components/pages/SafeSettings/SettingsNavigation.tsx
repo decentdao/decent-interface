@@ -2,7 +2,8 @@ import { Box, Flex, Show, Text } from '@chakra-ui/react';
 import { Bank, CaretRight, CheckSquare, GearFine, Stack } from '@phosphor-icons/react';
 import { PropsWithChildren, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
+import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -17,11 +18,16 @@ function SettingsLink({
   children,
   showDivider = true,
 }: PropsWithChildren<{ path: string; title: string; leftIcon: ReactNode; showDivider?: boolean }>) {
+  const isActive = useMatch(path.substring(0, path.indexOf('?')));
   return (
     <Box
       as={Link}
       to={path}
-      my="1rem"
+      borderRadius={{ md: '0.5rem' }}
+      transition="all ease-out 300ms"
+      _hover={{ bgColor: 'neutral-3' }}
+      bg={isActive ? 'white-alpha-04' : 'transparent'}
+      p={{ base: 0, md: '0.5rem' }}
     >
       <Flex
         alignItems="center"
@@ -57,6 +63,7 @@ function SettingsLink({
             variant="darker"
             width="calc(100% + 2rem)"
             mx="-1rem"
+            my="1rem"
           />
         </Show>
       )}
@@ -74,12 +81,16 @@ export default function SettingsNavigation() {
   const azoriusGovernance = governance as AzoriusGovernance;
 
   return (
-    <Box
+    <Flex
       backgroundColor="neutral-2"
-      p="1rem"
-      borderRadius="0.5rem"
+      p={{ base: '1rem', md: '0.25rem' }}
+      gap="0.25rem"
+      flexDirection="column"
+      borderRadius="0.75rem"
       border="1px solid"
       borderColor="neutral-3"
+      boxShadow={DETAILS_BOX_SHADOW}
+      minWidth="220px"
     >
       {!safe ? (
         <Flex
@@ -136,6 +147,6 @@ export default function SettingsNavigation() {
           </SettingsLink>
         </>
       )}
-    </Box>
+    </Flex>
   );
 }

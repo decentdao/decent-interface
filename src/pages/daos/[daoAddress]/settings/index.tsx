@@ -1,6 +1,6 @@
-import { Flex, Show } from '@chakra-ui/react';
+import { Flex, useBreakpointValue } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import SettingsNavigation from '../../../../components/pages/SafeSettings/SettingsNavigation';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -8,9 +8,14 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export default function SafeSettingsPage() {
   const { t } = useTranslation(['settings']);
   const { node } = useFractal();
+  const location = useLocation();
+  const paths = location.pathname.split('/');
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const isIndexSettingsPage = paths.length === 2;
+
   return (
     <>
-      <Show above="md">
+      {(!isMobile || isIndexSettingsPage) && (
         <PageHeader
           breadcrumbs={[
             {
@@ -20,10 +25,13 @@ export default function SafeSettingsPage() {
           ]}
           title={t('settingsPageTitle', { daoName: node?.daoName })}
         />
-      </Show>
-      <Flex gap="0.5rem">
-        <SettingsNavigation />
-        <Outlet />
+      )}
+      <Flex
+        gap="0.5rem"
+        flexDirection={{ base: 'column', md: 'row' }}
+      >
+        {(!isMobile || isIndexSettingsPage) && <SettingsNavigation />}
+        {(!isMobile || (isMobile && !isIndexSettingsPage)) && <Outlet />}
       </Flex>
     </>
   );

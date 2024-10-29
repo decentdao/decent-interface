@@ -1,18 +1,22 @@
-import { Divider, Flex, Hide, Show, Text } from '@chakra-ui/react';
+import { Flex, Hide, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
-import { SettingsSection } from '../../../../../components/pages/SafeSettings/SettingsSection';
+import { StyledBox } from '../../../../../components/ui/containers/StyledBox';
 import { DisplayAddress } from '../../../../../components/ui/links/DisplayAddress';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import NestedPageHeader from '../../../../../components/ui/page/Header/NestedPageHeader';
+import Divider from '../../../../../components/ui/utils/Divider';
+import { DAO_ROUTES } from '../../../../../constants/routes';
 import { createAccountSubstring } from '../../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalModuleType } from '../../../../../types';
 
 export default function SafeModulesSettingsPage() {
   const { t } = useTranslation('settings');
+  const { addressPrefix } = useNetworkConfig();
   const {
-    node: { fractalModules, isModulesLoaded, safe },
+    node: { fractalModules, isModulesLoaded, safe, daoAddress },
     guardContracts: { freezeGuardContractAddress, freezeVotingContractAddress },
   } = useFractal();
 
@@ -22,15 +26,19 @@ export default function SafeModulesSettingsPage() {
         <NestedPageHeader
           title={t('daoModulesAndGuard')}
           backButtonText={t('settings')}
+          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
         />
       </Show>
-      <Hide below="md"></Hide>
-      <SettingsSection title={t('daoModulesAndGuard')}>
+      <StyledBox width="100%">
         <Flex
           flexDirection="column"
           gap="1rem"
-          mt={4}
         >
+          <Text textStyle="display-lg">{t('daoModulesAndGuard')}</Text>
+          <Divider
+            w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+            mx={{ base: '-0.75rem', md: '-1.5rem' }}
+          />
           {isModulesLoaded ? (
             fractalModules.length > 0 ? (
               fractalModules.map(({ moduleAddress, moduleType }) => {
@@ -61,9 +69,7 @@ export default function SafeModulesSettingsPage() {
           flexDir="column"
           mt="2rem"
         >
-          <Flex justifyContent="space-between">
-            <Text textStyle="display-lg">{t('guardTitle')}</Text>
-          </Flex>
+          <Text textStyle="display-lg">{t('guardTitle')}</Text>
           <Divider
             my="1rem"
             w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
@@ -82,7 +88,7 @@ export default function SafeModulesSettingsPage() {
             <Text color="neutral-5">{t('noGuardAttached')}</Text>
           )}
         </Flex>
-      </SettingsSection>
+      </StyledBox>
     </>
   );
 }
