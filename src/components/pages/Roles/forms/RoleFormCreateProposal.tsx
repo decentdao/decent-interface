@@ -102,7 +102,6 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               termEndDate: term.termEndDate,
               nominee: getAddress(term.nominee), // TODO: do we know that this is an address?
               termNumber: term.termNumber,
-              newStatus: term.newStatus,
             };
           }) || [];
 

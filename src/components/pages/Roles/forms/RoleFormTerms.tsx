@@ -82,15 +82,7 @@ function RoleTermMemberInput({ termIndex }: { termIndex: number }) {
   );
 }
 
-function RoleTermCreate({
-  onClose,
-  isNextTerm,
-  termIndex,
-}: {
-  termIndex: number;
-  isNextTerm: boolean;
-  onClose: () => void;
-}) {
+function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: () => void }) {
   const { t } = useTranslation('roles');
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   return (
@@ -135,10 +127,11 @@ function RoleTermCreate({
         <RoleTermEndDateInput termIndex={termIndex} />
         <Button
           onClick={() => {
-            setFieldValue(
-              `roleEditing.roleTerms[${termIndex}].newStatus`,
-              !isNextTerm ? 'current' : 'next',
-            );
+            setFieldValue(`roleEditing.roleTerms[${termIndex}]`, {
+              nominee: '',
+              termEndDate: undefined,
+              termNumber: termIndex + 1,
+            });
           }}
         >
           {t('Add Term')}
@@ -306,7 +299,6 @@ export default function RoleFormTerms() {
         {newTermIndex !== undefined && (
           <RoleTermCreate
             termIndex={newTermIndex}
-            isNextTerm={!nextTerm}
             onClose={() => setNewTermIndex(undefined)}
           />
         )}

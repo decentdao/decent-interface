@@ -123,7 +123,6 @@ export interface RoleHatFormValue
   roleEditingPaymentIndex?: number;
   isTermed?: boolean;
   roleTerms?: {
-    newStatus?: 'current' | 'next';
     nominee?: string;
     termEndDate?: Date;
     termNumber: number;
