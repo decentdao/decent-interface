@@ -1007,7 +1007,6 @@ export default function useCreateRoles() {
                 throw new Error('Nominee of added Role is undefined.');
               }
               // @note {assumption}: We have already determined the eligibility address is the election module
-              // @todo double check assumption
               if (formHat.eligibility === undefined) {
                 throw new Error(
                   'Cannot prepare transactions for edited role without eligibility address',
@@ -1054,59 +1053,6 @@ export default function useCreateRoles() {
                   }),
                   targetAddress: formHat.eligibility,
                 });
-                // flush funds from previous term
-                // @note {assumption}: no stream should need to be cancelled if past previous term
-                const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFromHat(formHat);
-                if (streamsWithFundsToClaim.length) {
-                  for (const stream of streamsWithFundsToClaim) {
-                    if (!stream.streamId || !stream.contractAddress) {
-                      throw new Error(
-                        'Stream ID and Stream ContractAddress is required for flush stream transaction',
-                      );
-                    }
-                    // transfer hat to DAO
-                    allTxs.push({
-                      calldata: encodeFunctionData({
-                        abi: HatsAbi,
-                        functionName: 'transferHat',
-                        args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
-                      }),
-                      targetAddress: hatsProtocol,
-                    });
-                    const flushStreamTxCalldata = prepareFlushStreamTxs({
-                      streamId: stream.streamId,
-                      to: originalHat.wearerAddress,
-                      smartAccount: formHat.smartAddress,
-                    });
-
-                    allTxs.push(...flushStreamTxCalldata);
-                  }
-                }
-                if (streamsWithFundsToClaim.length) {
-                  // transfer hat to nominee from DAO
-                  allTxs.push({
-                    calldata: encodeFunctionData({
-                      abi: HatsAbi,
-                      functionName: 'transferHat',
-                      args: [BigInt(formHat.id), daoAddress, getAddress(latestTerm.nominee)],
-                    }),
-                    targetAddress: hatsProtocol,
-                  });
-                } else {
-                  // transfer hat to nominee from wearer
-                  allTxs.push({
-                    calldata: encodeFunctionData({
-                      abi: HatsAbi,
-                      functionName: 'transferHat',
-                      args: [
-                        BigInt(formHat.id),
-                        getAddress(formHat.wearer),
-                        getAddress(latestTerm.nominee),
-                      ],
-                    }),
-                    targetAddress: hatsProtocol,
-                  });
-                }
               }
             }
           }
