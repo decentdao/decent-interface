@@ -48,11 +48,11 @@ function ShadowedBox({
   );
 }
 
-function StartDatePicker({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
+function StartDatePicker({ paymentIndex, disabled }: { paymentIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
 
-  const selectedEndDate = values?.roleEditing?.payments?.[formIndex]?.endDate;
+  const selectedEndDate = values?.roleEditing?.payments?.[paymentIndex]?.endDate;
   const terms = useMemo(
     () => values?.roleEditing?.roleTerms || [],
     [values?.roleEditing?.roleTerms],
@@ -84,8 +84,8 @@ function StartDatePicker({ formIndex, disabled }: { formIndex: number; disabled:
         title={t('paymentStart')}
         tooltipContent={t('startSubTitle')}
       />
-      <Field name={`roleEditing.payments.[${formIndex}].startDate"`}>
-        {({ field }: FieldProps<Date, RoleFormValues>) => (
+      <Field name={`roleEditing.payments.[${paymentIndex}].startDate`}>
+        {({ field, form: { setFieldValue } }: FieldProps<Date, RoleFormValues>) => (
           <LabelWrapper
             label={t('date')}
             labelColor="neutral-7"
@@ -104,12 +104,13 @@ function StartDatePicker({ formIndex, disabled }: { formIndex: number; disabled:
   );
 }
 
-function CliffDatePicker({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
+function CliffDatePicker({ paymentIndex, disabled }: { paymentIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
+  console.log('🚀 ~ values:', values);
 
-  const selectedStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
-  const selectedEndDate = values?.roleEditing?.payments?.[formIndex]?.endDate;
+  const selectedStartDate = values?.roleEditing?.payments?.[paymentIndex]?.startDate;
+  const selectedEndDate = values?.roleEditing?.payments?.[paymentIndex]?.endDate;
 
   return (
     <FormControl
@@ -122,8 +123,8 @@ function CliffDatePicker({ formIndex, disabled }: { formIndex: number; disabled:
         title={t('cliff')}
         tooltipContent={t('cliffSubTitle')}
       />
-      <Field name={`roleEditing.payments.[${formIndex}].cliffDate"`}>
-        {({ field }: FieldProps<Date, RoleFormValues>) => (
+      <Field name={`roleEditing.payments.[${paymentIndex}].cliffDate"`}>
+        {({ field, form: { setFieldValue } }: FieldProps<Date, RoleFormValues>) => (
           <LabelWrapper
             label={t('date')}
             labelColor="neutral-7"
@@ -132,7 +133,7 @@ function CliffDatePicker({ formIndex, disabled }: { formIndex: number; disabled:
               onChange={(date: Date) => setFieldValue(field.name, date)}
               selectedDate={field.value}
               minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
-              maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
+              maxDate={selectedEndDate}
               disabled={disabled}
             />
           </LabelWrapper>
@@ -181,9 +182,10 @@ function TermSelection({
   );
 }
 
-function TermSelectorMenu({ formIndex }: { formIndex: number }) {
+function TermSelectorMenu({ paymentIndex }: { paymentIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue, validateField } = useFormikContext<RoleFormValues>();
+  console.log('🚀 ~ payments:', values.roleEditing?.payments);
   console.log('🚀 ~ errors:', errors);
   const [selectedTerm, setSelectedTerm] = useState<{
     termNumber: number;
@@ -230,11 +232,10 @@ function TermSelectorMenu({ formIndex }: { formIndex: number }) {
     if (selectedTerm) {
       // @todo: What is the start date for 'next' term payments?
       // @note {assumption} the start date is now for current terms or current term being proposed.
-      setFieldValue(`roleEditing.payments[${formIndex}].startDate`, new Date());
-      setFieldValue(`roleEditing.payments[${formIndex}].endDate`, selectedTerm.termEndDate);
+      setFieldValue(`roleEditing.payments[${paymentIndex}].endDate`, selectedTerm.termEndDate);
       validateField(`roleEditing.payments`);
     }
-  }, [selectedTerm, formIndex, setFieldValue, validateField]);
+  }, [selectedTerm, paymentIndex, setFieldValue, validateField]);
   return (
     <Box my="1rem">
       <Menu
@@ -361,13 +362,13 @@ function TermSelectorMenu({ formIndex }: { formIndex: number }) {
   );
 }
 
-export default function RoleFormPaymentStreamTermed({ formIndex }: { formIndex: number }) {
+export default function RoleFormPaymentStreamTermed({ paymentIndex }: { paymentIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
     ?.payments;
 
-  const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
+  const streamId = values.roleEditing?.payments?.[paymentIndex]?.streamId;
 
   return (
     <>
@@ -382,7 +383,7 @@ export default function RoleFormPaymentStreamTermed({ formIndex }: { formIndex: 
             externalLink="https://docs.decentdao.org/app/user-guide/roles-and-streaming/streaming-payroll-and-vesting"
           />
           <AssetSelector
-            formIndex={formIndex}
+            formIndex={paymentIndex}
             disabled={!!streamId}
           />
         </ShadowedBox>
@@ -391,15 +392,15 @@ export default function RoleFormPaymentStreamTermed({ formIndex }: { formIndex: 
             title={t('assignPayment')}
             tooltipContent={t('assignPaymentTooltip')}
           />
-          <TermSelectorMenu formIndex={formIndex} />
+          <TermSelectorMenu paymentIndex={paymentIndex} />
         </ShadowedBox>
         <ShadowedBox>
           <StartDatePicker
-            formIndex={formIndex}
+            paymentIndex={paymentIndex}
             disabled={!!streamId}
           />
           <CliffDatePicker
-            formIndex={formIndex}
+            paymentIndex={paymentIndex}
             disabled={!!streamId}
           />
         </ShadowedBox>

@@ -62,7 +62,7 @@ export default function RoleFormTabs({
   if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
     if (values.roleEditing?.isTermed) {
       return (
-        <RoleFormPaymentStreamTermed formIndex={values.roleEditing?.roleEditingPaymentIndex} />
+        <RoleFormPaymentStreamTermed paymentIndex={values.roleEditing?.roleEditingPaymentIndex} />
       );
     } else {
       return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
