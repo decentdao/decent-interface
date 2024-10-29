@@ -180,7 +180,7 @@ const isElectionEligibilityModule = async (
   const hatsModuleClient = new HatsModulesClient({
     publicClient,
   });
-  hatsModuleClient.prepare();
+  await hatsModuleClient.prepare();
 
   const possibleElectionModule = await hatsModuleClient.getModuleByInstance(eligibility);
   if (possibleElectionModule === undefined) return false;
