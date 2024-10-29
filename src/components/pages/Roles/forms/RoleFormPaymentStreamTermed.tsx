@@ -49,6 +49,62 @@ function ShadowedBox({
   );
 }
 
+function StartDatePicker({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
+  const { t } = useTranslation(['roles']);
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+
+  const selectedEndDate = values?.roleEditing?.payments?.[formIndex]?.endDate;
+  const terms = useMemo(
+    () => values?.roleEditing?.roleTerms || [],
+    [values?.roleEditing?.roleTerms],
+  );
+  const minDate = useMemo(() => {
+    const [currentTerm, nextTerm] = terms.filter(
+      term => !!term.termEndDate && term.termEndDate >= new Date(),
+    );
+    // if selected term is next term, start date can be next day after beggining of the term
+    if (!!nextTerm) {
+      if (!currentTerm.termEndDate) {
+        throw new Error('Current Term end date is required');
+      }
+      return addDays(currentTerm.termEndDate, 1);
+    }
+
+    // if selected term is current term, start date can be now
+    return new Date();
+  }, [terms]);
+
+  return (
+    <FormControl
+      my="1rem"
+      display="flex"
+      flexDir="column"
+      gap="1rem"
+    >
+      <SectionTitle
+        title={t('paymentStart')}
+        tooltipContent={t('startSubTitle')}
+      />
+      <Field name={`roleEditing.payments.[${formIndex}].startDate"`}>
+        {({ field }: FieldProps<Date, RoleFormValues>) => (
+          <LabelWrapper
+            label={t('date')}
+            labelColor="neutral-7"
+          >
+            <DatePicker
+              onChange={(date: Date) => setFieldValue(field.name, date)}
+              selectedDate={field.value}
+              minDate={minDate}
+              maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
+              disabled={disabled}
+            />
+          </LabelWrapper>
+        )}
+      </Field>
+    </FormControl>
+  );
+}
+
 function CliffDatePicker({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
@@ -342,6 +398,10 @@ export default function RoleFormPaymentStreamTermed({ formIndex }: { formIndex: 
           <TermSelectorMenu formIndex={formIndex} />
         </ShadowedBox>
         <ShadowedBox>
+          <StartDatePicker
+            formIndex={formIndex}
+            disabled={!!streamId}
+          />
           <CliffDatePicker
             formIndex={formIndex}
             disabled={!!streamId}
