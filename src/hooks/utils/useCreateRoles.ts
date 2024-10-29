@@ -989,7 +989,7 @@ export default function useCreateRoles() {
             if (!formHat.isTermed) {
               allTxs.push(...(await prepareRolePaymentUpdateTxs(formHat)));
             } else {
-              allTxs.push(...(await prepareTermedRolePaymentUpdateTxs(formHat)));
+              allTxs.push(...prepareTermedRolePaymentUpdateTxs(formHat));
             }
           }
           if (formHat.editedRole.fieldNames.includes('term')) {
