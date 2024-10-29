@@ -616,6 +616,99 @@ export default function useCreateRoles() {
     );
   }, []);
 
+  const prepareRolePaymentUpdateTxs = useCallback(
+    async (formHat: RoleHatFormValueEdited) => {
+      if (!daoAddress) {
+        throw new Error('Cannot prepare transactions without DAO address');
+      }
+      if (formHat.wearer === undefined) {
+        throw new Error('Cannot prepare transactions without wearer');
+      }
+
+      const paymentTxs = []; // Initialize an empty array to hold the transaction data
+      const cancelledStreamsOnHat = getCancelledStreamsFromFormHat(formHat);
+      if (cancelledStreamsOnHat.length) {
+        // This role edit includes stream cancels. In case there are any unclaimed funds on these streams,
+        // we need to flush them out to the original wearer.
+
+        const originalHat = getHat(formHat.id);
+        if (!originalHat) {
+          throw new Error('Cannot find original hat');
+        }
+
+        for (const stream of cancelledStreamsOnHat) {
+          if (!stream.streamId || !stream.contractAddress || !formHat.smartAddress) {
+            throw new Error('Stream data is missing for cancel stream transaction');
+          }
+
+          // First transfer hat from the original wearer to the Safe
+          paymentTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
+            }),
+            targetAddress: hatsProtocol,
+          });
+
+          // flush withdrawable streams to the original wearer
+          if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
+            const flushStreamTxCalldata = prepareFlushStreamTxs({
+              streamId: stream.streamId,
+              to: originalHat.wearerAddress,
+              smartAccount: formHat.smartAddress,
+            });
+
+            paymentTxs.push(...flushStreamTxCalldata);
+          }
+
+          // Cancel the stream
+          paymentTxs.push(...prepareCancelStreamTxs(stream.streamId));
+
+          // Finally, transfer the hat back to the correct wearer.
+          // Because a payment cancel can occur in the same role edit as a member change, we need to ensure hat is
+          // finally transferred to the correct wearer. Instead of transferring to `originalHat.wearer` here,
+          // `formHat.wearer` will represent the new wearer if the role member was changed, but will otherwise remain
+          // the original wearer since the member form field was untouched.
+          paymentTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+            }),
+            targetAddress: hatsProtocol,
+          });
+        }
+      }
+
+      const newStreamsOnHat = getNewStreamsFromFormHat(formHat);
+      if (newStreamsOnHat.length) {
+        if (!formHat.smartAddress) {
+          throw new Error('Cannot prepare transactions for edited role without smart address');
+        }
+        const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
+        const newStreamTxData = createBatchLinearStreamCreationTx(
+          newStreamsOnHat,
+          newPredictedHatSmartAccount,
+        );
+        paymentTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
+        paymentTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
+      }
+      return paymentTxs;
+    },
+    [
+      getCancelledStreamsFromFormHat,
+      getNewStreamsFromFormHat,
+      getHat,
+      daoAddress,
+      hatsProtocol,
+      prepareCancelStreamTxs,
+      prepareFlushStreamTxs,
+      predictSmartAccount,
+      createBatchLinearStreamCreationTx,
+    ],
+  );
+
   const prepareCreateRolesModificationsProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
       if (!hatsTree || !daoAddress) {
@@ -836,76 +929,9 @@ export default function useCreateRoles() {
               });
             }
           }
-          if (formHat.editedRole.fieldNames.includes('payments') && !formHat.isTermed) {
-            const cancelledStreamsOnHat = getCancelledStreamsFromFormHat(formHat);
-            if (cancelledStreamsOnHat.length) {
-              // This role edit includes stream cancels. In case there are any unclaimed funds on these streams,
-              // we need to flush them out to the original wearer.
-
-              const originalHat = getHat(formHat.id);
-              if (!originalHat) {
-                throw new Error('Cannot find original hat');
-              }
-
-              for (const stream of cancelledStreamsOnHat) {
-                if (!stream.streamId || !stream.contractAddress || !formHat.smartAddress) {
-                  throw new Error('Stream data is missing for cancel stream transaction');
-                }
-
-                // First transfer hat from the original wearer to the Safe
-                allTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsAbi,
-                    functionName: 'transferHat',
-                    args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
-                  }),
-                  targetAddress: hatsProtocol,
-                });
-
-                // flush withdrawable streams to the original wearer
-                if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
-                  const flushStreamTxCalldata = prepareFlushStreamTxs({
-                    streamId: stream.streamId,
-                    to: originalHat.wearerAddress,
-                    smartAccount: formHat.smartAddress,
-                  });
-
-                  allTxs.push(...flushStreamTxCalldata);
-                }
-
-                // Cancel the stream
-                allTxs.push(...prepareCancelStreamTxs(stream.streamId));
-
-                // Finally, transfer the hat back to the correct wearer.
-                // Because a payment cancel can occur in the same role edit as a member change, we need to ensure hat is
-                // finally transferred to the correct wearer. Instead of transferring to `originalHat.wearer` here,
-                // `formHat.wearer` will represent the new wearer if the role member was changed, but will otherwise remain
-                // the original wearer since the member form field was untouched.
-                allTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsAbi,
-                    functionName: 'transferHat',
-                    args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
-                  }),
-                  targetAddress: hatsProtocol,
-                });
-              }
-            }
-
-            const newStreamsOnHat = getNewStreamsFromFormHat(formHat);
-            if (newStreamsOnHat.length) {
-              if (!formHat.smartAddress) {
-                throw new Error(
-                  'Cannot prepare transactions for edited role without smart address',
-                );
-              }
-              const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
-              const newStreamTxData = createBatchLinearStreamCreationTx(
-                newStreamsOnHat,
-                newPredictedHatSmartAccount,
-              );
-              allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
-              allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
+          if (formHat.editedRole.fieldNames.includes('payments')) {
+            if (!formHat.isTermed) {
+              allTxs.push(...(await prepareRolePaymentUpdateTxs(formHat)));
             }
           }
           if (formHat.editedRole.fieldNames.includes('term')) {
@@ -1039,24 +1065,21 @@ export default function useCreateRoles() {
       };
     },
     [
-      createBatchLinearStreamCreationTx,
-      prepareNewTermedHatTxs,
-      daoAddress,
-      getActiveStreamsFromFormHat,
-      getCancelledStreamsFromFormHat,
-      getHat,
-      getNewStreamsFromFormHat,
-      getStreamsWithFundsToClaimFromFormHat,
-      getStreamsWithFundsToClaimFromFromHat,
-      hatsDetailsBuilder,
-      hatsProtocol,
       hatsTree,
-      predictSmartAccount,
-      prepareCancelStreamTxs,
-      prepareFlushStreamTxs,
-      prepareNewHatTxs,
+      daoAddress,
       publicClient,
+      prepareNewTermedHatTxs,
+      prepareNewHatTxs,
+      getHat,
+      hatsProtocol,
+      getStreamsWithFundsToClaimFromFormHat,
+      getActiveStreamsFromFormHat,
+      prepareFlushStreamTxs,
+      prepareCancelStreamTxs,
       uploadHatDescription,
+      hatsDetailsBuilder,
+      getStreamsWithFundsToClaimFromFromHat,
+      prepareRolePaymentUpdateTxs,
     ],
   );
 
