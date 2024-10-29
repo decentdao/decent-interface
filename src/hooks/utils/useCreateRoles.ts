@@ -591,6 +591,35 @@ export default function useCreateRoles() {
     },
     [prepareBatchLinearStreamCreation],
   );
+  const createBatchTermedLinearStreamCreationTx = useCallback(
+    (formStreams: (SablierPaymentFormValues & { recipient: Address })[]) => {
+      const preparedStreams = formStreams.map(stream => {
+        if (
+          !stream.asset ||
+          !stream.startDate ||
+          !stream.endDate ||
+          !stream.amount?.bigintValue ||
+          stream.amount.bigintValue <= 0n
+        ) {
+          throw new Error('Form Values inValid', {
+            cause: stream,
+          });
+        }
+
+        return {
+          recipient: stream.recipient,
+          startDateTs: Math.floor(stream.startDate.getTime() / 1000),
+          endDateTs: Math.ceil(stream.endDate.getTime() / 1000),
+          cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
+          totalAmount: stream.amount.bigintValue,
+          assetAddress: stream.asset.address,
+        };
+      });
+
+      return prepareBatchLinearStreamCreation(preparedStreams);
+    },
+    [prepareBatchLinearStreamCreation],
+  );
 
   const getStreamsWithFundsToClaimFromFromHat = useCallback((formHat: RoleHatFormValueEdited) => {
     return (formHat.payments ?? []).filter(
@@ -615,6 +644,33 @@ export default function useCreateRoles() {
       payment => !payment.isCancelled && !!payment.endDate && payment.endDate > new Date(),
     );
   }, []);
+
+  const getPaymentTermRecipients = useCallback(
+    (formHat: RoleHatFormValueEdited): (SablierPaymentFormValues & { recipient: Address })[] => {
+      return getNewStreamsFromFormHat(formHat).map(payment => {
+        if (formHat.roleTerms === undefined || formHat.roleTerms.length === 0) {
+          throw new Error('Cannot prepare transactions without role terms');
+        }
+        const findTerm = formHat.roleTerms.find(
+          term =>
+            term.termEndDate &&
+            payment.endDate &&
+            term.termEndDate.getTime() === payment.endDate?.getTime(),
+        );
+        if (!findTerm) {
+          throw new Error('Cannot find term for payment');
+        }
+        if (!findTerm.nominee) {
+          throw new Error('Nominee is undefined');
+        }
+        return {
+          ...payment,
+          recipient: getAddress(findTerm.nominee),
+        };
+      });
+    },
+    [getNewStreamsFromFormHat],
+  );
 
   const prepareRolePaymentUpdateTxs = useCallback(
     async (formHat: RoleHatFormValueEdited) => {
@@ -706,6 +762,36 @@ export default function useCreateRoles() {
       prepareFlushStreamTxs,
       predictSmartAccount,
       createBatchLinearStreamCreationTx,
+    ],
+  );
+
+  const prepareTermedRolePaymentUpdateTxs = useCallback(
+    (formHat: RoleHatFormValueEdited) => {
+      if (!daoAddress) {
+        throw new Error('Cannot prepare transactions without DAO address');
+      }
+      if (formHat.wearer === undefined) {
+        throw new Error('Cannot prepare transactions without wearer');
+      }
+      if (formHat.roleTerms === undefined || formHat.roleTerms.length === 0) {
+        throw new Error('Cannot prepare transactions without role terms');
+      }
+      const paymentTxs = [];
+      const newStreamsOnHat = getNewStreamsFromFormHat(formHat);
+      if (newStreamsOnHat.length) {
+        const newStreamTxData = createBatchTermedLinearStreamCreationTx(
+          getPaymentTermRecipients(formHat),
+        );
+        paymentTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
+        paymentTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
+      }
+      return paymentTxs;
+    },
+    [
+      createBatchTermedLinearStreamCreationTx,
+      daoAddress,
+      getNewStreamsFromFormHat,
+      getPaymentTermRecipients,
     ],
   );
 
@@ -932,6 +1018,8 @@ export default function useCreateRoles() {
           if (formHat.editedRole.fieldNames.includes('payments')) {
             if (!formHat.isTermed) {
               allTxs.push(...(await prepareRolePaymentUpdateTxs(formHat)));
+            } else {
+              allTxs.push(...(await prepareTermedRolePaymentUpdateTxs(formHat)));
             }
           }
           if (formHat.editedRole.fieldNames.includes('term')) {
@@ -1080,6 +1168,7 @@ export default function useCreateRoles() {
       hatsDetailsBuilder,
       getStreamsWithFundsToClaimFromFromHat,
       prepareRolePaymentUpdateTxs,
+      prepareTermedRolePaymentUpdateTxs,
     ],
   );
 
