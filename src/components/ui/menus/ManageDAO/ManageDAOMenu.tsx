@@ -16,11 +16,7 @@ import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  FractalModuleType,
-  FreezeVotingType,
-  GovernanceType,
-} from '../../../../types';
+import { FractalModuleType, FreezeVotingType, GovernanceType } from '../../../../types';
 import { ModalType } from '../../modals/ModalProvider';
 import { useDecentModal } from '../../modals/useDecentModal';
 import { OptionMenu } from '../OptionMenu';
@@ -30,7 +26,7 @@ export function ManageDAOMenu() {
     node,
     governance: { type },
     guard,
-    guardContracts
+    guardContracts,
   } = useFractal();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
@@ -145,11 +141,7 @@ export function ManageDAOMenu() {
         guard.freezeProposalPeriod,
         currentTime,
       ) &&
-      !isWithinFreezePeriod(
-        guard.freezeProposalCreatedTime,
-        guard.freezePeriod,
-        currentTime,
-      ) &&
+      !isWithinFreezePeriod(guard.freezeProposalCreatedTime, guard.freezePeriod, currentTime) &&
       guard.userHasVotes
     ) {
       if (type === GovernanceType.MULTISIG) {
@@ -160,11 +152,7 @@ export function ManageDAOMenu() {
     } else if (
       guard.freezeProposalCreatedTime !== null &&
       guard.freezePeriod !== null &&
-      isWithinFreezePeriod(
-        guard.freezeProposalCreatedTime,
-        guard.freezePeriod,
-        currentTime,
-      ) &&
+      isWithinFreezePeriod(guard.freezeProposalCreatedTime, guard.freezePeriod, currentTime) &&
       guard.isFrozen &&
       guard.userHasVotes
     ) {

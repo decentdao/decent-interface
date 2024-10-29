@@ -14,9 +14,7 @@ import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
  * Info card used on the DAO homepage.
  */
 export function DAOInfoCard() {
-  const {
-    node,
-  } = useFractal();
+  const { node } = useFractal();
 
   const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
@@ -75,8 +73,7 @@ export function DAOInfoCard() {
               </Link>
             )}
           </Flex>
-          <ManageDAOMenu
-            />
+          <ManageDAOMenu />
         </Flex>
         {/* DAO NAME AND ACTIONS */}
 
