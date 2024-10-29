@@ -12,13 +12,15 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CaretDown, CheckCircle } from '@phosphor-icons/react';
-import { Field, FieldInputProps, FieldProps, FormikErrors, useFormikContext } from 'formik';
+import { FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../types';
 import { RoleFormValues } from '../../../types/roles';
 import { formatCoin, formatUSD } from '../../../utils';
+import { useTypesafeFormikContext } from '../../../utils/TypesafeForm';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
@@ -26,7 +28,7 @@ import LabelWrapper from '../../ui/forms/LabelWrapper';
 import Divider from '../../ui/utils/Divider';
 import { EaseOutComponent } from '../../ui/utils/EaseOutComponent';
 
-function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; formIndex: number }) {
+function AssetsList({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation('roles');
   const {
     treasury: { assetsFungible },
@@ -36,7 +38,9 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
       parseFloat(asset.balance) > 0 &&
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { values, setFieldValue },
+  } = useTypesafeFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
   if (fungibleAssetsWithBalance.length === 0) {
@@ -72,12 +76,11 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
             justifyContent="space-between"
             w="full"
             onClick={() => {
-              setFieldValue(field.name, {
-                address: asset.tokenAddress,
+              setFieldValue(`roleEditing.payments.${formIndex}.asset`, {
+                name: asset.name,
+                address: getAddress(asset.tokenAddress),
                 symbol: asset.symbol,
-                logo: asset.logo,
-                balance: asset.balance,
-                balanceFormatted: asset.balanceFormatted,
+                logo: asset.logo ?? '',
                 decimals: asset.decimals,
               });
             }}
@@ -143,7 +146,10 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
 
 export function AssetSelector({ formIndex, disabled }: { formIndex: number; disabled?: boolean }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { values, setFieldValue },
+    Field,
+  } = useTypesafeFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
   return (
@@ -152,8 +158,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         my="0.5rem"
         isDisabled={disabled}
       >
-        <Field name={`roleEditing.payments[${formIndex}].asset`}>
-          {({ field }: FieldProps<string, RoleFormValues>) => (
+        <Field name={`roleEditing.payments.${formIndex}.asset`}>
+          {() => (
             <Menu
               placement="bottom-end"
               offset={[0, 8]}
@@ -233,10 +239,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                         padding="0.25rem"
                         mt="-1rem"
                       >
-                        <AssetsList
-                          field={field}
-                          formIndex={formIndex}
-                        />
+                        <AssetsList formIndex={formIndex} />
                       </Flex>
                     </DraggableDrawer>
                   </Show>
@@ -266,10 +269,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                           mx="-0.25rem"
                           width="calc(100% + 0.5rem)"
                         />
-                        <AssetsList
-                          field={field}
-                          formIndex={formIndex}
-                        />
+                        <AssetsList formIndex={formIndex} />
                       </EaseOutComponent>
                     </MenuList>
                   </Show>
@@ -283,12 +283,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         my="1rem"
         isDisabled={disabled}
       >
-        <Field name={`roleEditing.payments[${formIndex}].amount`}>
-          {({
-            field,
-            meta,
-            form: { setFieldTouched },
-          }: FieldProps<BigIntValuePair, RoleFormValues>) => {
+        <Field name={`roleEditing.payments.${formIndex}.amount`}>
+          {({ field, meta, form: { setFieldTouched } }) => {
             const paymentAmountBigIntError = meta.error as FormikErrors<BigIntValuePair>;
             const paymentAmountBigIntTouched = meta.touched;
             const inputDisabled = !values?.roleEditing?.payments?.[formIndex]?.asset || disabled;
@@ -306,11 +302,11 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   value={field.value?.bigintValue}
                   parentFormikValue={values?.roleEditing?.payments?.[formIndex]?.amount}
                   onChange={valuePair => {
-                    setFieldValue(field.name, valuePair, true);
+                    setFieldValue(`roleEditing.payments.${formIndex}.amount`, valuePair, true);
                   }}
                   decimalPlaces={values?.roleEditing?.payments?.[formIndex]?.asset?.decimals}
                   onBlur={() => {
-                    setFieldTouched(field.name, true);
+                    setFieldTouched(`roleEditing.payments.${formIndex}.amount`, true);
                   }}
                   cursor={disabled ? 'not-allowed' : 'pointer'}
                   placeholder="0"

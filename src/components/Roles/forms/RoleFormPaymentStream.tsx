@@ -1,13 +1,13 @@
 import { Alert, Box, Button, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
 import { ArrowRight, Info, Trash } from '@phosphor-icons/react';
 import { addDays, addMinutes } from 'date-fns';
-import { FormikErrors, useFormikContext } from 'formik';
+import { FormikErrors } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, isDevMode } from '../../../constants/common';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
-import { BigIntValuePair } from '../../../types';
 import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
+import { useTypesafeFormikContext } from '../../../utils/TypesafeForm';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { DecentDatePicker } from '../../ui/utils/DecentDatePicker';
@@ -16,7 +16,9 @@ import { SectionTitle } from './RoleFormSectionTitle';
 
 function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { values, setFieldValue },
+  } = useTypesafeFormikContext<RoleFormValues>();
   const payment = values?.roleEditing?.payments?.[formIndex];
 
   // Show cliff date picker if both start and end dates are set and if there is at least a day between them
@@ -29,7 +31,7 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
     const startDate = type === 'startDate' ? date : payment.startDate;
     const endDate = type === 'endDate' ? date : payment.endDate;
 
-    setFieldValue(`roleEditing.payments[${formIndex}]`, {
+    setFieldValue(`roleEditing.payments.${formIndex}`, {
       ...payment,
       startDate,
       endDate,
@@ -38,7 +40,7 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
     // If this date change interferes with the cliff date, reset the cliff date
     const cliffDate = payment.cliffDate;
     if (cliffDate && ((startDate && startDate >= cliffDate) || (endDate && endDate <= cliffDate))) {
-      setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, undefined);
+      setFieldValue(`roleEditing.payments.${formIndex}.cliffDate`, undefined);
     }
   };
 
@@ -90,7 +92,7 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
             minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
             maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
             onChange={(date: Date) => {
-              setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
+              setFieldValue(`roleEditing.payments.${formIndex}.cliffDate`, date);
             }}
             disabled={disabled}
           />
@@ -102,7 +104,9 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
 
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { values, errors, setFieldValue },
+  } = useTypesafeFormikContext<RoleFormValues>();
   const { getPayment } = useRolesStore();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
     ?.payments;
@@ -205,14 +209,16 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
             {isDevMode() && (
               <Button
                 onClick={() => {
+                  if (payment === undefined) {
+                    return;
+                  }
                   const nowDate = new Date();
-                  setFieldValue(`roleEditing.payments[${formIndex}]`, {
+                  setFieldValue(`roleEditing.payments.${formIndex}`, {
                     ...payment,
                     amount: {
                       value: '100',
                       bigintValue: 100000000000000000000n,
-                    } as BigIntValuePair,
-                    decimals: 18,
+                    },
                     startDate: addMinutes(nowDate, 1),
                     endDate: addMinutes(nowDate, 10),
                   });

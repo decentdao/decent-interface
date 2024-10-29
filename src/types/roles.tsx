@@ -25,7 +25,6 @@ export interface DecentTree {
   topHat: DecentTopHat;
   adminHat: DecentAdminHat;
   roleHats: DecentRoleHat[];
-  roleHatsTotalCount: number;
 }
 
 export interface SablierPayment {
@@ -143,13 +142,13 @@ export interface RoleHatFormValueEdited extends RoleHatFormValue {
   editedRole: EditedRole;
 }
 
-export interface RoleFormValues {
+export type RoleFormValues = {
   proposalMetadata: CreateProposalMetadata;
   hats: RoleHatFormValue[];
   roleEditing?: RoleHatFormValue;
   customNonce?: number;
   actions: SendAssetsData[];
-}
+};
 
 export type PreparedNewStreamData = {
   recipient: Address;

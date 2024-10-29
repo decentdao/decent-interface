@@ -1,7 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
-import { Formik } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -24,6 +23,7 @@ import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues } from '../../../../../types/roles';
+import { makeTypesafeForm } from '../../../../../utils/TypesafeForm';
 
 function RolesEdit() {
   useEffect(() => {
@@ -95,8 +95,10 @@ function RolesEdit() {
   const hatsTreeLoading = hatsTree === undefined;
   const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
 
+  const { Formik } = makeTypesafeForm<RoleFormValues>();
+
   return (
-    <Formik<RoleFormValues>
+    <Formik
       initialValues={initialValues}
       enableReinitialize
       validationSchema={rolesSchema}
@@ -162,7 +164,7 @@ function RolesEdit() {
                 ),
                 onClick: async () => {
                   const newId = toHex(getRandomBytes(), { size: 32 });
-                  setFieldValue('roleEditing', { id: newId });
+                  setFieldValue('roleEditing', { id: newId, canCreateProposals: false });
                   showRoleEditDetails(newId);
                 },
               }}

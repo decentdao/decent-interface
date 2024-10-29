@@ -1,6 +1,5 @@
 import { Box, Button } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
-import { FieldArray, useFormikContext } from 'formik';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,13 +8,17 @@ import {
   paymentSorterByWithdrawAmount,
 } from '../../../store/roles/rolesStoreUtils';
 import { RoleFormValues, SablierPaymentFormValues } from '../../../types/roles';
+import { useTypesafeFormikContext } from '../../../utils/TypesafeForm';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue, validateForm } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { values, setFieldValue, validateForm },
+    FieldArray,
+  } = useTypesafeFormikContext<RoleFormValues>();
   const cancelModal = useDecentModal(ModalType.NONE);
   const payments = values.roleEditing?.payments;
 

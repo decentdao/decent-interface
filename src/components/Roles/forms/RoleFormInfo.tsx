@@ -1,5 +1,4 @@
 import { Box, Flex, FormControl, Switch, Text } from '@chakra-ui/react';
-import { Field, FieldProps, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
@@ -9,6 +8,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { GovernanceType } from '../../../types';
 import { RoleFormValues } from '../../../types/roles';
+import { useTypesafeFormikContext } from '../../../utils/TypesafeForm';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
@@ -24,7 +24,10 @@ export default function RoleFormInfo() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { setFieldValue, values },
+    Field,
+  } = useTypesafeFormikContext<RoleFormValues>();
 
   useEffect(() => {
     if (isValidWearerAddress) {
@@ -51,14 +54,14 @@ export default function RoleFormInfo() {
       >
         <FormControl>
           <Field name="roleEditing.name">
-            {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+            {({ field, form: { setFieldTouched }, meta }) => (
               <InputComponent
-                value={field.value}
+                value={field.value || ''}
                 onChange={e => {
-                  setFieldValue(field.name, e.target.value);
+                  setFieldValue('roleEditing.wearer', e.target.value);
                 }}
                 onBlur={() => {
-                  setFieldTouched(field.name, true);
+                  setFieldTouched('roleEditing.wearer', true);
                 }}
                 testId="role-name"
                 placeholder={t('roleName')}
@@ -77,11 +80,11 @@ export default function RoleFormInfo() {
         </FormControl>
         <FormControl>
           <Field name="roleEditing.description">
-            {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+            {({ field, form: { setFieldTouched }, meta }) => (
               <TextareaComponent
-                value={field.value}
+                value={field.value || ''}
                 onChange={e => {
-                  setFieldValue(field.name, e.target.value);
+                  setFieldValue('roleEditing.description', e.target.value);
                 }}
                 isRequired
                 gridContainerProps={{
@@ -93,7 +96,7 @@ export default function RoleFormInfo() {
                 textAreaProps={{
                   h: '12rem',
                   onBlur: () => {
-                    setFieldTouched(field.name, true);
+                    setFieldTouched('roleEditing.description', true);
                   },
                 }}
                 label={t('roleDescription')}
@@ -104,7 +107,7 @@ export default function RoleFormInfo() {
         </FormControl>
         <FormControl>
           <Field name="roleEditing.wearer">
-            {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+            {({ field, form: { setFieldTouched }, meta }) => (
               <LabelWrapper
                 label={t('member')}
                 errorMessage={meta.touched && meta.error ? meta.error : undefined}
@@ -114,12 +117,12 @@ export default function RoleFormInfo() {
                 <AddressInput
                   value={displayName ?? field.value}
                   onBlur={() => {
-                    setFieldTouched(field.name, true);
+                    setFieldTouched('roleEditing.wearer', true);
                   }}
                   onChange={e => {
                     const inputWearer = e.target.value;
                     setRoleWearerString(inputWearer);
-                    setFieldValue(field.name, inputWearer);
+                    setFieldValue('roleEditing.wearer', inputWearer);
                   }}
                 />
               </LabelWrapper>
@@ -131,7 +134,7 @@ export default function RoleFormInfo() {
       {type !== GovernanceType.MULTISIG && !!hatsTree && !!hatsTreeId && (
         <FormControl mt={4}>
           <Field name="roleEditing.canCreateProposals">
-            {({ field }: FieldProps<string, RoleFormValues>) => (
+            {() => (
               <Flex
                 justifyContent="space-between"
                 alignItems="center"
@@ -145,7 +148,10 @@ export default function RoleFormInfo() {
                   size="md"
                   variant="secondary"
                   onChange={() =>
-                    setFieldValue(field.name, !values.roleEditing?.canCreateProposals)
+                    setFieldValue(
+                      'roleEditing.canCreateProposals',
+                      !values.roleEditing?.canCreateProposals,
+                    )
                   }
                   isChecked={values.roleEditing?.canCreateProposals}
                   isDisabled={!values.roleEditing}

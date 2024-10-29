@@ -12,7 +12,7 @@ import {
   isHex,
   parseAbiParameters,
 } from 'viem';
-import { usePublicClient, useWalletClient } from 'wagmi';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
@@ -61,6 +61,7 @@ export default function useSubmitProposal() {
   const publicClient = usePublicClient();
 
   const { getVotingStrategies } = useVotingStrategiesAddresses();
+  const { address: userAddress } = useAccount();
 
   const {
     node: { safe, fractalModules },
@@ -72,9 +73,6 @@ export default function useSubmitProposal() {
       linearVotingErc721WithHatsWhitelistingAddress,
     },
     action,
-    readOnly: {
-      user: { address },
-    },
   } = useFractal();
   const safeAPI = useSafeAPI();
 
@@ -303,7 +301,7 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData || !safeAPI || !publicClient || !address) {
+      if (!proposalData || !safeAPI || !publicClient || !userAddress) {
         return;
       }
 
@@ -330,7 +328,7 @@ export default function useSubmitProposal() {
               client: publicClient,
               address: votingStrategy.address,
             });
-            const isProposer = await votingContract.read.isProposer([address]);
+            const isProposer = await votingContract.read.isProposer([userAddress]);
             return isProposer;
           });
 
@@ -396,7 +394,7 @@ export default function useSubmitProposal() {
       submitAzoriusProposal,
       submitMultisigProposal,
       publicClient,
-      address,
+      userAddress,
     ],
   );
 

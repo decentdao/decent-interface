@@ -1,5 +1,5 @@
-import { Hat, Tree } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, getContract } from 'viem';
+import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
+import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import LinearERC20VotingWithHatsProposalCreationAbi from '../../assets/abi/LinearERC20VotingWithHatsProposalCreation';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
@@ -205,15 +205,22 @@ export const sanitize = async (
     canCreateProposals: false, // @dev - we don't care about it since adminHat is not displayed
   };
 
-  const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
-
-  const rawRoleHatsPruned = rawRoleHats
-    .filter(rawHat => rawHat.status === true)
-    .filter(h => h.wearers !== undefined && h.wearers.length === 1);
-
   let roleHats: DecentRoleHat[] = [];
 
-  for (const rawHat of rawRoleHatsPruned) {
+  for (const rawHat of hatsTree.hats) {
+    if (
+      !appearsExactlyNumberOfTimes(rawHat.prettyId, '.', 2) ||
+      rawHat.status !== true ||
+      !rawHat.wearers ||
+      rawHat.wearers.length !== 1
+    ) {
+      // Ignore hats that do not
+      // - exist as a child of the Admin Hat
+      // - are not active
+      // - have exactly one wearer
+      continue;
+    }
+
     const tokenId = BigInt(rawHat.id);
     const hatMetadata = getHatMetadata(rawHat);
     const roleHatSmartAddress = await predictAccountAddress({
@@ -235,7 +242,7 @@ export const sanitize = async (
       prettyId: rawHat.prettyId ?? '',
       name: hatMetadata.name,
       description: hatMetadata.description,
-      wearerAddress: rawHat.wearers![0].id,
+      wearerAddress: getAddress(rawHat.wearers[0].id),
       smartAddress: roleHatSmartAddress,
       canCreateProposals,
     });
@@ -245,23 +252,9 @@ export const sanitize = async (
     topHat,
     adminHat,
     roleHats,
-    roleHatsTotalCount: rawRoleHats.length,
   };
 
   return decentTree;
-};
-
-export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {
-  // 1 byte = 8 bits = 2 string characters
-  const adminLevelBinary = adminHatId.slice(0, 14); // Top Admin ID 1 byte 0x + 4 bytes (tree ID) + next **16 bits** (admin level ID)
-
-  // Each next level is next **16 bits**
-  // Since we're operating only with direct child of top level admin - we don't care about nested levels
-  // @dev At least for now?
-  const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
-
-  // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
-  return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
 };
 
 export const paymentSorterByActiveStatus = (
