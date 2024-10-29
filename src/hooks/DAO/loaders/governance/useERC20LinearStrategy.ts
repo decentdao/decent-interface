@@ -1,6 +1,6 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useMemo } from 'react';
-import { getContract } from 'viem';
+import { erc20Abi, formatUnits, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -38,13 +38,28 @@ export const useERC20LinearStrategy = () => {
       address: moduleAzoriusAddress,
       client: publicClient,
     });
-    const [votingPeriodBlocks, quorumNumerator, quorumDenominator, timeLockPeriod] =
-      await Promise.all([
-        ozLinearVotingContract.read.votingPeriod(),
-        ozLinearVotingContract.read.quorumNumerator(),
-        ozLinearVotingContract.read.QUORUM_DENOMINATOR(),
-        azoriusContract.read.timelockPeriod(),
-      ]);
+    const [
+      governanceToken,
+      votingPeriodBlocks,
+      quorumNumerator,
+      quorumDenominator,
+      timeLockPeriod,
+      proposerThreshold,
+    ] = await Promise.all([
+      ozLinearVotingContract.read.governanceToken(),
+      ozLinearVotingContract.read.votingPeriod(),
+      ozLinearVotingContract.read.quorumNumerator(),
+      ozLinearVotingContract.read.QUORUM_DENOMINATOR(),
+      azoriusContract.read.timelockPeriod(),
+      ozLinearVotingContract.read.requiredProposerWeight(),
+    ]);
+
+    const governanceTokenContract = getContract({
+      abi: erc20Abi,
+      address: governanceToken,
+      client: publicClient,
+    });
+    const govTokenDecimals = await governanceTokenContract.read.decimals();
 
     const quorumPercentage = (quorumNumerator * 100n) / quorumDenominator;
     const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, publicClient);
@@ -53,6 +68,10 @@ export const useERC20LinearStrategy = () => {
       votingPeriod: {
         value: BigInt(votingPeriodValue),
         formatted: getTimeDuration(votingPeriodValue),
+      },
+      proposerThreshold: {
+        value: proposerThreshold,
+        formatted: formatUnits(proposerThreshold, govTokenDecimals),
       },
       quorumPercentage: {
         value: quorumPercentage,

@@ -280,6 +280,7 @@ export interface VotingStrategy<Type = BIFormattedPair> {
   quorumPercentage?: Type;
   quorumThreshold?: Type;
   timeLockPeriod?: Type;
+  proposerThreshold?: Type;
 }
 
 export enum GovernanceType {
@@ -291,10 +292,10 @@ export enum GovernanceType {
 }
 
 export enum VotingStrategyType {
-  LINEAR_ERC20 = 'LINEAR_ERC20',
-  LINEAR_ERC20_HATS_WHITELISTING = 'LINEAR_ERC20_HATS_WHITELISTING',
-  LINEAR_ERC721 = 'LINEAR_ERC721',
-  LINEAR_ERC721_HATS_WHITELISTING = 'LINEAR_ERC721_HATS_WHITELISTING',
+  LINEAR_ERC20 = 'labelLinearErc20',
+  LINEAR_ERC20_HATS_WHITELISTING = 'labelLinearErc20WithWhitelisting',
+  LINEAR_ERC721 = 'labelLinearErc721',
+  LINEAR_ERC721_HATS_WHITELISTING = 'labelLinearErc721WithWhitelisting',
 }
 
 export interface NodeHierarchy {

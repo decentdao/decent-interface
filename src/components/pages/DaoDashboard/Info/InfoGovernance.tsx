@@ -11,7 +11,7 @@ import { AzoriusGovernance, FreezeGuardType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
-export function InfoGovernance() {
+export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
   const { t } = useTranslation(['dashboard', 'daoCreate', 'common']);
   const {
     node: { daoAddress },
@@ -94,14 +94,16 @@ export function InfoGovernance() {
 
   return (
     <Box data-testid="dashboard-daoGovernance">
-      <Flex
-        alignItems="center"
-        gap="0.4rem"
-        mb="0.5rem"
-      >
-        <Bank size="1.5rem" />
-        <Text textStyle="display-lg">{t('titleGovernance')}</Text>
-      </Flex>
+      {showTitle && (
+        <Flex
+          alignItems="center"
+          gap="0.4rem"
+          mb="0.5rem"
+        >
+          <Bank size="1.5rem" />
+          <Text textStyle="display-lg">{t('titleGovernance')}</Text>
+        </Flex>
+      )}
 
       <Flex
         alignItems="center"

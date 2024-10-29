@@ -1,14 +1,17 @@
 import { Flex, Hide, Show } from '@chakra-ui/react';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { Card } from '../../ui/cards/Card';
+import { GovernanceType } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 import { GeneralSettingsContainer } from './components/GeneralSettingsContainer';
 import GovernanceContainer from './components/GovernanceContainer';
+import MobileSettingsLinks from './components/MobileSettingsLinks';
 import { ModulesContainer } from './components/ModulesContainer';
+import PermissionsContainer from './components/PermissionsContainer';
 
 export function DAOSettingsContent() {
   const {
     node: { safe },
+    governance: { type },
   } = useFractal();
 
   if (!safe) {
@@ -27,7 +30,7 @@ export function DAOSettingsContent() {
   return (
     <>
       <Show below="md">
-        <Card>List of settings for mobile</Card>
+        <MobileSettingsLinks />
       </Show>
       <Hide below="md">
         <Flex
@@ -36,6 +39,7 @@ export function DAOSettingsContent() {
         >
           <GeneralSettingsContainer />
           <GovernanceContainer />
+          {type !== GovernanceType.MULTISIG && <PermissionsContainer />}
           <ModulesContainer />
         </Flex>
       </Hide>
