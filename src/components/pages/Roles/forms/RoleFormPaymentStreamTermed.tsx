@@ -12,12 +12,11 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Calendar, CaretDown, CheckCircle } from '@phosphor-icons/react';
-import { addDays, addMinutes, format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CARD_SHADOW, DETAILS_BOX_SHADOW, isDevMode } from '../../../../constants/common';
-import { BigIntValuePair } from '../../../../types';
+import { CARD_SHADOW, DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { DatePicker } from '../../../ui/forms/DatePicker';
@@ -367,10 +366,7 @@ export default function RoleFormPaymentStreamTermed({ formIndex }: { formIndex: 
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
     ?.payments;
-  const payment = useMemo(
-    () => values.roleEditing?.payments?.[formIndex],
-    [formIndex, values.roleEditing?.payments],
-  );
+
   const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
 
   return (
@@ -420,25 +416,6 @@ export default function RoleFormPaymentStreamTermed({ formIndex }: { formIndex: 
             }}
           >
             {t('save')}
-          </Button>
-        )}
-        {isDevMode() && (
-          <Button
-            onClick={() => {
-              const nowDate = new Date();
-              setFieldValue(`roleEditing.payments[${formIndex}]`, {
-                ...payment,
-                amount: {
-                  value: '100',
-                  bigintValue: 100000000000000000000n,
-                } as BigIntValuePair,
-                decimals: 18,
-                startDate: addMinutes(nowDate, 1),
-                endDate: addMinutes(nowDate, 10),
-              });
-            }}
-          >
-            Ze stream ends in 10!
           </Button>
         )}
       </Flex>
