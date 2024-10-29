@@ -89,6 +89,17 @@ export function useMasterCopy() {
           if (!masterCopyAddress) {
             return [zeroAddress, 'No master copy address'] as const;
           }
+
+          // @todo - seems like we can uncomment this buddy and enjoy master copy caching ^_^
+          // Requires testing though
+          // setValue(
+          //   {
+          //     cacheName: CacheKeys.MASTER_COPY,
+          //     chainId: chain.id,
+          //     proxyAddress,
+          //   },
+          //   masterCopyAddress,
+          // );
           return [masterCopyAddress, null] as const;
         })
         .catch(() => {
