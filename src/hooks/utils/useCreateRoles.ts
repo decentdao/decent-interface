@@ -49,7 +49,7 @@ import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
+import { predictAccountAddress, predictHatId } from './../../store/roles/rolesStoreUtils';
 
 export default function useCreateRoles() {
   const {
@@ -694,6 +694,7 @@ export default function useCreateRoles() {
       //       - if no: allTxs.push(deploy new strategy with params based on existing strategy)
       //     - allTxs.push(whitelist or un-whitelist)
 
+      let newHatsCount = 0;
       for (let index = 0; index < modifiedHats.length; index++) {
         const formHat = modifiedHats[index];
         if (
@@ -708,7 +709,12 @@ export default function useCreateRoles() {
 
         if (formHat.editedRole.status === EditBadgeStatus.New) {
           allTxs.push(...(await prepareNewHatTxs(formHat)));
+          newHatsCount++;
           if (formHat.canCreateProposals) {
+            const newHatId = predictHatId({
+              adminHatId: hatsTree.adminHat.id,
+              hatsCount: hatsTree.roleHats.length + newHatsCount,
+            });
             whitelistingPermissionAddedHats.push(newHatId);
           }
         } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
