@@ -164,7 +164,7 @@ function RolesEdit() {
                 ),
                 onClick: async () => {
                   const newId = toHex(getRandomBytes(), { size: 32 });
-                  setFieldValue('roleEditing', { id: newId });
+                  setFieldValue('roleEditing', { id: newId, canCreateProposals: false });
                   showRoleEditDetails(newId);
                 },
               }}
