@@ -1,10 +1,10 @@
 import { Box, FormControl } from '@chakra-ui/react';
-import { Field, FieldProps, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
+import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -17,7 +17,10 @@ export default function RoleFormInfo() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { setFieldValue, values },
+    Field,
+  } = useTypesafeFormikContext<RoleFormValues>();
 
   useEffect(() => {
     if (isValidWearerAddress) {
@@ -43,14 +46,14 @@ export default function RoleFormInfo() {
     >
       <FormControl>
         <Field name="roleEditing.name">
-          {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+          {({ field, form: { setFieldTouched }, meta }) => (
             <InputComponent
-              value={field.value}
+              value={field.value ?? ''}
               onChange={e => {
-                setFieldValue(field.name, e.target.value);
+                setFieldValue('roleEditing.name', e.target.value);
               }}
               onBlur={() => {
-                setFieldTouched(field.name, true);
+                setFieldTouched('roleEditing.name', true);
               }}
               testId="role-name"
               placeholder={t('roleName')}
@@ -69,11 +72,11 @@ export default function RoleFormInfo() {
       </FormControl>
       <FormControl>
         <Field name="roleEditing.description">
-          {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+          {({ field, form: { setFieldTouched }, meta }) => (
             <TextareaComponent
-              value={field.value}
+              value={field.value ?? ''}
               onChange={e => {
-                setFieldValue(field.name, e.target.value);
+                setFieldValue('roleEditing.description', e.target.value);
               }}
               isRequired
               gridContainerProps={{
@@ -85,7 +88,7 @@ export default function RoleFormInfo() {
               textAreaProps={{
                 h: '12rem',
                 onBlur: () => {
-                  setFieldTouched(field.name, true);
+                  setFieldTouched('roleEditing.description', true);
                 },
               }}
               label={t('roleDescription')}
@@ -96,7 +99,7 @@ export default function RoleFormInfo() {
       </FormControl>
       <FormControl>
         <Field name="roleEditing.wearer">
-          {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+          {({ field, form: { setFieldTouched }, meta }) => (
             <LabelWrapper
               label={t('member')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
@@ -106,12 +109,12 @@ export default function RoleFormInfo() {
               <AddressInput
                 value={displayName ?? field.value}
                 onBlur={() => {
-                  setFieldTouched(field.name, true);
+                  setFieldTouched('roleEditing.wearer', true);
                 }}
                 onChange={e => {
                   const inputWearer = e.target.value;
                   setRoleWearerString(inputWearer);
-                  setFieldValue(field.name, inputWearer);
+                  setFieldValue('roleEditing.wearer', inputWearer);
                 }}
               />
             </LabelWrapper>
