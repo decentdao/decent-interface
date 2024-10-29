@@ -1,8 +1,8 @@
-import { Box, Flex, Show, Text } from '@chakra-ui/react';
+import { Box, Flex, Show, Text, useBreakpointValue } from '@chakra-ui/react';
 import { Bank, CaretRight, CheckSquare, GearFine, Stack } from '@phosphor-icons/react';
 import { PropsWithChildren, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useMatch } from 'react-router-dom';
+import { Link, useLocation, useMatch } from 'react-router-dom';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -18,7 +18,13 @@ function SettingsLink({
   children,
   showDivider = true,
 }: PropsWithChildren<{ path: string; title: string; leftIcon: ReactNode; showDivider?: boolean }>) {
-  const isActive = useMatch(path.substring(0, path.indexOf('?')));
+  const pathWithoutSearch = path.substring(0, path.indexOf('?'));
+  const isCurrentPath = useMatch(pathWithoutSearch);
+  const location = useLocation();
+  const paths = location.pathname.split('/');
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const isIndexSettingsPage = paths.length === 2;
+  
   return (
     <Box
       as={Link}
@@ -26,7 +32,7 @@ function SettingsLink({
       borderRadius={{ md: '0.5rem' }}
       transition="all ease-out 300ms"
       _hover={{ bgColor: 'neutral-3' }}
-      bg={isActive ? 'white-alpha-04' : 'transparent'}
+      bg={(isCurrentPath || (!isMobile && isIndexSettingsPage))? 'white-alpha-04' : 'transparent'}
       p={{ base: 0, md: '0.5rem' }}
     >
       <Flex

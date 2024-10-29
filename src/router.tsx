@@ -6,7 +6,7 @@ import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
 import DaoCreatePage from './pages/create';
-import DaoDashboardPage from './pages/daos/[daoAddress]/DaoDashboardPage';
+import DaoDashboardPage from './pages/daos/[daoAddress]';
 import ModifyGovernancePage from './pages/daos/[daoAddress]/edit/governance';
 import HierarchyPage from './pages/daos/[daoAddress]/hierarchy';
 import SubDaoCreate from './pages/daos/[daoAddress]/new';

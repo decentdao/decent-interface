@@ -37,7 +37,7 @@ export default function SafePermissionsSettingsPage() {
         flexDirection="column"
         gap={{ base: 4, md: 6 }}
         width="100%"
-        borderWidth={{ base: 'unset', md: '1px' }}
+        borderWidth={{ base: '0px', md: '1px' }}
         borderColor="neutral-3"
         borderRadius="0.75rem"
         padding={{ base: 0, md: 6 }}
