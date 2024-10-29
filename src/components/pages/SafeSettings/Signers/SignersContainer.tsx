@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { useFractal } from '../../../../../providers/App/AppProvider';
-import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
-import { ModalType } from '../../../../ui/modals/ModalProvider';
-import { useDecentModal } from '../../../../ui/modals/useDecentModal';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { DisplayAddress } from '../../../ui/links/DisplayAddress';
+import { ModalType } from '../../../ui/modals/ModalProvider';
+import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { SettingsSection } from '../SettingsSection';
 
 function Signer({
@@ -123,13 +123,6 @@ export function SignersContainer() {
           </Flex>
         )
       }
-      descriptionHeader={
-        <Flex justifyContent="space-between">
-          <Text>{t('signersRequired', { ns: 'common' })}</Text>
-          <Text>{`${safe?.threshold}/${safe?.owners.length}`}</Text>
-        </Flex>
-      }
-      descriptionContent={t('signersDescription')}
     >
       {signers &&
         signers.map(signer => (

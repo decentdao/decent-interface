@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,10 +11,10 @@ import {
 } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
-import ModalTooltip from '../../ui/modals/ModalTooltip';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
 import { RolePaymentDetails } from './RolePaymentDetails';
+import { RoleProposalPermissionBadge } from './RolesDetailsDrawer';
 import { RoleDetailsDrawerProps } from './types';
 
 export default function RolesDetailsDrawerMobile({
@@ -109,24 +109,7 @@ export default function RolesDetailsDrawerMobile({
           >
             {t('permissions')}
           </Text>
-          <ModalTooltip
-            containerRef={permissionsContainerRef}
-            label={t('permissionsProposalsTooltip')}
-          >
-            <Badge
-              color="celery-0"
-              bgColor="celery--6"
-              textTransform="unset"
-              textStyle="body-base"
-              fontSize="1rem"
-              lineHeight="1.5rem"
-              fontWeight="normal"
-              borderRadius="0.25rem"
-              px="0.5rem"
-            >
-              {t('permissionsProposals')}
-            </Badge>
-          </ModalTooltip>
+          <RoleProposalPermissionBadge containerRef={permissionsContainerRef} />
         </Box>
       )}
       <Box

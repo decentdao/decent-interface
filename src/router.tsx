@@ -1,9 +1,5 @@
 import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
-import DAOGeneralSettingsPage from './components/pages/DaoSettings/DAOGeneralSettingsPage';
-import DAOGovernanceSettingsPage from './components/pages/DaoSettings/DAOGovernanceSettingsPage';
-import DAOModulesSettingsPage from './components/pages/DaoSettings/DAOModulesSettingsPage';
-import DAOPermissionsSettingsPage from './components/pages/DaoSettings/DAOPermissionsSettingsPage';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
@@ -11,7 +7,6 @@ import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
 import DaoCreatePage from './pages/create';
 import DaoDashboardPage from './pages/daos/[daoAddress]/DaoDashboardPage';
-import { SettingsPage } from './pages/daos/[daoAddress]/SettingsPage';
 import ModifyGovernancePage from './pages/daos/[daoAddress]/edit/governance';
 import HierarchyPage from './pages/daos/[daoAddress]/hierarchy';
 import SubDaoCreate from './pages/daos/[daoAddress]/new';
@@ -26,6 +21,11 @@ import RoleDetails from './pages/daos/[daoAddress]/roles/details';
 import RolesEdit from './pages/daos/[daoAddress]/roles/edit';
 import RoleEditDetails from './pages/daos/[daoAddress]/roles/edit/details';
 import EditProposalSummary from './pages/daos/[daoAddress]/roles/edit/summary';
+import SafeSettingsPage from './pages/daos/[daoAddress]/settings';
+import SafeGeneralSettingsPage from './pages/daos/[daoAddress]/settings/general';
+import SafeGovernanceSettingsPage from './pages/daos/[daoAddress]/settings/governance';
+import SafeModulesSettingsPage from './pages/daos/[daoAddress]/settings/modules-and-guard';
+import SafePermissionsSettingsPage from './pages/daos/[daoAddress]/settings/permissions';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 import HomePage from './pages/home/HomePage';
 
@@ -181,26 +181,27 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.settings.path,
+              element: <SafeSettingsPage />,
               children: [
                 {
                   index: true,
-                  element: <SettingsPage />,
+                  element: <SafeGeneralSettingsPage />,
                 },
                 {
-                  path: 'general',
-                  element: <DAOGeneralSettingsPage />,
+                  path: DAO_ROUTES.settingsGeneral.path,
+                  element: <SafeGeneralSettingsPage />,
                 },
                 {
-                  path: 'governance',
-                  element: <DAOGovernanceSettingsPage />,
+                  path: DAO_ROUTES.settingsGovernance.path,
+                  element: <SafeGovernanceSettingsPage />,
                 },
                 {
-                  path: 'modules-and-guard',
-                  element: <DAOModulesSettingsPage />,
+                  path: DAO_ROUTES.settingsModulesAndGuard.path,
+                  element: <SafeModulesSettingsPage />,
                 },
                 {
-                  path: 'permissions',
-                  element: <DAOPermissionsSettingsPage />,
+                  path: DAO_ROUTES.settingsPermissions.path,
+                  element: <SafePermissionsSettingsPage />,
                 },
               ],
             },

@@ -1,9 +1,9 @@
-import { Flex, Text, Grid, GridItem } from '@chakra-ui/react';
+import { Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { AzoriusGovernance } from '../../../../types';
-import { DisplayAddress } from '../../../ui/links/DisplayAddress';
-import { BarLoader } from '../../../ui/loaders/BarLoader';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { AzoriusGovernance } from '../../../types';
+import { DisplayAddress } from '../../ui/links/DisplayAddress';
+import { BarLoader } from '../../ui/loaders/BarLoader';
 import { SettingsSection } from './SettingsSection';
 
 export function ERC721TokensContainer() {
@@ -14,11 +14,7 @@ export function ERC721TokensContainer() {
   const { erc721Tokens } = azoriusGovernance;
 
   return (
-    <SettingsSection
-      title={t('governanceERC721TokenTitle')}
-      descriptionHeader={t('governanceERC721TokenTitle')}
-      descriptionContent={t('governanceERC721TokenDescription')}
-    >
+    <SettingsSection title={t('governanceERC721TokenTitle')}>
       {erc721Tokens ? (
         <Flex flexWrap="wrap">
           <Grid

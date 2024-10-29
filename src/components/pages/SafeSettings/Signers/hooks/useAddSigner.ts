@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, encodeFunctionData } from 'viem';
-import GnosisSafeL2Abi from '../../../../../../assets/abi/GnosisSafeL2';
-import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
-import { ProposalExecuteData } from '../../../../../../types';
+import GnosisSafeL2Abi from '../../../../../assets/abi/GnosisSafeL2';
+import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
+import { ProposalExecuteData } from '../../../../../types';
 
 const useAddSigner = () => {
   const { submitProposal } = useSubmitProposal();
