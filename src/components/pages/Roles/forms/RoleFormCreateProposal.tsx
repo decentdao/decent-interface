@@ -93,12 +93,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         }
         const roleTerms =
           roleHat.roleTerms?.map(term => {
-            if (
-              !term.termEndDate ||
-              term.nominee === undefined ||
-              term.newStatus === undefined ||
-              term.termNumber === undefined
-            ) {
+            if (!term.termEndDate || term.nominee === undefined || term.termNumber === undefined) {
               throw new Error('Role term missing data', {
                 cause: term,
               });
