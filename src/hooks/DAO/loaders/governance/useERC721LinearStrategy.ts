@@ -1,5 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -70,56 +70,6 @@ export const useERC721LinearStrategy = () => {
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
   }, [action, moduleAzoriusAddress, erc721LinearVotingContract, getTimeDuration, publicClient]);
-
-  useEffect(() => {
-    if (!erc721LinearVotingContract) {
-      return;
-    }
-
-    const unwatch = erc721LinearVotingContract.watchEvent.VotingPeriodUpdated({
-      onLogs: logs => {
-        for (const log of logs) {
-          if (!log.args.votingPeriod) {
-            continue;
-          }
-
-          action.dispatch({
-            type: FractalGovernanceAction.UPDATE_VOTING_PERIOD,
-            payload: BigInt(log.args.votingPeriod),
-          });
-        }
-      },
-    });
-
-    return () => {
-      unwatch();
-    };
-  }, [action, erc721LinearVotingContract]);
-
-  useEffect(() => {
-    if (!erc721LinearVotingContract) {
-      return;
-    }
-
-    const unwatch = erc721LinearVotingContract.watchEvent.QuorumThresholdUpdated({
-      onLogs: logs => {
-        for (const log of logs) {
-          if (!log.args.quorumThreshold) {
-            continue;
-          }
-
-          action.dispatch({
-            type: FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD,
-            payload: log.args.quorumThreshold,
-          });
-        }
-      },
-    });
-
-    return () => {
-      unwatch();
-    };
-  }, [erc721LinearVotingContract, action]);
 
   return loadERC721Strategy;
 };

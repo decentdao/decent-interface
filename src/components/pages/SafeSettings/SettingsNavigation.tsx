@@ -32,7 +32,12 @@ function SettingsLink({
       borderRadius={{ md: '0.5rem' }}
       transition="all ease-out 300ms"
       _hover={{ bgColor: 'neutral-3' }}
-      bg={isCurrentPath || (!isMobile && isIndexSettingsPage) ? 'white-alpha-04' : 'transparent'}
+      bg={
+        isCurrentPath ||
+        (!isMobile && isIndexSettingsPage && pathWithoutSearch === '/settings/general')
+          ? 'white-alpha-04'
+          : 'transparent'
+      }
       p={{ base: 0, md: '0.5rem' }}
     >
       <Flex
@@ -97,6 +102,8 @@ export default function SettingsNavigation() {
       borderColor="neutral-3"
       boxShadow={DETAILS_BOX_SHADOW}
       minWidth="220px"
+      alignSelf="flex-start"
+      width={{ base: '100%', md: 'auto' }}
     >
       {!safe ? (
         <Flex
