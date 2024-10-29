@@ -8,9 +8,12 @@ import {
   Address,
   encodeAbiParameters,
   encodeFunctionData,
+  encodePacked,
   getAddress,
   getContract,
+  getCreate2Address,
   Hex,
+  keccak256,
   parseAbiParameters,
   zeroAddress,
 } from 'viem';
@@ -32,6 +35,7 @@ import {
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { getRandomBytes } from '../../helpers';
+import { generateContractByteCodeLinear } from '../../models/helpers/utils';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -134,7 +138,7 @@ export default function useCreateRoles() {
           args: [encodedStrategyInitParams],
         });
 
-        return {
+        const deployWhitelistingVotingStrategyTx = {
           calldata: encodeFunctionData({
             abi: abis.ModuleProxyFactory,
             functionName: 'deployModule',
@@ -146,6 +150,34 @@ export default function useCreateRoles() {
           }),
           targetAddress: zodiacModuleProxyFactory,
         };
+
+        const strategyByteCodeLinear = generateContractByteCodeLinear(
+          linearVotingErc20HatsWhitelistingMasterCopy,
+        );
+
+        const strategySalt = keccak256(
+          encodePacked(
+            ['bytes32', 'uint256'],
+            [keccak256(encodePacked(['bytes'], [encodedStrategySetupData])), strategyNonce],
+          ),
+        );
+
+        const predictedStrategyAddress = getCreate2Address({
+          from: zodiacModuleProxyFactory,
+          salt: strategySalt,
+          bytecodeHash: keccak256(encodePacked(['bytes'], [strategyByteCodeLinear])),
+        });
+
+        const enableDeployedVotingStrategyTx = {
+          targetAddress: moduleAzoriusAddress,
+          calldata: encodeFunctionData({
+            abi: abis.Azorius,
+            functionName: 'enableStrategy',
+            args: [predictedStrategyAddress],
+          }),
+        };
+
+        return [deployWhitelistingVotingStrategyTx, enableDeployedVotingStrategyTx];
       } else if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC721) {
         if (!erc721Tokens || !votingStrategy?.votingPeriod || !votingStrategy.quorumThreshold) {
           return;
@@ -183,7 +215,7 @@ export default function useCreateRoles() {
           args: [encodedStrategyInitParams],
         });
 
-        return {
+        const deployWhitelistingVotingStrategyTx = {
           calldata: encodeFunctionData({
             abi: abis.ModuleProxyFactory,
             functionName: 'deployModule',
@@ -195,6 +227,34 @@ export default function useCreateRoles() {
           }),
           targetAddress: zodiacModuleProxyFactory,
         };
+
+        const strategyByteCodeLinear = generateContractByteCodeLinear(
+          linearVotingErc721HatsWhitelistingMasterCopy,
+        );
+
+        const strategySalt = keccak256(
+          encodePacked(
+            ['bytes32', 'uint256'],
+            [keccak256(encodePacked(['bytes'], [encodedStrategySetupData])), strategyNonce],
+          ),
+        );
+
+        const predictedStrategyAddress = getCreate2Address({
+          from: zodiacModuleProxyFactory,
+          salt: strategySalt,
+          bytecodeHash: keccak256(encodePacked(['bytes'], [strategyByteCodeLinear])),
+        });
+
+        const enableDeployedVotingStrategyTx = {
+          targetAddress: moduleAzoriusAddress,
+          calldata: encodeFunctionData({
+            abi: abis.Azorius,
+            functionName: 'enableStrategy',
+            args: [predictedStrategyAddress],
+          }),
+        };
+
+        return [deployWhitelistingVotingStrategyTx, enableDeployedVotingStrategyTx];
       } else {
         throw new Error(
           'Can not deploy Whitelisting Voting Strategy - unsupported governance type!',
@@ -920,7 +980,7 @@ export default function useCreateRoles() {
               'Error encoding transaction for deploying whitelisting voting strategy',
             );
           }
-          allTxs.push(deployWhitelistingVotingStrategyCalldata);
+          allTxs.push(...deployWhitelistingVotingStrategyCalldata);
         } else {
           whitelistingPermissionAddedHats.forEach(hatId => {
             allTxs.push({
