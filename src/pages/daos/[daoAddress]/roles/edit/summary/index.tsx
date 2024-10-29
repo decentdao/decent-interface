@@ -4,13 +4,13 @@ import { useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import RoleFormCreateProposal from '../../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
-import { RoleFormValues } from '../../../../../../components/pages/Roles/types';
+import RoleFormCreateProposal from '../../../../../../components/Roles/forms/RoleFormCreateProposal';
 import PageHeader from '../../../../../../components/ui/page/Header/PageHeader';
 import { SIDEBAR_WIDTH, useHeaderHeight } from '../../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../../constants/routes';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { RoleFormValues } from '../../../../../../types/roles';
 
 export default function EditProposalSummary() {
   const headerHeight = useHeaderHeight();

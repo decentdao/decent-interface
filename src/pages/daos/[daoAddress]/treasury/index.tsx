@@ -2,12 +2,12 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Divider, Flex, Grid, GridItem, Show, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
+import { Assets } from '../../../../components/DAOTreasury/components/Assets';
 import {
   PaginationButton,
   PaginationCount,
   Transactions,
-} from '../../../../components/pages/DAOTreasury/components/Transactions';
+} from '../../../../components/DAOTreasury/components/Transactions';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalBase } from '../../../../components/ui/modals/ModalBase';
 import { SendAssetsData, SendAssetsModal } from '../../../../components/ui/modals/SendAssetsModal';

@@ -24,14 +24,6 @@ import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import LinearERC20VotingWithHatsProposalCreation from '../../assets/abi/LinearERC20VotingWithHatsProposalCreation';
 import LinearERC721VotingWithHatsProposalCreation from '../../assets/abi/LinearERC721VotingWithHatsProposalCreation';
-import {
-  EditBadgeStatus,
-  HatStruct,
-  HatStructWithPayments,
-  RoleFormValues,
-  RoleHatFormValueEdited,
-  SablierPaymentFormValues,
-} from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { getRandomBytes } from '../../helpers';
@@ -46,6 +38,14 @@ import {
   GovernanceType,
   ProposalExecuteData,
 } from '../../types';
+import {
+  EditBadgeStatus,
+  HatStruct,
+  HatStructWithPayments,
+  RoleFormValues,
+  RoleHatFormValueEdited,
+  SablierPaymentFormValues,
+} from '../../types/roles';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';

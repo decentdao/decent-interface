@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
-import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
-import { RoleCardLoading } from '../../../../components/pages/Roles/RolePageCard';
-import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
+import { RoleCard } from '../../../../components/Roles/RoleCard';
+import { RoleCardLoading } from '../../../../components/Roles/RolePageCard';
+import { RolesTable } from '../../../../components/Roles/RolesTable';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
 import {
   HatsLogoIcon,

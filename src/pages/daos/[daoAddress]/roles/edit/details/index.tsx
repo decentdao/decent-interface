@@ -19,15 +19,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex, isHex } from 'viem';
-import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
-import {
-  EditBadgeStatus,
-  EditedRole,
-  RoleFormValues,
-  RoleHatFormValue,
-} from '../../../../../../components/pages/Roles/types';
+import RoleFormTabs from '../../../../../../components/Roles/forms/RoleFormTabs';
+
 import DraggableDrawer from '../../../../../../components/ui/containers/DraggableDrawer';
 import { ModalBase } from '../../../../../../components/ui/modals/ModalBase';
+import { UnsavedChangesWarningContent } from '../../../../../../components/ui/modals/UnsavedChangesWarningContent';
 import {
   BACKGROUND_SEMI_TRANSPARENT,
   CARD_SHADOW,
@@ -39,7 +35,12 @@ import { useNavigationBlocker } from '../../../../../../hooks/utils/useNavigatio
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../../store/roles/useRolesStore';
-import { UnsavedChangesWarningContent } from '../unsavedChangesWarningContent';
+import {
+  EditBadgeStatus,
+  EditedRole,
+  RoleFormValues,
+  RoleHatFormValue,
+} from '../../../../../../types/roles';
 
 function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void }) {
   const { t } = useTranslation(['roles']);

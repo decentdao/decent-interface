@@ -6,13 +6,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, toHex } from 'viem';
-import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
-import { RoleCardLoading } from '../../../../../components/pages/Roles/RolePageCard';
-import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { EditBadgeStatus, RoleFormValues } from '../../../../../components/pages/Roles/types';
+import { RoleCardEdit } from '../../../../../components/Roles/RoleCard';
+import { RoleCardLoading } from '../../../../../components/Roles/RolePageCard';
+import { RolesEditTable } from '../../../../../components/Roles/RolesTable';
 import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
 import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
+import { UnsavedChangesWarningContent } from '../../../../../components/ui/modals/UnsavedChangesWarningContent';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { getRandomBytes } from '../../../../../helpers';
@@ -23,7 +23,7 @@ import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
-import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
+import { EditBadgeStatus, RoleFormValues } from '../../../../../types/roles';
 
 function RolesEdit() {
   useEffect(() => {

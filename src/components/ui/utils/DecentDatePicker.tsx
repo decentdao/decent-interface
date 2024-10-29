@@ -17,9 +17,9 @@ import { Calendar } from 'react-calendar';
 import { useTranslation } from 'react-i18next';
 import '../../../assets/css/Calendar.css';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
+import { RoleFormValues } from '../../../types/roles';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
-import { DatePickerTrigger } from '../../pages/Roles/DatePickerTrigger';
-import { RoleFormValues } from '../../pages/Roles/types';
+import { DatePickerTrigger } from '../../Roles/DatePickerTrigger';
 import DraggableDrawer from '../containers/DraggableDrawer';
 import Divider from './Divider';
 

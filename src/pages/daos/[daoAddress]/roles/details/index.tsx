@@ -1,7 +1,7 @@
 import { Show } from '@chakra-ui/react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import RolesDetailsDrawer from '../../../../../components/pages/Roles/RolesDetailsDrawer';
-import RolesDetailsDrawerMobile from '../../../../../components/pages/Roles/RolesDetailsDrawerMobile';
+import RolesDetailsDrawer from '../../../../../components/Roles/RolesDetailsDrawer';
+import RolesDetailsDrawerMobile from '../../../../../components/Roles/RolesDetailsDrawerMobile';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';

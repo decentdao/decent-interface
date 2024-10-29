@@ -1,10 +1,10 @@
 import { Flex, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
-import { InfoGovernance } from '../../../../../components/pages/DaoDashboard/Info/InfoGovernance';
-import { ERC20TokenContainer } from '../../../../../components/pages/SafeSettings/ERC20TokenContainer';
-import { ERC721TokensContainer } from '../../../../../components/pages/SafeSettings/ERC721TokensContainer';
-import { SignersContainer } from '../../../../../components/pages/SafeSettings/Signers/SignersContainer';
+import { InfoGovernance } from '../../../../../components/DaoDashboard/Info/InfoGovernance';
+import { ERC20TokenContainer } from '../../../../../components/SafeSettings/ERC20TokenContainer';
+import { ERC721TokensContainer } from '../../../../../components/SafeSettings/ERC721TokensContainer';
+import { SignersContainer } from '../../../../../components/SafeSettings/Signers/SignersContainer';
 import { StyledBox } from '../../../../../components/ui/containers/StyledBox';
 import NestedPageHeader from '../../../../../components/ui/page/Header/NestedPageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
