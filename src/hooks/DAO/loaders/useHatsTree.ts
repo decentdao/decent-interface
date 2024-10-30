@@ -1,12 +1,14 @@
 import { useApolloClient } from '@apollo/client';
 import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { formatUnits, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { SablierPayment } from '../../../components/pages/Roles/types';
+import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
@@ -18,6 +20,13 @@ import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 const hatsSubgraphClient = new HatsSubgraphClient({});
 
 const useHatsTree = () => {
+  const { t } = useTranslation('roles');
+  const {
+    governanceContracts: {
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721WithHatsWhitelistingAddress,
+    },
+  } = useFractal();
   const {
     hatsTreeId,
     contextChainId,
@@ -107,10 +116,13 @@ const useHatsTree = () => {
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
             chainId: BigInt(contextChainId),
-            hatsProtocol: hatsProtocol,
+            hatsProtocol,
             erc6551Registry,
             hatsAccountImplementation,
             publicClient,
+            whitelistingVotingStrategy:
+              linearVotingErc20WithHatsWhitelistingAddress ||
+              linearVotingErc721WithHatsWhitelistingAddress,
           });
         } catch (e) {
           if (e instanceof DecentHatsError) {
@@ -121,12 +133,12 @@ const useHatsTree = () => {
         setHatsTree({
           hatsTree: null,
           chainId: BigInt(contextChainId),
-          hatsProtocol: hatsProtocol,
+          hatsProtocol,
           erc6551Registry,
           hatsAccountImplementation,
           publicClient,
         });
-        const message = 'Hats Tree ID is not valid';
+        const message = t('invalidHatsTreeIdMessage');
         toast.error(message);
         console.error(e, {
           message,
@@ -149,6 +161,9 @@ const useHatsTree = () => {
     ipfsClient,
     publicClient,
     setHatsTree,
+    t,
+    linearVotingErc20WithHatsWhitelistingAddress,
+    linearVotingErc721WithHatsWhitelistingAddress,
   ]);
 
   useEffect(() => {

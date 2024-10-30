@@ -1,6 +1,6 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
-import { Address, getContract } from 'viem';
+import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -8,14 +8,16 @@ import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { FractalModuleData } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
 import { useFractalModules } from '../DAO/loaders/useFractalModules';
+import { useMasterCopy } from './useMasterCopy';
 
-const useVotingStrategyAddress = () => {
+const useVotingStrategiesAddresses = () => {
   const { node } = useFractal();
   const publicClient = usePublicClient();
   const safeAPI = useSafeAPI();
+  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const lookupModules = useFractalModules();
 
-  const getVotingStrategyAddress = useCallback(
+  const getVotingStrategies = useCallback(
     async (safeAddress?: Address) => {
       let azoriusModule: FractalModuleData | undefined;
 
@@ -40,14 +42,27 @@ const useVotingStrategyAddress = () => {
         client: publicClient,
       });
 
-      // @dev assumes the first strategy is the voting contract
-      const strategies = await azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n]);
-      return strategies[1];
+      const [strategies, nextStrategy] = await azoriusContract.read.getStrategies([
+        SENTINEL_ADDRESS,
+        3n,
+      ]);
+      const result = Promise.all(
+        [...strategies, nextStrategy]
+          .filter(
+            strategyAddress =>
+              strategyAddress !== SENTINEL_ADDRESS && strategyAddress !== zeroAddress,
+          )
+          .map(async strategyAddress => ({
+            ...(await getZodiacModuleProxyMasterCopyData(strategyAddress)),
+            strategyAddress,
+          })),
+      );
+      return result;
     },
-    [lookupModules, node.fractalModules, publicClient, safeAPI],
+    [lookupModules, getZodiacModuleProxyMasterCopyData, node.fractalModules, publicClient, safeAPI],
   );
 
-  return { getVotingStrategyAddress };
+  return { getVotingStrategies };
 };
 
-export default useVotingStrategyAddress;
+export default useVotingStrategiesAddresses;

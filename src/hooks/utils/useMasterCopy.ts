@@ -6,6 +6,9 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 // import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
 // import { getValue, setValue } from './cache/useLocalStorage';
 
+// @todo - seems like we can uncomment the commented code in here and enjoy master copy caching ^_^
+// Requires testing though
+
 export function useMasterCopy() {
   const {
     // chain,
@@ -13,7 +16,9 @@ export function useMasterCopy() {
       zodiacModuleProxyFactory,
       zodiacModuleProxyFactoryOld,
       linearVotingErc20MasterCopy,
+      linearVotingErc20HatsWhitelistingMasterCopy,
       linearVotingErc721MasterCopy,
+      linearVotingErc721HatsWhitelistingMasterCopy,
       moduleFractalMasterCopy,
       moduleAzoriusMasterCopy,
       freezeGuardMultisigMasterCopy,
@@ -30,6 +35,17 @@ export function useMasterCopy() {
   const isLinearVotingErc721 = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc721MasterCopy,
     [linearVotingErc721MasterCopy],
+  );
+
+  const isLinearVotingErc20WithWhitelisting = useCallback(
+    (masterCopyAddress: Address) =>
+      masterCopyAddress === linearVotingErc20HatsWhitelistingMasterCopy,
+    [linearVotingErc20HatsWhitelistingMasterCopy],
+  );
+  const isLinearVotingErc721WithWhitelisting = useCallback(
+    (masterCopyAddress: Address) =>
+      masterCopyAddress === linearVotingErc721HatsWhitelistingMasterCopy,
+    [linearVotingErc721HatsWhitelistingMasterCopy],
   );
   const isFreezeGuardMultisig = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === freezeGuardMultisigMasterCopy,
@@ -136,6 +152,9 @@ export function useMasterCopy() {
         address: masterCopyAddress,
         isLinearVotingErc20: isLinearVotingErc20(masterCopyAddress),
         isLinearVotingErc721: isLinearVotingErc721(masterCopyAddress),
+        isLinearVotingErc20WithWhitelisting: isLinearVotingErc20WithWhitelisting(masterCopyAddress),
+        isLinearVotingErc721WithWhitelisting:
+          isLinearVotingErc721WithWhitelisting(masterCopyAddress),
         isFreezeGuardMultisig: isFreezeGuardMultisig(masterCopyAddress),
         isFreezeVotingMultisig: isFreezeVotingMultisig(masterCopyAddress),
         isFreezeVotingErc721: isFreezeVotingErc721(masterCopyAddress),
@@ -150,6 +169,8 @@ export function useMasterCopy() {
       isFreezeVotingMultisig,
       isLinearVotingErc20,
       isLinearVotingErc721,
+      isLinearVotingErc20WithWhitelisting,
+      isLinearVotingErc721WithWhitelisting,
       isModuleAzorius,
       isModuleFractal,
       zodiacModuleProxyFactory,

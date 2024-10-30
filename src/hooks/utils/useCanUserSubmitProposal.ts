@@ -1,11 +1,11 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { GovernanceType } from '../../types';
-import useVotingStrategyAddress from './useVotingStrategyAddress';
+import useVotingStrategiesAddresses from './useVotingStrategiesAddresses';
 
 export function useCanUserCreateProposal() {
   const {
@@ -18,7 +18,7 @@ export function useCanUserCreateProposal() {
   const [canUserCreateProposal, setCanUserCreateProposal] = useState<boolean>();
   const publicClient = usePublicClient();
 
-  const { getVotingStrategyAddress } = useVotingStrategyAddress();
+  const { getVotingStrategies } = useVotingStrategiesAddresses();
 
   /**
    * Performs a check whether user has access rights to create proposal for DAO
@@ -37,14 +37,21 @@ export function useCanUserCreateProposal() {
       };
 
       if (safeAddress) {
-        const votingStrategyAddress = await getVotingStrategyAddress(safeAddress);
-        if (votingStrategyAddress) {
-          const votingContract = getContract({
-            abi: abis.LinearERC20Voting,
-            address: votingStrategyAddress,
-            client: publicClient,
-          });
-          const isProposer = await votingContract.read.isProposer([user.address]);
+        const votingStrategies = await getVotingStrategies(safeAddress);
+        if (votingStrategies) {
+          let isProposer = false;
+          await Promise.all(
+            votingStrategies.map(async strategy => {
+              if (!isProposer && user.address) {
+                const votingContract = getContract({
+                  abi: abis.LinearERC20Voting,
+                  address: strategy.address,
+                  client: publicClient,
+                });
+                isProposer = await votingContract.read.isProposer([user.address]);
+              }
+            }),
+          );
           return isProposer;
         } else {
           const safeInfo = await safeAPI.getSafeInfo(safeAddress);
@@ -82,7 +89,7 @@ export function useCanUserCreateProposal() {
     },
     [
       linearVotingErc721Address,
-      getVotingStrategyAddress,
+      getVotingStrategies,
       linearVotingErc20Address,
       publicClient,
       safe,

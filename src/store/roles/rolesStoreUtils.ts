@@ -1,6 +1,7 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
+import LinearERC20VotingWithHatsProposalCreationAbi from '../../assets/abi/LinearERC20VotingWithHatsProposalCreation';
 import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 
@@ -21,6 +22,7 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
+  canCreateProposals: boolean;
   payments?: SablierPayment[];
 }
 
@@ -56,6 +58,7 @@ export interface RolesStore extends RolesStoreData {
     erc6551Registry: Address;
     hatsAccountImplementation: Address;
     publicClient: PublicClient;
+    whitelistingVotingStrategy?: Address;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
   updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
@@ -166,6 +169,7 @@ export const sanitize = async (
   hats: Address,
   chainId: bigint,
   publicClient: PublicClient,
+  whitelistingVotingStrategy?: Address,
 ): Promise<undefined | null | DecentTree> => {
   if (hatsTree === undefined || hatsTree === null) {
     return hatsTree;
@@ -187,12 +191,21 @@ export const sanitize = async (
     publicClient,
   });
 
+  const whitelistingVotingContract = whitelistingVotingStrategy
+    ? getContract({
+        abi: LinearERC20VotingWithHatsProposalCreationAbi,
+        address: whitelistingVotingStrategy,
+        client: publicClient,
+      })
+    : undefined;
+
   const topHat: DecentHat = {
     id: rawTopHat.id,
     prettyId: rawTopHat.prettyId ?? '',
     name: topHatMetadata.name,
     description: topHatMetadata.description,
     smartAddress: topHatSmartAddress,
+    canCreateProposals: false, // @dev - we don't care about it since topHat is not displayed
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
@@ -213,6 +226,7 @@ export const sanitize = async (
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
+    canCreateProposals: false, // @dev - we don't care about it since adminHat is not displayed
   };
 
   let roleHats: DecentRoleHat[] = [];
@@ -231,15 +245,21 @@ export const sanitize = async (
       continue;
     }
 
+    const tokenId = BigInt(rawHat.id);
     const hatMetadata = getHatMetadata(rawHat);
     const roleHatSmartAddress = await predictAccountAddress({
       implementation: hatsAccountImplementation,
       registryAddress: erc6551Registry,
       tokenContract: hats,
       chainId,
-      tokenId: BigInt(rawHat.id),
+      tokenId,
       publicClient,
     });
+
+    let canCreateProposals = false;
+    if (whitelistingVotingContract) {
+      canCreateProposals = await whitelistingVotingContract.read.isHatWhitelisted([tokenId]);
+    }
 
     roleHats.push({
       id: rawHat.id,
@@ -248,6 +268,7 @@ export const sanitize = async (
       description: hatMetadata.description,
       wearerAddress: getAddress(rawHat.wearers[0].id),
       smartAddress: roleHatSmartAddress,
+      canCreateProposals,
     });
   }
 
