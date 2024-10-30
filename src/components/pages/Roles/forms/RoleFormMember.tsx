@@ -21,7 +21,7 @@ import { Field, FieldProps, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DecentHourGlass } from '../../../../assets/theme/custom/icons/DecentHourGlass';
-import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
+import { DETAILS_BOX_SHADOW, isTermedRolesEnabled } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
@@ -346,7 +346,7 @@ export default function RoleFormMember() {
       >
         <RoleMemberWearerInput />
       </Box>
-      <RoleFormMemberTermToggle />
+      {isTermedRolesEnabled() && <RoleFormMemberTermToggle />}
     </Box>
   );
 }
