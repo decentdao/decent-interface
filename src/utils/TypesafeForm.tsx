@@ -17,7 +17,7 @@ import {
   FieldArrayConfig,
   FieldArrayRenderProps,
 } from 'formik';
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useMemo } from 'react';
 
 // -------------------- OVERRIDDEN SETTERS ------------------------------------
 
@@ -221,9 +221,18 @@ function TypesafeFormikProvider<T extends Record<string, unknown>>({
   children: ReactNode;
   formik: TypesafeFormikProps<T>;
 }) {
+  const contextValue = useMemo(
+    () => ({
+      formik,
+      Field: typesafeFieldFactory<T>(),
+      FieldArray: typesafeFieldArrayFactory<T>(),
+    }),
+    [formik],
+  );
+
   return (
     <TypesafeFormikContext.Provider
-      value={{ formik } as TypesafeFormikContextInputType<Record<string, unknown>>}
+      value={contextValue as TypesafeFormikContextInputType<Record<string, unknown>>}
     >
       {children}
     </TypesafeFormikContext.Provider>
@@ -250,15 +259,30 @@ function makeTypesafeForm<Values extends Record<string, unknown>>(): {
   FieldArray: TypesafeFieldArrayComponent<Values>;
 } {
   const FormikComponent = typesafeFormikFactory<Values>();
+  const WrappedField = typesafeFieldFactory<Values>();
+  const WrappedFieldArray = typesafeFieldArrayFactory<Values>();
 
   function WrappedFormik({
     children,
     ...props
   }: TypesafeFormikConfig<Values> & { initialValues?: Values }) {
+    const memoizedComponents = useMemo(
+      () => ({
+        Field: WrappedField,
+        FieldArray: WrappedFieldArray,
+      }),
+      [],
+    );
+
     return (
       <FormikComponent {...props}>
         {formikProps => (
-          <TypesafeFormikProvider formik={formikProps}>
+          <TypesafeFormikProvider
+            formik={{
+              ...formikProps,
+              ...memoizedComponents,
+            }}
+          >
             {typeof children === 'function' ? children(formikProps) : children}
           </TypesafeFormikProvider>
         )}
@@ -268,8 +292,8 @@ function makeTypesafeForm<Values extends Record<string, unknown>>(): {
 
   return {
     Formik: WrappedFormik,
-    Field: typesafeFieldFactory<Values>(),
-    FieldArray: typesafeFieldArrayFactory<Values>(),
+    Field: WrappedField,
+    FieldArray: WrappedFieldArray,
   };
 }
 
