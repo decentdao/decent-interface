@@ -107,7 +107,10 @@ export default function RoleFormTabs({
               if (isRoleUpdated || editedRoleData.status === EditBadgeStatus.New) {
                 setFieldValue(`hats.${hatIndex}`, roleUpdated);
               } else if (existingRoleHat !== undefined) {
-                setFieldValue(`hats.${hatIndex}`, existingRoleHat);
+                setFieldValue(`hats.${hatIndex}`, {
+                  ...existingRoleHat,
+                  roleTerms: existingRoleHat.roleTerms.allTerms,
+                });
               }
             }
             setFieldValue('roleEditing', undefined);
