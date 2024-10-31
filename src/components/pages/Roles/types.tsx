@@ -160,8 +160,6 @@ export type PreparedNewStreamData = {
   assetAddress: Address;
 };
 
-// export const HATS_ADDRESS: Address = '0x0000000000000000000000000000000000004a75';
-
 export interface RoleDetailsDrawerProps {
   roleHat: RoleDetailsDrawerRoleHatProp | RoleDetailsDrawerEditingRoleHatProp;
   onOpen?: () => void;
