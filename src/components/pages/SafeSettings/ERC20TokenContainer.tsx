@@ -1,11 +1,11 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { AzoriusGovernance } from '../../../../types';
-import { formatCoin } from '../../../../utils';
-import { DisplayAddress } from '../../../ui/links/DisplayAddress';
-import { BarLoader } from '../../../ui/loaders/BarLoader';
-import { SettingsSection } from './SettingsSection';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { AzoriusGovernance } from '../../../types';
+import { formatCoin } from '../../../utils';
+import { StyledBox } from '../../ui/containers/StyledBox';
+import { DisplayAddress } from '../../ui/links/DisplayAddress';
+import { BarLoader } from '../../ui/loaders/BarLoader';
 
 export function ERC20TokenContainer() {
   const { t } = useTranslation(['settings']);
@@ -15,11 +15,8 @@ export function ERC20TokenContainer() {
   const { votesToken } = azoriusGovernance;
 
   return (
-    <SettingsSection
-      title={t('governanceTokenTitle')}
-      descriptionHeader={t('governanceTokenTitle')}
-      descriptionContent={t('governanceTokenDescription')}
-    >
+    <StyledBox width="100%">
+      <Text textStyle="display-lg">{t('governanceTokenTitle')}</Text>
       {votesToken ? (
         <Flex
           justifyContent="space-between"
@@ -79,6 +76,6 @@ export function ERC20TokenContainer() {
           <BarLoader />
         </Flex>
       )}
-    </SettingsSection>
+    </StyledBox>
   );
 }

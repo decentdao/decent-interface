@@ -1,4 +1,5 @@
 import {
+  Badge,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -10,8 +11,8 @@ import {
   IconButton,
   Text,
 } from '@chakra-ui/react';
-import { List, PencilLine, User, X } from '@phosphor-icons/react';
-import { useMemo } from 'react';
+import { CheckSquare, List, PencilLine, User, X } from '@phosphor-icons/react';
+import { RefObject, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
@@ -24,11 +25,39 @@ import {
   paymentSorterByWithdrawAmount,
 } from '../../../store/roles/rolesStoreUtils';
 import { BarLoader } from '../../ui/loaders/BarLoader';
+import ModalTooltip from '../../ui/modals/ModalTooltip';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
 import { RoleDetailsDrawerProps } from './types';
 
+export function RoleProposalPermissionBadge({
+  containerRef,
+}: {
+  containerRef: RefObject<HTMLDivElement>;
+}) {
+  const { t } = useTranslation('roles');
+  return (
+    <ModalTooltip
+      containerRef={containerRef}
+      label={t('permissionsProposalsTooltip')}
+    >
+      <Badge
+        color="celery-0"
+        bgColor="celery--6"
+        textTransform="unset"
+        textStyle="body-base"
+        fontSize="1rem"
+        lineHeight="1.5rem"
+        fontWeight="normal"
+        borderRadius="0.25rem"
+        px="0.5rem"
+      >
+        {t('permissionsProposals')}
+      </Badge>
+    </ModalTooltip>
+  );
+}
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
     <Flex
@@ -55,6 +84,7 @@ export default function RolesDetailsDrawer({
   const {
     node: { daoAddress },
   } = useFractal();
+  const permissionsContainerRef = useRef<HTMLDivElement>(null);
 
   const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
 
@@ -129,8 +159,11 @@ export default function RolesDetailsDrawer({
             {roleHat.name}
           </Text>
           <Grid
-            gridTemplateAreas={`"mLabel mValue"
-            "dLabel dValue"`}
+            gridTemplateAreas={`
+              "mLabel mValue"
+              "dLabel dValue"
+              "pLabel pValue"
+            `}
             gridRowGap="1rem"
             gridColumnGap="2rem"
           >
@@ -145,6 +178,14 @@ export default function RolesDetailsDrawer({
                 label={t('description')}
                 icon={List}
               />
+            </GridItem>
+            <GridItem area="pLabel">
+              {roleHat.canCreateProposals && (
+                <RoleAndDescriptionLabel
+                  label={t('permissions')}
+                  icon={CheckSquare}
+                />
+              )}
             </GridItem>
             <GridItem area="mValue">
               <Flex
@@ -175,6 +216,14 @@ export default function RolesDetailsDrawer({
               >
                 {roleHat.description}
               </Text>
+            </GridItem>
+            <GridItem
+              area="pValue"
+              ref={permissionsContainerRef}
+            >
+              {roleHat.canCreateProposals && (
+                <RoleProposalPermissionBadge containerRef={permissionsContainerRef} />
+              )}
             </GridItem>
           </Grid>
           {roleHat.payments && (

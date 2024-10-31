@@ -82,6 +82,26 @@ export const DAO_ROUTES = {
       `/settings${getDaoQueryParam(addressPrefix, daoAddress)}`,
     path: 'settings',
   },
+  settingsGeneral: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings/general${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'general',
+  },
+  settingsGovernance: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings/governance${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'governance',
+  },
+  settingsModulesAndGuard: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings/modules-and-guard${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'modules-and-guard',
+  },
+  settingsPermissions: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings/permissions${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'permissions',
+  },
   proposalTemplates: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/proposal-templates${getDaoQueryParam(addressPrefix, daoAddress)}`,

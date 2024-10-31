@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Select, Text, Icon } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Icon, Select, Text } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
@@ -6,14 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
-import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
-import { useFractal } from '../../../../../../providers/App/AppProvider';
-import { validateENSName } from '../../../../../../utils/url';
-import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
-import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
-import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
-import LabelWrapper from '../../../../../ui/forms/LabelWrapper';
-import Divider from '../../../../../ui/utils/Divider';
+import { useValidationAddress } from '../../../../../hooks/schemas/common/useValidationAddress';
+import { useFractal } from '../../../../../providers/App/AppProvider';
+import { validateENSName } from '../../../../../utils/url';
+import SupportTooltip from '../../../../ui/badges/SupportTooltip';
+import { CustomNonceInput } from '../../../../ui/forms/CustomNonceInput';
+import { AddressInput } from '../../../../ui/forms/EthAddressInput';
+import LabelWrapper from '../../../../ui/forms/LabelWrapper';
+import Divider from '../../../../ui/utils/Divider';
 import useAddSigner from '../hooks/useAddSigner';
 
 function AddSignerModal({

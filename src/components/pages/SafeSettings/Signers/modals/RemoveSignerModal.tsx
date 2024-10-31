@@ -1,15 +1,15 @@
-import { Box, Button, Flex, HStack, Select, Text, Icon, Input } from '@chakra-ui/react';
-import { WarningDiamond, WarningCircle } from '@phosphor-icons/react';
+import { Box, Button, Flex, HStack, Icon, Input, Select, Text } from '@chakra-ui/react';
+import { WarningCircle, WarningDiamond } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { useEnsName } from 'wagmi';
-import { useFractal } from '../../../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { SENTINEL_MODULE } from '../../../../../../utils/address';
-import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
-import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
-import Divider from '../../../../../ui/utils/Divider';
+import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { SENTINEL_MODULE } from '../../../../../utils/address';
+import SupportTooltip from '../../../../ui/badges/SupportTooltip';
+import { CustomNonceInput } from '../../../../ui/forms/CustomNonceInput';
+import Divider from '../../../../ui/utils/Divider';
 import useRemoveSigner from '../hooks/useRemoveSigner';
 
 function RemoveSignerModal({
