@@ -118,7 +118,7 @@ export default function RolesDetailsDrawerMobile({
                 payment={payment}
                 roleHatSmartAddress={roleHat.smartAddress}
                 roleHatWearerAddress={roleHatWearerAddress}
-                roleTerms={roleHat.roleTerms.map(term => ({
+                roleTerms={roleHat.roleTerms.allTerms.map(term => ({
                   termEndDate: term.termEndDate,
                   termNumber: term.termNumber,
                 }))}

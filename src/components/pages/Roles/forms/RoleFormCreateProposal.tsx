@@ -91,7 +91,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             cause: roleHat,
           });
         }
-        const roleTerms =
+        const allRoleTerms =
           roleHat.roleTerms?.map(term => {
             if (!term.termEndDate || term.nominee === undefined || term.termNumber === undefined) {
               throw new Error('Role term missing data', {
@@ -104,7 +104,13 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               termNumber: term.termNumber,
             };
           }) || [];
-
+        const activeTerms = allRoleTerms.filter(term => term.termEndDate > new Date());
+        const roleTerms = {
+          allTerms: allRoleTerms,
+          currentTerm: activeTerms[0],
+          nextTerm: activeTerms[1],
+          expiredTerms: allRoleTerms.filter(term => term.termEndDate <= new Date()),
+        };
         return {
           ...roleHat,
           editedRole: roleHat.editedRole,

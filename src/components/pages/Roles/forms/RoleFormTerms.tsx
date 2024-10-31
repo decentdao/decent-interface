@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { DatePicker } from '../../../ui/forms/DatePicker';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -246,6 +247,13 @@ export default function RoleFormTerms() {
   const [newTermIndex, setNewTermIndex] = useState<number>();
   const { t } = useTranslation('roles');
   const { values } = useFormikContext<RoleFormValues>();
+  const { getHat } = useRolesStore();
+
+  const roleHatTerms = useMemo(() => {
+    const roleFormHatId = values.roleEditing?.id;
+    const hat = getHat(roleFormHatId || '0x');
+    return hat?.roleTerms;
+  }, [getHat, values.roleEditing?.id]);
 
   const roleFormTerms = useMemo(
     () => values.roleEditing?.roleTerms || [],
@@ -259,21 +267,8 @@ export default function RoleFormTerms() {
     }
   }, [roleFormTerms]);
 
-  const expiredTerms = roleFormTerms
-    .filter(term => !!term.termEndDate && term.termEndDate < new Date())
-    .sort((a, b) => {
-      if (!a.termEndDate || !b.termEndDate) {
-        return 0;
-      }
-      return b.termEndDate.getTime() - a.termEndDate.getTime();
-    });
-
   // {assumption}: only 2 terms should be unexpired at a time
   const terms = roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
-  const [currentTerm, nextTerm] = terms;
-  if (terms.length > 2) {
-    throw new Error('More than 2 terms are active');
-  }
 
   return (
     <Box>
@@ -281,7 +276,7 @@ export default function RoleFormTerms() {
         variant="secondary"
         size="sm"
         mb={4}
-        isDisabled={!!newTermIndex || terms.length > 2 || !roleFormTerms.length}
+        isDisabled={!!newTermIndex || terms.length == 2 || !roleFormTerms.length}
         onClick={() => {
           setNewTermIndex(roleFormTerms.length);
         }}
@@ -303,14 +298,14 @@ export default function RoleFormTerms() {
           />
         )}
         <RoleTermRenderer
-          roleTerm={nextTerm}
+          roleTerm={roleHatTerms?.nextTerm}
           termStatus="queued"
         />
         <RoleTermRenderer
-          roleTerm={currentTerm}
+          roleTerm={roleHatTerms?.currentTerm}
           termStatus="current"
         />
-        <RoleTermExpiredTerms roleTerms={expiredTerms} />
+        <RoleTermExpiredTerms roleTerms={roleHatTerms?.expiredTerms} />
       </Flex>
     </Box>
   );

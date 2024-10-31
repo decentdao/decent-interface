@@ -194,7 +194,7 @@ export default function RolesDetailsDrawer({
                   key={index}
                   payment={payment}
                   roleHatSmartAddress={roleHat.smartAddress}
-                  roleTerms={roleHat.roleTerms.map(term => ({
+                  roleTerms={roleHat.roleTerms.allTerms.map(term => ({
                     termEndDate: term.termEndDate,
                     termNumber: term.termNumber,
                   }))}

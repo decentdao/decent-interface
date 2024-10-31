@@ -41,10 +41,21 @@ interface RolesStoreData {
   contextChainId: number | null;
 }
 
+export type RoleTerm = {
+  nominee: string;
+  termEndDate: Date;
+  termNumber: number;
+};
+
 export interface DecentRoleHat extends DecentHat {
   wearerAddress: Address;
   eligibility?: Address;
-  roleTerms: { nominee: Address; termEndDate: Date; termNumber: number }[];
+  roleTerms: {
+    allTerms: RoleTerm[];
+    currentTerm: RoleTerm | undefined;
+    nextTerm: RoleTerm | undefined;
+    expiredTerms: RoleTerm[];
+  };
   isTermed: boolean;
 }
 
@@ -193,10 +204,11 @@ const getRoleHatTerms = async (
   publicClient: PublicClient,
 ) => {
   let roleTerms: {
-    nominee: Address;
-    termEndDate: Date;
-    termNumber: number;
-  }[] = [];
+    allTerms: RoleTerm[];
+    currentTerm: RoleTerm | undefined;
+    nextTerm: RoleTerm | undefined;
+    expiredTerms: RoleTerm[];
+  } = { allTerms: [], expiredTerms: [], currentTerm: undefined, nextTerm: undefined };
   let isTermed: boolean = false;
 
   if (
@@ -217,7 +229,7 @@ const getRoleHatTerms = async (
       const rawTerms = await electionContract.getEvents.ElectionCompleted({
         fromBlock: 0n,
       });
-      roleTerms = rawTerms
+      const allRoleTerms = rawTerms
         .map(term => {
           const nominee = term.args.winners?.[0];
           const termEnd = term.args.termEnd;
@@ -234,6 +246,21 @@ const getRoleHatTerms = async (
         })
         .sort((a, b) => a.termEndDate.getTime() - b.termEndDate.getTime())
         .map((term, index) => ({ ...term, termNumber: index + 1 }));
+
+      const activeTerms = allRoleTerms.filter(term => term.termEndDate > new Date());
+      roleTerms = {
+        allTerms: allRoleTerms,
+        currentTerm: activeTerms[0],
+        nextTerm: activeTerms[1],
+        expiredTerms: allRoleTerms
+          .filter(term => term.termEndDate <= new Date())
+          .sort((a, b) => {
+            if (!a.termEndDate || !b.termEndDate) {
+              return 0;
+            }
+            return b.termEndDate.getTime() - a.termEndDate.getTime();
+          }),
+      };
       isTermed = true;
     } catch {
       console.error('Failed to get election terms or not a valid election contract');
