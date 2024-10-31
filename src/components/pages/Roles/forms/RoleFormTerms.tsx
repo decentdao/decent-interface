@@ -298,11 +298,13 @@ export default function RoleFormTerms() {
             termEndDate: undefined,
           });
         }}
+        leftIcon={
+          <Icon
+            as={Plus}
+            boxSize="1rem"
+          />
+        }
       >
-        <Icon
-          as={Plus}
-          boxSize="1rem"
-        />
         {t('addTerm')}
       </Button>
       <Flex
