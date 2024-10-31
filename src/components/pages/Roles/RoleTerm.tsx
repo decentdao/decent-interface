@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
 import { Calendar, ClockCountdown, Copy } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { useMemo } from 'react';
@@ -194,11 +194,18 @@ function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
           address={memberAddress}
           url={avatarURL}
         />
-        <Flex
-          alignItems="center"
-          gap={2}
+        <Button
+          variant="unstyled"
+          p={0}
           aria-label="Copy address"
           onClick={() => copyToClipboard(memberAddress)}
+          rightIcon={
+            <Icon
+              as={Copy}
+              boxSize="1rem"
+              color="white-0"
+            />
+          }
         >
           <Text
             textStyle="label-base"
@@ -206,12 +213,7 @@ function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
           >
             {accountDisplayName}
           </Text>
-          <Icon
-            as={Copy}
-            boxSize="1rem"
-            color="white-0"
-          />
-        </Flex>
+        </Button>
       </Flex>
     </Flex>
   );
