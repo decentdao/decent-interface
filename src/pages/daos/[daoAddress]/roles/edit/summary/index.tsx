@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
 import { ArrowLeft } from '@phosphor-icons/react';
+import { useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +11,6 @@ import { SIDEBAR_WIDTH, useHeaderHeight } from '../../../../../../constants/comm
 import { DAO_ROUTES } from '../../../../../../constants/routes';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useTypesafeFormikContext } from '../../../../../../utils/TypesafeForm';
 
 export default function EditProposalSummary() {
   const headerHeight = useHeaderHeight();
@@ -20,9 +20,7 @@ export default function EditProposalSummary() {
   } = useFractal();
   const { t } = useTranslation(['roles', 'breadcrumbs']);
   const { addressPrefix } = useNetworkConfig();
-  const {
-    formik: { values },
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
 
   // @dev redirects back to roles edit page if no roles are edited (user refresh)
   useEffect(() => {

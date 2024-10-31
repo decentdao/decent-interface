@@ -1,12 +1,12 @@
 import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { DecentTree } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
-import { useTypesafeFormikContext } from '../../../utils/TypesafeForm';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
@@ -271,9 +271,7 @@ export function RolesTable({
 
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
   const { hatsTree } = useRolesStore();
-  const {
-    formik: { values, setFieldValue },
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   if (hatsTree === undefined) {
     return <RoleCardLoading />;
   }

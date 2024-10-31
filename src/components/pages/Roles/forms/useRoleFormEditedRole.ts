@@ -1,6 +1,6 @@
+import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
 import { DecentTree } from '../../../../store/roles/rolesStoreUtils';
-import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
 
 const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boolean) => {
@@ -13,9 +13,7 @@ const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boo
 };
 
 export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | undefined | null }) {
-  const {
-    formik: { values },
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
   const existingRoleHat = useMemo(
     () =>
       hatsTree?.roleHats.find(role => !!values.roleEditing && role.id === values.roleEditing.id),
