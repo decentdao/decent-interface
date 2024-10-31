@@ -297,4 +297,4 @@ function makeTypesafeForm<Values extends Record<string, unknown>>(): {
   };
 }
 
-export { makeTypesafeForm, useTypesafeFormikContext };
+export { makeTypesafeForm as doNotUseThis, useTypesafeFormikContext as thisIsBroken };
