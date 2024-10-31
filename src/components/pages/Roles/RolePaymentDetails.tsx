@@ -410,7 +410,7 @@ export function RolePaymentDetails({
           >
             <GridItem area="starting">
               {assignedTerm ? (
-                <TermedAssigned termNumber={roleTerms[0].termNumber} />
+                <TermedAssigned termNumber={assignedTerm.termNumber} />
               ) : (
                 <PaymentDate
                   label="starting"
