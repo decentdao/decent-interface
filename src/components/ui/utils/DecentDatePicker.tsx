@@ -11,13 +11,13 @@ import {
 } from '@chakra-ui/react';
 import { ArrowRight, CalendarBlank, CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
+import { Field, useFormikContext } from 'formik';
 import { ReactNode, useMemo, useState } from 'react';
 import { Calendar } from 'react-calendar';
 import { useTranslation } from 'react-i18next';
 import '../../../assets/css/Calendar.css';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
-import { useTypesafeFormikContext } from '../../../utils/TypesafeForm';
 import { DatePickerTrigger } from '../../pages/Roles/DatePickerTrigger';
 import { RoleFormValues } from '../../pages/Roles/types';
 import DraggableDrawer from '../containers/DraggableDrawer';
@@ -99,10 +99,7 @@ function DecentDatePickerContainer({
   disabled: boolean;
 }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const {
-    formik: { values },
-    Field,
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
   const selectedDate = values.roleEditing?.payments?.[formIndex]?.[type];
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
@@ -210,9 +207,7 @@ export function DecentDatePicker({
   formIndex: number;
   disabled: boolean;
 }) {
-  const {
-    formik: { values },
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
 
   const selectedDate = useMemo(() => {
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return null;
@@ -270,10 +265,7 @@ export function DecentDatePickerRange({
   formIndex: number;
   disabled: boolean;
 }) {
-  const {
-    formik: { values },
-  } = useTypesafeFormikContext<RoleFormValues>();
-
+  const { values } = useFormikContext<RoleFormValues>();
   const selectedRange: [DateOrNull, DateOrNull] = useMemo(() => {
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return [null, null];
     const paymentIndex = values.roleEditing.roleEditingPaymentIndex;

@@ -12,14 +12,20 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CaretDown, CheckCircle } from '@phosphor-icons/react';
-import { FormikErrors } from 'formik';
+import {
+  Field,
+  FieldMetaProps,
+  FieldInputProps,
+  FormikErrors,
+  useFormikContext,
+  FormikProps,
+} from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
 import { formatCoin, formatUSD } from '../../../../utils';
-import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
@@ -38,9 +44,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
       parseFloat(asset.balance) > 0 &&
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
-  const {
-    formik: { values, setFieldValue },
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
   if (fungibleAssetsWithBalance.length === 0) {
@@ -146,10 +150,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
 
 export function AssetSelector({ formIndex, disabled }: { formIndex: number; disabled?: boolean }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
-  const {
-    formik: { values, setFieldValue },
-    Field,
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
   return (
@@ -284,7 +285,15 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         isDisabled={disabled}
       >
         <Field name={`roleEditing.payments.${formIndex}.amount`}>
-          {({ field, meta, form: { setFieldTouched } }) => {
+          {({
+            field,
+            meta,
+            form: { setFieldTouched },
+          }: {
+            field: FieldInputProps<BigIntValuePair>;
+            meta: FieldMetaProps<BigIntValuePair>;
+            form: FormikProps<RoleFormValues>;
+          }) => {
             const paymentAmountBigIntError = meta.error as FormikErrors<BigIntValuePair>;
             const paymentAmountBigIntTouched = meta.touched;
             const inputDisabled = !values?.roleEditing?.payments?.[formIndex]?.asset || disabled;
