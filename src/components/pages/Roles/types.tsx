@@ -139,7 +139,7 @@ export interface RoleHatFormValueEdited extends RoleHatFormValue {
   editedRole: EditedRole;
 }
 
-export interface RoleFormValues {
+export type RoleFormValues = {
   proposalMetadata: CreateProposalMetadata;
   hats: RoleHatFormValue[];
   roleEditing?: RoleHatFormValue;
@@ -149,7 +149,7 @@ export interface RoleFormValues {
     nominee: string;
     termEndDate: Date;
   };
-}
+};
 
 export type PreparedNewStreamData = {
   recipient: Address;
