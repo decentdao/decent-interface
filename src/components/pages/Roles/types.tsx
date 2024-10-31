@@ -139,6 +139,10 @@ export interface RoleFormValues {
   roleEditing?: RoleHatFormValue;
   customNonce?: number;
   actions: SendAssetsData[];
+  newRoleTerm?: {
+    nominee: string;
+    termEndDate: Date;
+  };
 }
 
 export type PreparedNewStreamData = {

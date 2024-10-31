@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { CaretDown, CaretRight, Plus, X } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
@@ -21,14 +21,14 @@ import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { DatePicker } from '../../../ui/forms/DatePicker';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import RoleTerm, { RoleTermStatus } from '../RoleTerm';
+import RoleTerm, { RoleFormTermStatus } from '../RoleTerm';
 import { RoleFormValues } from '../types';
 
-function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
+function RoleTermEndDateInput() {
   const { t } = useTranslation('roles');
   return (
     <FormControl>
-      <Field name={`roleEditing.roleTerms[${termIndex}].termEndDate`}>
+      <Field name="newRoleTerm.termEndDate">
         {({ field, meta, form: { setFieldValue } }: FieldProps<Date, RoleFormValues>) => (
           <LabelWrapper
             label={t('termEndDate')}
@@ -51,11 +51,11 @@ function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
   );
 }
 
-function RoleTermMemberInput({ termIndex }: { termIndex: number }) {
+function RoleTermMemberInput() {
   const { t } = useTranslation('roles');
   return (
     <FormControl>
-      <Field name={`roleEditing.roleTerms[${termIndex}].nominee`}>
+      <Field name="newRoleTerm.nominee">
         {({
           field,
           form: { setFieldValue, setFieldTouched },
@@ -85,7 +85,9 @@ function RoleTermMemberInput({ termIndex }: { termIndex: number }) {
 
 function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: () => void }) {
   const { t } = useTranslation('roles');
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+  console.log('🚀 ~ errors:', errors);
+
   return (
     <Box>
       <Flex
@@ -124,15 +126,24 @@ function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: ()
         flexDirection="column"
         gap="1rem"
       >
-        <RoleTermMemberInput termIndex={termIndex} />
-        <RoleTermEndDateInput termIndex={termIndex} />
+        <RoleTermMemberInput />
+        <RoleTermEndDateInput />
         <Button
+          isDisabled={!!errors.newRoleTerm}
           onClick={() => {
-            setFieldValue(`roleEditing.roleTerms[${termIndex}]`, {
-              nominee: '',
-              termEndDate: undefined,
-              termNumber: termIndex + 1,
-            });
+            if (!values.newRoleTerm?.nominee || !values.newRoleTerm?.termEndDate) {
+              throw new Error('Nominee and Term End Date are required');
+            }
+            setFieldValue('roleEditing.roleTerms', [
+              ...(values?.roleEditing?.roleTerms || []),
+              {
+                nominee: values.newRoleTerm.nominee,
+                termEndDate: values.newRoleTerm.termEndDate,
+                termNumber: termIndex + 1,
+              },
+            ]);
+
+            onClose();
           }}
         >
           {t('Add Term')}
@@ -151,7 +162,7 @@ function RoleTermRenderer({
     termEndDate?: Date;
     termNumber: number;
   };
-  termStatus: RoleTermStatus;
+  termStatus: RoleFormTermStatus;
 }) {
   if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
     return null;
@@ -244,9 +255,8 @@ function RoleTermExpiredTerms({
 }
 
 export default function RoleFormTerms() {
-  const [newTermIndex, setNewTermIndex] = useState<number>();
   const { t } = useTranslation('roles');
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const { getHat } = useRolesStore();
 
   const roleHatTerms = useMemo(() => {
@@ -260,15 +270,21 @@ export default function RoleFormTerms() {
     [values.roleEditing?.roleTerms],
   );
 
-  // @dev shows the term form when there are no terms
-  useEffect(() => {
-    if (!roleFormTerms.length) {
-      setNewTermIndex(0);
-    }
+  // {assumption}: only 2 terms should be unexpired at a time
+  const terms = useMemo(() => {
+    console.log('🚀 ~ roleFormTerms:', roleFormTerms);
+    return roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
   }, [roleFormTerms]);
 
-  // {assumption}: only 2 terms should be unexpired at a time
-  const terms = roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
+  // @dev shows the term form when there are no terms
+  useEffect(() => {
+    if (terms[0] === undefined && values.newRoleTerm === undefined) {
+      setFieldValue('newRoleTerm', {
+        nominee: '',
+        termEndDate: undefined,
+      });
+    }
+  }, [values.newRoleTerm, setFieldValue, terms]);
 
   return (
     <Box>
@@ -276,9 +292,12 @@ export default function RoleFormTerms() {
         variant="secondary"
         size="sm"
         mb={4}
-        isDisabled={!!newTermIndex || terms.length == 2 || !roleFormTerms.length}
+        isDisabled={!!values.newRoleTerm || terms.length == 2 || !roleFormTerms.length}
         onClick={() => {
-          setNewTermIndex(roleFormTerms.length);
+          setFieldValue('newRoleTerm', {
+            nominee: '',
+            termEndDate: undefined,
+          });
         }}
       >
         <Icon
@@ -291,19 +310,21 @@ export default function RoleFormTerms() {
         flexDir="column"
         gap={4}
       >
-        {newTermIndex !== undefined && (
+        {values.newRoleTerm !== undefined && (
           <RoleTermCreate
-            termIndex={newTermIndex}
-            onClose={() => setNewTermIndex(undefined)}
+            termIndex={roleFormTerms.length}
+            onClose={() => setFieldValue('newRoleTerm', undefined)}
           />
         )}
         <RoleTermRenderer
-          roleTerm={roleHatTerms?.nextTerm}
-          termStatus="queued"
+          roleTerm={terms[1]}
+          termStatus={roleHatTerms?.nextTerm ? 'queued' : 'pending'}
         />
         <RoleTermRenderer
-          roleTerm={roleHatTerms?.currentTerm}
-          termStatus="current"
+          roleTerm={terms[0]}
+          // @dev show queued if term is being created
+          // @todo update with currentTerm's status
+          termStatus={roleHatTerms?.currentTerm ? 'current' : 'pending'}
         />
         <RoleTermExpiredTerms roleTerms={roleHatTerms?.expiredTerms} />
       </Flex>

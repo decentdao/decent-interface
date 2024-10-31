@@ -12,7 +12,7 @@ import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import Avatar from '../../ui/page/Header/Avatar';
 
-export type RoleTermStatus = 'current' | 'queued' | 'expired';
+export type RoleFormTermStatus = 'current' | 'queued' | 'expired' | 'pending';
 
 function Container({ children, isTop = false }: { isTop?: boolean; children: React.ReactNode }) {
   return (
@@ -36,7 +36,7 @@ function RoleTermHeaderTitle({
   termStatus,
 }: {
   termNumber: number;
-  termStatus: RoleTermStatus;
+  termStatus: RoleFormTermStatus;
 }) {
   const { t } = useTranslation(['roles']);
   const isCurrentTerm = termStatus === 'current';
@@ -67,7 +67,7 @@ function RoleTermHeaderStatus({
   termStatus,
 }: {
   termEndDate: Date;
-  termStatus: RoleTermStatus;
+  termStatus: RoleFormTermStatus;
 }) {
   // @todo implement isReadyToStart
   const isReadyToStart = false;
@@ -83,6 +83,11 @@ function RoleTermHeaderStatus({
       },
       inQueue: {
         text: t('inQueue'),
+        textColor: 'neutral-7',
+        iconColor: 'lilac-0',
+      },
+      pending: {
+        text: t('pending'),
         textColor: 'neutral-7',
         iconColor: 'lilac-0',
       },
@@ -111,6 +116,10 @@ function RoleTermHeaderStatus({
     }
     if (termStatus === 'queued') {
       // Next term
+      return statusTextData.inQueue;
+    }
+    if (termStatus === 'pending') {
+      // term being created
       return statusTextData.inQueue;
     }
     if (termStatus === 'current') {
@@ -152,7 +161,7 @@ function RoleTermHeader({
 }: {
   termNumber: number;
   termEndDate: Date;
-  termStatus: RoleTermStatus;
+  termStatus: RoleFormTermStatus;
 }) {
   return (
     <Container isTop>
@@ -250,7 +259,7 @@ export default function RoleTerm({
   memberAddress: Address;
   termEndDate: Date;
   termNumber: number;
-  termStatus: RoleTermStatus;
+  termStatus: RoleFormTermStatus;
 }) {
   return (
     <Box>

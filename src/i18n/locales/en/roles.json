@@ -116,5 +116,6 @@
   "assignPayment": "Assign Payment to Term",
   "assignPaymentTooltip": "Assign this payment to a specific term.",
   "selectTerm": "Select Term",
-  "assigned": "Assigned"
+  "assigned": "Assigned",
+  "pending": "Pending"
 }
