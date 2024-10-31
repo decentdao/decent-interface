@@ -82,6 +82,12 @@ export interface TermedParams {
   nominatedWearers: Address[];
 }
 
+export enum RoleFormTermStatus {
+  Current,
+  Queued,
+  Expired,
+  Pending,
+}
 export interface HatStruct {
   maxSupply: 1; // No more than this number of wearers. Hardcode to 1
   details: string; // IPFS url/hash to JSON { version: '1.0', data: { name, description, ...arbitraryData } }

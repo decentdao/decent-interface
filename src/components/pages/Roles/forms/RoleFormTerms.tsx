@@ -21,8 +21,8 @@ import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { DatePicker } from '../../../ui/forms/DatePicker';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import RoleTerm, { RoleFormTermStatus } from '../RoleTerm';
-import { RoleFormValues } from '../types';
+import RoleTerm from '../RoleTerm';
+import { RoleFormTermStatus, RoleFormValues } from '../types';
 
 function RoleTermEndDateInput() {
   const { t } = useTranslation('roles');
@@ -240,7 +240,7 @@ function RoleTermExpiredTerms({
                       <RoleTermRenderer
                         key={index}
                         roleTerm={term}
-                        termStatus="expired"
+                        termStatus={RoleFormTermStatus.Expired}
                       />
                     </AccordionPanel>
                   );
@@ -272,7 +272,6 @@ export default function RoleFormTerms() {
 
   // {assumption}: only 2 terms should be unexpired at a time
   const terms = useMemo(() => {
-    console.log('🚀 ~ roleFormTerms:', roleFormTerms);
     return roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
   }, [roleFormTerms]);
 
@@ -318,13 +317,16 @@ export default function RoleFormTerms() {
         )}
         <RoleTermRenderer
           roleTerm={terms[1]}
-          termStatus={roleHatTerms?.nextTerm ? 'queued' : 'pending'}
+          termStatus={
+            roleHatTerms?.nextTerm ? RoleFormTermStatus.Queued : RoleFormTermStatus.Pending
+          }
         />
         <RoleTermRenderer
           roleTerm={terms[0]}
           // @dev show queued if term is being created
-          // @todo update with currentTerm's status
-          termStatus={roleHatTerms?.currentTerm ? 'current' : 'pending'}
+          termStatus={
+            roleHatTerms?.currentTerm ? RoleFormTermStatus.Current : RoleFormTermStatus.Pending
+          }
         />
         <RoleTermExpiredTerms roleTerms={roleHatTerms?.expiredTerms} />
       </Flex>

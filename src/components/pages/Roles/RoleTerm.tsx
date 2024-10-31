@@ -11,8 +11,7 @@ import { useCopyText } from '../../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import Avatar from '../../ui/page/Header/Avatar';
-
-export type RoleFormTermStatus = 'current' | 'queued' | 'expired' | 'pending';
+import { RoleFormTermStatus } from './types';
 
 function Container({ children, isTop = false }: { isTop?: boolean; children: React.ReactNode }) {
   return (
@@ -39,8 +38,8 @@ function RoleTermHeaderTitle({
   termStatus: RoleFormTermStatus;
 }) {
   const { t } = useTranslation(['roles']);
-  const isCurrentTerm = termStatus === 'current';
-  const isNextTerm = termStatus === 'queued';
+  const isCurrentTerm = termStatus === RoleFormTermStatus.Current;
+  const isNextTerm = termStatus === RoleFormTermStatus.Pending;
   const termIndicatorText = isCurrentTerm
     ? t('currentTerm')
     : isNextTerm
@@ -101,7 +100,6 @@ function RoleTermHeaderStatus({
         textColor: 'neutral-7',
         iconColor: 'lilac-0',
       },
-      // @todo implement revoked tx
       revoked: {
         text: t('revoked'),
         textColor: 'red-1',
@@ -111,27 +109,22 @@ function RoleTermHeaderStatus({
     if (isReadyToStart) {
       return statusTextData.readyToStart;
     }
-    if (termStatus === 'expired') {
-      return statusTextData.ended;
+    switch (termStatus) {
+      case RoleFormTermStatus.Expired:
+        return statusTextData.ended;
+      case RoleFormTermStatus.Queued:
+        return statusTextData.inQueue;
+      case RoleFormTermStatus.Pending:
+        return statusTextData.inQueue;
+      case RoleFormTermStatus.Current:
+        return statusTextData.active;
+      default:
+        return {
+          text: undefined,
+          textColor: undefined,
+          iconColor: undefined,
+        };
     }
-    if (termStatus === 'queued') {
-      // Next term
-      return statusTextData.inQueue;
-    }
-    if (termStatus === 'pending') {
-      // term being created
-      return statusTextData.inQueue;
-    }
-    if (termStatus === 'current') {
-      // time left
-      return statusTextData.active;
-    }
-
-    return {
-      text: undefined,
-      textColor: undefined,
-      iconColor: undefined,
-    };
   }, [isReadyToStart, dateDisplay, termStatus, t]);
   return (
     <Flex
