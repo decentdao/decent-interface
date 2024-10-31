@@ -127,7 +127,7 @@ export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
           gap="0.5rem"
         >
           <Text color="neutral-7">{t('titleVotingPeriod')}</Text>
-          <Text textAlign="right">{governanceAzorius.votingStrategy?.votingPeriod?.formatted}</Text>
+          <Text textAlign="right">{governanceAzorius.votingStrategy.votingPeriod.formatted}</Text>
         </Flex>
       )}
       {governanceAzorius?.votingStrategy?.quorumPercentage && (

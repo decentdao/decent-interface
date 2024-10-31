@@ -40,6 +40,10 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     });
   }, [values.roleEditing]);
 
+  const isCanCreateProposalsUpdated =
+    !!existingRoleHat &&
+    values.roleEditing?.canCreateProposals !== existingRoleHat.canCreateProposals;
+
   const editedRoleData = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
       return {
@@ -52,6 +56,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
     fieldNames = addRemoveField(fieldNames, 'payments', isPaymentsUpdated);
+    fieldNames = addRemoveField(fieldNames, 'canCreateProposals', isCanCreateProposalsUpdated);
 
     return {
       fieldNames,
@@ -63,13 +68,24 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     isRoleDescriptionUpdated,
     isMemberUpdated,
     isPaymentsUpdated,
+    isCanCreateProposalsUpdated,
   ]);
 
   const isRoleUpdated = useMemo(() => {
     return (
-      !!isRoleNameUpdated || !!isRoleDescriptionUpdated || !!isMemberUpdated || !!isPaymentsUpdated
+      !!isRoleNameUpdated ||
+      !!isRoleDescriptionUpdated ||
+      !!isMemberUpdated ||
+      !!isPaymentsUpdated ||
+      !!isCanCreateProposalsUpdated
     );
-  }, [isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated, isPaymentsUpdated]);
+  }, [
+    isRoleNameUpdated,
+    isRoleDescriptionUpdated,
+    isMemberUpdated,
+    isPaymentsUpdated,
+    isCanCreateProposalsUpdated,
+  ]);
 
   return {
     existingRoleHat,

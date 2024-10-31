@@ -524,7 +524,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     }
   }
 
-  // TODO - verify we can use safe contract address
   private setPredictedAzoriusAddress() {
     const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
     const safeContractAddress = this.safeContractAddress;

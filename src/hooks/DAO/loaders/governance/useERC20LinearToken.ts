@@ -17,18 +17,6 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
   const account = user.address;
   const publicClient = usePublicClient();
 
-  // const tokenContract = useMemo(() => {
-  //   if (!votesTokenAddress || !publicClient) {
-  //     return;
-  //   }
-
-  //   return getContract({
-  //     abi: abis.VotesERC20,
-  //     address: votesTokenAddress,
-  //     client: publicClient,
-  //   });
-  // }, [publicClient, votesTokenAddress]);
-
   const underlyingTokenContract = useMemo(() => {
     if (!underlyingTokenAddress || !publicClient) {
       return;

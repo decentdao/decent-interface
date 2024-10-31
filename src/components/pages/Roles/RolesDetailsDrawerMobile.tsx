@@ -1,6 +1,6 @@
-import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../../hooks/utils/useAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -11,6 +11,7 @@ import {
 } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
+import ModalTooltip from '../../ui/modals/ModalTooltip';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
 import { RolePaymentDetails } from './RolePaymentDetails';
@@ -28,6 +29,7 @@ export default function RolesDetailsDrawerMobile({
   } = useFractal();
   const { t } = useTranslation('roles');
   const { hatsTree } = useRolesStore();
+  const permissionsContainerRef = useRef<HTMLDivElement>(null);
 
   const sortedPayments = useMemo(
     () =>
@@ -94,6 +96,39 @@ export default function RolesDetailsDrawerMobile({
         </Text>
         <Text textStyle="body-base">{roleHat.description}</Text>
       </Box>
+      {roleHat.canCreateProposals && (
+        <Box
+          px="1rem"
+          mb="1rem"
+          zIndex={1}
+          ref={permissionsContainerRef}
+        >
+          <Text
+            color="neutral-7"
+            textStyle="button-small"
+          >
+            {t('permissions')}
+          </Text>
+          <ModalTooltip
+            containerRef={permissionsContainerRef}
+            label={t('permissionsProposalsTooltip')}
+          >
+            <Badge
+              color="celery-0"
+              bgColor="celery--6"
+              textTransform="unset"
+              textStyle="body-base"
+              fontSize="1rem"
+              lineHeight="1.5rem"
+              fontWeight="normal"
+              borderRadius="0.25rem"
+              px="0.5rem"
+            >
+              {t('permissionsProposals')}
+            </Badge>
+          </ModalTooltip>
+        </Box>
+      )}
       <Box
         px="1rem"
         mb="1.5rem"
