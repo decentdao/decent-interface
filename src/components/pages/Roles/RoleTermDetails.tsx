@@ -18,7 +18,7 @@ import { RoleFormTermStatus } from './types';
 function RoleTermRenderer({
   roleTerm,
   termStatus,
-  containerVariant,
+  displayLightContainer,
 }: {
   roleTerm?: {
     nominee?: string;
@@ -26,7 +26,7 @@ function RoleTermRenderer({
     termNumber: number;
   };
   termStatus: RoleFormTermStatus;
-  containerVariant?: 'dark' | 'light';
+  displayLightContainer?: boolean;
 }) {
   if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
     return null;
@@ -37,7 +37,7 @@ function RoleTermRenderer({
       termEndDate={roleTerm.termEndDate}
       termStatus={termStatus}
       termNumber={roleTerm.termNumber}
-      containerVariant={containerVariant}
+      displayLightContainer={displayLightContainer}
     />
   );
 }
@@ -105,7 +105,7 @@ function RoleTermExpiredTerms({
                         key={index}
                         roleTerm={term}
                         termStatus={RoleFormTermStatus.Expired}
-                        containerVariant="light"
+                        displayLightContainer
                       />
                     </AccordionPanel>
                   );

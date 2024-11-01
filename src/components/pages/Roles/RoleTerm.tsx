@@ -16,23 +16,24 @@ import { RoleFormTermStatus } from './types';
 function Container({
   children,
   isTop = false,
-  showBorder = false,
+  displayLightContainer = false,
 }: {
   isTop?: boolean;
-  showBorder?: boolean;
+  displayLightContainer?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <Box
       p="1rem"
       bg="neutral-2"
-      boxShadow={DETAILS_BOX_SHADOW}
+      boxShadow={displayLightContainer ? 'layeredShadowBorder' : DETAILS_BOX_SHADOW}
       borderTopRadius={isTop ? '0.5rem' : undefined}
       borderBottomRadius={!isTop ? '0.5rem' : undefined}
       display="flex"
       flexDirection="column"
       gap="1rem"
-      border={showBorder ? '1px solid #3E3743' : undefined}
+      border={displayLightContainer ? '1px solid' : undefined}
+      borderColor={displayLightContainer ? 'neutral-4' : undefined}
     >
       {children}
     </Box>
@@ -160,17 +161,17 @@ function RoleTermHeader({
   termNumber,
   termEndDate,
   termStatus,
-  showBorder,
+  displayLightContainer,
 }: {
   termNumber: number;
   termEndDate: Date;
   termStatus: RoleFormTermStatus;
-  showBorder?: boolean;
+  displayLightContainer?: boolean;
 }) {
   return (
     <Container
       isTop
-      showBorder={showBorder}
+      displayLightContainer={displayLightContainer}
     >
       <Flex justifyContent="space-between">
         <RoleTermHeaderTitle
@@ -268,13 +269,13 @@ export default function RoleTerm({
   termEndDate,
   termStatus,
   termNumber,
-  showBorder,
+  displayLightContainer,
 }: {
   memberAddress: Address;
   termEndDate: Date;
   termNumber: number;
   termStatus: RoleFormTermStatus;
-  showBorder?: boolean;
+  displayLightContainer?: boolean;
 }) {
   return (
     <Box>
@@ -282,9 +283,9 @@ export default function RoleTerm({
         termNumber={termNumber}
         termEndDate={termEndDate}
         termStatus={termStatus}
-        showBorder={showBorder}
+        displayLightContainer={displayLightContainer}
       />
-      <Container showBorder={showBorder}>
+      <Container displayLightContainer={displayLightContainer}>
         <Flex justifyContent="space-between">
           <RoleTermMemberAddress memberAddress={memberAddress} />
           <RoleTermEndDate termEndDate={termEndDate} />
