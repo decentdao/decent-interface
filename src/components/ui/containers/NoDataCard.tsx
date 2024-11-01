@@ -16,7 +16,7 @@ export default function NoDataCard({
   return (
     <Box
       bg="neutral-2"
-      boxShadow="0px 0px 0px 1px #100414, inset 0px 0px 0px 1px rgba(248, 244, 252, 0.04), inset 0px 1px 0px rgba(248, 244, 252, 0.04)"
+      boxShadow="layeredShadowBorder"
       borderRadius="0.75rem"
       p="1rem"
     >
