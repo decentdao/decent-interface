@@ -1,6 +1,7 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
+import { Formik } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -22,7 +23,6 @@ import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
-import { makeTypesafeForm } from '../../../../../utils/TypesafeForm';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
@@ -95,10 +95,8 @@ function RolesEdit() {
   const hatsTreeLoading = hatsTree === undefined;
   const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
 
-  const { Formik } = makeTypesafeForm<RoleFormValues>();
-
   return (
-    <Formik
+    <Formik<RoleFormValues>
       initialValues={initialValues}
       enableReinitialize
       validationSchema={rolesSchema}

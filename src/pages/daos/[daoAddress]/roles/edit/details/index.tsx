@@ -14,6 +14,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { ArrowLeft, DotsThree, Trash } from '@phosphor-icons/react';
+import { FieldArray, useFormikContext } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -38,14 +39,11 @@ import { useNavigationBlocker } from '../../../../../../hooks/utils/useNavigatio
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../../store/roles/useRolesStore';
-import { useTypesafeFormikContext } from '../../../../../../utils/TypesafeForm';
 import { UnsavedChangesWarningContent } from '../unsavedChangesWarningContent';
 
 function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void }) {
   const { t } = useTranslation(['roles']);
-  const {
-    formik: { values, setFieldValue },
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const hatIndex = values.hats.findIndex(h => h.id === hatId);
@@ -138,16 +136,13 @@ export default function RoleEditDetails() {
   const { getPayment } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
-  const {
-    formik: { values, setFieldValue, touched, setTouched },
-    FieldArray,
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
 
   const [wasRoleActuallyEdited, setWasRoleActuallyEdited] = useState(false);
 
-  const { formik: editRolesFormikContext } = useTypesafeFormikContext<RoleFormValues>();
+  const editRolesFormikContext = useFormikContext<RoleFormValues>();
   const blocker = useNavigationBlocker({
     roleEditDetailsNavigationBlockerParams: { wasRoleActuallyEdited, ...editRolesFormikContext },
   });

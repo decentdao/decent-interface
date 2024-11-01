@@ -1,4 +1,5 @@
 import { Box, Flex, FormControl, Switch, Text } from '@chakra-ui/react';
+import { Field, FieldInputProps, FieldMetaProps, FormikProps, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
@@ -7,7 +8,6 @@ import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { GovernanceType } from '../../../../types';
-import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -24,10 +24,7 @@ export default function RoleFormInfo() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const {
-    formik: { setFieldValue, values },
-    Field,
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
 
   useEffect(() => {
     if (isValidWearerAddress) {
@@ -38,28 +35,107 @@ export default function RoleFormInfo() {
   const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer, false);
 
   return (
-    <>
-      <Box
-        px={{ base: '1rem', md: 0 }}
-        py="1rem"
-        bg="neutral-2"
-        boxShadow={{
-          base: DETAILS_BOX_SHADOW,
-          md: 'unset',
-        }}
-        borderRadius="0.5rem"
-        display="flex"
-        flexDirection="column"
-        gap="1rem"
-      >
-        <FormControl>
-          <Field name="roleEditing.name">
-            {({ field, form: { setFieldTouched }, meta }) => (
-              <InputComponent
-                value={field.value || ''}
-                onChange={e => {
-                  setFieldValue('roleEditing.wearer', e.target.value);
-                }}
+    <Box
+      px={{ base: '1rem', md: 0 }}
+      py="1rem"
+      bg="neutral-2"
+      boxShadow={{
+        base: DETAILS_BOX_SHADOW,
+        md: 'unset',
+      }}
+      borderRadius="0.5rem"
+      display="flex"
+      flexDirection="column"
+      gap="1rem"
+    >
+      <FormControl>
+        <Field name="roleEditing.name">
+          {({
+            field,
+            form: { setFieldTouched },
+            meta,
+          }: {
+            field: FieldInputProps<string>;
+            form: FormikProps<RoleFormValues>;
+            meta: FieldMetaProps<string>;
+          }) => (
+            <InputComponent
+              value={field.value ?? ''}
+              onChange={e => {
+                setFieldValue('roleEditing.name', e.target.value);
+              }}
+              onBlur={() => {
+                setFieldTouched('roleEditing.name', true);
+              }}
+              testId="role-name"
+              placeholder={t('roleName')}
+              isRequired
+              gridContainerProps={{
+                gridTemplateColumns: { base: '1fr', md: '1fr' },
+              }}
+              inputContainerProps={{
+                p: 0,
+              }}
+              label={t('roleName')}
+              errorMessage={meta.touched && meta.error ? meta.error : undefined}
+            />
+          )}
+        </Field>
+      </FormControl>
+      <FormControl>
+        <Field name="roleEditing.description">
+          {({
+            field,
+            form: { setFieldTouched },
+            meta,
+          }: {
+            field: FieldInputProps<string>;
+            form: FormikProps<RoleFormValues>;
+            meta: FieldMetaProps<string>;
+          }) => (
+            <TextareaComponent
+              value={field.value ?? ''}
+              onChange={e => {
+                setFieldValue('roleEditing.description', e.target.value);
+              }}
+              isRequired
+              gridContainerProps={{
+                gridTemplateColumns: { base: '1fr', md: '1fr' },
+              }}
+              inputContainerProps={{
+                p: 0,
+              }}
+              textAreaProps={{
+                h: '12rem',
+                onBlur: () => {
+                  setFieldTouched('roleEditing.description', true);
+                },
+              }}
+              label={t('roleDescription')}
+              errorMessage={meta.touched && meta.error ? meta.error : undefined}
+            />
+          )}
+        </Field>
+      </FormControl>
+      <FormControl>
+        <Field name="roleEditing.wearer">
+          {({
+            field,
+            form: { setFieldTouched },
+            meta,
+          }: {
+            field: FieldInputProps<string>;
+            form: FormikProps<RoleFormValues>;
+            meta: FieldMetaProps<string>;
+          }) => (
+            <LabelWrapper
+              label={t('member')}
+              errorMessage={meta.touched && meta.error ? meta.error : undefined}
+              isRequired
+              labelColor="neutral-7"
+            >
+              <AddressInput
+                value={displayName ?? field.value}
                 onBlur={() => {
                   setFieldTouched('roleEditing.wearer', true);
                 }}
