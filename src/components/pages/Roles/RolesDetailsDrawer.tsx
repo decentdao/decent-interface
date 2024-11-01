@@ -35,6 +35,7 @@ import { BarLoader } from '../../ui/loaders/BarLoader';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
+import RoleTermDetails from './RoleTermDetails';
 import { RoleDetailsDrawerProps, SablierPayment } from './types';
 
 function NoDataCard({
@@ -148,6 +149,40 @@ function RolesDetailsPayments({
         />
       ))}
     </>
+  );
+}
+
+function RolesDetailsTerms({
+  currentTerm,
+  nextTerm,
+  expiredTerms,
+}: {
+  nextTerm:
+    | {
+        termEndDate: Date;
+        termNumber: number;
+        nominee: string;
+      }
+    | undefined;
+  currentTerm:
+    | {
+        termEndDate: Date;
+        termNumber: number;
+        nominee: string;
+      }
+    | undefined;
+  expiredTerms: {
+    termEndDate: Date;
+    termNumber: number;
+    nominee: string;
+  }[];
+}) {
+  return (
+    <RoleTermDetails
+      currentTerm={currentTerm}
+      nextTerm={nextTerm}
+      expiredTerms={expiredTerms}
+    />
   );
 }
 
@@ -295,7 +330,17 @@ export default function RolesDetailsDrawer({
               <Tab>{t('payments')}</Tab>
             </TabList>
             <TabPanels mt={4}>
-              <TabPanel>{/* Terms content goes here */}</TabPanel>
+              <TabPanel>
+                <RolesDetailsTerms
+                  currentTerm={roleHat.roleTerms.currentTerm}
+                  nextTerm={roleHat.roleTerms.nextTerm}
+                  expiredTerms={roleHat.roleTerms.expiredTerms.map(term => ({
+                    nominee: term.nominee,
+                    termEndDate: term.termEndDate,
+                    termNumber: term.termNumber,
+                  }))}
+                />
+              </TabPanel>
               <TabPanel>
                 <RolesDetailsPayments
                   payments={sortedPayments}

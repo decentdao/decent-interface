@@ -119,5 +119,9 @@
   "assigned": "Assigned",
   "pending": "Pending",
   "noActivePayments": "No active payments.",
-  "noActivePaymentsNotProposer": "This Role doesn't have any active payments yet."
+  "noActivePaymentsNotProposer": "This Role doesn't have any active payments.",
+  "terms": "Terms",
+  "noActiveTerms": "No active terms.",
+  "noActiveTermsNotProposer": "This Role doesn't have any active terms",
+  "showPreviousTerms": "Previous terms"
 }

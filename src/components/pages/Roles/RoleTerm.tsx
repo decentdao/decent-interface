@@ -13,7 +13,15 @@ import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import Avatar from '../../ui/page/Header/Avatar';
 import { RoleFormTermStatus } from './types';
 
-function Container({ children, isTop = false }: { isTop?: boolean; children: React.ReactNode }) {
+function Container({
+  children,
+  isTop = false,
+  showBorder = false,
+}: {
+  isTop?: boolean;
+  showBorder?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <Box
       p="1rem"
@@ -24,6 +32,7 @@ function Container({ children, isTop = false }: { isTop?: boolean; children: Rea
       display="flex"
       flexDirection="column"
       gap="1rem"
+      border={showBorder ? '1px solid #3E3743' : undefined}
     >
       {children}
     </Box>
@@ -151,13 +160,18 @@ function RoleTermHeader({
   termNumber,
   termEndDate,
   termStatus,
+  showBorder,
 }: {
   termNumber: number;
   termEndDate: Date;
   termStatus: RoleFormTermStatus;
+  showBorder?: boolean;
 }) {
   return (
-    <Container isTop>
+    <Container
+      isTop
+      showBorder={showBorder}
+    >
       <Flex justifyContent="space-between">
         <RoleTermHeaderTitle
           termNumber={termNumber}
@@ -197,6 +211,7 @@ function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
         <Button
           variant="unstyled"
           p={0}
+          h="fit-content"
           aria-label="Copy address"
           onClick={() => copyToClipboard(memberAddress)}
           rightIcon={
@@ -233,7 +248,10 @@ function RoleTermEndDate({ termEndDate }: { termEndDate: Date }) {
         gap={1}
         alignItems="center"
       >
-        <Icon as={Calendar} />
+        <Icon
+          as={Calendar}
+          boxSize="1.5rem"
+        />
         <Text
           textStyle="label-base"
           color="white"
@@ -250,11 +268,13 @@ export default function RoleTerm({
   termEndDate,
   termStatus,
   termNumber,
+  showBorder,
 }: {
   memberAddress: Address;
   termEndDate: Date;
   termNumber: number;
   termStatus: RoleFormTermStatus;
+  showBorder?: boolean;
 }) {
   return (
     <Box>
@@ -262,8 +282,9 @@ export default function RoleTerm({
         termNumber={termNumber}
         termEndDate={termEndDate}
         termStatus={termStatus}
+        showBorder={showBorder}
       />
-      <Container>
+      <Container showBorder={showBorder}>
         <Flex justifyContent="space-between">
           <RoleTermMemberAddress memberAddress={memberAddress} />
           <RoleTermEndDate termEndDate={termEndDate} />
