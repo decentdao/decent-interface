@@ -11,7 +11,6 @@ import {
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
-import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import RoleTerm from './RoleTerm';
 import { RoleFormTermStatus } from './types';
@@ -19,7 +18,7 @@ import { RoleFormTermStatus } from './types';
 function RoleTermRenderer({
   roleTerm,
   termStatus,
-  showBorder,
+  containerVariant,
 }: {
   roleTerm?: {
     nominee?: string;
@@ -27,7 +26,7 @@ function RoleTermRenderer({
     termNumber: number;
   };
   termStatus: RoleFormTermStatus;
-  showBorder?: boolean;
+  containerVariant?: 'dark' | 'light';
 }) {
   if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
     return null;
@@ -38,7 +37,7 @@ function RoleTermRenderer({
       termEndDate={roleTerm.termEndDate}
       termStatus={termStatus}
       termNumber={roleTerm.termNumber}
-      showBorder={showBorder}
+      containerVariant={containerVariant}
     />
   );
 }
@@ -59,11 +58,10 @@ function RoleTermExpiredTerms({
   return (
     <Box
       borderRadius="0.5rem"
-      boxShadow={DETAILS_BOX_SHADOW}
+      boxShadow="layeredShadowBorder"
     >
       <Accordion allowToggle>
         <AccordionItem
-          bg="neutral-2"
           borderTop="none"
           borderBottom="none"
           borderTopRadius="0.5rem"
@@ -72,7 +70,6 @@ function RoleTermExpiredTerms({
           {({ isExpanded }) => (
             <>
               <AccordionButton
-                bg="neutral-2"
                 borderTopRadius="0.5rem"
                 borderBottomRadius="0.5rem"
                 p="1rem"
@@ -108,7 +105,7 @@ function RoleTermExpiredTerms({
                         key={index}
                         roleTerm={term}
                         termStatus={RoleFormTermStatus.Expired}
-                        showBorder
+                        containerVariant="light"
                       />
                     </AccordionPanel>
                   );
