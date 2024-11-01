@@ -3,9 +3,15 @@ import { useCallback } from 'react';
 import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+// import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
+// import { getValue, setValue } from './cache/useLocalStorage';
+
+// @todo - seems like we can uncomment the commented code in here and enjoy master copy caching ^_^
+// Requires testing though
 
 export function useMasterCopy() {
   const {
+    // chain,
     contracts: {
       zodiacModuleProxyFactory,
       zodiacModuleProxyFactoryOld,
@@ -71,6 +77,13 @@ export function useMasterCopy() {
         return [zeroAddress, null] as const;
       }
 
+      // const cachedValue = getValue({
+      //   cacheName: CacheKeys.MASTER_COPY,
+      //   chainId: chain.id,
+      //   proxyAddress,
+      // });
+      // if (cachedValue) return [cachedValue, null] as const;
+
       const moduleProxyFactoryContract = getContract({
         abi: abis.ModuleProxyFactory,
         address: moduleProxyFactoryContractAddress,
@@ -82,6 +95,15 @@ export function useMasterCopy() {
         .then(proxiesCreated => {
           // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
           if (proxiesCreated.length === 0) {
+            // setValue(
+            //   {
+            //     cacheName: CacheKeys.MASTER_COPY,
+            //     chainId: chain.id,
+            //     proxyAddress,
+            //   },
+            //   zeroAddress,
+            //   CacheExpiry.ONE_WEEK,
+            // );
             return [zeroAddress, 'No proxies created'] as const;
           }
 
@@ -90,8 +112,6 @@ export function useMasterCopy() {
             return [zeroAddress, 'No master copy address'] as const;
           }
 
-          // @todo - seems like we can uncomment this buddy and enjoy master copy caching ^_^
-          // Requires testing though
           // setValue(
           //   {
           //     cacheName: CacheKeys.MASTER_COPY,
