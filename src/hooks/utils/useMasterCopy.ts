@@ -12,37 +12,47 @@ export function useMasterCopy() {
     contracts: {
       zodiacModuleProxyFactory,
       zodiacModuleProxyFactoryOld,
+
+      claimErc20MasterCopy,
+
       linearVotingErc20MasterCopy,
+      linearVotingErc20WrappedMasterCopy,
       linearVotingErc721MasterCopy,
+
       moduleFractalMasterCopy,
       moduleAzoriusMasterCopy,
+
       freezeGuardMultisigMasterCopy,
-      freezeVotingErc721MasterCopy,
+      freezeGuardAzoriusMasterCopy,
+
       freezeVotingMultisigMasterCopy,
+      freezeVotingErc20MasterCopy,
+      freezeVotingErc721MasterCopy,
+
+      votesErc20MasterCopy,
+      votesErc20WrapperMasterCopy,
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
+
+  const isClaimErc20 = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === claimErc20MasterCopy,
+    [claimErc20MasterCopy],
+  );
 
   const isLinearVotingErc20 = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc20MasterCopy,
     [linearVotingErc20MasterCopy],
   );
+  const isLinearVotingErc20Wrapped = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc20WrappedMasterCopy,
+    [linearVotingErc20WrappedMasterCopy],
+  );
   const isLinearVotingErc721 = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc721MasterCopy,
     [linearVotingErc721MasterCopy],
   );
-  const isFreezeGuardMultisig = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === freezeGuardMultisigMasterCopy,
-    [freezeGuardMultisigMasterCopy],
-  );
-  const isFreezeVotingMultisig = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingMultisigMasterCopy,
-    [freezeVotingMultisigMasterCopy],
-  );
-  const isFreezeVotingErc721 = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingErc721MasterCopy,
-    [freezeVotingErc721MasterCopy],
-  );
+
   const isModuleAzorius = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === moduleAzoriusMasterCopy,
     [moduleAzoriusMasterCopy],
@@ -50,6 +60,37 @@ export function useMasterCopy() {
   const isModuleFractal = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === moduleFractalMasterCopy,
     [moduleFractalMasterCopy],
+  );
+
+  const isFreezeGuardMultisig = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === freezeGuardMultisigMasterCopy,
+    [freezeGuardMultisigMasterCopy],
+  );
+  const isFreezeGuardAzorius = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === freezeGuardAzoriusMasterCopy,
+    [freezeGuardAzoriusMasterCopy],
+  );
+
+  const isFreezeVotingMultisig = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingMultisigMasterCopy,
+    [freezeVotingMultisigMasterCopy],
+  );
+  const isFreezeVotingErc20 = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingErc20MasterCopy,
+    [freezeVotingErc20MasterCopy],
+  );
+  const isFreezeVotingErc721 = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingErc721MasterCopy,
+    [freezeVotingErc721MasterCopy],
+  );
+
+  const isVotesErc20 = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === votesErc20MasterCopy,
+    [votesErc20MasterCopy],
+  );
+  const isVotesErc20Wrapper = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === votesErc20WrapperMasterCopy,
+    [votesErc20WrapperMasterCopy],
   );
 
   const getMasterCopyAddress = useCallback(
@@ -133,24 +174,41 @@ export function useMasterCopy() {
       }
 
       return {
+        isClaimErc20: isClaimErc20(masterCopyAddress),
+
         isLinearVotingErc20: isLinearVotingErc20(masterCopyAddress),
+        isLinearVotingErc20Wrapped: isLinearVotingErc20Wrapped(masterCopyAddress),
         isLinearVotingErc721: isLinearVotingErc721(masterCopyAddress),
-        isFreezeGuardMultisig: isFreezeGuardMultisig(masterCopyAddress),
-        isFreezeVotingMultisig: isFreezeVotingMultisig(masterCopyAddress),
-        isFreezeVotingErc721: isFreezeVotingErc721(masterCopyAddress),
+
         isModuleAzorius: isModuleAzorius(masterCopyAddress),
         isModuleFractal: isModuleFractal(masterCopyAddress),
+
+        isFreezeGuardMultisig: isFreezeGuardMultisig(masterCopyAddress),
+        isFreezeGuardAzorius: isFreezeGuardAzorius(masterCopyAddress),
+
+        isFreezeVotingMultisig: isFreezeVotingMultisig(masterCopyAddress),
+        isFreezeVotingErc20: isFreezeVotingErc20(masterCopyAddress),
+        isFreezeVotingErc721: isFreezeVotingErc721(masterCopyAddress),
+
+        isVotesErc20: isVotesErc20(masterCopyAddress),
+        isVotesErc20Wrapper: isVotesErc20Wrapper(masterCopyAddress),
       };
     },
     [
       getMasterCopyAddress,
+      isClaimErc20,
+      isFreezeGuardAzorius,
       isFreezeGuardMultisig,
+      isFreezeVotingErc20,
       isFreezeVotingErc721,
       isFreezeVotingMultisig,
       isLinearVotingErc20,
+      isLinearVotingErc20Wrapped,
       isLinearVotingErc721,
       isModuleAzorius,
       isModuleFractal,
+      isVotesErc20,
+      isVotesErc20Wrapper,
       zodiacModuleProxyFactory,
       zodiacModuleProxyFactoryOld,
     ],
