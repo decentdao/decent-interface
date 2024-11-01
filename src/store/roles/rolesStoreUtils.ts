@@ -52,7 +52,7 @@ export interface DecentRoleHat extends DecentHat {
   eligibility?: Address;
   roleTerms: {
     allTerms: RoleTerm[];
-    currentTerm: RoleTerm | undefined;
+    currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
     nextTerm: RoleTerm | undefined;
     expiredTerms: RoleTerm[];
   };
@@ -181,6 +181,26 @@ export const predictAccountAddress = async (params: {
   ]);
 };
 
+export const getCurrentTermStatus = async (
+  currentTermEndDateTs: bigint,
+  eligibility: Address,
+  publicClient: PublicClient,
+) => {
+  try {
+    const electionContract = getContract({
+      abi: HatsElectionsEligibilityAbi,
+      address: eligibility,
+      client: publicClient,
+    });
+
+    const nextTextEndTs = await electionContract.read.nextTermEnd();
+    return nextTextEndTs === currentTermEndDateTs ? 'active' : 'inactive';
+  } catch (e) {
+    console.error('Failed to get current term status', e);
+    return 'inactive';
+  }
+};
+
 const isElectionEligibilityModule = async (
   eligibility: Address | undefined,
   hatsElectionsImplementation: Address,
@@ -205,7 +225,7 @@ const getRoleHatTerms = async (
 ) => {
   let roleTerms: {
     allTerms: RoleTerm[];
-    currentTerm: RoleTerm | undefined;
+    currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
     nextTerm: RoleTerm | undefined;
     expiredTerms: RoleTerm[];
   } = { allTerms: [], expiredTerms: [], currentTerm: undefined, nextTerm: undefined };
@@ -250,7 +270,16 @@ const getRoleHatTerms = async (
       const activeTerms = allRoleTerms.filter(term => term.termEndDate > new Date());
       roleTerms = {
         allTerms: allRoleTerms,
-        currentTerm: activeTerms[0],
+        currentTerm: !!activeTerms[0]
+          ? {
+              ...activeTerms[0],
+              termStatus: await getCurrentTermStatus(
+                BigInt(activeTerms[0].termEndDate.getTime()),
+                rawHat.eligibility,
+                publicClient,
+              ),
+            }
+          : undefined,
         nextTerm: activeTerms[1],
         expiredTerms: allRoleTerms
           .filter(term => term.termEndDate <= new Date())
@@ -261,6 +290,7 @@ const getRoleHatTerms = async (
             return b.termEndDate.getTime() - a.termEndDate.getTime();
           }),
       };
+
       isTermed = true;
     } catch {
       console.error('Failed to get election terms or not a valid election contract');
@@ -345,6 +375,7 @@ export const sanitize = async (
     }
 
     const hatMetadata = getHatMetadata(rawHat);
+    // @todo What to do about this for termed roles?
     const roleHatSmartAddress = await predictAccountAddress({
       implementation: hatsAccountImplementation,
       registryAddress: erc6551Registry,

@@ -18,6 +18,8 @@ type RoleTermDetailProp = {
   nominee: string;
 };
 
+type CurrentTermProp = RoleTermDetailProp & { termStatus: 'active' | 'inactive' };
+
 function RolesDetailsPayments({
   payments,
   roleHatSmartAddress,
@@ -86,7 +88,7 @@ function RolesDetailsTerms({
   expiredTerms,
 }: {
   nextTerm: RoleTermDetailProp | undefined;
-  currentTerm: RoleTermDetailProp | undefined;
+  currentTerm: CurrentTermProp | undefined;
   expiredTerms: RoleTermDetailProp[];
 }) {
   return (
@@ -105,7 +107,7 @@ export default function RoleDetailsTabs({
   sortedPayments,
 }: {
   roleTerms: {
-    currentTerm: RoleTermDetailProp | undefined;
+    currentTerm: CurrentTermProp | undefined;
     nextTerm: RoleTermDetailProp | undefined;
     expiredTerms: RoleTermDetailProp[];
     allTerms: RoleTermDetailProp[];

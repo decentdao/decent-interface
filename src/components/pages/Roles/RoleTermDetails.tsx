@@ -15,16 +15,20 @@ import NoDataCard from '../../ui/containers/NoDataCard';
 import RoleTerm from './RoleTerm';
 import { RoleFormTermStatus } from './types';
 
+type RoleTermDetailProp = {
+  nominee: string;
+  termEndDate: Date;
+  termNumber: number;
+};
+
+type CurrentTermProp = RoleTermDetailProp & { termStatus: 'active' | 'inactive' };
+
 function RoleTermRenderer({
   roleTerm,
   termStatus,
   displayLightContainer,
 }: {
-  roleTerm?: {
-    nominee?: string;
-    termEndDate?: Date;
-    termNumber: number;
-  };
+  roleTerm?: RoleTermDetailProp;
   termStatus: RoleFormTermStatus;
   displayLightContainer?: boolean;
 }) {
@@ -42,15 +46,7 @@ function RoleTermRenderer({
   );
 }
 
-function RoleTermExpiredTerms({
-  roleTerms,
-}: {
-  roleTerms?: {
-    nominee?: string;
-    termEndDate?: Date;
-    termNumber: number;
-  }[];
-}) {
+function RoleTermExpiredTerms({ roleTerms }: { roleTerms?: RoleTermDetailProp[] }) {
   const { t } = useTranslation('roles');
   if (!roleTerms?.length) {
     return null;
@@ -124,25 +120,9 @@ export default function RoleTermDetails({
   nextTerm,
   expiredTerms,
 }: {
-  nextTerm:
-    | {
-        termEndDate: Date;
-        termNumber: number;
-        nominee: string;
-      }
-    | undefined;
-  currentTerm:
-    | {
-        termEndDate: Date;
-        termNumber: number;
-        nominee: string;
-      }
-    | undefined;
-  expiredTerms: {
-    termEndDate: Date;
-    termNumber: number;
-    nominee: string;
-  }[];
+  nextTerm: RoleTermDetailProp | undefined;
+  currentTerm: CurrentTermProp | undefined;
+  expiredTerms: RoleTermDetailProp[];
 }) {
   return (
     <Flex
