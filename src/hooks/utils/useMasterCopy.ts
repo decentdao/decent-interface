@@ -133,7 +133,6 @@ export function useMasterCopy() {
       }
 
       return {
-        address: masterCopyAddress,
         isLinearVotingErc20: isLinearVotingErc20(masterCopyAddress),
         isLinearVotingErc721: isLinearVotingErc721(masterCopyAddress),
         isFreezeGuardMultisig: isFreezeGuardMultisig(masterCopyAddress),
