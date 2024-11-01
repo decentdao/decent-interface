@@ -117,5 +117,7 @@
   "assignPaymentTooltip": "Assign this payment to a specific term.",
   "selectTerm": "Select Term",
   "assigned": "Assigned",
-  "pending": "Pending"
+  "pending": "Pending",
+  "noActivePayments": "No active payments.",
+  "noActivePaymentsNotProposer": "This Role doesn't have any active payments yet."
 }
