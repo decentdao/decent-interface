@@ -205,13 +205,14 @@ export default function useUserERC721VotingTokens(
       };
     },
     [
-      safeAddress,
-      linearVotingErc721Address,
       erc721Tokens,
-      getVotingStrategyAddress,
+      safeAddress,
       publicClient,
       safeAPI,
+      globalContextSafeAddress,
+      linearVotingErc721Address,
       user.address,
+      getVotingStrategyAddress,
     ],
   );
 

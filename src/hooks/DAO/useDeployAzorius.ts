@@ -219,6 +219,8 @@ const useDeployAzorius = () => {
       safeAddress,
       canUserCreateProposal,
       safe,
+      publicClient,
+      parentAddress,
       compatibilityFallbackHandler,
       votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
@@ -240,11 +242,10 @@ const useDeployAzorius = () => {
       moduleAzoriusMasterCopy,
       submitProposal,
       t,
-      navigate,
-      addressPrefix,
       loadDao,
       getZodiacModuleProxyMasterCopyData,
-      parentAddress,
+      navigate,
+      addressPrefix,
     ],
   );
 

@@ -3,11 +3,12 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress, isAddress } from 'viem';
+import { Address, getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
-import { useEthersProvider } from '../../../../../../providers/Ethers/hooks/useEthersProvider';
+import { validateENSName } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
@@ -28,39 +29,25 @@ function AddSignerModal({
     node: { safe },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const provider = useEthersProvider();
+  const publicClient = usePublicClient();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
 
   const addSigner = useAddSigner();
 
   const onSubmit = useCallback(
-    async (values: { addressOrENS: string; threshold: number; nonce: number }) => {
-      if (!safe) {
-        throw new Error('No safe found');
+    async (values: { address: string; threshold: number; nonce: number }) => {
+      const { address, nonce, threshold } = values;
+      let validAddress = address;
+      if (validateENSName(validAddress) && publicClient) {
+        const maybeEnsAddress = await publicClient.getEnsAddress({ name: address });
+        if (maybeEnsAddress) {
+          validAddress = maybeEnsAddress;
+        }
       }
 
-      const { addressOrENS, nonce, threshold } = values;
-
-      let validAddress: Address;
-
-      if (isAddress(addressOrENS)) {
-        validAddress = getAddress(addressOrENS);
-      } else if (provider) {
-        let resolvedAddress: string | null;
-        try {
-          resolvedAddress = await provider.resolveName(addressOrENS);
-        } catch (e) {
-          throw e;
-        }
-
-        if (resolvedAddress === null) {
-          throw new Error('Given ENS name does not resolve to an address.');
-        }
-
-        validAddress = getAddress(resolvedAddress);
-      } else {
-        throw new Error('No provider found');
+      if (!safe) {
+        throw new Error('Safe not found');
       }
 
       await addSigner({
@@ -71,7 +58,7 @@ function AddSignerModal({
         close: close,
       });
     },
-    [addSigner, close, provider, safe],
+    [addSigner, close, safe, publicClient],
   );
 
   const addSignerValidationSchema = Yup.object().shape({
@@ -87,7 +74,7 @@ function AddSignerModal({
     <Box>
       <Formik
         initialValues={{
-          addressOrENS: '',
+          address: '',
           nonce: safe?.nextNonce || 0,
           threshold: currentThreshold,
           thresholdOptions: Array.from({ length: signers.length + 1 }, (_, i) => i + 1),
@@ -103,11 +90,11 @@ function AddSignerModal({
                 {({ field }: FieldAttributes<any>) => (
                   <LabelWrapper
                     subLabel={t('addSignerSublabel', { ns: 'modals' })}
-                    errorMessage={field.value && errors.addressOrENS}
+                    errorMessage={field.value && errors.address}
                   >
                     <AddressInput
                       {...field}
-                      isInvalid={!!field.value && !!errors.addressOrENS}
+                      isInvalid={!!field.value && !!errors.address}
                     />
                   </LabelWrapper>
                 )}
