@@ -1,12 +1,49 @@
 export default [
   {
     inputs: [],
-    name: 'NAME',
+    name: 'NotCurrentWearer',
+    type: 'error',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint8',
+        name: 'version',
+        type: 'uint8',
+      },
+    ],
+    name: 'Initialized',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
+    name: 'OwnershipTransferred',
+    type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'owner',
     outputs: [
       {
-        internalType: 'string',
+        internalType: 'address',
         name: '',
-        type: 'string',
+        type: 'address',
       },
     ],
     stateMutability: 'view',
@@ -14,7 +51,52 @@ export default [
   },
   {
     inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes',
+        name: 'initializeParams',
+        type: 'bytes',
+      },
+    ],
     name: 'setUp',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes4',
+        name: 'interfaceId',
+        type: 'bytes4',
+      },
+    ],
+    name: 'supportsInterface',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
+    name: 'transferOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -30,12 +112,12 @@ export default [
           },
           {
             internalType: 'contract IHats',
-            name: 'userHatProtocol',
+            name: 'hatsProtocol',
             type: 'address',
           },
           {
             internalType: 'uint256',
-            name: 'userHatId',
+            name: 'hatId',
             type: 'uint256',
           },
           {
@@ -43,25 +125,8 @@ export default [
             name: 'nominatedWearer',
             type: 'address',
           },
-          {
-            components: [
-              {
-                internalType: 'uint256',
-                name: 'streamId',
-                type: 'uint256',
-              },
-              {
-                internalType: 'contract ISablierV2Lockup',
-                name: 'sablierV2Lockup',
-                type: 'address',
-              },
-            ],
-            internalType: 'struct DecentAutonomousAdmin.SablierStreamInfo[]',
-            name: 'sablierStreamInfo',
-            type: 'tuple[]',
-          },
         ],
-        internalType: 'struct DecentAutonomousAdmin.TriggerStartArgs',
+        internalType: 'struct IDecentAutonomousAdminV1.TriggerStartArgs',
         name: 'args',
         type: 'tuple',
       },
@@ -73,15 +138,15 @@ export default [
   },
   {
     inputs: [],
-    name: 'version_',
+    name: 'version',
     outputs: [
       {
-        internalType: 'string',
+        internalType: 'uint32',
         name: '',
-        type: 'string',
+        type: 'uint32',
       },
     ],
-    stateMutability: 'view',
+    stateMutability: 'pure',
     type: 'function',
   },
 ] as const;

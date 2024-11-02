@@ -90,14 +90,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             cause: roleHat,
           });
         }
-        const roleTerms =
+        const allRoleTerms =
           roleHat.roleTerms?.map(term => {
-            if (
-              !term.termEndDate ||
-              term.nominee === undefined ||
-              term.newStatus === undefined ||
-              term.termNumber === undefined
-            ) {
+            if (!term.termEndDate || term.nominee === undefined || term.termNumber === undefined) {
               throw new Error('Role term missing data', {
                 cause: term,
               });
@@ -106,10 +101,14 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               termEndDate: term.termEndDate,
               nominee: getAddress(term.nominee), // TODO: do we know that this is an address?
               termNumber: term.termNumber,
-              newStatus: term.newStatus,
             };
           }) || [];
-
+        const roleTerms = {
+          allTerms: allRoleTerms,
+          currentTerm: drawerViewingRole?.roleTerms.currentTerm,
+          nextTerm: drawerViewingRole?.roleTerms.nextTerm,
+          expiredTerms: allRoleTerms.filter(term => term.termEndDate <= new Date()),
+        };
         return {
           ...roleHat,
           editedRole: roleHat.editedRole,
@@ -140,7 +139,11 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             : [],
         };
       });
-  }, [values.hats]);
+  }, [
+    drawerViewingRole?.roleTerms.currentTerm,
+    drawerViewingRole?.roleTerms.nextTerm,
+    values.hats,
+  ]);
 
   const {
     node: { daoAddress },

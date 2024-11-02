@@ -40,6 +40,17 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     });
   }, [values.roleEditing]);
 
+  const isRoleTypeUpdated = useMemo(() => {
+    return !!existingRoleHat && values.roleEditing?.isTermed !== existingRoleHat.isTermed;
+  }, [existingRoleHat, values.roleEditing]);
+
+  const isRoleTermedUpdated = useMemo(() => {
+    return (
+      !!existingRoleHat &&
+      values.roleEditing?.roleTerms?.length !== existingRoleHat.roleTerms.allTerms.length
+    );
+  }, [existingRoleHat, values.roleEditing]);
+
   const editedRoleData = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
       return {
@@ -52,6 +63,8 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
     fieldNames = addRemoveField(fieldNames, 'payments', isPaymentsUpdated);
+    fieldNames = addRemoveField(fieldNames, 'roleType', isRoleTypeUpdated);
+    fieldNames = addRemoveField(fieldNames, 'newTerm', isRoleTermedUpdated);
 
     return {
       fieldNames,
@@ -63,13 +76,27 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     isRoleDescriptionUpdated,
     isMemberUpdated,
     isPaymentsUpdated,
+    isRoleTypeUpdated,
+    isRoleTermedUpdated,
   ]);
 
   const isRoleUpdated = useMemo(() => {
     return (
-      !!isRoleNameUpdated || !!isRoleDescriptionUpdated || !!isMemberUpdated || !!isPaymentsUpdated
+      !!isRoleNameUpdated ||
+      !!isRoleDescriptionUpdated ||
+      !!isMemberUpdated ||
+      !!isPaymentsUpdated ||
+      !!isRoleTypeUpdated ||
+      !!isRoleTermedUpdated
     );
-  }, [isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated, isPaymentsUpdated]);
+  }, [
+    isRoleNameUpdated,
+    isRoleDescriptionUpdated,
+    isMemberUpdated,
+    isPaymentsUpdated,
+    isRoleTypeUpdated,
+    isRoleTermedUpdated,
+  ]);
 
   return {
     existingRoleHat,

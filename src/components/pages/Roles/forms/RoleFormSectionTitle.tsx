@@ -43,7 +43,12 @@ export function SectionTitle({
               >
                 {title}
               </Text>
-              {tooltipContent && <Icon as={Info} />}
+              {tooltipContent && (
+                <Icon
+                  as={Info}
+                  color="lilac-0"
+                />
+              )}
             </Flex>
           </ModalTooltip>
         </Box>

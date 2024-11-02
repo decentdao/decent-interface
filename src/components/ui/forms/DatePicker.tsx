@@ -6,6 +6,7 @@ import {
   Icon,
   Menu,
   MenuButton,
+  MenuItem,
   MenuList,
   Show,
   useBreakpointValue,
@@ -134,17 +135,19 @@ function DatePickerContainer({
             />
           </MenuButton>
           <MenuList zIndex={2}>
-            <Flex
-              flexDir="column"
-              justifySelf="center"
-              borderRadius="0.5rem"
-              boxShadow={boxShadow}
-              maxW={maxBoxW}
-              bg="neutral-2"
-              pt="1.5rem"
-            >
-              {children}
-            </Flex>
+            <MenuItem onClick={onClose}>
+              <Flex
+                flexDir="column"
+                justifySelf="center"
+                borderRadius="0.5rem"
+                boxShadow={boxShadow}
+                maxW={maxBoxW}
+                bg="neutral-2"
+                pt="1.5rem"
+              >
+                {children}
+              </Flex>
+            </MenuItem>
           </MenuList>
         </Menu>
       </Show>

@@ -33,6 +33,29 @@ export function RoleFormPaymentStreams() {
     [payments],
   );
 
+  const isTermsAvailable = useMemo(() => {
+    return values.roleEditing?.roleTerms?.some(term => {
+      if (!term.termEndDate) {
+        return false;
+      }
+      return term.termEndDate > new Date();
+    });
+  }, [values.roleEditing?.roleTerms]);
+
+  const roleTerms = useMemo(() => {
+    const terms =
+      values.roleEditing?.roleTerms?.map(term => {
+        if (!term.termEndDate) {
+          return undefined;
+        }
+        return {
+          termEndDate: term.termEndDate,
+          termNumber: term.termNumber,
+        };
+      }) || [];
+    return terms.filter(term => term !== undefined);
+  }, [values.roleEditing?.roleTerms]);
+
   return (
     <FieldArray name="roleEditing.payments">
       {({ push: pushPayment }: { push: (streamFormValue: SablierPaymentFormValues) => void }) => (
@@ -40,6 +63,7 @@ export function RoleFormPaymentStreams() {
           <Button
             variant="secondary"
             size="sm"
+            isDisabled={values.roleEditing?.isTermed ? !isTermsAvailable : false}
             leftIcon={<Plus size="1rem" />}
             iconSpacing={0}
             onClick={async () => {
@@ -78,6 +102,7 @@ export function RoleFormPaymentStreams() {
                     cancelModal();
                     setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
                   }}
+                  roleTerms={roleTerms}
                   payment={{
                     streamId: payment.streamId,
                     amount: payment.amount,

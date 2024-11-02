@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, GridItem, Icon, Image, Show, Tag, Text } from '@chakra-ui/react';
-import { CalendarBlank, Download, Trash } from '@phosphor-icons/react';
+import { CalendarBlank, Download, Link, Trash } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { TouchEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -49,6 +49,39 @@ function PaymentDate({ label, date }: { label: string; date?: Date }) {
   );
 }
 
+function TermedAssigned({ termNumber }: { termNumber: number }) {
+  const { t } = useTranslation(['roles']);
+  return (
+    <Flex
+      flexDir="column"
+      gap="0.5rem"
+    >
+      <Text
+        textStyle="label-small"
+        color="neutral-7"
+      >
+        {t('assigned')}
+      </Text>
+      <Flex
+        alignItems="center"
+        gap={2}
+      >
+        <Icon
+          boxSize="1rem"
+          as={Link}
+          color="lila-0"
+        />
+        <Text
+          textStyle="label-small"
+          color="white-0"
+        >
+          {t('termNumber', { number: termNumber })}
+        </Text>
+      </Flex>
+    </Flex>
+  );
+}
+
 function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
   if (!isStreaming) {
     return null;
@@ -67,6 +100,7 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 interface RolePaymentDetailsProps {
   roleHatWearerAddress?: Address;
   roleHatSmartAddress?: Address;
+  roleTerms: { termEndDate: Date; termNumber: number }[];
   payment: {
     streamId?: string;
     contractAddress?: Address;
@@ -99,6 +133,7 @@ export function RolePaymentDetails({
   roleHatSmartAddress,
   showCancel,
   onCancel,
+  roleTerms,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
@@ -249,6 +284,10 @@ export function RolePaymentDetails({
     }
   }, [payment.isCancelling, showInlineDelete]);
 
+  const assignedTerm = useMemo(() => {
+    return roleTerms.find(term => term.termEndDate.getTime() === payment.endDate.getTime());
+  }, [payment.endDate, roleTerms]);
+
   return (
     <Flex
       my="0.75rem"
@@ -370,10 +409,14 @@ export function RolePaymentDetails({
             templateColumns="1fr 24px 1fr 24px 1fr"
           >
             <GridItem area="starting">
-              <PaymentDate
-                label="starting"
-                date={payment.startDate}
-              />
+              {assignedTerm ? (
+                <TermedAssigned termNumber={assignedTerm.termNumber} />
+              ) : (
+                <PaymentDate
+                  label="starting"
+                  date={payment.startDate}
+                />
+              )}
             </GridItem>
             <GridItem area="dividerOne">
               <Box

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import DecentAutonomousAdminTempAbi from '../../assets/abi/DecentAutonomousAdminTempAbi';
 import { DecentHatsTempAbi } from '../../assets/abi/DecentHatsTempAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
@@ -563,7 +564,7 @@ export default function useCreateRoles() {
   );
 
   const createBatchLinearStreamCreationTx = useCallback(
-    (formStreams: SablierPaymentFormValues[], roleSmartAccountAddress: Address) => {
+    (formStreams: (SablierPaymentFormValues & { recipient: Address })[]) => {
       const preparedStreams = formStreams.map(stream => {
         if (
           !stream.asset ||
@@ -578,7 +579,7 @@ export default function useCreateRoles() {
         }
 
         return {
-          recipient: roleSmartAccountAddress,
+          recipient: stream.recipient,
           startDateTs: Math.floor(stream.startDate.getTime() / 1000),
           endDateTs: Math.ceil(stream.endDate.getTime() / 1000),
           cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
@@ -615,6 +616,155 @@ export default function useCreateRoles() {
       payment => !payment.isCancelled && !!payment.endDate && payment.endDate > new Date(),
     );
   }, []);
+
+  const getPaymentTermRecipients = useCallback(
+    (formHat: RoleHatFormValueEdited): (SablierPaymentFormValues & { recipient: Address })[] => {
+      return getNewStreamsFromFormHat(formHat).map(payment => {
+        if (formHat.roleTerms === undefined || formHat.roleTerms.length === 0) {
+          throw new Error('Cannot prepare transactions without role terms');
+        }
+        const findTerm = formHat.roleTerms.find(
+          term =>
+            term.termEndDate &&
+            payment.endDate &&
+            term.termEndDate.getTime() === payment.endDate?.getTime(),
+        );
+        if (!findTerm) {
+          throw new Error('Cannot find term for payment');
+        }
+        if (!findTerm.nominee) {
+          throw new Error('Nominee is undefined');
+        }
+        return {
+          ...payment,
+          recipient: getAddress(findTerm.nominee),
+        };
+      });
+    },
+    [getNewStreamsFromFormHat],
+  );
+
+  const prepareRolePaymentUpdateTxs = useCallback(
+    async (formHat: RoleHatFormValueEdited) => {
+      if (!daoAddress) {
+        throw new Error('Cannot prepare transactions without DAO address');
+      }
+      if (formHat.wearer === undefined) {
+        throw new Error('Cannot prepare transactions without wearer');
+      }
+
+      const paymentTxs = []; // Initialize an empty array to hold the transaction data
+      const cancelledStreamsOnHat = getCancelledStreamsFromFormHat(formHat);
+      if (cancelledStreamsOnHat.length) {
+        // This role edit includes stream cancels. In case there are any unclaimed funds on these streams,
+        // we need to flush them out to the original wearer.
+
+        const originalHat = getHat(formHat.id);
+        if (!originalHat) {
+          throw new Error('Cannot find original hat');
+        }
+
+        for (const stream of cancelledStreamsOnHat) {
+          if (!stream.streamId || !stream.contractAddress || !formHat.smartAddress) {
+            throw new Error('Stream data is missing for cancel stream transaction');
+          }
+
+          // First transfer hat from the original wearer to the Safe
+          paymentTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
+            }),
+            targetAddress: hatsProtocol,
+          });
+
+          // flush withdrawable streams to the original wearer
+          if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
+            const flushStreamTxCalldata = prepareFlushStreamTxs({
+              streamId: stream.streamId,
+              to: originalHat.wearerAddress,
+              smartAccount: formHat.smartAddress,
+            });
+
+            paymentTxs.push(...flushStreamTxCalldata);
+          }
+
+          // Cancel the stream
+          paymentTxs.push(...prepareCancelStreamTxs(stream.streamId));
+
+          // Finally, transfer the hat back to the correct wearer.
+          // Because a payment cancel can occur in the same role edit as a member change, we need to ensure hat is
+          // finally transferred to the correct wearer. Instead of transferring to `originalHat.wearer` here,
+          // `formHat.wearer` will represent the new wearer if the role member was changed, but will otherwise remain
+          // the original wearer since the member form field was untouched.
+          paymentTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+            }),
+            targetAddress: hatsProtocol,
+          });
+        }
+      }
+
+      const newStreamsOnHat = getNewStreamsFromFormHat(formHat);
+      if (newStreamsOnHat.length) {
+        if (!formHat.smartAddress) {
+          throw new Error('Cannot prepare transactions for edited role without smart address');
+        }
+        const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
+        const newStreamTxData = createBatchLinearStreamCreationTx(
+          newStreamsOnHat.map(stream => ({ ...stream, recipient: newPredictedHatSmartAccount })),
+        );
+        paymentTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
+        paymentTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
+      }
+      return paymentTxs;
+    },
+    [
+      getCancelledStreamsFromFormHat,
+      getNewStreamsFromFormHat,
+      getHat,
+      daoAddress,
+      hatsProtocol,
+      prepareCancelStreamTxs,
+      prepareFlushStreamTxs,
+      predictSmartAccount,
+      createBatchLinearStreamCreationTx,
+    ],
+  );
+
+  const prepareTermedRolePaymentUpdateTxs = useCallback(
+    (formHat: RoleHatFormValueEdited) => {
+      if (!daoAddress) {
+        throw new Error('Cannot prepare transactions without DAO address');
+      }
+      if (formHat.wearer === undefined) {
+        throw new Error('Cannot prepare transactions without wearer');
+      }
+      if (formHat.roleTerms === undefined || formHat.roleTerms.length === 0) {
+        throw new Error('Cannot prepare transactions without role terms');
+      }
+      const paymentTxs = [];
+      const newStreamsOnHat = getNewStreamsFromFormHat(formHat);
+      if (newStreamsOnHat.length) {
+        const newStreamTxData = createBatchLinearStreamCreationTx(
+          getPaymentTermRecipients(formHat),
+        );
+        paymentTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
+        paymentTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
+      }
+      return paymentTxs;
+    },
+    [
+      createBatchLinearStreamCreationTx,
+      daoAddress,
+      getNewStreamsFromFormHat,
+      getPaymentTermRecipients,
+    ],
+  );
 
   const prepareCreateRolesModificationsProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
@@ -836,194 +986,63 @@ export default function useCreateRoles() {
               });
             }
           }
-          if (formHat.editedRole.fieldNames.includes('payments') && !formHat.isTermed) {
-            const cancelledStreamsOnHat = getCancelledStreamsFromFormHat(formHat);
-            if (cancelledStreamsOnHat.length) {
-              // This role edit includes stream cancels. In case there are any unclaimed funds on these streams,
-              // we need to flush them out to the original wearer.
-
-              const originalHat = getHat(formHat.id);
-              if (!originalHat) {
-                throw new Error('Cannot find original hat');
-              }
-
-              for (const stream of cancelledStreamsOnHat) {
-                if (!stream.streamId || !stream.contractAddress || !formHat.smartAddress) {
-                  throw new Error('Stream data is missing for cancel stream transaction');
-                }
-
-                // First transfer hat from the original wearer to the Safe
-                allTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsAbi,
-                    functionName: 'transferHat',
-                    args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
-                  }),
-                  targetAddress: hatsProtocol,
-                });
-
-                // flush withdrawable streams to the original wearer
-                if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
-                  const flushStreamTxCalldata = prepareFlushStreamTxs({
-                    streamId: stream.streamId,
-                    to: originalHat.wearerAddress,
-                    smartAccount: formHat.smartAddress,
-                  });
-
-                  allTxs.push(...flushStreamTxCalldata);
-                }
-
-                // Cancel the stream
-                allTxs.push(...prepareCancelStreamTxs(stream.streamId));
-
-                // Finally, transfer the hat back to the correct wearer.
-                // Because a payment cancel can occur in the same role edit as a member change, we need to ensure hat is
-                // finally transferred to the correct wearer. Instead of transferring to `originalHat.wearer` here,
-                // `formHat.wearer` will represent the new wearer if the role member was changed, but will otherwise remain
-                // the original wearer since the member form field was untouched.
-                allTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsAbi,
-                    functionName: 'transferHat',
-                    args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
-                  }),
-                  targetAddress: hatsProtocol,
-                });
-              }
-            }
-
-            const newStreamsOnHat = getNewStreamsFromFormHat(formHat);
-            if (newStreamsOnHat.length) {
-              if (!formHat.smartAddress) {
-                throw new Error(
-                  'Cannot prepare transactions for edited role without smart address',
-                );
-              }
-              const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
-              const newStreamTxData = createBatchLinearStreamCreationTx(
-                newStreamsOnHat,
-                newPredictedHatSmartAccount,
-              );
-              allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
-              allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
+          if (formHat.editedRole.fieldNames.includes('payments')) {
+            if (!formHat.isTermed) {
+              allTxs.push(...(await prepareRolePaymentUpdateTxs(formHat)));
+            } else {
+              allTxs.push(...prepareTermedRolePaymentUpdateTxs(formHat));
             }
           }
           if (formHat.editedRole.fieldNames.includes('term')) {
-            if (formHat.isTermed) {
-              // @note {assumption}: We are only dealing with the next term here
-              const latestTerm = formHat.roleTerms?.pop();
+            if (!formHat.isTermed || !formHat.roleTerms) {
+              throw new Error('Cannot prepare transactions for edited role without role terms');
+            }
 
-              if (!latestTerm) {
-                throw new Error('No term data found');
-              }
-              if (latestTerm.termEndDate === undefined) {
-                throw new Error('Term end date of added Role is undefined.');
-              }
-              if (latestTerm.nominee === undefined) {
-                throw new Error('Nominee of added Role is undefined.');
-              }
-              // @note {assumption}: We have already determined the eligibility address is the election module
-              // @todo double check assumption
-              if (formHat.eligibility === undefined) {
-                throw new Error(
-                  'Cannot prepare transactions for edited role without eligibility address',
-                );
-              }
-              if (formHat.smartAddress === undefined) {
-                throw new Error(
-                  'Cannot prepare transactions for edited role without smart address',
-                );
-              }
-              const originalHat = getHat(formHat.id);
-              if (!originalHat) {
-                throw new Error('Cannot find original hat');
-              }
+            // @note {assumption}: We have already determined the eligibility address is the election module
+            if (formHat.eligibility === undefined) {
+              throw new Error(
+                'Cannot prepare transactions for edited role without eligibility address',
+              );
+            }
 
+            const terms = parseRoleTermsFromFormRoleTerms(formHat.roleTerms);
+            // @dev {assupmtion}: We are only dealing with a single term here, either the next term or a new current term when there is no term set.
+            // @dev {assupmtion}: There were always be more than one term in this workflow.
+            const [previousTerm, newTerm] = terms.slice(-2);
+
+            allTxs.push({
+              calldata: encodeFunctionData({
+                abi: HatsElectionsEligibilityAbi,
+                functionName: 'setNextTerm',
+                args: [newTerm.termEndDateTs],
+              }),
+              targetAddress: formHat.eligibility,
+            });
+            allTxs.push({
+              calldata: encodeFunctionData({
+                abi: HatsElectionsEligibilityAbi,
+                functionName: 'elect',
+                args: [newTerm.termEndDateTs, [newTerm.nominatedWearers[0]]],
+              }),
+              targetAddress: formHat.eligibility,
+            });
+            if (previousTerm.termEndDateTs > Date.now() * 1000) {
               allTxs.push({
                 calldata: encodeFunctionData({
-                  abi: HatsElectionsEligibilityAbi,
-                  functionName: 'setNextTerm',
-                  // @todo fix this to be the latest term end date
-                  args: [BigInt(Date.now())],
+                  abi: DecentAutonomousAdminTempAbi,
+                  functionName: 'triggerStartNextTerm',
+                  args: [
+                    {
+                      // @dev formHat.wearer is not changeable for term roles. It will always be the current wearer.
+                      currentWearer: getAddress(formHat.wearer),
+                      hatsProtocol: hatsProtocol,
+                      hatId: BigInt(formHat.id),
+                      nominatedWearer: newTerm.nominatedWearers[0],
+                    },
+                  ],
                 }),
                 targetAddress: formHat.eligibility,
               });
-              allTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsElectionsEligibilityAbi,
-                  functionName: 'elect',
-                  // @todo fix this to be the latest term end date
-                  args: [BigInt(Date.now()), [getAddress(latestTerm.nominee)]],
-                }),
-                targetAddress: formHat.eligibility,
-              });
-
-              // @note {assumption at proposal creation}: previous term is on going
-              // const previousTerm = formHat.roleTerms?.[formHat.roleTerms.length - 2];
-              // @todo fix this to be the previous term end date
-              if (Date.now() ?? 0 < Date.now()) {
-                allTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsElectionsEligibilityAbi,
-                    functionName: 'startNextTerm',
-                    args: [],
-                  }),
-                  targetAddress: formHat.eligibility,
-                });
-                // flush funds from previous term
-                // @note {assumption}: no stream should need to be cancelled if past previous term
-                const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFromHat(formHat);
-                if (streamsWithFundsToClaim.length) {
-                  for (const stream of streamsWithFundsToClaim) {
-                    if (!stream.streamId || !stream.contractAddress) {
-                      throw new Error(
-                        'Stream ID and Stream ContractAddress is required for flush stream transaction',
-                      );
-                    }
-                    // transfer hat to DAO
-                    allTxs.push({
-                      calldata: encodeFunctionData({
-                        abi: HatsAbi,
-                        functionName: 'transferHat',
-                        args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
-                      }),
-                      targetAddress: hatsProtocol,
-                    });
-                    const flushStreamTxCalldata = prepareFlushStreamTxs({
-                      streamId: stream.streamId,
-                      to: originalHat.wearerAddress,
-                      smartAccount: formHat.smartAddress,
-                    });
-
-                    allTxs.push(...flushStreamTxCalldata);
-                  }
-                }
-                if (streamsWithFundsToClaim.length) {
-                  // transfer hat to nominee from DAO
-                  allTxs.push({
-                    calldata: encodeFunctionData({
-                      abi: HatsAbi,
-                      functionName: 'transferHat',
-                      args: [BigInt(formHat.id), daoAddress, getAddress(latestTerm.nominee)],
-                    }),
-                    targetAddress: hatsProtocol,
-                  });
-                } else {
-                  // transfer hat to nominee from wearer
-                  allTxs.push({
-                    calldata: encodeFunctionData({
-                      abi: HatsAbi,
-                      functionName: 'transferHat',
-                      args: [
-                        BigInt(formHat.id),
-                        getAddress(formHat.wearer),
-                        getAddress(latestTerm.nominee),
-                      ],
-                    }),
-                    targetAddress: hatsProtocol,
-                  });
-                }
-              }
             }
           }
         } else {
@@ -1039,24 +1058,23 @@ export default function useCreateRoles() {
       };
     },
     [
-      createBatchLinearStreamCreationTx,
-      prepareNewTermedHatTxs,
-      daoAddress,
-      getActiveStreamsFromFormHat,
-      getCancelledStreamsFromFormHat,
-      getHat,
-      getNewStreamsFromFormHat,
-      getStreamsWithFundsToClaimFromFormHat,
-      getStreamsWithFundsToClaimFromFromHat,
-      hatsDetailsBuilder,
-      hatsProtocol,
       hatsTree,
-      predictSmartAccount,
-      prepareCancelStreamTxs,
-      prepareFlushStreamTxs,
-      prepareNewHatTxs,
+      daoAddress,
       publicClient,
+      prepareNewTermedHatTxs,
+      prepareNewHatTxs,
+      getHat,
+      hatsProtocol,
+      getStreamsWithFundsToClaimFromFormHat,
+      getActiveStreamsFromFormHat,
+      prepareFlushStreamTxs,
+      prepareCancelStreamTxs,
       uploadHatDescription,
+      hatsDetailsBuilder,
+      getStreamsWithFundsToClaimFromFromHat,
+      prepareRolePaymentUpdateTxs,
+      prepareTermedRolePaymentUpdateTxs,
+      parseRoleTermsFromFormRoleTerms,
     ],
   );
 

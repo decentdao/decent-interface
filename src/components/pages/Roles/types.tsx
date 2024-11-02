@@ -82,6 +82,12 @@ export interface TermedParams {
   nominatedWearers: Address[];
 }
 
+export enum RoleFormTermStatus {
+  Current,
+  Queued,
+  Expired,
+  Pending,
+}
 export interface HatStruct {
   maxSupply: 1; // No more than this number of wearers. Hardcode to 1
   details: string; // IPFS url/hash to JSON { version: '1.0', data: { name, description, ...arbitraryData } }
@@ -123,7 +129,6 @@ export interface RoleHatFormValue
   roleEditingPaymentIndex?: number;
   isTermed?: boolean;
   roleTerms?: {
-    newStatus?: 'current' | 'next';
     nominee?: string;
     termEndDate?: Date;
     termNumber: number;
@@ -140,6 +145,10 @@ export type RoleFormValues = {
   roleEditing?: RoleHatFormValue;
   customNonce?: number;
   actions: SendAssetsData[];
+  newRoleTerm?: {
+    nominee: string;
+    termEndDate: Date;
+  };
 };
 
 export type PreparedNewStreamData = {
@@ -150,8 +159,6 @@ export type PreparedNewStreamData = {
   totalAmount: bigint;
   assetAddress: Address;
 };
-
-// export const HATS_ADDRESS: Address = '0x0000000000000000000000000000000000004a75';
 
 export interface RoleDetailsDrawerProps {
   roleHat: RoleDetailsDrawerRoleHatProp | RoleDetailsDrawerEditingRoleHatProp;
