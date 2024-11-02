@@ -1,21 +1,9 @@
-import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  Icon,
-  IconButton,
-  Text,
-} from '@chakra-ui/react';
-import { CaretDown, CaretRight, Plus, X } from '@phosphor-icons/react';
+import { Box, Button, Flex, FormControl, Icon, IconButton, Text } from '@chakra-ui/react';
+import { Plus, X } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
+import { getAddress, Hex } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
@@ -194,81 +182,6 @@ function RoleTermRenderer({
   );
 }
 
-function RoleTermExpiredTerms({
-  roleTerms,
-}: {
-  roleTerms?: {
-    nominee?: string;
-    termEndDate?: Date;
-    termNumber: number;
-  }[];
-}) {
-  const { t } = useTranslation('roles');
-  if (!roleTerms?.length) {
-    return null;
-  }
-  return (
-    <Box>
-      <Accordion allowToggle>
-        <AccordionItem
-          bg="neutral-2"
-          borderTop="none"
-          borderBottom="none"
-          borderTopRadius="0.5rem"
-          borderBottomRadius="0.5rem"
-        >
-          {({ isExpanded }) => (
-            <>
-              <AccordionButton
-                bg="neutral-2"
-                borderTopRadius="0.5rem"
-                borderBottomRadius="0.5rem"
-                p="1rem"
-              >
-                <Flex
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Icon
-                    as={!isExpanded ? CaretDown : CaretRight}
-                    boxSize="1.25rem"
-                    color="lilac-0"
-                  />
-                  <Text
-                    textStyle="button-base"
-                    color="lilac-0"
-                  >
-                    {t('showExpiredTerms')}
-                  </Text>
-                </Flex>
-              </AccordionButton>
-              <Flex
-                flexDir="column"
-                gap={4}
-              >
-                {roleTerms.map((term, index) => {
-                  return (
-                    <AccordionPanel
-                      key={index}
-                      px="1rem"
-                    >
-                      <RoleTermRenderer
-                        key={index}
-                        roleTerm={term}
-                        termStatus={RoleFormTermStatus.Expired}
-                      />
-                    </AccordionPanel>
-                  );
-                })}
-              </Flex>
-            </>
-          )}
-        </AccordionItem>
-      </Accordion>
-    </Box>
-  );
-}
-
 export default function RoleFormTerms() {
   const { t } = useTranslation('roles');
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
@@ -345,7 +258,6 @@ export default function RoleFormTerms() {
             roleHatTerms?.currentTerm ? RoleFormTermStatus.Current : RoleFormTermStatus.Pending
           }
         />
-        <RoleTermExpiredTerms roleTerms={roleHatTerms?.expiredTerms} />
       </Flex>
     </Box>
   );
