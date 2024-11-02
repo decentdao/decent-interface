@@ -21,7 +21,7 @@ import { FieldInputProps, FormikProps, FieldMetaProps, useFormikContext, Field }
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DecentHourGlass } from '../../../../assets/theme/custom/icons/DecentHourGlass';
-import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
+import { DETAILS_BOX_SHADOW, isFeatureEnabled } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
@@ -335,6 +335,10 @@ export default function RoleFormMember() {
   const { values } = useFormikContext<RoleFormValues>();
 
   if (!!values.roleEditing?.isTermed) {
+    if (!isFeatureEnabled('TERMED_ROLES')) {
+      // @prevent any sheningans on different environments
+      return null;
+    }
     return <RoleFormTerms />;
   }
   return (
@@ -354,7 +358,7 @@ export default function RoleFormMember() {
       >
         <RoleMemberWearerInput />
       </Box>
-      <RoleFormMemberTermToggle />
+      {isFeatureEnabled('TERMED_ROLES') && <RoleFormMemberTermToggle />}
     </Box>
   );
 }

@@ -2,6 +2,7 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel, Divider, Text } from '@chakra-
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
+import { isFeatureEnabled } from '../../../constants/common';
 import {
   paymentSorterByWithdrawAmount,
   paymentSorterByStartDate,
@@ -131,18 +132,20 @@ export default function RoleDetailsTabs({
       mt={4}
     >
       <TabList>
-        <Tab>{t('terms')}</Tab>
+        {isFeatureEnabled('TERMED_ROLES') && <Tab>{t('terms')}</Tab>}
         <Tab>{t('payments')}</Tab>
       </TabList>
       <TabPanels mt={4}>
-        <TabPanel>
-          <RolesDetailsTerms
-            hatId={hatId}
-            currentTerm={roleTerms.currentTerm}
-            nextTerm={roleTerms.nextTerm}
-            expiredTerms={roleTerms.expiredTerms}
-          />
-        </TabPanel>
+        {isFeatureEnabled('TERMED_ROLES') && (
+          <TabPanel>
+            <RolesDetailsTerms
+              hatId={hatId}
+              currentTerm={roleTerms.currentTerm}
+              nextTerm={roleTerms.nextTerm}
+              expiredTerms={roleTerms.expiredTerms}
+            />
+          </TabPanel>
+        )}
         <TabPanel>
           <RolesDetailsPayments
             payments={sortedPayments}
