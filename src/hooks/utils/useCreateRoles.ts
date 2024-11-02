@@ -411,7 +411,7 @@ export default function useCreateRoles() {
     [prepareBatchLinearStreamCreation],
   );
 
-  const getStreamsWithFundsToClaimFromFromHat = useCallback((formHat: RoleHatFormValueEdited) => {
+  const getStreamsWithFundsToClaimNotCancelling = useCallback((formHat: RoleHatFormValueEdited) => {
     return (formHat.payments ?? []).filter(
       payment => (payment?.withdrawableAmount ?? 0n) > 0n && !payment.isCancelling,
     );
@@ -596,7 +596,7 @@ export default function useCreateRoles() {
               throw new Error('Cannot find original hat');
             }
 
-            const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFromHat(formHat);
+            const streamsWithFundsToClaim = getStreamsWithFundsToClaimNotCancelling(formHat);
 
             if (streamsWithFundsToClaim.length) {
               // If there are unclaimed funds on any streams on the hat, we need to flush them to the original wearer.
@@ -744,7 +744,7 @@ export default function useCreateRoles() {
       prepareCancelStreamTxs,
       uploadHatDescription,
       hatsDetailsBuilder,
-      getStreamsWithFundsToClaimFromFromHat,
+      getStreamsWithFundsToClaimNotCancelling,
       getCancelledStreamsFromFormHat,
       getNewStreamsFromFormHat,
       predictSmartAccount,
