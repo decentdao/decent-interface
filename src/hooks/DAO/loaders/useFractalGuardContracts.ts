@@ -46,7 +46,9 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         });
 
         const azoriusGuardAddress = await azoriusContract.read.getGuard();
-        if (azoriusGuardAddress === zeroAddress) {
+        const { isFreezeGuardAzorius } =
+          await getZodiacModuleProxyMasterCopyData(azoriusGuardAddress);
+        if (azoriusGuardAddress === zeroAddress || !isFreezeGuardAzorius) {
           return {
             freezeGuardContractAddress: undefined,
             freezeVotingContractAddress: undefined,
