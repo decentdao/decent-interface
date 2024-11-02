@@ -1,17 +1,14 @@
 import { Box, FormControl } from '@chakra-ui/react';
+import { Field, FieldInputProps, FieldMetaProps, FormikProps, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
-import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import { RoleFormValues } from '../types';
 
 export default function RoleFormInfo() {
   const { t } = useTranslation('roles');
 
-  const {
-    formik: { setFieldValue },
-    Field,
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
 
   return (
     <Box
@@ -29,7 +26,15 @@ export default function RoleFormInfo() {
     >
       <FormControl>
         <Field name="roleEditing.name">
-          {({ field, form: { setFieldTouched }, meta }) => (
+          {({
+            field,
+            form: { setFieldTouched },
+            meta,
+          }: {
+            field: FieldInputProps<string>;
+            form: FormikProps<RoleFormValues>;
+            meta: FieldMetaProps<string>;
+          }) => (
             <InputComponent
               value={field.value ?? ''}
               onChange={e => {
@@ -55,7 +60,15 @@ export default function RoleFormInfo() {
       </FormControl>
       <FormControl>
         <Field name="roleEditing.description">
-          {({ field, form: { setFieldTouched }, meta }) => (
+          {({
+            field,
+            form: { setFieldTouched },
+            meta,
+          }: {
+            field: FieldInputProps<string>;
+            form: FormikProps<RoleFormValues>;
+            meta: FieldMetaProps<string>;
+          }) => (
             <TextareaComponent
               value={field.value ?? ''}
               onChange={e => {
