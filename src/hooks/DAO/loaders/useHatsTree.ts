@@ -10,7 +10,8 @@ import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLin
 import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentHatsError, useRolesStore } from '../../../store/roles';
+import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { convertStreamIdToBigInt } from '../../streams/useCreateSablierStream';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';

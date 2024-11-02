@@ -8,8 +8,8 @@ import {
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
-  useRolesStore,
-} from '../../../store/roles';
+} from '../../../store/roles/rolesStoreUtils';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';

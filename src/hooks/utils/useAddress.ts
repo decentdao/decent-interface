@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Address, isAddress } from 'viem';
+import { Address, isAddress, getAddress } from 'viem';
 import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
 
@@ -21,7 +21,9 @@ const useAddress = (addressInput: string) => {
     setIsLoading(true);
 
     if (isAddress(addressInput)) {
-      setAddress(addressInput);
+      // addressInput is a string, so if it's a valid address but not checksummed
+      // we want it to be checksummed, which getAddress does
+      setAddress(getAddress(addressInput));
       setIsValid(true);
       setIsLoading(false);
       return;

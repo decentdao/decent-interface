@@ -6,7 +6,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../store/roles';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetSafeName } from '../../utils/useGetSafeName';

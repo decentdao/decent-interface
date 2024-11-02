@@ -7,7 +7,7 @@ import { Hex } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../../store/roles';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
@@ -31,7 +31,7 @@ export default function RoleFormTabs({
   const { addressPrefix } = useNetworkConfig();
   const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue, setTouched } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue, errors, setTouched } = useFormikContext<RoleFormValues>();
 
   useEffect(() => {
     if (values.hats.length && !values.roleEditing) {
@@ -91,12 +91,11 @@ export default function RoleFormTabs({
             if (hatIndex === -1) {
               pushRole({ ...roleUpdated });
             } else {
-              setFieldValue(
-                `hats.${hatIndex}`,
-                isRoleUpdated || editedRoleData.status === EditBadgeStatus.New
-                  ? roleUpdated
-                  : existingRoleHat,
-              );
+              if (isRoleUpdated || editedRoleData.status === EditBadgeStatus.New) {
+                setFieldValue(`hats.${hatIndex}`, roleUpdated);
+              } else if (existingRoleHat !== undefined) {
+                setFieldValue(`hats.${hatIndex}`, existingRoleHat);
+              }
             }
             setFieldValue('roleEditing', undefined);
             setTouched({});

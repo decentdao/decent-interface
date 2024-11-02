@@ -22,7 +22,7 @@ import {
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
-} from '../../../store/roles';
+} from '../../../store/roles/rolesStoreUtils';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';

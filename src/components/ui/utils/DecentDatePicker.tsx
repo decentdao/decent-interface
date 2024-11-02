@@ -104,7 +104,7 @@ function DecentDatePickerContainer({
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
   return (
-    <Field name={`roleEditing.payments[${formIndex}].${type}`}>
+    <Field name={`roleEditing.payments.${formIndex}.${type}`}>
       {() => (
         <>
           <Show below="md">
@@ -266,7 +266,6 @@ export function DecentDatePickerRange({
   disabled: boolean;
 }) {
   const { values } = useFormikContext<RoleFormValues>();
-
   const selectedRange: [DateOrNull, DateOrNull] = useMemo(() => {
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return [null, null];
     const paymentIndex = values.roleEditing.roleEditingPaymentIndex;

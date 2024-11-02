@@ -1,6 +1,6 @@
 import { Box, Button, Flex, FormControl, Show, Text, Icon } from '@chakra-ui/react';
 import { SquaresFour, ArrowsDownUp, Trash } from '@phosphor-icons/react';
-import { Field, FieldProps, useFormikContext } from 'formik';
+import { Field, FieldInputProps, FormikProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -71,6 +71,7 @@ function SendAssetsAction({
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerEditingRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
+
   const {
     values,
     setFieldValue: setFieldValueTopLevel,
@@ -161,13 +162,16 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             {({
               field,
               form: { setFieldValue, setFieldTouched },
-            }: FieldProps<string, RoleFormValues>) => (
+            }: {
+              field: FieldInputProps<string>;
+              form: FormikProps<RoleFormValues>;
+            }) => (
               <LabelWrapper label={t('proposalTitle', { ns: 'proposal' })}>
                 <InputComponent
                   value={field.value}
                   onChange={e => {
-                    setFieldValue(field.name, e.target.value);
-                    setFieldTouched(field.name, true);
+                    setFieldValue('proposalMetadata.title', e.target.value);
+                    setFieldTouched('proposalMetadata.title', true);
                   }}
                   testId={field.name}
                   placeholder="Proposal Title"
@@ -185,13 +189,16 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             {({
               field,
               form: { setFieldValue, setFieldTouched },
-            }: FieldProps<string, RoleFormValues>) => (
+            }: {
+              field: FieldInputProps<string>;
+              form: FormikProps<RoleFormValues>;
+            }) => (
               <LabelWrapper label={t('proposalDescription', { ns: 'proposal' })}>
                 <TextareaComponent
                   value={field.value}
                   onChange={e => {
-                    setFieldValue(field.name, e.target.value);
-                    setFieldTouched(field.name, true);
+                    setFieldValue('proposalMetadata.description', e.target.value);
+                    setFieldTouched('proposalMetadata.description', true);
                   }}
                   isRequired={false}
                   placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
@@ -206,14 +213,17 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
 
         <FormControl>
           <Field name="customNonce">
-            {({ form: { setFieldValue } }: FieldProps<string, RoleFormValues>) => (
+            {({ form: { setFieldValue } }: { form: FormikProps<RoleFormValues> }) => (
               <Flex
                 w="100%"
                 justifyContent="flex-end"
               >
                 <CustomNonceInput
                   nonce={values.customNonce}
-                  onChange={newNonce => setFieldValue('customNonce', newNonce)}
+                  onChange={newNonce => {
+                    if (newNonce === undefined) return;
+                    setFieldValue('customNonce', Number(newNonce));
+                  }}
                 />
               </Flex>
             )}

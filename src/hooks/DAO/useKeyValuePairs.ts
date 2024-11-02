@@ -7,7 +7,7 @@ import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../store/roles';
+import { useRolesStore } from '../../store/roles/useRolesStore';
 
 const getHatsTreeId = (
   events: GetContractEventsReturnType<typeof abis.KeyValuePairs> | undefined,

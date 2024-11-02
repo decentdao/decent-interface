@@ -3,7 +3,7 @@ import { useIdleTimer } from 'react-idle-timer';
 
 export const useUpdateTimer = (safeAddress?: string | null) => {
   // Use useRef to store timers without triggering unnecessary re-renders
-  const timers = useRef<Map<string, NodeJS.Timer>>(new Map());
+  const timers = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const [isActive, setIsActive] = useState<boolean>(true);
   const twentySeconds = 20000; // in milliseconds
 

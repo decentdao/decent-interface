@@ -10,7 +10,7 @@ import {
 } from '../../../../constants/common';
 import useNavigationScrollReset from '../../../../hooks/utils/useNavigationScrollReset';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useRolesStore } from '../../../../store/roles';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';
