@@ -63,17 +63,23 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
           client: publicClient,
         });
 
-        const votingAddress = await freezeGuardContract.read.freezeVoting();
-        const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingAddress);
-        const freezeVotingType = masterCopyData.isFreezeVotingMultisig
-          ? FreezeVotingType.MULTISIG
-          : masterCopyData.isFreezeVotingErc721
-            ? FreezeVotingType.ERC721
-            : FreezeVotingType.ERC20;
+        const freezeVotingAddress = await freezeGuardContract.read.freezeVoting();
+        const freezeVotingPossibilities =
+          await getZodiacModuleProxyMasterCopyData(freezeVotingAddress);
+        let freezeVotingType;
+        if (freezeVotingPossibilities.isFreezeVotingMultisig) {
+          freezeVotingType = FreezeVotingType.MULTISIG;
+        } else if (freezeVotingPossibilities.isFreezeVotingErc721) {
+          freezeVotingType = FreezeVotingType.ERC721;
+        } else if (freezeVotingPossibilities.isFreezeVotingErc20) {
+          freezeVotingType = FreezeVotingType.ERC20;
+        } else {
+          throw new Error('Invalid freeze voting type');
+        }
 
         return {
           freezeGuardContractAddress: azoriusGuardAddress,
-          freezeVotingContractAddress: votingAddress,
+          freezeVotingContractAddress: freezeVotingAddress,
           freezeVotingType,
           freezeGuardType: FreezeGuardType.AZORIUS,
         };
