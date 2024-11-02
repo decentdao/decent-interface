@@ -33,12 +33,14 @@ export function RoleFormPaymentStreams() {
     [payments],
   );
 
-  const isTermsAvailable = values.roleEditing?.roleTerms?.some(term => {
-    if (!term.termEndDate) {
-      return false;
-    }
-    return term.termEndDate > new Date();
-  });
+  const isTermsAvailable = useMemo(() => {
+    return values.roleEditing?.roleTerms?.some(term => {
+      if (!term.termEndDate) {
+        return false;
+      }
+      return term.termEndDate > new Date();
+    });
+  }, [values.roleEditing?.roleTerms]);
 
   const roleTerms = useMemo(() => {
     const terms =

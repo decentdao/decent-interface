@@ -184,9 +184,7 @@ function TermSelection({
 
 function TermSelectorMenu({ paymentIndex }: { paymentIndex: number }) {
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue, validateField } = useFormikContext<RoleFormValues>();
-  console.log('🚀 ~ payments:', values.roleEditing?.payments);
-  console.log('🚀 ~ errors:', errors);
+  const { values, setFieldValue, validateField } = useFormikContext<RoleFormValues>();
   const [selectedTerm, setSelectedTerm] = useState<{
     termNumber: number;
     termEndDate: Date;

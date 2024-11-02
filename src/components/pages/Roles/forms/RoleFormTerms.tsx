@@ -1,33 +1,23 @@
-import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  Icon,
-  IconButton,
-  Text,
-} from '@chakra-ui/react';
-import { CaretDown, CaretRight, Plus, X } from '@phosphor-icons/react';
+import { Box, Button, Flex, FormControl, Icon, IconButton, Text } from '@chakra-ui/react';
+import { Plus, X } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
+import { getAddress, Hex } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { DatePicker } from '../../../ui/forms/DatePicker';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import RoleTerm, { RoleTermStatus } from '../RoleTerm';
-import { RoleFormValues } from '../types';
+import RoleTerm from '../RoleTerm';
+import { RoleFormTermStatus, RoleFormValues } from '../types';
 
-function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
+function RoleTermEndDateInput() {
   const { t } = useTranslation('roles');
   return (
     <FormControl>
-      <Field name={`roleEditing.roleTerms[${termIndex}].termEndDate`}>
+      <Field name="newRoleTerm.termEndDate">
         {({ field, meta, form: { setFieldValue } }: FieldProps<Date, RoleFormValues>) => (
           <LabelWrapper
             label={t('termEndDate')}
@@ -50,11 +40,11 @@ function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
   );
 }
 
-function RoleTermMemberInput({ termIndex }: { termIndex: number }) {
+function RoleTermMemberInput() {
   const { t } = useTranslation('roles');
   return (
     <FormControl>
-      <Field name={`roleEditing.roleTerms[${termIndex}].nominee`}>
+      <Field name="newRoleTerm.nominee">
         {({
           field,
           form: { setFieldValue, setFieldTouched },
@@ -84,7 +74,37 @@ function RoleTermMemberInput({ termIndex }: { termIndex: number }) {
 
 function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: () => void }) {
   const { t } = useTranslation('roles');
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+  const publicClient = usePublicClient();
+
+  const handleAddTerm = async () => {
+    if (!values.newRoleTerm?.nominee || !values.newRoleTerm?.termEndDate) {
+      throw new Error('Nominee and Term End Date are required');
+    }
+    if (!publicClient) {
+      throw new Error('Public client is not available');
+    }
+    let nomineeAddress = values.newRoleTerm.nominee;
+    if (!values.newRoleTerm.nominee.startsWith('0x') && !getAddress(values.newRoleTerm.nominee)) {
+      const ens = await publicClient.getEnsAddress({
+        name: values.newRoleTerm.nominee,
+      });
+      if (ens) {
+        nomineeAddress = ens;
+      }
+    }
+
+    setFieldValue('roleEditing.roleTerms', [
+      ...(values?.roleEditing?.roleTerms || []),
+      {
+        nominee: nomineeAddress,
+        termEndDate: values.newRoleTerm.termEndDate,
+        termNumber: termIndex + 1,
+      },
+    ]);
+
+    onClose();
+  };
   return (
     <Box>
       <Flex
@@ -123,16 +143,11 @@ function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: ()
         flexDirection="column"
         gap="1rem"
       >
-        <RoleTermMemberInput termIndex={termIndex} />
-        <RoleTermEndDateInput termIndex={termIndex} />
+        <RoleTermMemberInput />
+        <RoleTermEndDateInput />
         <Button
-          onClick={() => {
-            setFieldValue(`roleEditing.roleTerms[${termIndex}]`, {
-              nominee: '',
-              termEndDate: undefined,
-              termNumber: termIndex + 1,
-            });
-          }}
+          isDisabled={!!errors.newRoleTerm}
+          onClick={handleAddTerm}
         >
           {t('Add Term')}
         </Button>
@@ -144,21 +159,24 @@ function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: ()
 function RoleTermRenderer({
   roleTerm,
   termStatus,
+  hatId,
 }: {
   roleTerm?: {
     nominee?: string;
     termEndDate?: Date;
     termNumber: number;
   };
-  termStatus: RoleTermStatus;
+  termStatus: RoleFormTermStatus;
+  hatId: Hex | undefined;
 }) {
-  if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
+  if (!roleTerm?.nominee || !roleTerm?.termEndDate || !hatId) {
     return null;
   }
   return (
     <Box>
       <RoleTerm
-        memberAddress={getAddress(roleTerm.nominee)}
+        hatId={hatId}
+        termNominatedWearer={getAddress(roleTerm.nominee)}
         termEndDate={roleTerm.termEndDate}
         termStatus={termStatus}
         termNumber={roleTerm.termNumber}
@@ -167,113 +185,39 @@ function RoleTermRenderer({
   );
 }
 
-function RoleTermExpiredTerms({
-  roleTerms,
-}: {
-  roleTerms?: {
-    nominee?: string;
-    termEndDate?: Date;
-    termNumber: number;
-  }[];
-}) {
-  const { t } = useTranslation('roles');
-  if (!roleTerms?.length) {
-    return null;
-  }
-  return (
-    <Box>
-      <Accordion allowToggle>
-        <AccordionItem
-          bg="neutral-2"
-          borderTop="none"
-          borderBottom="none"
-          borderTopRadius="0.5rem"
-          borderBottomRadius="0.5rem"
-        >
-          {({ isExpanded }) => (
-            <>
-              <AccordionButton
-                bg="neutral-2"
-                borderTopRadius="0.5rem"
-                borderBottomRadius="0.5rem"
-                p="1rem"
-              >
-                <Flex
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Icon
-                    as={!isExpanded ? CaretDown : CaretRight}
-                    boxSize="1.25rem"
-                    color="lilac-0"
-                  />
-                  <Text
-                    textStyle="button-base"
-                    color="lilac-0"
-                  >
-                    {t('showExpiredTerms')}
-                  </Text>
-                </Flex>
-              </AccordionButton>
-              <Flex
-                flexDir="column"
-                gap={4}
-              >
-                {roleTerms.map((term, index) => {
-                  return (
-                    <AccordionPanel
-                      key={index}
-                      px="1rem"
-                    >
-                      <RoleTermRenderer
-                        key={index}
-                        roleTerm={term}
-                        termStatus="expired"
-                      />
-                    </AccordionPanel>
-                  );
-                })}
-              </Flex>
-            </>
-          )}
-        </AccordionItem>
-      </Accordion>
-    </Box>
-  );
-}
-
 export default function RoleFormTerms() {
-  const [newTermIndex, setNewTermIndex] = useState<number>();
   const { t } = useTranslation('roles');
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { getHat } = useRolesStore();
+  const roleFormHatId = values.roleEditing?.id;
+
+  const roleHatTerms = useMemo(() => {
+    if (!roleFormHatId) {
+      return undefined;
+    }
+    const hat = getHat(roleFormHatId);
+    return hat?.roleTerms;
+  }, [getHat, roleFormHatId]);
 
   const roleFormTerms = useMemo(
     () => values.roleEditing?.roleTerms || [],
     [values.roleEditing?.roleTerms],
   );
 
-  // @dev shows the term form when there are no terms
-  useEffect(() => {
-    if (!roleFormTerms.length) {
-      setNewTermIndex(0);
-    }
+  // {assumption}: only 2 terms should be unexpired at a time
+  const terms = useMemo(() => {
+    return roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
   }, [roleFormTerms]);
 
-  const expiredTerms = roleFormTerms
-    .filter(term => !!term.termEndDate && term.termEndDate < new Date())
-    .sort((a, b) => {
-      if (!a.termEndDate || !b.termEndDate) {
-        return 0;
-      }
-      return b.termEndDate.getTime() - a.termEndDate.getTime();
-    });
-
-  // {assumption}: only 2 terms should be unexpired at a time
-  const terms = roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
-  const [currentTerm, nextTerm] = terms;
-  if (terms.length > 2) {
-    throw new Error('More than 2 terms are active');
-  }
+  // @dev shows the term form when there are no terms
+  useEffect(() => {
+    if (terms[0] === undefined && values.newRoleTerm === undefined) {
+      setFieldValue('newRoleTerm', {
+        nominee: '',
+        termEndDate: undefined,
+      });
+    }
+  }, [values.newRoleTerm, setFieldValue, terms]);
 
   return (
     <Box>
@@ -281,36 +225,47 @@ export default function RoleFormTerms() {
         variant="secondary"
         size="sm"
         mb={4}
-        isDisabled={!!newTermIndex || terms.length > 2 || !roleFormTerms.length}
+        isDisabled={!!values.newRoleTerm || terms.length == 2 || !roleFormTerms.length}
         onClick={() => {
-          setNewTermIndex(roleFormTerms.length);
+          setFieldValue('newRoleTerm', {
+            nominee: '',
+            termEndDate: undefined,
+          });
         }}
+        leftIcon={
+          <Icon
+            as={Plus}
+            boxSize="1rem"
+          />
+        }
       >
-        <Icon
-          as={Plus}
-          boxSize="1rem"
-        />
         {t('addTerm')}
       </Button>
       <Flex
         flexDir="column"
         gap={4}
       >
-        {newTermIndex !== undefined && (
+        {values.newRoleTerm !== undefined && (
           <RoleTermCreate
-            termIndex={newTermIndex}
-            onClose={() => setNewTermIndex(undefined)}
+            termIndex={roleFormTerms.length}
+            onClose={() => setFieldValue('newRoleTerm', undefined)}
           />
         )}
         <RoleTermRenderer
-          roleTerm={nextTerm}
-          termStatus="queued"
+          hatId={roleFormHatId}
+          roleTerm={terms[1]}
+          termStatus={
+            roleHatTerms?.nextTerm ? RoleFormTermStatus.Queued : RoleFormTermStatus.Pending
+          }
         />
         <RoleTermRenderer
-          roleTerm={currentTerm}
-          termStatus="current"
+          hatId={roleFormHatId}
+          roleTerm={terms[0]}
+          // @dev show queued if term is being created
+          termStatus={
+            roleHatTerms?.currentTerm ? RoleFormTermStatus.Current : RoleFormTermStatus.Pending
+          }
         />
-        <RoleTermExpiredTerms roleTerms={expiredTerms} />
       </Flex>
     </Box>
   );

@@ -1035,8 +1035,8 @@ export default function useCreateRoles() {
                     {
                       // @dev formHat.wearer is not changeable for term roles. It will always be the current wearer.
                       currentWearer: getAddress(formHat.wearer),
-                      userHatProtocol: hatsProtocol,
-                      userHatId: BigInt(formHat.id),
+                      hatsProtocol: hatsProtocol,
+                      hatId: BigInt(formHat.id),
                       nominatedWearer: newTerm.nominatedWearers[0],
                     },
                   ],

@@ -1,7 +1,6 @@
-import { Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
-import { Card } from '../cards/Card';
 
 export default function NoDataCard({
   translationNameSpace,
@@ -15,7 +14,12 @@ export default function NoDataCard({
   const { t } = useTranslation(translationNameSpace);
   const { canUserCreateProposal } = useCanUserCreateProposal();
   return (
-    <Card my="0.5rem">
+    <Box
+      bg="neutral-2"
+      boxShadow="layeredShadowBorder"
+      borderRadius="0.75rem"
+      p="1rem"
+    >
       <Text
         textStyle="body-base"
         textAlign="center"
@@ -29,6 +33,6 @@ export default function NoDataCard({
             : emptyText,
         )}
       </Text>
-    </Card>
+    </Box>
   );
 }
