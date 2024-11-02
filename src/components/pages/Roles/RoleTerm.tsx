@@ -192,7 +192,7 @@ function RoleTermHeader({
 }
 
 function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
-  const { t } = useTranslation(['roles']);
+  const { t } = useTranslation(['roles', 'common']);
   const { displayName: accountDisplayName } = useGetAccountName(memberAddress);
   const avatarURL = useAvatar(memberAddress);
   const copyToClipboard = useCopyText();
@@ -217,7 +217,7 @@ function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
           variant="unstyled"
           p={0}
           h="fit-content"
-          aria-label="Copy address"
+          aria-label={t('copyAddress', { ns: 'common' })}
           onClick={() => copyToClipboard(memberAddress)}
           rightIcon={
             <Icon
