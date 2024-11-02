@@ -197,7 +197,6 @@ function TermSelectorMenu({ paymentIndex }: { paymentIndex: number }) {
   const eligibleTerms = useMemo(
     () =>
       roleFormTerms
-        .filter(term => !term.termEndDate || term.termEndDate >= new Date())
         .map(term => {
           if (!term.termEndDate) {
             throw new Error('Term end date is required');
@@ -206,7 +205,8 @@ function TermSelectorMenu({ paymentIndex }: { paymentIndex: number }) {
             termNumber: term.termNumber,
             termEndDate: term.termEndDate,
           };
-        }),
+        })
+        .filter(term => term.termEndDate >= new Date()),
     [roleFormTerms],
   );
 
