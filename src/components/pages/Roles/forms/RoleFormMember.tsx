@@ -17,13 +17,13 @@ import {
   Warning,
   WarningDiamond,
 } from '@phosphor-icons/react';
+import { FieldInputProps, FormikProps, FieldMetaProps, useFormikContext, Field } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DecentHourGlass } from '../../../../assets/theme/custom/icons/DecentHourGlass';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
-import { useTypesafeFormikContext } from '../../../../utils/TypesafeForm';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -38,11 +38,7 @@ function RoleMemberWearerInput() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const {
-    formik: { setFieldValue, values },
-    Field,
-  } = useTypesafeFormikContext<RoleFormValues>();
-
+  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
   useEffect(() => {
     if (isValidWearerAddress) {
       setFieldValue('roleEditing.resolvedWearer', resolvedWearerAddress);
@@ -53,7 +49,15 @@ function RoleMemberWearerInput() {
   return (
     <FormControl>
       <Field name="roleEditing.wearer">
-        {({ field, form: { setFieldTouched }, meta }) => (
+        {({
+          field,
+          form: { setFieldTouched },
+          meta,
+        }: {
+          field: FieldInputProps<string>;
+          form: FormikProps<RoleFormValues>;
+          meta: FieldMetaProps<string>;
+        }) => (
           <LabelWrapper
             label={t('member')}
             errorMessage={meta.touched && meta.error ? meta.error : undefined}
@@ -255,10 +259,7 @@ function RoleFormMemberTermToggle() {
   const { t } = useTranslation('roles');
   const [seenConfirmation, setSeenConfirmation] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure({});
-  const {
-    formik: { setFieldValue },
-    Field,
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
   return (
     <Box
       padding="1.5rem"
@@ -268,7 +269,7 @@ function RoleFormMemberTermToggle() {
       mt="1.5rem"
     >
       <Field name="roleEditing.isTermed">
-        {({ field }) => (
+        {({ field }: { field: FieldInputProps<boolean> }) => (
           <>
             <Flex justifyContent="space-between">
               <Flex
@@ -331,9 +332,7 @@ function RoleFormMemberTermToggle() {
 }
 
 export default function RoleFormMember() {
-  const {
-    formik: { values },
-  } = useTypesafeFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
 
   if (!!values.roleEditing?.isTermed) {
     return <RoleFormTerms />;
