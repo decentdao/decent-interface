@@ -228,8 +228,6 @@ function TermSelectorMenu({ paymentIndex }: { paymentIndex: number }) {
 
   useEffect(() => {
     if (selectedTerm) {
-      // @todo: What is the start date for 'next' term payments?
-      // @note {assumption} the start date is now for current terms or current term being proposed.
       setFieldValue(`roleEditing.payments[${paymentIndex}].endDate`, selectedTerm.termEndDate);
       validateField(`roleEditing.payments`);
     }
