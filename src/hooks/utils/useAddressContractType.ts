@@ -6,7 +6,7 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
 import { getValue, setValue } from './cache/useLocalStorage';
 
-export function useMasterCopy() {
+export function useAddressContractType() {
   const {
     chain,
     contracts: {
@@ -154,7 +154,7 @@ export function useMasterCopy() {
     [chain.id, publicClient],
   );
 
-  const getZodiacModuleProxyMasterCopyData = useCallback(
+  const getAddressContractType = useCallback(
     async function (proxyAddress: Address) {
       let masterCopyAddress: Address = zeroAddress;
       let error: string | null = null;
@@ -214,5 +214,5 @@ export function useMasterCopy() {
     ],
   );
 
-  return { getZodiacModuleProxyMasterCopyData };
+  return { getAddressContractType };
 }
