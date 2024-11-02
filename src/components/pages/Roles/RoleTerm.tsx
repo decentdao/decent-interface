@@ -1,14 +1,18 @@
 import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
-import { Calendar, ClockCountdown, Copy } from '@phosphor-icons/react';
+import { ArrowRight, Calendar, ClockCountdown, Copy } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address } from 'viem';
+import { Address, getContract, Hex } from 'viem';
+import { useWalletClient } from 'wagmi';
+import DecentAutonomousAdminTempAbi from '../../../assets/abi/DecentAutonomousAdminTempAbi';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import Avatar from '../../ui/page/Header/Avatar';
 import { RoleFormTermStatus } from './types';
@@ -265,18 +269,64 @@ function RoleTermEndDate({ termEndDate }: { termEndDate: Date }) {
 }
 
 export default function RoleTerm({
-  memberAddress,
+  hatId,
+  termNominatedWearer,
   termEndDate,
   termStatus,
   termNumber,
   displayLightContainer,
 }: {
-  memberAddress: Address;
+  hatId: Hex;
+  termNominatedWearer: Address;
   termEndDate: Date;
   termNumber: number;
   termStatus: RoleFormTermStatus;
   displayLightContainer?: boolean;
 }) {
+  const { hatsTree, getHat } = useRolesStore();
+  const { data: walletClient } = useWalletClient();
+  const { t } = useTranslation(['roles']);
+  const {
+    contracts: { hatsProtocol },
+  } = useNetworkConfig();
+
+  const currentHatWearer = useMemo(() => {
+    const currentHat = getHat(hatId);
+    if (!currentHat) {
+      return undefined;
+    }
+    return currentHat.wearerAddress;
+  }, [getHat, hatId]);
+
+  const handleTriggerStartTerm = async () => {
+    // @todo check if the wearer address is the Decent Autonomous Admin contract
+    // ? @todo if first term wearer === new term nominee, then start term directly?
+    const adminHatWearer = hatsTree?.adminHat.wearer;
+
+    if (currentHatWearer === undefined) {
+      throw new Error('Current hat must be worn by a member');
+    }
+    if (adminHatWearer === undefined) {
+      throw new Error('Admin hat must be worn by Decent Autonomous Admin');
+    }
+    if (!walletClient) {
+      throw new Error('Public client not found');
+    }
+    const decentAutonomousAdminContract = getContract({
+      abi: DecentAutonomousAdminTempAbi,
+      address: adminHatWearer,
+      client: walletClient,
+    });
+
+    await decentAutonomousAdminContract.write.triggerStartNextTerm([
+      {
+        currentWearer: currentHatWearer,
+        hatsProtocol,
+        hatId: BigInt(hatId),
+        nominatedWearer: termNominatedWearer,
+      },
+    ]);
+  };
   return (
     <Box>
       <RoleTermHeader
@@ -287,9 +337,22 @@ export default function RoleTerm({
       />
       <Container displayLightContainer={displayLightContainer}>
         <Flex justifyContent="space-between">
-          <RoleTermMemberAddress memberAddress={memberAddress} />
+          <RoleTermMemberAddress memberAddress={currentHatWearer ?? termNominatedWearer} />
           <RoleTermEndDate termEndDate={termEndDate} />
         </Flex>
+        {/* {!!currentTerm && currentTerm.termStatus === 'inactive' && ( */}
+        <Button
+          leftIcon={
+            <Icon
+              as={ArrowRight}
+              size="1.25rem"
+            />
+          }
+          onClick={handleTriggerStartTerm}
+        >
+          {t('startTerm')}
+        </Button>
+        {/* )} */}
       </Container>
     </Box>
   );

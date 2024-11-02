@@ -159,6 +159,7 @@ function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: ()
 function RoleTermRenderer({
   roleTerm,
   termStatus,
+  hatId,
 }: {
   roleTerm?: {
     nominee?: string;
@@ -166,14 +167,16 @@ function RoleTermRenderer({
     termNumber: number;
   };
   termStatus: RoleFormTermStatus;
+  hatId: Hex | undefined;
 }) {
-  if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
+  if (!roleTerm?.nominee || !roleTerm?.termEndDate || !hatId) {
     return null;
   }
   return (
     <Box>
       <RoleTerm
-        memberAddress={getAddress(roleTerm.nominee)}
+        hatId={hatId}
+        termNominatedWearer={getAddress(roleTerm.nominee)}
         termEndDate={roleTerm.termEndDate}
         termStatus={termStatus}
         termNumber={roleTerm.termNumber}
@@ -186,12 +189,15 @@ export default function RoleFormTerms() {
   const { t } = useTranslation('roles');
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const { getHat } = useRolesStore();
+  const roleFormHatId = values.roleEditing?.id;
 
   const roleHatTerms = useMemo(() => {
-    const roleFormHatId = values.roleEditing?.id;
-    const hat = getHat(roleFormHatId || '0x');
+    if (!roleFormHatId) {
+      return undefined;
+    }
+    const hat = getHat(roleFormHatId);
     return hat?.roleTerms;
-  }, [getHat, values.roleEditing?.id]);
+  }, [getHat, roleFormHatId]);
 
   const roleFormTerms = useMemo(
     () => values.roleEditing?.roleTerms || [],
@@ -246,12 +252,14 @@ export default function RoleFormTerms() {
           />
         )}
         <RoleTermRenderer
+          hatId={roleFormHatId}
           roleTerm={terms[1]}
           termStatus={
             roleHatTerms?.nextTerm ? RoleFormTermStatus.Queued : RoleFormTermStatus.Pending
           }
         />
         <RoleTermRenderer
+          hatId={roleFormHatId}
           roleTerm={terms[0]}
           // @dev show queued if term is being created
           termStatus={

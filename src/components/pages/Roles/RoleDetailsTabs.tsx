@@ -1,7 +1,7 @@
 import { Tabs, TabList, Tab, TabPanels, TabPanel, Divider, Text } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address } from 'viem';
+import { Address, Hex } from 'viem';
 import {
   paymentSorterByWithdrawAmount,
   paymentSorterByStartDate,
@@ -83,16 +83,19 @@ function RolesDetailsPayments({
 }
 
 function RolesDetailsTerms({
+  hatId,
   currentTerm,
   nextTerm,
   expiredTerms,
 }: {
+  hatId: Hex | undefined;
   nextTerm: RoleTermDetailProp | undefined;
   currentTerm: CurrentTermProp | undefined;
   expiredTerms: RoleTermDetailProp[];
 }) {
   return (
     <RoleTermDetails
+      hatId={hatId}
       currentTerm={currentTerm}
       nextTerm={nextTerm}
       expiredTerms={expiredTerms}
@@ -102,10 +105,12 @@ function RolesDetailsTerms({
 
 export default function RoleDetailsTabs({
   roleTerms,
+  hatId,
   roleHatWearerAddress,
   roleHatSmartAddress,
   sortedPayments,
 }: {
+  hatId: Hex | undefined;
   roleTerms: {
     currentTerm: CurrentTermProp | undefined;
     nextTerm: RoleTermDetailProp | undefined;
@@ -132,6 +137,7 @@ export default function RoleDetailsTabs({
       <TabPanels mt={4}>
         <TabPanel>
           <RolesDetailsTerms
+            hatId={hatId}
             currentTerm={roleTerms.currentTerm}
             nextTerm={roleTerms.nextTerm}
             expiredTerms={roleTerms.expiredTerms}

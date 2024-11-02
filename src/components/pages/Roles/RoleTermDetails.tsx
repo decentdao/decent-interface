@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
+import { getAddress, Hex } from 'viem';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import RoleTerm from './RoleTerm';
 import { RoleFormTermStatus } from './types';
@@ -27,17 +27,20 @@ function RoleTermRenderer({
   roleTerm,
   termStatus,
   displayLightContainer,
+  hatId,
 }: {
+  hatId: Hex | undefined;
   roleTerm?: RoleTermDetailProp;
   termStatus: RoleFormTermStatus;
   displayLightContainer?: boolean;
 }) {
-  if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
+  if (!roleTerm?.nominee || !roleTerm?.termEndDate || !hatId) {
     return null;
   }
   return (
     <RoleTerm
-      memberAddress={getAddress(roleTerm.nominee)}
+      hatId={hatId}
+      termNominatedWearer={getAddress(roleTerm.nominee)}
       termEndDate={roleTerm.termEndDate}
       termStatus={termStatus}
       termNumber={roleTerm.termNumber}
@@ -46,7 +49,13 @@ function RoleTermRenderer({
   );
 }
 
-function RoleTermExpiredTerms({ roleTerms }: { roleTerms?: RoleTermDetailProp[] }) {
+function RoleTermExpiredTerms({
+  hatId,
+  roleTerms,
+}: {
+  hatId: Hex | undefined;
+  roleTerms?: RoleTermDetailProp[];
+}) {
   const { t } = useTranslation('roles');
   if (!roleTerms?.length) {
     return null;
@@ -99,6 +108,7 @@ function RoleTermExpiredTerms({ roleTerms }: { roleTerms?: RoleTermDetailProp[] 
                     >
                       <RoleTermRenderer
                         key={index}
+                        hatId={hatId}
                         roleTerm={term}
                         termStatus={RoleFormTermStatus.Expired}
                         displayLightContainer
@@ -116,10 +126,12 @@ function RoleTermExpiredTerms({ roleTerms }: { roleTerms?: RoleTermDetailProp[] 
 }
 
 export default function RoleTermDetails({
+  hatId,
   currentTerm,
   nextTerm,
   expiredTerms,
 }: {
+  hatId: Hex | undefined;
   nextTerm: RoleTermDetailProp | undefined;
   currentTerm: CurrentTermProp | undefined;
   expiredTerms: RoleTermDetailProp[];
@@ -137,14 +149,19 @@ export default function RoleTermDetails({
         />
       )}
       <RoleTermRenderer
+        hatId={hatId}
         roleTerm={nextTerm}
         termStatus={nextTerm ? RoleFormTermStatus.Queued : RoleFormTermStatus.Pending}
       />
       <RoleTermRenderer
+        hatId={hatId}
         roleTerm={currentTerm}
         termStatus={currentTerm ? RoleFormTermStatus.Current : RoleFormTermStatus.Pending}
       />
-      <RoleTermExpiredTerms roleTerms={expiredTerms} />
+      <RoleTermExpiredTerms
+        roleTerms={expiredTerms}
+        hatId={hatId}
+      />
     </Flex>
   );
 }

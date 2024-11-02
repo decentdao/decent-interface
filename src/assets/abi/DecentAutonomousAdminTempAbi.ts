@@ -1,5 +1,10 @@
 export default [
   {
+    inputs: [],
+    name: 'NotCurrentWearer',
+    type: 'error',
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -107,12 +112,12 @@ export default [
           },
           {
             internalType: 'contract IHats',
-            name: 'userHatProtocol',
+            name: 'hatsProtocol',
             type: 'address',
           },
           {
             internalType: 'uint256',
-            name: 'userHatId',
+            name: 'hatId',
             type: 'uint256',
           },
           {
@@ -121,7 +126,7 @@ export default [
             type: 'address',
           },
         ],
-        internalType: 'struct IDecentAutonomousAdmin.TriggerStartArgs',
+        internalType: 'struct IDecentAutonomousAdminV1.TriggerStartArgs',
         name: 'args',
         type: 'tuple',
       },
@@ -129,6 +134,19 @@ export default [
     name: 'triggerStartNextTerm',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'version',
+    outputs: [
+      {
+        internalType: 'uint32',
+        name: '',
+        type: 'uint32',
+      },
+    ],
+    stateMutability: 'pure',
     type: 'function',
   },
 ] as const;

@@ -98,6 +98,7 @@ export default function RolesDetailsDrawerMobile({
         mb="1.5rem"
       >
         <RoleDetailsTabs
+          hatId={roleHat.id}
           roleHatSmartAddress={roleHat.smartAddress}
           roleTerms={roleHat.roleTerms}
           roleHatWearerAddress={roleHatWearerAddress}
