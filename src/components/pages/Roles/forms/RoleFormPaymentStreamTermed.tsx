@@ -211,7 +211,6 @@ function TermSelectorMenu({ paymentIndex }: { paymentIndex: number }) {
   );
 
   useEffect(() => {
-    // @note {assumption} this also captures the current term being created
     const [currentTerm] = roleFormTerms.filter(
       term => !!term.termEndDate && term.termEndDate >= new Date(),
     );
