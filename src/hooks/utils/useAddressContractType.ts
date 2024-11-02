@@ -1,218 +1,261 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useCallback } from 'react';
-import { Address, getContract, zeroAddress } from 'viem';
+import { Abi, Address } from 'viem';
 import { usePublicClient } from 'wagmi';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
-import { getValue, setValue } from './cache/useLocalStorage';
+
+// https://github.com/adamgall/fractal-contract-identification/blob/229fc398661c5d684600feeb98a4eb767f728632/src/identify-contracts.ts
+
+type ContractType = {
+  isClaimErc20: boolean;
+  isFreezeGuardAzorius: boolean;
+  isFreezeGuardMultisig: boolean;
+  isFreezeVotingErc20: boolean;
+  isFreezeVotingErc721: boolean;
+  isFreezeVotingMultisig: boolean;
+  isLinearVotingErc20: boolean;
+  isLinearVotingErc721: boolean;
+  isModuleAzorius: boolean;
+  isModuleFractal: boolean;
+  isVotesErc20: boolean;
+  isVotesErc20Wrapper: boolean;
+};
+
+const defaultContractType: ContractType = {
+  isClaimErc20: false,
+  isFreezeGuardAzorius: false,
+  isFreezeGuardMultisig: false,
+  isFreezeVotingErc20: false,
+  isFreezeVotingErc721: false,
+  isFreezeVotingMultisig: false,
+  isLinearVotingErc20: false,
+  isLinearVotingErc721: false,
+  isModuleAzorius: false,
+  isModuleFractal: false,
+  isVotesErc20: false,
+  isVotesErc20Wrapper: false,
+};
+
+type ContractFunctionTest = {
+  // The ABI of the contract to test
+  abi: Abi;
+  // These functions must not revert when called
+  functionNames: string[];
+  // These functions must revert when called
+  revertFunctionNames?: string[];
+  // The key in the result object to set
+  resultKey: keyof ContractType;
+};
+
+function combineAbis(...abisToCombine: Abi[]): Abi {
+  return abisToCombine.flat();
+}
+
+const contractTests: ContractFunctionTest[] = [
+  {
+    abi: abis.ERC20Claim,
+    functionNames: [
+      'childERC20',
+      'parentERC20',
+      'deadlineBlock',
+      'funder',
+      'owner',
+      'parentAllocation',
+      'snapShotId',
+    ],
+    resultKey: 'isClaimErc20',
+  },
+  {
+    abi: combineAbis(abis.AzoriusFreezeGuard, abis.MultisigFreezeGuard),
+    functionNames: ['freezeVoting', 'owner'],
+    revertFunctionNames: ['childGnosisSafe', 'timelockPeriod', 'executionPeriod'],
+    resultKey: 'isFreezeGuardAzorius',
+  },
+  {
+    abi: abis.MultisigFreezeGuard,
+    functionNames: [
+      'childGnosisSafe',
+      'executionPeriod',
+      'freezeVoting',
+      'owner',
+      'timelockPeriod',
+    ],
+    resultKey: 'isFreezeGuardMultisig',
+  },
+  {
+    abi: abis.ERC20FreezeVoting,
+    functionNames: [
+      'votesERC20',
+      'freezePeriod',
+      'freezeProposalPeriod',
+      'freezeProposalVoteCount',
+      'freezeVotesThreshold',
+      'isFrozen',
+      'owner',
+    ],
+    resultKey: 'isFreezeVotingErc20',
+  },
+  {
+    abi: abis.ERC721FreezeVoting,
+    functionNames: [
+      'strategy',
+      'owner',
+      'isFrozen',
+      'freezeVotesThreshold',
+      'freezePeriod',
+      'freezeProposalVoteCount',
+      'freezeProposalPeriod',
+    ],
+    resultKey: 'isFreezeVotingErc721',
+  },
+  {
+    abi: abis.MultisigFreezeVoting,
+    functionNames: [
+      'parentGnosisSafe',
+      'freezePeriod',
+      'freezeProposalPeriod',
+      'freezeProposalVoteCount',
+      'isFrozen',
+      'owner',
+    ],
+    resultKey: 'isFreezeVotingMultisig',
+  },
+  {
+    abi: abis.LinearERC20Voting,
+    functionNames: [
+      'BASIS_DENOMINATOR',
+      'QUORUM_DENOMINATOR',
+      'azoriusModule',
+      'basisNumerator',
+      'governanceToken',
+      'owner',
+      'quorumNumerator',
+      'votingPeriod',
+      'requiredProposerWeight',
+    ],
+    resultKey: 'isLinearVotingErc20',
+  },
+  {
+    abi: abis.LinearERC721Voting,
+    functionNames: [
+      'BASIS_DENOMINATOR',
+      'azoriusModule',
+      'basisNumerator',
+      'getAllTokenAddresses',
+      'owner',
+      'proposerThreshold',
+      'quorumThreshold',
+      'votingPeriod',
+    ],
+    resultKey: 'isLinearVotingErc721',
+  },
+  {
+    abi: abis.Azorius,
+    functionNames: [
+      'avatar',
+      'target',
+      'guard',
+      'getGuard',
+      'executionPeriod',
+      'totalProposalCount',
+      'timelockPeriod',
+      'owner',
+      'DOMAIN_SEPARATOR_TYPEHASH',
+      'TRANSACTION_TYPEHASH',
+    ],
+    resultKey: 'isModuleAzorius',
+  },
+  {
+    abi: combineAbis(abis.FractalModule, abis.Azorius),
+    functionNames: ['avatar', 'target', 'getGuard', 'guard', 'owner'],
+    revertFunctionNames: [
+      'timelockPeriod',
+      'executionPeriod',
+      'totalProposalCount',
+      'DOMAIN_SEPARATOR_TYPEHASH',
+      'TRANSACTION_TYPEHASH',
+    ],
+    resultKey: 'isModuleFractal',
+  },
+  {
+    abi: combineAbis(abis.VotesERC20, abis.VotesERC20Wrapper),
+    functionNames: ['DOMAIN_SEPARATOR', 'decimals', 'name', 'owner', 'symbol', 'totalSupply'],
+    revertFunctionNames: ['underlying'],
+    resultKey: 'isVotesErc20',
+  },
+  {
+    abi: abis.VotesERC20Wrapper,
+    functionNames: [
+      'DOMAIN_SEPARATOR',
+      'decimals',
+      'name',
+      'owner',
+      'symbol',
+      'totalSupply',
+      'underlying',
+    ],
+    resultKey: 'isVotesErc20Wrapper',
+  },
+];
 
 export function useAddressContractType() {
-  const {
-    chain,
-    contracts: {
-      zodiacModuleProxyFactory,
-      zodiacModuleProxyFactoryOld,
-
-      claimErc20MasterCopy,
-
-      linearVotingErc20MasterCopy,
-      linearVotingErc20WrappedMasterCopy,
-      linearVotingErc721MasterCopy,
-
-      moduleFractalMasterCopy,
-      moduleAzoriusMasterCopy,
-
-      freezeGuardMultisigMasterCopy,
-      freezeGuardAzoriusMasterCopy,
-
-      freezeVotingMultisigMasterCopy,
-      freezeVotingErc20MasterCopy,
-      freezeVotingErc721MasterCopy,
-
-      votesErc20MasterCopy,
-      votesErc20WrapperMasterCopy,
-    },
-  } = useNetworkConfig();
   const publicClient = usePublicClient();
 
-  const isClaimErc20 = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === claimErc20MasterCopy,
-    [claimErc20MasterCopy],
-  );
+  async function getAddressContractType(address: Address): Promise<ContractType> {
+    if (!publicClient) {
+      throw new Error('Public client not found');
+    }
 
-  const isLinearVotingErc20 = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc20MasterCopy,
-    [linearVotingErc20MasterCopy],
-  );
-  const isLinearVotingErc20Wrapped = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc20WrappedMasterCopy,
-    [linearVotingErc20WrappedMasterCopy],
-  );
-  const isLinearVotingErc721 = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc721MasterCopy,
-    [linearVotingErc721MasterCopy],
-  );
+    const result = { ...defaultContractType };
 
-  const isModuleAzorius = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === moduleAzoriusMasterCopy,
-    [moduleAzoriusMasterCopy],
-  );
-  const isModuleFractal = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === moduleFractalMasterCopy,
-    [moduleFractalMasterCopy],
-  );
+    const allCalls = contractTests.flatMap(test => [
+      ...test.functionNames.map(fn => ({
+        address,
+        abi: test.abi,
+        functionName: fn,
+        args: [],
+      })),
+      ...(test.revertFunctionNames?.map(fn => ({
+        address,
+        abi: test.abi,
+        functionName: fn,
+        args: [],
+      })) ?? []),
+    ]);
 
-  const isFreezeGuardMultisig = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === freezeGuardMultisigMasterCopy,
-    [freezeGuardMultisigMasterCopy],
-  );
-  const isFreezeGuardAzorius = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === freezeGuardAzoriusMasterCopy,
-    [freezeGuardAzoriusMasterCopy],
-  );
+    const allResults = await publicClient.multicall({
+      contracts: allCalls,
+    });
 
-  const isFreezeVotingMultisig = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingMultisigMasterCopy,
-    [freezeVotingMultisigMasterCopy],
-  );
-  const isFreezeVotingErc20 = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingErc20MasterCopy,
-    [freezeVotingErc20MasterCopy],
-  );
-  const isFreezeVotingErc721 = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingErc721MasterCopy,
-    [freezeVotingErc721MasterCopy],
-  );
+    let resultIndex = 0;
+    let passedTestCount = 0;
 
-  const isVotesErc20 = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === votesErc20MasterCopy,
-    [votesErc20MasterCopy],
-  );
-  const isVotesErc20Wrapper = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === votesErc20WrapperMasterCopy,
-    [votesErc20WrapperMasterCopy],
-  );
+    for (const test of contractTests) {
+      const successResults = allResults.slice(resultIndex, resultIndex + test.functionNames.length);
+      const successPassed = successResults.every(r => !r.error);
+      resultIndex += test.functionNames.length;
 
-  const getMasterCopyAddress = useCallback(
-    async function (
-      proxyAddress: Address,
-      moduleProxyFactoryContractAddress: Address,
-    ): Promise<readonly [Address, string | null]> {
-      if (!publicClient) {
-        return [zeroAddress, null] as const;
-      }
-
-      const cachedValue = getValue({
-        cacheName: CacheKeys.MASTER_COPY,
-        chainId: chain.id,
-        proxyAddress,
-      });
-      if (cachedValue) return [cachedValue, null] as const;
-
-      const moduleProxyFactoryContract = getContract({
-        abi: abis.ModuleProxyFactory,
-        address: moduleProxyFactoryContractAddress,
-        client: publicClient,
-      });
-
-      return moduleProxyFactoryContract.getEvents
-        .ModuleProxyCreation({ proxy: proxyAddress }, { fromBlock: 0n })
-        .then(proxiesCreated => {
-          // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
-          if (proxiesCreated.length === 0) {
-            setValue(
-              {
-                cacheName: CacheKeys.MASTER_COPY,
-                chainId: chain.id,
-                proxyAddress,
-              },
-              zeroAddress,
-              CacheExpiry.ONE_WEEK,
-            );
-            return [zeroAddress, 'No proxies created'] as const;
-          }
-
-          const masterCopyAddress = proxiesCreated[0].args.masterCopy;
-          if (!masterCopyAddress) {
-            return [zeroAddress, 'No master copy address'] as const;
-          }
-
-          setValue(
-            {
-              cacheName: CacheKeys.MASTER_COPY,
-              chainId: chain.id,
-              proxyAddress,
-            },
-            masterCopyAddress,
-          );
-          return [masterCopyAddress, null] as const;
-        })
-        .catch(() => {
-          return [zeroAddress, 'error'] as const;
-        });
-    },
-    [chain.id, publicClient],
-  );
-
-  const getAddressContractType = useCallback(
-    async function (proxyAddress: Address) {
-      let masterCopyAddress: Address = zeroAddress;
-      let error: string | null = null;
-      [masterCopyAddress, error] = await getMasterCopyAddress(
-        proxyAddress,
-        zodiacModuleProxyFactory,
-      );
-      // @dev checks Zodiac's ModuleProxyFactory Contract if the first one fails.
-      if (error) {
-        [masterCopyAddress, error] = await getMasterCopyAddress(
-          proxyAddress,
-          zodiacModuleProxyFactoryOld,
+      let revertPassed = true;
+      if (test.revertFunctionNames?.length) {
+        const revertResults = allResults.slice(
+          resultIndex,
+          resultIndex + test.revertFunctionNames.length,
         );
+        revertPassed = revertResults.every(r => r.error);
+        resultIndex += test.revertFunctionNames.length;
       }
-      if (error) {
-        console.error(error);
+
+      const testPassed = successPassed && revertPassed;
+      result[test.resultKey] = testPassed;
+
+      if (testPassed) {
+        passedTestCount++;
+        if (passedTestCount > 1) {
+          throw new Error(`Address ${address} matches multiple contract types`);
+        }
       }
+    }
 
-      return {
-        isClaimErc20: isClaimErc20(masterCopyAddress),
-
-        isLinearVotingErc20: isLinearVotingErc20(masterCopyAddress),
-        isLinearVotingErc20Wrapped: isLinearVotingErc20Wrapped(masterCopyAddress),
-        isLinearVotingErc721: isLinearVotingErc721(masterCopyAddress),
-
-        isModuleAzorius: isModuleAzorius(masterCopyAddress),
-        isModuleFractal: isModuleFractal(masterCopyAddress),
-
-        isFreezeGuardMultisig: isFreezeGuardMultisig(masterCopyAddress),
-        isFreezeGuardAzorius: isFreezeGuardAzorius(masterCopyAddress),
-
-        isFreezeVotingMultisig: isFreezeVotingMultisig(masterCopyAddress),
-        isFreezeVotingErc20: isFreezeVotingErc20(masterCopyAddress),
-        isFreezeVotingErc721: isFreezeVotingErc721(masterCopyAddress),
-
-        isVotesErc20: isVotesErc20(masterCopyAddress),
-        isVotesErc20Wrapper: isVotesErc20Wrapper(masterCopyAddress),
-      };
-    },
-    [
-      getMasterCopyAddress,
-      isClaimErc20,
-      isFreezeGuardAzorius,
-      isFreezeGuardMultisig,
-      isFreezeVotingErc20,
-      isFreezeVotingErc721,
-      isFreezeVotingMultisig,
-      isLinearVotingErc20,
-      isLinearVotingErc20Wrapped,
-      isLinearVotingErc721,
-      isModuleAzorius,
-      isModuleFractal,
-      isVotesErc20,
-      isVotesErc20Wrapper,
-      zodiacModuleProxyFactory,
-      zodiacModuleProxyFactoryOld,
-    ],
-  );
+    return result;
+  }
 
   return { getAddressContractType };
 }
