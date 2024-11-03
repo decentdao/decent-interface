@@ -49,7 +49,7 @@ export default function useCreateRoles() {
       erc6551Registry,
       keyValuePairs,
       sablierV2LockupLinear,
-      decentHatsMasterCopy,
+      decentHatsCreationModule,
       decentAutonomousAdminMasterCopy,
       zodiacModuleProxyFactory,
       hatsElectionsEligibilityImplementationAddress,
@@ -265,17 +265,17 @@ export default function useCreateRoles() {
     const enableDecentHatsModuleData = encodeFunctionData({
       abi: GnosisSafeL2,
       functionName: 'enableModule',
-      args: [decentHatsMasterCopy],
+      args: [decentHatsCreationModule],
     });
 
     const disableDecentHatsModuleData = encodeFunctionData({
       abi: GnosisSafeL2,
       functionName: 'disableModule',
-      args: [SENTINEL_MODULE, decentHatsMasterCopy],
+      args: [SENTINEL_MODULE, decentHatsCreationModule],
     });
 
     return { enableDecentHatsModuleData, disableDecentHatsModuleData };
-  }, [decentHatsMasterCopy]);
+  }, [decentHatsCreationModule]);
 
   const prepareCreateTopHatProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
@@ -345,7 +345,7 @@ export default function useCreateRoles() {
       });
 
       return {
-        targets: [daoAddress, decentHatsMasterCopy, daoAddress],
+        targets: [daoAddress, decentHatsCreationModule, daoAddress],
         calldatas: [
           enableDecentHatsModuleData,
           createAndDeclareTreeData,
@@ -358,7 +358,7 @@ export default function useCreateRoles() {
     [
       daoAddress,
       daoName,
-      decentHatsMasterCopy,
+      decentHatsCreationModule,
       decentAutonomousAdminMasterCopy,
       hatsElectionsEligibilityImplementationAddress,
       erc6551Registry,
@@ -428,7 +428,7 @@ export default function useCreateRoles() {
       const transferTopHatToDecentHatsData = encodeFunctionData({
         abi: HatsAbi,
         functionName: 'transferHat',
-        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsMasterCopy],
+        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsCreationModule],
       });
 
       return [
@@ -441,7 +441,7 @@ export default function useCreateRoles() {
           calldata: enableDecentHatsModuleData,
         },
         {
-          targetAddress: decentHatsMasterCopy,
+          targetAddress: decentHatsCreationModule,
           calldata: createNewRoleData,
         },
         {
@@ -459,7 +459,7 @@ export default function useCreateRoles() {
       hatsProtocol,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
-      decentHatsMasterCopy,
+      decentHatsCreationModule,
     ],
   );
 
@@ -526,7 +526,7 @@ export default function useCreateRoles() {
       const transferTopHatToDecentHatsData = encodeFunctionData({
         abi: HatsAbi,
         functionName: 'transferHat',
-        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsMasterCopy],
+        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsCreationModule],
       });
 
       return [
@@ -539,7 +539,7 @@ export default function useCreateRoles() {
           calldata: enableDecentHatsModuleData,
         },
         {
-          targetAddress: decentHatsMasterCopy,
+          targetAddress: decentHatsCreationModule,
           calldata: createNewRoleData,
         },
         {
@@ -559,7 +559,7 @@ export default function useCreateRoles() {
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsELIAddress,
-      decentHatsMasterCopy,
+      decentHatsCreationModule,
     ],
   );
 

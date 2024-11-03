@@ -55,7 +55,7 @@ export type NetworkConfig = {
     fractalRegistry: Address;
     keyValuePairs: Address;
 
-    decentHatsMasterCopy: Address;
+    decentHatsCreationModule: Address;
     decentSablierMasterCopy: Address;
 
     hatsProtocol: Address;

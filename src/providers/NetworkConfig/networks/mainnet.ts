@@ -82,7 +82,7 @@ export const mainnetConfig: NetworkConfig = {
     keyValuePairs: getAddress(a.KeyValuePairs),
     // @todo update addresses when contracts are deployed
     decentAutonomousAdminMasterCopy: zeroAddress,
-    decentHatsMasterCopy: getAddress(a.DecentHats_0_1_0),
+    decentHatsCreationModule: getAddress(a.DecentHats_0_1_0),
     decentSablierMasterCopy: getAddress(a.DecentSablierStreamManagement),
 
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
