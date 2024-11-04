@@ -188,8 +188,7 @@ function RoleTermRenderer({
 
 export default function RoleFormTerms() {
   const { t } = useTranslation('roles');
-  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-  console.log('🚀 ~ errors:', errors);
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const { getHat } = useRolesStore();
   const roleFormHatId = values.roleEditing?.id;
 
