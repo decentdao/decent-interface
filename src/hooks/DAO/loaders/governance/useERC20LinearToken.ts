@@ -44,7 +44,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       tokenContract.read.name(),
       tokenContract.read.symbol(),
       tokenContract.read.decimals(),
-      await tokenContract.read.totalSupply(),
+      tokenContract.read.totalSupply(),
     ]);
     const tokenData = {
       name: tokenName,
