@@ -47,14 +47,14 @@ function Container({
 
 function RoleTermHeaderTitle({
   termNumber,
-  termStatus,
+  termPosition,
 }: {
   termNumber: number;
-  termStatus: RoleFormTermStatus;
+  termPosition?: 'current' | 'next';
 }) {
   const { t } = useTranslation(['roles']);
-  const isCurrentTerm = termStatus === RoleFormTermStatus.Current;
-  const isNextTerm = termStatus === RoleFormTermStatus.Pending;
+  const isCurrentTerm = termPosition === 'current';
+  const isNextTerm = termPosition === 'next';
   const termIndicatorText = isCurrentTerm
     ? t('currentTerm')
     : isNextTerm
@@ -130,7 +130,7 @@ function RoleTermHeaderStatus({
       case RoleFormTermStatus.Queued:
         return statusTextData.inQueue;
       case RoleFormTermStatus.Pending:
-        return statusTextData.inQueue;
+        return statusTextData.pending;
       case RoleFormTermStatus.Current:
         return statusTextData.active;
       default:
@@ -166,11 +166,13 @@ function RoleTermHeader({
   termNumber,
   termEndDate,
   termStatus,
+  termPosition,
   displayLightContainer,
 }: {
   termNumber: number;
   termEndDate: Date;
   termStatus: RoleFormTermStatus;
+  termPosition?: 'current' | 'next';
   displayLightContainer?: boolean;
 }) {
   return (
@@ -181,7 +183,7 @@ function RoleTermHeader({
       <Flex justifyContent="space-between">
         <RoleTermHeaderTitle
           termNumber={termNumber}
-          termStatus={termStatus}
+          termPosition={termPosition}
         />
         <RoleTermHeaderStatus
           termEndDate={termEndDate}
@@ -297,6 +299,15 @@ export default function RoleTerm({
     return getHat(hatId);
   }, [getHat, hatId]);
 
+  const termPosition = useMemo(() => {
+    if (!roleHat) return undefined;
+    const currentTermEndDate = roleHat.roleTerms.currentTerm?.termEndDate;
+    const nextTermEndDate = roleHat.roleTerms.nextTerm?.termEndDate;
+    if (currentTermEndDate && termEndDate.getTime() === currentTermEndDate.getTime())
+      return 'current';
+    if (nextTermEndDate && termEndDate.getTime() === nextTermEndDate.getTime()) return 'next';
+  }, [roleHat, termEndDate]);
+
   const wearerAddress = roleHat?.wearerAddress;
 
   const handleTriggerStartTerm = useCallback(async () => {
@@ -357,6 +368,7 @@ export default function RoleTerm({
         termNumber={termNumber}
         termEndDate={termEndDate}
         termStatus={termStatus}
+        termPosition={termPosition}
         displayLightContainer={displayLightContainer}
       />
       <Container displayLightContainer={displayLightContainer}>
