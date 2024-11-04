@@ -81,9 +81,10 @@ export const polygonConfig: NetworkConfig = {
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
     // @todo update addresses when contracts are deployed
-    decentAutonomousAdminMasterCopy: zeroAddress,
-    decentHatsCreationModule: getAddress(a.DecentHats_0_1_0),
-    decentSablierMasterCopy: getAddress(a.DecentSablierStreamManagement),
+    decentAutonomousAdminV1ImplementationAddress: zeroAddress,
+    decentHatsCreationModule: zeroAddress,
+    decentSablierStreamManagementModule: zeroAddress,
+    decentHatsModificationModule: zeroAddress,
 
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',

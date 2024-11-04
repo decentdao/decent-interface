@@ -81,9 +81,12 @@ export const sepoliaConfig: NetworkConfig = {
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
     // @todo update addresses when contracts are deployed
-    decentHatsCreationModule: getAddress('0x511d826E6f157b9503cCea75AE4e0E979ae955A6'),
-    decentAutonomousAdminMasterCopy: getAddress('0xfcDF3E2dA1e0e1245BcE872B2Ffc47f01bFce53A'),
-    decentSablierMasterCopy: getAddress(a.DecentSablierStreamManagement),
+    decentHatsCreationModule: getAddress('0xA7e43c376860Cc398005313F6C1fa2CB15F8978f'),
+    decentAutonomousAdminV1ImplementationAddress: getAddress(
+      '0xbb6d4A16480C81E32bd5284A728DedEd5a439a81',
+    ),
+    decentSablierStreamManagementModule: getAddress('0x633bde1C391E51E7Ee6D04CA707481C76537818F'),
+    decentHatsModificationModule: '0xfB59Ed9Ae3b6351854839e44a9ACd008BFa3847C',
 
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',

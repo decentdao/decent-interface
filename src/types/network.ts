@@ -56,7 +56,8 @@ export type NetworkConfig = {
     keyValuePairs: Address;
 
     decentHatsCreationModule: Address;
-    decentSablierMasterCopy: Address;
+    decentHatsModificationModule: Address;
+    decentSablierStreamManagementModule: Address;
 
     hatsProtocol: Address;
     erc6551Registry: Address;
@@ -65,7 +66,7 @@ export type NetworkConfig = {
     sablierV2LockupDynamic: Address;
     sablierV2LockupTranched: Address;
     sablierV2LockupLinear: Address;
-    decentAutonomousAdminMasterCopy: Address;
+    decentAutonomousAdminV1ImplementationAddress: Address;
     hatsElectionsEligibilityImplementationAddress: Address;
   };
   staking: {
