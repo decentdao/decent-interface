@@ -439,18 +439,7 @@ export default function useCreateRoles() {
         ],
       });
 
-      // Transfer top hat to the DecentHats module so it is authorised to create hats on the tree
-      const transferTopHatToDecentHatsData = encodeFunctionData({
-        abi: HatsAbi,
-        functionName: 'transferHat',
-        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsCreationModule],
-      });
-
       return [
-        {
-          targetAddress: hatsProtocol,
-          calldata: transferTopHatToDecentHatsData,
-        },
         {
           targetAddress: daoAddress,
           calldata: enableDecentHatsModuleData,
@@ -476,7 +465,6 @@ export default function useCreateRoles() {
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsElectionsEligibilityImplementationAddress,
-      decentHatsCreationModule,
       decentHatsModificationModule,
     ],
   );
