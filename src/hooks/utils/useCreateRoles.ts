@@ -70,7 +70,6 @@ export default function useCreateRoles() {
       decentHatsCreationModule,
       decentAutonomousAdminV1ImplementationAddress,
       decentHatsModificationModule,
-      // decentSablierStreamManagementModule, @todo Where is this used?
       zodiacModuleProxyFactory,
     },
   } = useNetworkConfig();
