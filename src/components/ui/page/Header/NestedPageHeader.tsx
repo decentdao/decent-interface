@@ -8,7 +8,14 @@ export default function NestedPageHeader({
   backButtonText,
   backButtonHref,
   children,
-}: PropsWithChildren<{ title: string; backButtonText: string; backButtonHref: string }>) {
+  onGoBack,
+}: PropsWithChildren<{
+  title: string;
+  backButtonText: string;
+  backButtonHref: string;
+  onGoBack?: () => void;
+}>) {
+  const buttonProps = onGoBack ? { onClick: onGoBack } : { as: Link, to: backButtonHref };
   return (
     <Flex
       py={6}
@@ -19,11 +26,10 @@ export default function NestedPageHeader({
         <Button
           variant="link"
           width="min-content"
-          as={Link}
-          to={backButtonHref}
           color="neutral-7"
           padding={0}
           leftIcon={<ArrowLeft />}
+          {...buttonProps}
         >
           {backButtonText}
         </Button>

@@ -3,9 +3,12 @@ import { ArrowLeft, Trash, X } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { zeroAddress } from 'viem';
 import { SettingsPermissionsStrategyForm } from '../../../../components/SafeSettings/SettingsPermissionsStrategyForm';
 import { Card } from '../../../../components/ui/cards/Card';
 import { ModalBase } from '../../../../components/ui/modals/ModalBase';
+import { ModalType } from '../../../../components/ui/modals/ModalProvider';
+import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
 import Divider from '../../../../components/ui/utils/Divider';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -24,6 +27,7 @@ export function SafePermissionsCreateProposal() {
     governance,
   } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
+  const openSelectAddPermissionModal = useDecentModal(ModalType.ADD_PERMISSION);
 
   const [proposerThreshold, setProposerThreshold] = useState<BigIntValuePair>({
     bigintValue: BigInt(azoriusGovernance.votingStrategy?.proposerThreshold?.value ?? 0),
@@ -51,7 +55,7 @@ export function SafePermissionsCreateProposal() {
   };
 
   const handleGoBack = () => {
-    // @todo: handle going back to modal for permission creation (selecting permission type for creation)
+    openSelectAddPermissionModal();
     handleClose();
   };
 
@@ -61,7 +65,7 @@ export function SafePermissionsCreateProposal() {
   };
 
   const handleSubmit = () => {
-    // @todo: handle submitting proposal
+    // @todo: handle proceeding with proposal creation
     handleClose();
   };
 
@@ -70,10 +74,11 @@ export function SafePermissionsCreateProposal() {
       <Show below="md">
         <NestedPageHeader
           title={t('permissionCreateProposalsTitle')}
+          onGoBack={votingStrategyAddress ? undefined : handleGoBack}
           backButtonText={t('back', { ns: 'common' })}
           backButtonHref={settingsPermissionsPath}
         >
-          {votingStrategyAddress && (
+          {votingStrategyAddress && votingStrategyAddress !== zeroAddress && (
             <Flex
               width="25%"
               justifyContent="flex-end"
@@ -119,18 +124,19 @@ export function SafePermissionsCreateProposal() {
             justifyContent="space-between"
           >
             <Flex justifyContent="space-between">
-              {!votingStrategyAddress && (
-                <IconButton
-                  size="button-md"
-                  variant="ghost"
-                  color="lilac-0"
-                  aria-label={t('back', { ns: 'common' })}
-                  onClick={handleGoBack}
-                  icon={<ArrowLeft size={24} />}
-                />
-              )}
+              {!votingStrategyAddress ||
+                (votingStrategyAddress === zeroAddress && (
+                  <IconButton
+                    size="button-md"
+                    variant="ghost"
+                    color="lilac-0"
+                    aria-label={t('back', { ns: 'common' })}
+                    onClick={handleGoBack}
+                    icon={<ArrowLeft size={24} />}
+                  />
+                ))}
               <Text>{t('permissionCreateProposalsTitle')}</Text>
-              {votingStrategyAddress ? (
+              {votingStrategyAddress && votingStrategyAddress !== zeroAddress ? (
                 <IconButton
                   size="button-md"
                   variant="ghost"

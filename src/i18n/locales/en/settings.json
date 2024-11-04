@@ -31,5 +31,9 @@
   "permissionsCreateProposalsDescription": "Hold at least {{tokensCount}} {{symbol}}",
   "asset": "Asset",
   "assetTooltip": "The asset that the permission will be applied to",
-  "permissionAmountLabel": "Minimum amount"
+  "permissionAmountLabel": "Minimum amount",
+  "addPermissionTitle": "Add Permission",
+  "permissionCreateProposalsDescription": "Create proposals to the DAO.",
+  "permissionComingSoonTitle": "Coming Soon",
+  "permissionComingSoonDescription": "Permissions for more features."
 }
