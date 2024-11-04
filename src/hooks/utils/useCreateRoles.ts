@@ -263,7 +263,7 @@ export default function useCreateRoles() {
           const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments ?? []);
 
           const [firstTerm] = parseRoleTermsFromFormRoleTerms(role.roleTerms ?? []);
-          if (!firstTerm) {
+          if (!firstTerm && role.isTermed) {
             throw new Error('First term is undefined');
           }
 
