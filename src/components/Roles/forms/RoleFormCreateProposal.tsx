@@ -1,26 +1,21 @@
-import { Box, Button, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
-import { ArrowsDownUp, SquaresFour, Trash } from '@phosphor-icons/react';
+import { Box, Button, Flex, FormControl, Show, Text, Icon } from '@chakra-ui/react';
+import { SquaresFour, ArrowsDownUp, Trash } from '@phosphor-icons/react';
+import { Field, FieldInputProps, FormikProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { formatUnits, Hex } from 'viem';
-import { CARD_SHADOW } from '../../../constants/common';
-import { DAO_ROUTES } from '../../../constants/routes';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  EditedRole,
-  RoleDetailsDrawerEditingRoleHatProp,
-  RoleFormValues,
-} from '../../../types/roles';
-import { useTypesafeFormikContext } from '../../../utils/TypesafeForm';
-import { Card } from '../../ui/cards/Card';
-import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
-import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
-import LabelWrapper from '../../ui/forms/LabelWrapper';
-import { AddActions } from '../../ui/modals/AddActions';
-import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
+import { CARD_SHADOW } from '../../../../constants/common';
+import { DAO_ROUTES } from '../../../../constants/routes';
+import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { Card } from '../../../ui/cards/Card';
+import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
+import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
+import LabelWrapper from '../../../ui/forms/LabelWrapper';
+import { AddActions } from '../../../ui/modals/AddActions';
+import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
@@ -77,9 +72,11 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   const { t } = useTranslation(['modals', 'common', 'proposal']);
 
   const {
-    formik: { values, setFieldValue: setFieldValueTopLevel, isSubmitting, submitForm },
-    Field,
-  } = useTypesafeFormikContext<RoleFormValues>();
+    values,
+    setFieldValue: setFieldValueTopLevel,
+    isSubmitting,
+    submitForm,
+  } = useFormikContext<RoleFormValues>();
 
   const editedRoles = useMemo<
     (RoleDetailsDrawerEditingRoleHatProp & {
@@ -159,7 +156,13 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
       >
         <FormControl>
           <Field name="proposalMetadata.title">
-            {({ field, form: { setFieldValue, setFieldTouched } }) => (
+            {({
+              field,
+              form: { setFieldValue, setFieldTouched },
+            }: {
+              field: FieldInputProps<string>;
+              form: FormikProps<RoleFormValues>;
+            }) => (
               <LabelWrapper label={t('proposalTitle', { ns: 'proposal' })}>
                 <InputComponent
                   value={field.value}
@@ -180,7 +183,13 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         </FormControl>
         <FormControl>
           <Field name="proposalMetadata.description">
-            {({ field, form: { setFieldValue, setFieldTouched } }) => (
+            {({
+              field,
+              form: { setFieldValue, setFieldTouched },
+            }: {
+              field: FieldInputProps<string>;
+              form: FormikProps<RoleFormValues>;
+            }) => (
               <LabelWrapper label={t('proposalDescription', { ns: 'proposal' })}>
                 <TextareaComponent
                   value={field.value}
@@ -201,7 +210,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
 
         <FormControl>
           <Field name="customNonce">
-            {({ form: { setFieldValue } }) => (
+            {({ form: { setFieldValue } }: { form: FormikProps<RoleFormValues> }) => (
               <Flex
                 w="100%"
                 justifyContent="flex-end"

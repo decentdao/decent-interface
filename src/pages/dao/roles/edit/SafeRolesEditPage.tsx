@@ -1,29 +1,29 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
+import { Formik } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, toHex } from 'viem';
-import { RoleCardEdit } from '../../../../components/Roles/RoleCard';
-import { RoleCardLoading } from '../../../../components/Roles/RolePageCard';
-import { RolesEditTable } from '../../../../components/Roles/RolesTable';
-import DraggableDrawer from '../../../../components/ui/containers/DraggableDrawer';
-import NoDataCard from '../../../../components/ui/containers/NoDataCard';
-import { ModalBase } from '../../../../components/ui/modals/ModalBase';
-import { UnsavedChangesWarningContent } from '../../../../components/ui/modals/UnsavedChangesWarningContent';
-import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import { DAO_ROUTES } from '../../../../constants/routes';
-import { getRandomBytes } from '../../../../helpers';
-import { useRolesSchema } from '../../../../hooks/schemas/roles/useRolesSchema';
-import useCreateRoles from '../../../../hooks/utils/useCreateRoles';
-import { useNavigationBlocker } from '../../../../hooks/utils/useNavigationBlocker';
-import { analyticsEvents } from '../../../../insights/analyticsEvents';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../../store/roles/useRolesStore';
-import { EditBadgeStatus, RoleFormValues } from '../../../../types/roles';
-import { makeTypesafeForm } from '../../../../utils/TypesafeForm';
+import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
+import { RoleCardLoading } from '../../../../../components/pages/Roles/RolePageCard';
+import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
+import { EditBadgeStatus, RoleFormValues } from '../../../../../components/pages/Roles/types';
+import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
+import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
+import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
+import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
+import { DAO_ROUTES } from '../../../../../constants/routes';
+import { getRandomBytes } from '../../../../../helpers';
+import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
+import useCreateRoles from '../../../../../hooks/utils/useCreateRoles';
+import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
+import { analyticsEvents } from '../../../../../insights/analyticsEvents';
+import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesStore } from '../../../../../store/roles/useRolesStore';
+import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 export function SafeRolesEditPage() {
   useEffect(() => {
@@ -95,10 +95,8 @@ export function SafeRolesEditPage() {
   const hatsTreeLoading = hatsTree === undefined;
   const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
 
-  const { Formik } = makeTypesafeForm<RoleFormValues>();
-
   return (
-    <Formik
+    <Formik<RoleFormValues>
       initialValues={initialValues}
       enableReinitialize
       validationSchema={rolesSchema}
