@@ -12,6 +12,7 @@ import {
   encodeFunctionData,
   encodePacked,
   getAddress,
+  getContract,
   getCreate2Address,
   Hex,
   hexToBigInt,
@@ -48,7 +49,10 @@ import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
+import {
+  isElectionEligibilityModule,
+  predictAccountAddress,
+} from './../../store/roles/rolesStoreUtils';
 
 function hatsDetailsBuilder(data: { name: string; description: string }) {
   return JSON.stringify({
@@ -505,6 +509,23 @@ export default function useCreateRoles() {
       decentHatsModificationModule,
     ],
   );
+  // @todo  move to updated 'useMasterCopy` hook
+  const isDecentAutonomousAdminV1 = useCallback(
+    async (address: Address) => {
+      if (!publicClient) {
+        throw new Error('Public client is not set');
+      }
+      const decentAutonomousAdminV1Contract = getContract({
+        address: address,
+        abi: DecentAutonomousAdminTempAbi,
+        client: publicClient,
+      });
+      return decentAutonomousAdminV1Contract.read.supportsInterface([
+        calculateInterfaceId(DecentAutonomousAdminTempAbi),
+      ]);
+    },
+    [publicClient],
+  );
 
   /**
    * @dev Checks if Admin Hat is already being worn by an instance of DecentAutonomousAdminV1
@@ -517,13 +538,11 @@ export default function useCreateRoles() {
       if (adminHatWearerAddress === undefined && !isAnyRoleTermed) {
         return [];
       }
-      const isDecentAutonomousAdminV1 = encodeFunctionData({
-        abi: DecentAutonomousAdminTempAbi,
-        functionName: 'supportsInterface',
-        args: [calculateInterfaceId(DecentAutonomousAdminTempAbi)],
-      });
 
-      if (!!isDecentAutonomousAdminV1) {
+      if (
+        adminHatWearerAddress === undefined ||
+        !!isDecentAutonomousAdminV1(adminHatWearerAddress)
+      ) {
         return [];
       }
 
@@ -568,7 +587,12 @@ export default function useCreateRoles() {
 
       return [deployDecentAutonomousAdminV1Tx, mintAdminHat];
     },
-    [decentAutonomousAdminV1ImplementationAddress, hatsProtocol, zodiacModuleProxyFactory],
+    [
+      decentAutonomousAdminV1ImplementationAddress,
+      hatsProtocol,
+      zodiacModuleProxyFactory,
+      isDecentAutonomousAdminV1,
+    ],
   );
 
   const createBatchLinearStreamCreationTx = useCallback(
@@ -785,7 +809,7 @@ export default function useCreateRoles() {
       }
 
       const topHatAccount = hatsTree.topHat.smartAddress;
-
+      const adminHatWearer = hatsTree.adminHat.wearer;
       const allTxs: { calldata: Hex; targetAddress: Address }[] = [];
 
       // The Algorithm
@@ -1010,10 +1034,22 @@ export default function useCreateRoles() {
               throw new Error('Cannot prepare transactions for edited role without role terms');
             }
 
-            // @note {assumption}: We have already determined the eligibility address is the election module
-            if (formHat.eligibility === undefined) {
+            if (adminHatWearer === undefined || !!isDecentAutonomousAdminV1(adminHatWearer)) {
               throw new Error(
-                'Cannot prepare transactions for edited role without eligibility address',
+                'Cannot prepare transactions for edited role without decent auto admin hat wearer',
+              );
+            }
+
+            if (
+              formHat.eligibility === undefined ||
+              (await isElectionEligibilityModule(
+                formHat.eligibility,
+                hatsElectionsEligibilityImplementationAddress,
+                publicClient,
+              ))
+            ) {
+              throw new Error(
+                'Cannot prepare transactions for edited role without eligibility module set',
               );
             }
 
@@ -1038,7 +1074,8 @@ export default function useCreateRoles() {
               }),
               targetAddress: formHat.eligibility,
             });
-            if (previousTerm.termEndDateTs > Date.now() * 1000) {
+            // current term has ended
+            if (previousTerm.termEndDateTs < Date.now() * 1000) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: DecentAutonomousAdminTempAbi,
@@ -1053,7 +1090,7 @@ export default function useCreateRoles() {
                     },
                   ],
                 }),
-                targetAddress: formHat.eligibility,
+                targetAddress: adminHatWearer,
               });
             }
           }
@@ -1073,6 +1110,7 @@ export default function useCreateRoles() {
       hatsTree,
       daoAddress,
       publicClient,
+      prepareAdminHatTxs,
       prepareNewHatTxs,
       getHat,
       hatsProtocol,
@@ -1080,11 +1118,12 @@ export default function useCreateRoles() {
       getActiveStreamsFromFormHat,
       prepareFlushStreamTxs,
       prepareCancelStreamTxs,
-      prepareAdminHatTxs,
       ipfsClient,
       getStreamsWithFundsToClaimFromFromHat,
       prepareRolePaymentUpdateTxs,
       prepareTermedRolePaymentUpdateTxs,
+      isDecentAutonomousAdminV1,
+      hatsElectionsEligibilityImplementationAddress,
       parseRoleTermsFromFormRoleTerms,
     ],
   );

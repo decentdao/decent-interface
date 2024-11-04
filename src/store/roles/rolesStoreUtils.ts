@@ -204,7 +204,7 @@ export const getCurrentTermStatus = async (
   return nextTermEndTs === currentTermEndDateTs ? 'inactive' : 'active';
 };
 
-const isElectionEligibilityModule = async (
+export const isElectionEligibilityModule = async (
   eligibility: Address | undefined,
   hatsElectionsImplementation: Address,
   publicClient: PublicClient,
