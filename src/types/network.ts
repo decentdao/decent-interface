@@ -35,6 +35,7 @@ export type NetworkConfig = {
     zodiacModuleProxyFactoryOld: Address;
 
     linearVotingErc20MasterCopy: Address;
+    linearVotingErc20WrappedMasterCopy: Address;
     linearVotingErc721MasterCopy: Address;
 
     moduleAzoriusMasterCopy: Address;
