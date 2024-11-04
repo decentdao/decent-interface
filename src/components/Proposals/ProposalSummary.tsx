@@ -1,4 +1,4 @@
-import { Text, Box, Button, Flex, Tooltip, Icon } from '@chakra-ui/react';
+import { Text, Box, Button, Flex, Icon } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
@@ -12,6 +12,7 @@ import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT, formatCoin } from '../../utils/numberFormats';
+import { DecentTooltip } from '../ui/DecentTooltip';
 import ContentBox from '../ui/containers/ContentBox';
 import DisplayTransaction from '../ui/links/DisplayTransaction';
 import EtherscanLink from '../ui/links/EtherscanLink';
@@ -227,13 +228,13 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
             {t('votingPower')}
           </Text>
           {showVotingPower ? (
-            <Tooltip
+            <DecentTooltip
               label={t('votingPowerTooltip')}
               placement="left"
               maxW={TOOLTIP_MAXW}
             >
               {ShowVotingPowerButton}
-            </Tooltip>
+            </DecentTooltip>
           ) : (
             ShowVotingPowerButton
           )}
