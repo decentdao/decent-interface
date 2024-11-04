@@ -15,25 +15,21 @@ export default function NestedPageHeader({
       justifyContent="space-between"
       alignItems="center"
     >
-      <Button
-        variant="link"
-        as={Link}
-        to={backButtonHref}
-        color="neutral-7"
-        padding={0}
-        leftIcon={<ArrowLeft />}
-        width="25%"
-      >
-        {backButtonText}
-      </Button>
-      <Text
-        textStyle="body-base-strong"
-        width="50%"
-        textAlign="center"
-      >
-        {title}
-      </Text>
-      {children ?? <Box width="25%" />}
+      <Box width="25%">
+        <Button
+          variant="link"
+          width="min-content"
+          as={Link}
+          to={backButtonHref}
+          color="neutral-7"
+          padding={0}
+          leftIcon={<ArrowLeft />}
+        >
+          {backButtonText}
+        </Button>
+      </Box>
+      <Text textStyle="body-base-strong">{title}</Text>
+      {children || <Box width="25%" />}
     </Flex>
   );
 }

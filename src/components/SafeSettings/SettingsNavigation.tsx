@@ -35,7 +35,7 @@ function SettingsLink({
         isCurrentPath ||
         (!isMobile &&
           isIndexSettingsPage &&
-          pathWithoutSearch === `/${DAO_ROUTES.settingsGeneral.path}`)
+          pathWithoutSearch === `/${DAO_ROUTES.settings.path}/${DAO_ROUTES.settingsGeneral.path}`)
           ? 'white-alpha-04'
           : 'transparent'
       }

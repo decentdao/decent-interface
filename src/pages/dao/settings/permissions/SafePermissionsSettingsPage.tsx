@@ -1,8 +1,7 @@
-import { Box, Button, Flex, IconButton, Show, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Show, Text, useBreakpointValue } from '@chakra-ui/react';
 import { Coins, Plus } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { zeroAddress } from 'viem';
+import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import { Card } from '../../../../components/ui/cards/Card';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
 import PencilWithLineIcon from '../../../../components/ui/icons/PencilWithLineIcon';
@@ -17,11 +16,11 @@ import { AzoriusGovernance } from '../../../../types';
 import { SettingsContentBox } from '../SettingsContentBox';
 
 export function SafePermissionsSettingsPage() {
-  const { t } = useTranslation('settings');
+  const { t } = useTranslation(['settings', 'common']);
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
   const {
-    node: { daoAddress },
+    node: { safe },
     governance,
     governanceContracts: { isLoaded, linearVotingErc20Address },
   } = useFractal();
@@ -30,14 +29,48 @@ export function SafePermissionsSettingsPage() {
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken } = azoriusGovernance;
 
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const [searchParams] = useSearchParams();
+  const votingStrategyAddress = searchParams.get('votingStrategy');
+
+  if (isMobile && votingStrategyAddress) {
+    return <Outlet />;
+  }
+
+  if (!safe) {
+    return null;
+  }
+
   return (
     <>
       <Show below="md">
         <NestedPageHeader
           title={t('permissionsTitle')}
           backButtonText={t('settings')}
-          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
-        />
+          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, safe.address)}
+        >
+          {!linearVotingErc20Address && (
+            <Flex
+              width="25%"
+              justifyContent="flex-end"
+            >
+              <IconButton
+                aria-label={t('add', { ns: 'common' })}
+                size="icon-md"
+                variant="ghost"
+                color="neutral-6"
+                onClick={() =>
+                  navigate(
+                    DAO_ROUTES.settingsPermissionsCreateProposal.relative(
+                      addressPrefix,
+                      safe.address,
+                    ),
+                  )
+                }
+              />
+            </Flex>
+          )}
+        </NestedPageHeader>
       </Show>
       <SettingsContentBox
         flexDirection="column"
@@ -77,7 +110,7 @@ export function SafePermissionsSettingsPage() {
                     navigate(
                       DAO_ROUTES.settingsPermissionsCreateProposal.relative(
                         addressPrefix,
-                        daoAddress || zeroAddress,
+                        safe.address,
                         linearVotingErc20Address,
                       ),
                     )
@@ -131,6 +164,7 @@ export function SafePermissionsSettingsPage() {
           </Card>
         )}
       </SettingsContentBox>
+      <Outlet />
     </>
   );
 }

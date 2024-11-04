@@ -25,6 +25,7 @@ import { SafeSettingsPage } from './pages/dao/settings/SafeSettingsPage';
 import { SafeGeneralSettingsPage } from './pages/dao/settings/general/SafeGeneralSettingsPage';
 import { SafeGovernanceSettingsPage } from './pages/dao/settings/governance/SafeGovernanceSettingsPage';
 import { SafeModulesSettingsPage } from './pages/dao/settings/modules-and-guard/SafeModulesSettingsPage';
+import { SafePermissionsCreateProposal } from './pages/dao/settings/permissions/SafePermissionsCreateProposal';
 import { SafePermissionsSettingsPage } from './pages/dao/settings/permissions/SafePermissionsSettingsPage';
 import { SafeTreasuryPage } from './pages/dao/treasury/SafeTreasuryPage';
 import HomePage from './pages/home/HomePage';
@@ -204,6 +205,12 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
                       {
                         path: DAO_ROUTES.settingsPermissions.path,
                         element: <SafePermissionsSettingsPage />,
+                        children: [
+                          {
+                            path: DAO_ROUTES.settingsPermissionsCreateProposal.path,
+                            element: <SafePermissionsCreateProposal />,
+                          },
+                        ],
                       },
                     ]
                   : []),

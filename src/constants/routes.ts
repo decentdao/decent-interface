@@ -85,27 +85,27 @@ export const DAO_ROUTES = {
   settingsGeneral: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/settings/general${getDaoQueryParam(addressPrefix, daoAddress)}`,
-    path: 'settings/general',
+    path: 'general',
   },
   settingsGovernance: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/settings/governance${getDaoQueryParam(addressPrefix, daoAddress)}`,
-    path: 'settings/governance',
+    path: 'governance',
   },
   settingsModulesAndGuard: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/settings/modules-and-guard${getDaoQueryParam(addressPrefix, daoAddress)}`,
-    path: 'settings/modules-and-guard',
+    path: 'modules-and-guard',
   },
   settingsPermissions: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/settings/permissions${getDaoQueryParam(addressPrefix, daoAddress)}`,
-    path: 'settings/permissions',
+    path: 'permissions',
   },
   settingsPermissionsCreateProposal: {
     relative: (addressPrefix: string, daoAddress: string, votingStrategyAddress?: string) =>
       `/settings/permissions/create-proposal${getDaoQueryParam(addressPrefix, daoAddress)}${votingStrategyAddress ? `&votingStrategy=${votingStrategyAddress}` : ''}`,
-    path: 'permissions/create-proposal',
+    path: 'create-proposal',
   },
   proposalTemplates: {
     relative: (addressPrefix: string, daoAddress: string) =>

@@ -141,11 +141,10 @@ export function SafeTreasuryPage() {
         isOpen={isOpen}
         onClose={onClose}
         title={t('sendAssetsTitle', { ns: 'modals' })}
-        isSearchInputModal={false}
       >
         <SendAssetsModal
           submitButtonText={t('submitProposal', { ns: 'modals' })}
-          showNonceInput={true}
+          showNonceInput
           close={onClose}
           sendAssetsData={sendAssetsAction}
         />

@@ -92,7 +92,6 @@ export function AddActions({
         isOpen={isOpenAction}
         onClose={onCloseAction}
         title={t('actions')}
-        isSearchInputModal={false}
       >
         <Flex
           gap="2"
@@ -123,7 +122,6 @@ export function AddActions({
         isOpen={isOpenAssets}
         onClose={onCloseAssets}
         title={t('transferAssets')}
-        isSearchInputModal={false}
       >
         <SendAssetsModal
           submitButtonText={t('add', { ns: 'modals' })}
