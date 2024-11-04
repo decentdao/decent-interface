@@ -1,5 +1,6 @@
 import {
   Button,
+  Divider,
   Flex,
   FormControl,
   Icon,
@@ -14,25 +15,24 @@ import {
 import { CaretDown, CheckCircle } from '@phosphor-icons/react';
 import {
   Field,
-  FieldMetaProps,
   FieldInputProps,
+  FieldMetaProps,
   FormikErrors,
-  useFormikContext,
   FormikProps,
+  useFormikContext,
 } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
-import { CARD_SHADOW } from '../../../../constants/common';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { BigIntValuePair } from '../../../../types';
-import { formatCoin, formatUSD } from '../../../../utils';
-import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
-import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
-import { BigIntInput } from '../../../ui/forms/BigIntInput';
-import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import Divider from '../../../ui/utils/Divider';
-import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
-import { RoleFormValues } from '../types';
+import { CARD_SHADOW } from '../../../constants/common';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { BigIntValuePair } from '../../../types';
+import { RoleFormValues } from '../../../types/roles';
+import { formatCoin, formatUSD } from '../../../utils';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
+import DraggableDrawer from '../../ui/containers/DraggableDrawer';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
+import { EaseOutComponent } from '../../ui/utils/EaseOutComponent';
 
 function AssetsList({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation('roles');

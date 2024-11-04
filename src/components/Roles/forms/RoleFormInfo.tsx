@@ -2,16 +2,16 @@ import { Box, Flex, FormControl, Switch, Text } from '@chakra-ui/react';
 import { Field, FieldInputProps, FieldMetaProps, FormikProps, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
-import useAddress from '../../../../hooks/utils/useAddress';
-import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { useRolesStore } from '../../../../store/roles/useRolesStore';
-import { GovernanceType } from '../../../../types';
-import { AddressInput } from '../../../ui/forms/EthAddressInput';
-import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
-import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { RoleFormValues } from '../types';
+import { DETAILS_BOX_SHADOW } from '../../../constants/common';
+import useAddress from '../../../hooks/utils/useAddress';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
+import { GovernanceType } from '../../../types';
+import { RoleFormValues } from '../../../types/roles';
+import { AddressInput } from '../../ui/forms/EthAddressInput';
+import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
 
 export default function RoleFormInfo() {
   const { t } = useTranslation('roles');

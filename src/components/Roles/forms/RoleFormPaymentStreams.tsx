@@ -7,9 +7,10 @@ import {
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
-} from '../../../../store/roles/rolesStoreUtils';
-import { ModalType } from '../../../ui/modals/ModalProvider';
-import { useDecentModal } from '../../../ui/modals/useDecentModal';
+} from '../../../store/roles/rolesStoreUtils';
+import { RoleFormValues, SablierPaymentFormValues } from '../../../types/roles';
+import { ModalType } from '../../ui/modals/ModalProvider';
+import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';
 
 export function RoleFormPaymentStreams() {

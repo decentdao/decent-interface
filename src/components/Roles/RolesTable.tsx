@@ -3,12 +3,18 @@ import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
-import useAvatar from '../../../hooks/utils/useAvatar';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { DecentTree } from '../../../store/roles/rolesStoreUtils';
-import { useRolesStore } from '../../../store/roles/useRolesStore';
-import NoDataCard from '../../ui/containers/NoDataCard';
-import Avatar from '../../ui/page/Header/Avatar';
+import useAvatar from '../../hooks/utils/useAvatar';
+import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
+import { useRolesStore } from '../../store/roles/useRolesStore';
+import {
+  DecentTree,
+  EditBadgeStatus,
+  RoleEditProps,
+  RoleFormValues,
+  RoleProps,
+} from '../../types/roles';
+import NoDataCard from '../ui/containers/NoDataCard';
+import Avatar from '../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading } from './RolePageCard';
 

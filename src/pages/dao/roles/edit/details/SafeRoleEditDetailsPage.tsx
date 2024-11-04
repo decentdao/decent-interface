@@ -28,13 +28,18 @@ import {
   CARD_SHADOW,
   NEUTRAL_2_82_TRANSPARENT,
   useHeaderHeight,
-} from '../../../../../../constants/common';
-import { DAO_ROUTES } from '../../../../../../constants/routes';
-import { useNavigationBlocker } from '../../../../../../hooks/utils/useNavigationBlocker';
-import { useFractal } from '../../../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../../../../store/roles/useRolesStore';
-import { UnsavedChangesWarningContent } from '../unsavedChangesWarningContent';
+} from '../../../../../constants/common';
+import { DAO_ROUTES } from '../../../../../constants/routes';
+import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
+import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesStore } from '../../../../../store/roles/useRolesStore';
+import {
+  EditBadgeStatus,
+  EditedRole,
+  RoleFormValues,
+  RoleHatFormValue,
+} from '../../../../../types/roles';
 
 function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void }) {
   const { t } = useTranslation(['roles']);

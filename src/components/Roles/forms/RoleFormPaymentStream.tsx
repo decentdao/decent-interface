@@ -4,12 +4,12 @@ import { addDays, addMinutes } from 'date-fns';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CARD_SHADOW, isDevMode } from '../../../../constants/common';
-import { useRolesStore } from '../../../../store/roles/useRolesStore';
-import { ModalType } from '../../../ui/modals/ModalProvider';
-import { useDecentModal } from '../../../ui/modals/useDecentModal';
-import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
-import { RoleFormValues, RoleHatFormValue } from '../types';
+import { CARD_SHADOW, isDevMode } from '../../../constants/common';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
+import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
+import { ModalType } from '../../ui/modals/ModalProvider';
+import { useDecentModal } from '../../ui/modals/useDecentModal';
+import { DecentDatePicker } from '../../ui/utils/DecentDatePicker';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
