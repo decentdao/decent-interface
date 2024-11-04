@@ -61,6 +61,7 @@ export const mainnetConfig: NetworkConfig = {
     zodiacModuleProxyFactoryOld: getAddress(a.ModuleProxyFactory),
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
+    linearVotingErc20WrappedMasterCopy: getAddress(a.LinearERC20WrappedVoting),
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
 
     moduleAzoriusMasterCopy: getAddress(a.Azorius),
