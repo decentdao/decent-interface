@@ -254,6 +254,10 @@ export function useAddressContractType() {
       }
     }
 
+    if (passedTestCount === 0) {
+      throw new Error(`Address ${address} does not match any contract types`);
+    }
+
     return result;
   }
 
