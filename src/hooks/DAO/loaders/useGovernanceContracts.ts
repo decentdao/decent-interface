@@ -101,12 +101,12 @@ export const useGovernanceContracts = () => {
         } = votingStrategy;
         if (isLinearVotingErc20) {
           linearVotingErc20Address = strategyAddress;
-          setGovTokenAddress(strategyAddress);
+          await setGovTokenAddress(strategyAddress);
         } else if (isLinearVotingErc721) {
           linearVotingErc721Address = strategyAddress;
         } else if (isLinearVotingErc20WithWhitelisting) {
           linearVotingErc20WithHatsWhitelistingAddress = strategyAddress;
-          setGovTokenAddress(strategyAddress);
+          await setGovTokenAddress(strategyAddress);
         } else if (isLinearVotingErc721WithWhitelisting) {
           linearVotingErc721WithHatsWhitelistingAddress = strategyAddress;
         }
