@@ -52,7 +52,7 @@ export interface DecentRoleHat extends DecentHat {
   eligibility?: Address;
   roleTerms: {
     allTerms: RoleTerm[];
-    currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
+    currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' | undefined }) | undefined;
     nextTerm: RoleTerm | undefined;
     expiredTerms: RoleTerm[];
   };
@@ -187,19 +187,15 @@ export const getCurrentTermStatus = async (
   eligibility: Address,
   publicClient: PublicClient,
 ) => {
-  try {
-    const electionContract = getContract({
-      abi: HatsElectionsEligibilityAbi,
-      address: eligibility,
-      client: publicClient,
-    });
+  const electionContract = getContract({
+    abi: HatsElectionsEligibilityAbi,
+    address: eligibility,
+    client: publicClient,
+  });
 
-    const nextTextEndTs = await electionContract.read.nextTermEnd();
-    return nextTextEndTs === currentTermEndDateTs ? 'inactive' : 'active';
-  } catch (e) {
-    console.error('Failed to get current term status', e);
-    return 'inactive';
-  }
+  const nextTermEndTs = await electionContract.read.nextTermEnd();
+  if (nextTermEndTs === 0n) return;
+  return nextTermEndTs === currentTermEndDateTs ? 'inactive' : 'active';
 };
 
 const isElectionEligibilityModule = async (
@@ -226,7 +222,7 @@ const getRoleHatTerms = async (
 ) => {
   let roleTerms: {
     allTerms: RoleTerm[];
-    currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
+    currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' | undefined }) | undefined;
     nextTerm: RoleTerm | undefined;
     expiredTerms: RoleTerm[];
   } = { allTerms: [], expiredTerms: [], currentTerm: undefined, nextTerm: undefined };

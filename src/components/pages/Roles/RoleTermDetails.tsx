@@ -21,7 +21,7 @@ type RoleTermDetailProp = {
   termNumber: number;
 };
 
-type CurrentTermProp = RoleTermDetailProp & { termStatus: 'active' | 'inactive' };
+type CurrentTermProp = RoleTermDetailProp & { termStatus: 'active' | 'inactive' | undefined };
 
 function RoleTermRenderer({
   roleTerm,

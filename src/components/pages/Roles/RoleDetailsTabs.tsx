@@ -19,7 +19,7 @@ type RoleTermDetailProp = {
   nominee: string;
 };
 
-type CurrentTermProp = RoleTermDetailProp & { termStatus: 'active' | 'inactive' };
+type CurrentTermProp = RoleTermDetailProp & { termStatus: 'active' | 'inactive' | undefined };
 
 function RolesDetailsPayments({
   payments,
