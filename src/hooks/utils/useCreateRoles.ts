@@ -1,10 +1,25 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { HatsModulesClient, HATS_MODULES_FACTORY_ADDRESS } from '@hatsprotocol/modules-sdk';
 import { FormikHelpers } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
+import {
+  Abi,
+  AbiFunction,
+  Address,
+  encodeFunctionData,
+  encodePacked,
+  getAddress,
+  getCreate2Address,
+  Hex,
+  hexToBigInt,
+  keccak256,
+  sliceHex,
+  stringToBytes,
+  zeroAddress,
+} from 'viem';
 import { usePublicClient } from 'wagmi';
 import DecentAutonomousAdminTempAbi from '../../assets/abi/DecentAutonomousAdminTempAbi';
 import DecentHatsModificationModuleAbi from '../../assets/abi/DecentHatsModificationModuleAbi';
@@ -22,6 +37,7 @@ import {
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
+import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
@@ -52,6 +68,27 @@ async function uploadHatDescription(
   return `ipfs://${response.Hash}`;
 }
 
+function calculateInterfaceId(abi: Abi): Hex {
+  // Extract function selectors from ABI and convert each to BigInt for XOR
+  const selectors = (
+    abi.filter(item => item.type === 'function' && item.name && item.inputs) as AbiFunction[]
+  ) // Only consider valid functions
+    .map(func => {
+      // Construct the function signature, e.g., "version()" or "triggerStartNextTerm(TriggerStartArgs)"
+      const inputs = func.inputs.map(input => input.type).join(',');
+      const signature = `${func.name}(${inputs})`;
+      // Encode the signature to Uint8Array and then hash it with keccak256
+      const hash = keccak256(stringToBytes(signature));
+      // Slice the first 4 bytes to get the selector, then convert to BigInt for XOR
+      return hexToBigInt(sliceHex(hash, 0, 4));
+    });
+
+  // XOR all selectors to get the interface ID
+  const interfaceId = selectors.reduce((prev, curr) => prev ^ curr, BigInt(0));
+
+  // Convert the result to a zero-padded hex string, ensuring 4 bytes (8 hex characters)
+  return `0x${interfaceId.toString(16).padStart(8, '0')}`;
+}
 export default function useCreateRoles() {
   const {
     node: { safe, daoAddress, daoName },
@@ -469,6 +506,70 @@ export default function useCreateRoles() {
     ],
   );
 
+  /**
+   * @dev Checks if Admin Hat is already being worn by an instance of DecentAutonomousAdminV1
+   * @dev if not, prepares transactions to deploy a new instance of DecentAutonomousAdminV1
+   * @dev and mint a new hat
+   * @returns an array of transactions to create a deploy Decent Autonomous Admin and mint a new hat
+   */
+  const prepareAdminHatTxs = useCallback(
+    (adminHatWearerAddress: Address | undefined, adminHatId: Hex, isAnyRoleTermed: boolean) => {
+      if (adminHatWearerAddress === undefined || !isAnyRoleTermed) {
+        return [];
+      }
+      const isDecentAutonomousAdminV1 = encodeFunctionData({
+        abi: DecentAutonomousAdminTempAbi,
+        functionName: 'supportsInterface',
+        args: [calculateInterfaceId(DecentAutonomousAdminTempAbi)],
+      });
+
+      if (!!isDecentAutonomousAdminV1) {
+        return [];
+      }
+
+      // deploy new instance of DecentAutonomousAdminV1 through ModuleProxyFactory
+      const salt = keccak256(
+        encodePacked(
+          ['bytes32', 'uint256'],
+          [keccak256(encodePacked(['bytes'], [ERC6551_REGISTRY_SALT])), BigInt(adminHatId)],
+        ),
+      );
+      const deployDecentAutonomousAdminV1Calldata = encodeFunctionData({
+        abi: abis.ModuleProxyFactory,
+        functionName: 'deployModule',
+        args: [
+          decentAutonomousAdminV1ImplementationAddress,
+          encodeFunctionData({
+            abi: DecentAutonomousAdminTempAbi,
+            functionName: 'setUp',
+            args: [zeroAddress],
+          }),
+          BigInt(salt),
+        ],
+      });
+      const predictedDecentAutonomousAdminV1Address = getCreate2Address({
+        from: zodiacModuleProxyFactory,
+        salt: salt,
+        bytecodeHash: keccak256(encodePacked(['bytes'], [deployDecentAutonomousAdminV1Calldata])),
+      });
+      const mintAdminHat = {
+        targetAddress: hatsProtocol,
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'mintHat',
+          args: [BigInt(adminHatId), predictedDecentAutonomousAdminV1Address],
+        }),
+      };
+      const deployDecentAutonomousAdminV1Tx = {
+        targetAddress: zodiacModuleProxyFactory,
+        calldata: deployDecentAutonomousAdminV1Calldata,
+      };
+
+      return [deployDecentAutonomousAdminV1Tx, mintAdminHat];
+    },
+    [decentAutonomousAdminV1ImplementationAddress, hatsProtocol, zodiacModuleProxyFactory],
+  );
+
   const createBatchLinearStreamCreationTx = useCallback(
     (formStreams: (SablierPaymentFormValues & { recipient: Address })[]) => {
       const preparedStreams = formStreams.map(stream => {
@@ -687,7 +788,6 @@ export default function useCreateRoles() {
       const allTxs: { calldata: Hex; targetAddress: Address }[] = [];
 
       // The Algorithm
-      //
       // for each modified role
       //
       // New Role
@@ -716,6 +816,14 @@ export default function useCreateRoles() {
       //     - allTxs.push(flush stream transaction data)
       //   - for each new stream
       //     - allTxs.push(create new stream transactions datas)
+
+      allTxs.push(
+        ...prepareAdminHatTxs(
+          hatsTree.adminHat.wearer,
+          hatsTree.adminHat.id,
+          modifiedHats.some(hat => hat.isTermed),
+        ),
+      );
 
       for (let index = 0; index < modifiedHats.length; index++) {
         const formHat = modifiedHats[index];
@@ -971,6 +1079,7 @@ export default function useCreateRoles() {
       getActiveStreamsFromFormHat,
       prepareFlushStreamTxs,
       prepareCancelStreamTxs,
+      prepareAdminHatTxs,
       ipfsClient,
       getStreamsWithFundsToClaimFromFromHat,
       prepareRolePaymentUpdateTxs,
