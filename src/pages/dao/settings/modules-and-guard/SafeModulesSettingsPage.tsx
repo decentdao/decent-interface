@@ -1,7 +1,6 @@
 import { Flex, Hide, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
-import { StyledBox } from '../../../../components/ui/containers/StyledBox';
 import { DisplayAddress } from '../../../../components/ui/links/DisplayAddress';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
@@ -11,6 +10,7 @@ import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountNam
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalModuleType } from '../../../../types';
+import { SettingsContentBox } from '../SettingsContentBox';
 
 export function SafeModulesSettingsPage() {
   const { t } = useTranslation('settings');
@@ -29,7 +29,7 @@ export function SafeModulesSettingsPage() {
           backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
         />
       </Show>
-      <StyledBox width="100%">
+      <SettingsContentBox>
         <Flex
           flexDirection="column"
           gap="1rem"
@@ -88,7 +88,7 @@ export function SafeModulesSettingsPage() {
             <Text color="neutral-5">{t('noGuardAttached')}</Text>
           )}
         </Flex>
-      </StyledBox>
+      </SettingsContentBox>
     </>
   );
 }

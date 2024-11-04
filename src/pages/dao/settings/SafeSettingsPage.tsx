@@ -26,10 +26,7 @@ export function SafeSettingsPage() {
           title={t('settingsPageTitle', { daoName: node?.daoName })}
         />
       )}
-      <Flex
-        gap="0.5rem"
-        flexDirection={{ base: 'column', md: 'row' }}
-      >
+      <Flex flexDirection={{ base: 'column', md: 'row' }}>
         {(!isMobile || isIndexSettingsPage) && <SettingsNavigation />}
         {(!isMobile || (isMobile && !isIndexSettingsPage)) && <Outlet />}
       </Flex>

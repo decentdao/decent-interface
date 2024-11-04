@@ -1,5 +1,4 @@
 import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
@@ -14,6 +13,7 @@ import {
   RoleProps,
 } from '../../types/roles';
 import NoDataCard from '../ui/containers/NoDataCard';
+import PencilWithLineIcon from '../ui/icons/PencilWithLineIcon';
 import Avatar from '../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading } from './RolePageCard';
@@ -86,7 +86,7 @@ function RoleNameEditColumn({
         </Flex>
         <Icon
           className="edit-role-icon"
-          as={PencilLine}
+          as={PencilWithLineIcon}
           color="white-0"
           boxSize="1rem"
           opacity={0}

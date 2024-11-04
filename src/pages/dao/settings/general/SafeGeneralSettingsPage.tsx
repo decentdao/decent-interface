@@ -4,7 +4,6 @@ import { ChangeEventHandler, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { encodeFunctionData, zeroAddress } from 'viem';
-import { StyledBox } from '../../../../components/ui/containers/StyledBox';
 import { InputComponent } from '../../../../components/ui/forms/InputComponent';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
@@ -17,6 +16,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../../types';
 import { validateENSName } from '../../../../utils/url';
+import { SettingsContentBox } from '../SettingsContentBox';
 
 export function SafeGeneralSettingsPage() {
   const { t } = useTranslation(['settings', 'settingsMetadata']);
@@ -132,7 +132,7 @@ export function SafeGeneralSettingsPage() {
         />
       </Show>
       {!!safe ? (
-        <StyledBox w="100%">
+        <SettingsContentBox>
           <Flex
             flexDir="column"
             gap="1rem"
@@ -207,7 +207,7 @@ export function SafeGeneralSettingsPage() {
               }}
             />
           </Flex>
-        </StyledBox>
+        </SettingsContentBox>
       ) : (
         <Flex
           h="8.5rem"

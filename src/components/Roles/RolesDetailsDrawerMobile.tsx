@@ -1,5 +1,4 @@
 import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
-import { PencilLine } from '@phosphor-icons/react';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../hooks/utils/useAddress';
@@ -12,6 +11,7 @@ import {
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { RoleDetailsDrawerProps } from '../../types/roles';
 import DraggableDrawer from '../ui/containers/DraggableDrawer';
+import PencilWithLineIcon from '../ui/icons/PencilWithLineIcon';
 import Divider from '../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
 import { RolePaymentDetails } from './RolePaymentDetails';
@@ -73,10 +73,9 @@ export default function RolesDetailsDrawerMobile({
               size="icon-sm"
               icon={
                 <Icon
-                  as={PencilLine}
+                  as={PencilWithLineIcon}
                   color="lilac-0"
                   aria-hidden
-                  weight="fill"
                 />
               }
             />

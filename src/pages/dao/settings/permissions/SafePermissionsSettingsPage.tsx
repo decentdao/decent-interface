@@ -1,15 +1,18 @@
-import { Box, Button, Card, Flex, Show, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Coins, Plus } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
+import { Card } from '../../../../components/ui/cards/Card';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
+import { NEUTRAL_2_84 } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AzoriusGovernance } from '../../../../types';
+import { SettingsContentBox } from '../SettingsContentBox';
 
 export function SafePermissionsSettingsPage() {
   const { t } = useTranslation('settings');
@@ -33,14 +36,11 @@ export function SafePermissionsSettingsPage() {
           backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
         />
       </Show>
-      <Flex
+      <SettingsContentBox
         flexDirection="column"
         gap={{ base: 4, md: 6 }}
-        width="100%"
-        borderWidth={{ base: '0px', md: '1px' }}
-        borderColor="neutral-3"
-        borderRadius="0.75rem"
-        padding={{ base: 0, md: 6 }}
+        display="flex"
+        bg={{ base: 'transparent', md: NEUTRAL_2_84 }}
       >
         {canUserCreateProposal && (
           <Button
@@ -95,7 +95,7 @@ export function SafePermissionsSettingsPage() {
             </Flex>
           </Card>
         )}
-      </Flex>
+      </SettingsContentBox>
     </>
   );
 }
