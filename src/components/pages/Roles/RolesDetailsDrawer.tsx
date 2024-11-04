@@ -77,7 +77,6 @@ export default function RolesDetailsDrawer({
     [roleHat.payments],
   );
 
-  // @todo: confirm typing here
   if (!safe?.address) return null;
 
   return (
