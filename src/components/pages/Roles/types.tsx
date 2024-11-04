@@ -94,12 +94,11 @@ export interface HatStruct {
   imageURI: string;
   isMutable: boolean; // true
   wearer: Address;
-  isTermed: boolean;
-  termedParams: TermedParams[];
+  termEndDateTs: bigint; // 0 for non-termed roles
 }
 
 export interface HatStructWithPayments extends HatStruct {
-  sablierParams: {
+  sablierStreamsParams: {
     sablier: Address;
     sender: Address;
     totalAmount: bigint;

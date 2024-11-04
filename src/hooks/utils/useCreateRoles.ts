@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import DecentAutonomousAdminTempAbi from '../../assets/abi/DecentAutonomousAdminTempAbi';
+import DecentHatsModificationModuleAbi from '../../assets/abi/DecentHatsModificationModuleAbi';
 import { DecentHatsTempAbi } from '../../assets/abi/DecentHatsTempAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
@@ -20,7 +21,6 @@ import {
   RoleFormValues,
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
-  TermedParams,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -34,6 +34,26 @@ import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
 
+/* NON-REACT FUNCTIONS */
+
+function hatsDetailsBuilder(data: { name: string; description: string }) {
+  return JSON.stringify({
+    type: '1.0',
+    data,
+  });
+}
+
+async function uploadHatDescription(
+  hatDescription: string,
+  ipfsClient: {
+    cat: (hash: string) => Promise<any>;
+    add: (data: string) => Promise<any>;
+  },
+) {
+  const response = await ipfsClient.add(hatDescription);
+  return `ipfs://${response.Hash}`;
+}
+
 export default function useCreateRoles() {
   const {
     node: { safe, daoAddress, daoName },
@@ -45,14 +65,15 @@ export default function useCreateRoles() {
     contracts: {
       hatsProtocol,
       hatsAccount1ofNMasterCopy,
-      hatsElectionsEligibilityImplementationAddress: hatsELIAddress,
+      hatsElectionsEligibilityImplementationAddress,
       erc6551Registry,
       keyValuePairs,
       sablierV2LockupLinear,
       decentHatsCreationModule,
-      decentAutonomousAdminMasterCopy,
+      decentAutonomousAdminV1ImplementationAddress,
+      decentHatsModificationModule,
+      // decentSablierStreamManagementModule, @todo Where is this used?
       zodiacModuleProxyFactory,
-      hatsElectionsEligibilityImplementationAddress,
     },
   } = useNetworkConfig();
 
@@ -75,49 +96,32 @@ export default function useCreateRoles() {
     return client;
   }, [publicClient]);
 
-  const hatsDetailsBuilder = useCallback((data: { name: string; description: string }) => {
-    return JSON.stringify({
-      type: '1.0',
-      data,
-    });
-  }, []);
-
-  const uploadHatDescription = useCallback(
-    async (hatDescription: string) => {
-      const response = await ipfsClient.add(hatDescription);
-      return `ipfs://${response.Hash}`;
-    },
-    [ipfsClient],
-  );
-
   const createHatStruct = useCallback(
     async (
       name: string,
       description: string,
       wearer: Address,
-      isTermed: boolean,
-      termedParams: TermedParams[],
-    ) => {
+      isMutable: boolean,
+      termEndDateTs: bigint,
+    ): Promise<HatStruct> => {
       const details = await uploadHatDescription(
         hatsDetailsBuilder({
           name: name,
           description: description,
         }),
+        ipfsClient,
       );
 
-      const newHat: HatStruct = {
+      return {
         maxSupply: 1,
         details,
         imageURI: '',
-        isMutable: !isTermed,
-        wearer: wearer,
-        isTermed,
-        termedParams,
+        isMutable,
+        wearer,
+        termEndDateTs,
       };
-
-      return newHat;
     },
-    [hatsDetailsBuilder, uploadHatDescription],
+    [ipfsClient],
   );
 
   const createHatStructWithPayments = useCallback(
@@ -132,18 +136,24 @@ export default function useCreateRoles() {
         cliffTimestamp: number;
         endTimestamp: number;
       }[],
-      isTermed: boolean,
-      termedParams: TermedParams[],
+      termEndDateTs: bigint,
     ) => {
       if (daoAddress === null) {
         throw new Error('Can not create Hat Struct (with payments) without DAO Address');
       }
 
-      const newHat = await createHatStruct(name, description, wearer, isTermed, termedParams);
+      const newHat = await createHatStruct(
+        name,
+        description,
+        wearer,
+        // @dev if termEndDateTs is not 0, then the role is termed and is not mutable
+        termEndDateTs !== BigInt(0) ? false : true,
+        termEndDateTs,
+      );
 
       const newHatWithPayments: HatStructWithPayments = {
         ...newHat,
-        sablierParams: payments.map(payment => ({
+        sablierStreamsParams: payments.map(payment => ({
           sablier: sablierV2LockupLinear,
           sender: daoAddress,
           totalAmount: payment.totalAmount,
@@ -218,20 +228,23 @@ export default function useCreateRoles() {
           }
           const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments ?? []);
 
-          const roleTerms = parseRoleTermsFromFormRoleTerms(role.roleTerms ?? []);
+          const [firstTerm] = parseRoleTermsFromFormRoleTerms(role.roleTerms ?? []);
+          if (!firstTerm) {
+            throw new Error('First term is undefined');
+          }
 
           // @note for new termed roles, we set the first wearer to the first nominee
           const wearer = role.isTermed
-            ? getAddress(roleTerms[0].nominatedWearers[0])
+            ? getAddress(firstTerm.nominatedWearers[0])
             : getAddress(role.wearer);
+          const termEndDateTs = role.isTermed ? firstTerm.termEndDateTs : BigInt(0);
 
           return createHatStructWithPayments(
             role.name,
             role.description,
             wearer,
             sablierPayments,
-            role.isTermed ?? false,
-            roleTerms,
+            termEndDateTs,
           );
         }),
       );
@@ -283,38 +296,37 @@ export default function useCreateRoles() {
         throw new Error('Can not create top hat without DAO Address');
       }
 
-      const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
-        getEnableDisableDecentHatsModuleData();
-
-      const topHatDetails = await uploadHatDescription(
-        hatsDetailsBuilder({
-          name: daoName || daoAddress,
-          description: '',
-        }),
-      );
-      const adminHatDetails = await uploadHatDescription(
-        hatsDetailsBuilder({
-          name: 'Admin',
-          description: '',
-        }),
-      );
-
-      const adminHat = {
-        maxSupply: 1,
-        details: adminHatDetails,
-        imageURI: '',
-        isMutable: true,
-        wearer: zeroAddress,
-        sablierParams: [],
-        isTermed: false,
-        termedParams: [],
-      };
-
       if (!hatsModulesClient) {
         throw new Error('Cannot create Roles proposal without hatsModulesClient');
       }
+
+      const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
+        getEnableDisableDecentHatsModuleData();
+
+      const topHat = {
+        details: await uploadHatDescription(
+          hatsDetailsBuilder({
+            name: daoName || daoAddress,
+            description: '',
+          }),
+          ipfsClient,
+        ),
+        imageURI: '',
+      };
+
+      const adminHat = {
+        details: await uploadHatDescription(
+          hatsDetailsBuilder({
+            name: 'Admin',
+            description: '',
+          }),
+          ipfsClient,
+        ),
+        imageURI: '',
+        isMutable: true,
+      };
+
       await hatsModulesClient.prepare();
-      // @note for now the id argument seems to be the implementation address rather than the module id
       const module = hatsModulesClient.getModuleByImplementation(
         hatsElectionsEligibilityImplementationAddress,
       );
@@ -329,17 +341,16 @@ export default function useCreateRoles() {
         args: [
           {
             hatsProtocol,
-            hatsAccountImplementation: hatsAccount1ofNMasterCopy,
-            registry: erc6551Registry,
+            erc6551Registry: erc6551Registry,
+            hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
+            moduleProxyFactory: zodiacModuleProxyFactory,
             keyValuePairs: getAddress(keyValuePairs),
-            topHatDetails,
-            topHatImageURI: '',
+            decentAutonomousAdminImplementation: decentAutonomousAdminV1ImplementationAddress,
+            hatsAccountImplementation: hatsAccount1ofNMasterCopy,
+            hatsElectionsEligibilityImplementation: getAddress(module.implementationAddress),
+            topHat,
             adminHat,
             hats: addedHats,
-            hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
-            hatsElectionEligibilityImplementation: getAddress(module.implementationAddress),
-            moduleProxyFactory: zodiacModuleProxyFactory,
-            decentAutonomousAdminMasterCopy: decentAutonomousAdminMasterCopy,
           },
         ],
       });
@@ -359,18 +370,17 @@ export default function useCreateRoles() {
       daoAddress,
       daoName,
       decentHatsCreationModule,
-      decentAutonomousAdminMasterCopy,
+      decentAutonomousAdminV1ImplementationAddress,
       hatsElectionsEligibilityImplementationAddress,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
-      hatsDetailsBuilder,
       hatsProtocol,
       keyValuePairs,
       getEnableDisableDecentHatsModuleData,
-      uploadHatDescription,
       createHatStructsForNewTreeFromRolesFormValues,
       hatsModulesClient,
       zodiacModuleProxyFactory,
+      ipfsClient,
     ],
   );
 
@@ -396,128 +406,38 @@ export default function useCreateRoles() {
         throw new Error('Cannot create new hat without resolved wearer');
       }
 
-      const hatStruct = await createHatStructWithPayments(
-        formRole.name,
-        formRole.description,
-        formRole.resolvedWearer,
-        parseSablierPaymentsFromFormRolePayments(formRole.payments ?? []),
-        false,
-        [],
-      );
-
-      const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
-        getEnableDisableDecentHatsModuleData();
-
-      const createNewRoleData = encodeFunctionData({
-        abi: DecentHatsTempAbi,
-        functionName: 'createRoleHat',
-        args: [
-          {
-            hatsProtocol,
-            adminHatId: BigInt(hatsTree.adminHat.id),
-            hat: hatStruct,
-            topHatId: BigInt(hatsTree.topHat.id),
-            topHatAccount: hatsTree.topHat.smartAddress,
-            registry: erc6551Registry,
-            hatsAccountImplementation: hatsAccount1ofNMasterCopy,
-          },
-        ],
-      });
-
-      // Transfer top hat to the DecentHats module so it is authorised to create hats on the tree
-      const transferTopHatToDecentHatsData = encodeFunctionData({
-        abi: HatsAbi,
-        functionName: 'transferHat',
-        args: [BigInt(hatsTree.topHat.id), daoAddress, decentHatsCreationModule],
-      });
-
-      return [
-        {
-          targetAddress: hatsProtocol,
-          calldata: transferTopHatToDecentHatsData,
-        },
-        {
-          targetAddress: daoAddress,
-          calldata: enableDecentHatsModuleData,
-        },
-        {
-          targetAddress: decentHatsCreationModule,
-          calldata: createNewRoleData,
-        },
-        {
-          targetAddress: daoAddress,
-          calldata: disableDecentHatsModuleData,
-        },
-      ];
-    },
-    [
-      hatsTree,
-      daoAddress,
-      createHatStructWithPayments,
-      parseSablierPaymentsFromFormRolePayments,
-      getEnableDisableDecentHatsModuleData,
-      hatsProtocol,
-      erc6551Registry,
-      hatsAccount1ofNMasterCopy,
-      decentHatsCreationModule,
-    ],
-  );
-
-  const prepareNewTermedHatTxs = useCallback(
-    async (formRole: RoleHatFormValueEdited) => {
-      if (formRole.name === undefined || formRole.description === undefined) {
-        throw new Error('Name or description of added Role is undefined.');
+      const [firstTerm] = parseRoleTermsFromFormRoleTerms(formRole.roleTerms ?? []);
+      if (!!firstTerm && !formRole.isTermed) {
+        throw new Error('First term is defined, but role is not termed');
       }
-
-      if (formRole.isTermed === undefined) {
-        throw new Error('Termed status of added Role is undefined.');
-      }
-
-      if (formRole.wearer === undefined) {
-        throw new Error('Member of added Role is undefined.');
-      }
-      if (formRole.roleTerms === undefined || formRole.roleTerms.length === 0) {
-        throw new Error('Role terms of added Role is undefined.');
-      }
-
-      if (!hatsTree) {
-        throw new Error('Cannot create new hat without hats tree');
-      }
-
-      if (!daoAddress) {
-        throw new Error('Cannot create new hat without DAO address');
-      }
-
-      const roleTerms = parseRoleTermsFromFormRoleTerms(formRole.roleTerms);
-
-      let firstWearer = getAddress(formRole.wearer);
+      const firstWearer = !!firstTerm ? firstTerm.nominatedWearers[0] : formRole.resolvedWearer;
+      const termEndDateTs = !!firstTerm ? firstTerm.termEndDateTs : BigInt(0);
 
       const hatStruct = await createHatStructWithPayments(
         formRole.name,
         formRole.description,
         firstWearer,
         parseSablierPaymentsFromFormRolePayments(formRole.payments ?? []),
-        formRole.isTermed,
-        roleTerms,
+        termEndDateTs,
       );
 
       const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
         getEnableDisableDecentHatsModuleData();
 
       const createNewRoleData = encodeFunctionData({
-        abi: DecentHatsTempAbi,
-        functionName: 'createTermedRoleHat',
+        abi: DecentHatsModificationModuleAbi,
+        functionName: 'createRoleHats',
         args: [
           {
             hatsProtocol,
-            registry: erc6551Registry,
-            hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
-            topHatAccount: hatsTree.topHat.smartAddress,
+            erc6551Registry: erc6551Registry,
             hatsAccountImplementation: hatsAccount1ofNMasterCopy,
-            hatsElectionEligibilityImplementation: hatsELIAddress,
+            hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
+            hatsElectionsEligibilityImplementation: hatsElectionsEligibilityImplementationAddress,
             adminHatId: BigInt(hatsTree.adminHat.id),
+            hats: [hatStruct],
             topHatId: BigInt(hatsTree.topHat.id),
-            hat: hatStruct,
+            topHatAccount: hatsTree.topHat.smartAddress,
           },
         ],
       });
@@ -539,7 +459,7 @@ export default function useCreateRoles() {
           calldata: enableDecentHatsModuleData,
         },
         {
-          targetAddress: decentHatsCreationModule,
+          targetAddress: decentHatsModificationModule,
           calldata: createNewRoleData,
         },
         {
@@ -558,8 +478,9 @@ export default function useCreateRoles() {
       hatsProtocol,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
-      hatsELIAddress,
+      hatsElectionsEligibilityImplementationAddress,
       decentHatsCreationModule,
+      decentHatsModificationModule,
     ],
   );
 
@@ -824,11 +745,7 @@ export default function useCreateRoles() {
         }
 
         if (formHat.editedRole.status === EditBadgeStatus.New) {
-          if (formHat.isTermed) {
-            allTxs.push(...(await prepareNewTermedHatTxs(formHat)));
-          } else {
-            allTxs.push(...(await prepareNewHatTxs(formHat)));
-          }
+          allTxs.push(...(await prepareNewHatTxs(formHat)));
         } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
           if (formHat.smartAddress === undefined) {
             throw new Error(
@@ -912,6 +829,7 @@ export default function useCreateRoles() {
                 name: formHat.name,
                 description: formHat.description,
               }),
+              ipfsClient,
             );
             allTxs.push({
               calldata: encodeFunctionData({
@@ -1061,7 +979,6 @@ export default function useCreateRoles() {
       hatsTree,
       daoAddress,
       publicClient,
-      prepareNewTermedHatTxs,
       prepareNewHatTxs,
       getHat,
       hatsProtocol,
@@ -1069,8 +986,7 @@ export default function useCreateRoles() {
       getActiveStreamsFromFormHat,
       prepareFlushStreamTxs,
       prepareCancelStreamTxs,
-      uploadHatDescription,
-      hatsDetailsBuilder,
+      ipfsClient,
       getStreamsWithFundsToClaimFromFromHat,
       prepareRolePaymentUpdateTxs,
       prepareTermedRolePaymentUpdateTxs,
