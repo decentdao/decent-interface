@@ -138,19 +138,21 @@ export default function SettingsNavigation() {
               {fractalModules.length + safe.guard ? 1 : 0}
             </Text>
           </SettingsLink>
-          <SettingsLink
-            path={DAO_ROUTES.settingsPermissions.relative(addressPrefix, safe.address)}
-            leftIcon={<CheckSquare fontSize="1.5rem" />}
-            title={t('permissionsTitle')}
-            showDivider={false}
-          >
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
+          {import.meta.env.VITE_APP_FLAG_WHITELISTING === 'ON' && (
+            <SettingsLink
+              path={DAO_ROUTES.settingsPermissions.relative(addressPrefix, safe.address)}
+              leftIcon={<CheckSquare fontSize="1.5rem" />}
+              title={t('permissionsTitle')}
+              showDivider={false}
             >
-              {azoriusGovernance.votingStrategy ? 1 : 0}
-            </Text>
-          </SettingsLink>
+              <Text
+                textStyle="body-base"
+                color="neutral-7"
+              >
+                {azoriusGovernance.votingStrategy ? 1 : 0}
+              </Text>
+            </SettingsLink>
+          )}
         </>
       )}
     </Flex>
