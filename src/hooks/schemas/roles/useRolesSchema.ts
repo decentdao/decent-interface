@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import * as Yup from 'yup';
+import { useFractal } from '../../../providers/App/AppProvider';
 import {
   RoleFormValues,
   RoleHatFormValue,
   SablierPayment,
   SablierPaymentFormValues,
-} from '../../../components/pages/Roles/types';
-import { useFractal } from '../../../providers/App/AppProvider';
+} from '../../../types/roles';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {

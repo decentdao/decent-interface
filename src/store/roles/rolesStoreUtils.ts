@@ -2,8 +2,8 @@ import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import LinearERC20VotingWithHatsProposalCreationAbi from '../../assets/abi/LinearERC20VotingWithHatsProposalCreation';
-import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
+import { DecentHat, DecentRoleHat, DecentTree, SablierPayment } from '../../types/roles';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -16,35 +16,11 @@ export class DecentHatsError extends Error {
   }
 }
 
-interface DecentHat {
-  id: Hex;
-  prettyId: string;
-  name: string;
-  description: string;
-  smartAddress: Address;
-  canCreateProposals: boolean;
-  payments?: SablierPayment[];
-}
-
-interface DecentTopHat extends DecentHat {}
-
-interface DecentAdminHat extends DecentHat {}
-
 interface RolesStoreData {
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
   contextChainId: number | null;
-}
-
-export interface DecentRoleHat extends DecentHat {
-  wearerAddress: Address;
-}
-
-export interface DecentTree {
-  topHat: DecentTopHat;
-  adminHat: DecentAdminHat;
-  roleHats: DecentRoleHat[];
 }
 
 export interface RolesStore extends RolesStoreData {
