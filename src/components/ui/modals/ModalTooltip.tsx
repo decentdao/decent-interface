@@ -1,5 +1,6 @@
-import { Portal, Tooltip, TooltipProps } from '@chakra-ui/react';
+import { Portal, TooltipProps } from '@chakra-ui/react';
 import { ReactNode, RefObject } from 'react';
+import { DecentTooltip } from '../DecentTooltip';
 
 interface Props extends TooltipProps {
   containerRef: RefObject<HTMLElement | null>;
@@ -19,7 +20,7 @@ interface Props extends TooltipProps {
 export default function ModalTooltip({ containerRef, children, ...rest }: Props) {
   return (
     <Portal containerRef={containerRef}>
-      <Tooltip {...rest}>{children}</Tooltip>
+      <DecentTooltip {...rest}>{children}</DecentTooltip>
     </Portal>
   );
 }
