@@ -312,21 +312,21 @@ export default function useCreateRoles() {
     [publicClient, hatsAccount1ofNMasterCopy, chain.id, hatsProtocol, erc6551Registry],
   );
 
-  const getEnableDisableDecentHatsModuleData = useCallback(() => {
+  const getEnableDisableDecentHatsModuleData = useCallback((moduleAddress: Address) => {
     const enableDecentHatsModuleData = encodeFunctionData({
       abi: GnosisSafeL2,
       functionName: 'enableModule',
-      args: [decentHatsCreationModule],
+      args: [moduleAddress],
     });
 
     const disableDecentHatsModuleData = encodeFunctionData({
       abi: GnosisSafeL2,
       functionName: 'disableModule',
-      args: [SENTINEL_MODULE, decentHatsCreationModule],
+      args: [SENTINEL_MODULE, moduleAddress],
     });
 
     return { enableDecentHatsModuleData, disableDecentHatsModuleData };
-  }, [decentHatsCreationModule]);
+  }, []);
 
   const prepareCreateTopHatProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
@@ -339,7 +339,7 @@ export default function useCreateRoles() {
       }
 
       const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
-        getEnableDisableDecentHatsModuleData();
+        getEnableDisableDecentHatsModuleData(decentHatsCreationModule);
 
       const topHat = {
         details: await uploadHatDescription(
@@ -440,10 +440,6 @@ export default function useCreateRoles() {
         throw new Error('Cannot create new hat without DAO address');
       }
 
-      if (!formRole.resolvedWearer) {
-        throw new Error('Cannot create new hat without resolved wearer');
-      }
-
       const [firstTerm] = parseRoleTermsFromFormRoleTerms(formRole.roleTerms ?? []);
       if (!!firstTerm && !formRole.isTermed) {
         throw new Error('First term is defined, but role is not termed');
@@ -451,6 +447,9 @@ export default function useCreateRoles() {
       const firstWearer = !!firstTerm ? firstTerm.nominatedWearers[0] : formRole.resolvedWearer;
       const termEndDateTs = !!firstTerm ? firstTerm.termEndDateTs : BigInt(0);
 
+      if (firstWearer === undefined) {
+        throw new Error('Cannot create new hat without wearer');
+      }
       const hatStruct = await createHatStructWithPayments(
         formRole.name,
         formRole.description,
@@ -460,7 +459,7 @@ export default function useCreateRoles() {
       );
 
       const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
-        getEnableDisableDecentHatsModuleData();
+        getEnableDisableDecentHatsModuleData(decentHatsModificationModule);
 
       const createNewRoleData = encodeFunctionData({
         abi: DecentHatsModificationModuleAbi,
@@ -468,7 +467,7 @@ export default function useCreateRoles() {
         args: [
           {
             hatsProtocol,
-            erc6551Registry: erc6551Registry,
+            erc6551Registry,
             hatsAccountImplementation: hatsAccount1ofNMasterCopy,
             hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
             hatsElectionsEligibilityImplementation: hatsElectionsEligibilityImplementationAddress,
@@ -498,11 +497,11 @@ export default function useCreateRoles() {
     [
       hatsTree,
       daoAddress,
+      hatsProtocol,
       parseRoleTermsFromFormRoleTerms,
       createHatStructWithPayments,
       parseSablierPaymentsFromFormRolePayments,
       getEnableDisableDecentHatsModuleData,
-      hatsProtocol,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsElectionsEligibilityImplementationAddress,
