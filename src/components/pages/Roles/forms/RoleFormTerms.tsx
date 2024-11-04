@@ -3,6 +3,7 @@ import { Plus, X } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { getAddress, Hex } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
@@ -102,7 +103,7 @@ function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: ()
         termNumber: termIndex + 1,
       },
     ]);
-
+    toast.info(t('termSavedSuccessfully'));
     onClose();
   };
   return (

@@ -124,5 +124,6 @@
   "noActiveTerms": "No active terms.",
   "noActiveTermsNotProposer": "This Role doesn't have any active terms",
   "showPreviousTerms": "Previous terms",
-  "startTerm": "Start Term"
+  "startTerm": "Start Term",
+  "termSavedSuccessfully": "Term saved successfully"
 }
