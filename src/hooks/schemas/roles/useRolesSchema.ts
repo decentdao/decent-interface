@@ -67,6 +67,49 @@ export const useRolesSchema = () => {
     decimals: Yup.number(),
   });
 
+  const paymentsSchema = useMemo(
+    () =>
+      Yup.array().of(
+        Yup.object()
+          .default(undefined)
+          .nullable()
+          .when({
+            is: (payment: SablierPayment) => payment !== undefined,
+            then: _paymentSchema =>
+              _paymentSchema
+                .shape({
+                  asset: assetValidationSchema,
+                  amount: bigIntValidationSchema,
+                  startDate: Yup.date().required(
+                    t('roleInfoErrorPaymentFixedDateStartDateRequired'),
+                  ),
+                  cliffDate: Yup.date().nullable().default(undefined),
+                  endDate: Yup.date().required(t('roleInfoErrorPaymentFixedDateEndDateRequired')),
+                })
+                .test({
+                  name: 'end-date-after-start-date',
+                  message: t('roleInfoErrorPaymentFixedDateEndDateAfterStartDate'),
+                  test: _payments => {
+                    if (!_payments) return false;
+                    const { startDate, endDate } = _payments;
+                    return endDate > startDate;
+                  },
+                })
+                .test({
+                  name: 'cliff-date-before-end-date',
+                  message: t('roleInfoErrorPaymentFixedDateCliffDateBetweenStartAndEndDate'),
+                  test: _payments => {
+                    if (!_payments) return false;
+                    const { cliffDate, startDate, endDate } = _payments;
+                    if (!cliffDate) return true;
+                    return cliffDate > startDate && cliffDate < endDate;
+                  },
+                }),
+          }),
+      ),
+    [assetValidationSchema, bigIntValidationSchema, t],
+  );
+
   const rolesSchema = useMemo(
     () =>
       Yup.object<RoleFormValues>().shape({
@@ -76,54 +119,23 @@ export const useRolesSchema = () => {
           .when({
             is: (roleEditing: RoleHatFormValue) => roleEditing !== undefined,
             then: _roleEditingSchema =>
-              _roleEditingSchema.shape({
-                name: Yup.string().required(t('roleInfoErrorNameRequired')),
-                description: Yup.string().required(t('roleInfoErrorDescriptionRequired')),
-                wearer: Yup.string()
-                  .required(t('roleInfoErrorMemberRequired'))
-                  .test(addressValidationTest),
-                payments: Yup.array().of(
-                  Yup.object()
-                    .default(undefined)
-                    .nullable()
-                    .when({
-                      is: (payment: SablierPayment) => payment !== undefined,
-                      then: _paymentSchema =>
-                        _paymentSchema
-                          .shape({
-                            asset: assetValidationSchema,
-                            amount: bigIntValidationSchema,
-                            startDate: Yup.date().required(
-                              t('roleInfoErrorPaymentFixedDateStartDateRequired'),
-                            ),
-                            cliffDate: Yup.date().nullable().default(undefined),
-                            endDate: Yup.date().required(
-                              t('roleInfoErrorPaymentFixedDateEndDateRequired'),
-                            ),
-                          })
-                          .test({
-                            name: 'end-date-after-start-date',
-                            message: t('roleInfoErrorPaymentFixedDateEndDateAfterStartDate'),
-                            test: _payments => {
-                              if (!_payments) return false;
-                              const { startDate, endDate } = _payments;
-                              return endDate > startDate;
-                            },
-                          })
-                          .test({
-                            name: 'cliff-date-before-end-date',
-                            message: t(
-                              'roleInfoErrorPaymentFixedDateCliffDateBetweenStartAndEndDate',
-                            ),
-                            test: _payments => {
-                              if (!_payments) return false;
-                              const { cliffDate, startDate, endDate } = _payments;
-                              if (!cliffDate) return true;
-                              return cliffDate > startDate && cliffDate < endDate;
-                            },
-                          }),
-                    }),
-                ),
+              _roleEditingSchema.when('isTermed', {
+                is: (isTermed: boolean) => isTermed,
+                then: _schema =>
+                  _schema.shape({
+                    name: Yup.string().required(t('roleInfoErrorNameRequired')),
+                    description: Yup.string().required(t('roleInfoErrorDescriptionRequired')),
+                    payments: paymentsSchema,
+                  }),
+                otherwise: _schema =>
+                  _schema.shape({
+                    name: Yup.string().required(t('roleInfoErrorNameRequired')),
+                    description: Yup.string().required(t('roleInfoErrorDescriptionRequired')),
+                    wearer: Yup.string()
+                      .required(t('roleInfoErrorMemberRequired'))
+                      .test(addressValidationTest),
+                    payments: paymentsSchema,
+                  }),
               }),
           }),
         newRoleTerm: Yup.object()
@@ -163,7 +175,7 @@ export const useRolesSchema = () => {
               }),
           }),
       }),
-    [addressValidationTest, assetValidationSchema, bigIntValidationSchema, t],
+    [addressValidationTest, paymentsSchema, t],
   );
   return { rolesSchema };
 };
