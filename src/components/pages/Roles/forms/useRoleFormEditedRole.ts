@@ -1,9 +1,13 @@
 import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
 import { DecentTree } from '../../../../store/roles/rolesStoreUtils';
-import { EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
+import { EditedRole, EditBadgeStatus, RoleFormValues, EditedRoleFieldNames } from '../types';
 
-const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boolean) => {
+const addRemoveField = (
+  fieldNames: EditedRoleFieldNames[],
+  fieldName: EditedRoleFieldNames,
+  hasChanges: boolean,
+): EditedRoleFieldNames[] => {
   if (fieldNames.includes(fieldName) && !hasChanges) {
     return fieldNames.filter(field => field !== fieldName);
   } else if (!fieldNames.includes(fieldName) && !hasChanges) {
@@ -56,7 +60,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
         status: EditBadgeStatus.New,
       };
     }
-    let fieldNames: string[] = [];
+    let fieldNames: EditedRoleFieldNames[] = [];
     fieldNames = addRemoveField(fieldNames, 'roleName', isRoleNameUpdated);
     fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);

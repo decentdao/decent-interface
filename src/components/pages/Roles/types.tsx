@@ -110,8 +110,15 @@ export interface HatStructWithPayments extends HatStruct {
   }[];
 }
 
+export type EditedRoleFieldNames =
+  | 'roleName'
+  | 'roleDescription'
+  | 'member'
+  | 'payments'
+  | 'roleType'
+  | 'newTerm';
 export interface EditedRole {
-  fieldNames: string[];
+  fieldNames: EditedRoleFieldNames[];
   status: EditBadgeStatus;
 }
 

@@ -1005,7 +1005,7 @@ export default function useCreateRoles() {
               allTxs.push(...prepareTermedRolePaymentUpdateTxs(formHat));
             }
           }
-          if (formHat.editedRole.fieldNames.includes('term')) {
+          if (formHat.editedRole.fieldNames.includes('newTerm')) {
             if (!formHat.isTermed || !formHat.roleTerms) {
               throw new Error('Cannot prepare transactions for edited role without role terms');
             }
