@@ -195,7 +195,7 @@ export const getCurrentTermStatus = async (
     });
 
     const nextTextEndTs = await electionContract.read.nextTermEnd();
-    return nextTextEndTs === currentTermEndDateTs ? 'active' : 'inactive';
+    return nextTextEndTs === currentTermEndDateTs ? 'inactive' : 'active';
   } catch (e) {
     console.error('Failed to get current term status', e);
     return 'inactive';
