@@ -47,6 +47,12 @@ export type RoleTerm = {
   termNumber: number;
 };
 
+type DecentRoleHatTerms = {
+  allTerms: RoleTerm[];
+  currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' | undefined }) | undefined;
+  nextTerm: RoleTerm | undefined;
+  expiredTerms: RoleTerm[];
+};
 export interface DecentRoleHat extends DecentHat {
   wearerAddress: Address;
   eligibility?: Address;
@@ -208,6 +214,7 @@ const isElectionEligibilityModule = async (
   const hatsModuleClient = new HatsModulesClient({
     publicClient,
   });
+  // @todo probably don't need to prepare every time
   await hatsModuleClient.prepare();
 
   const possibleElectionModule = await hatsModuleClient.getModuleByInstance(eligibility);
@@ -219,13 +226,16 @@ const getRoleHatTerms = async (
   rawHat: Hat,
   hatsElectionsImplementation: Address,
   publicClient: PublicClient,
-) => {
-  let roleTerms: {
-    allTerms: RoleTerm[];
-    currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' | undefined }) | undefined;
-    nextTerm: RoleTerm | undefined;
-    expiredTerms: RoleTerm[];
-  } = { allTerms: [], expiredTerms: [], currentTerm: undefined, nextTerm: undefined };
+): Promise<{
+  roleTerms: DecentRoleHatTerms;
+  isTermed: boolean;
+}> => {
+  let roleTerms: DecentRoleHatTerms = {
+    allTerms: [],
+    expiredTerms: [],
+    currentTerm: undefined,
+    nextTerm: undefined,
+  };
   let isTermed: boolean = false;
 
   if (
@@ -236,6 +246,7 @@ const getRoleHatTerms = async (
       publicClient,
     ))
   ) {
+    isTermed = true;
     // @dev check if the eligibility is an election contract
     try {
       const electionContract = getContract({
@@ -287,8 +298,6 @@ const getRoleHatTerms = async (
             return b.termEndDate.getTime() - a.termEndDate.getTime();
           }),
       };
-
-      isTermed = true;
     } catch {
       console.error('Failed to get election terms or not a valid election contract');
     }
