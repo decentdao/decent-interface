@@ -6,7 +6,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FreezeGuardType, FreezeVotingType, SafeInfoResponseWithGuard } from '../../../types';
-import { useMasterCopy } from '../../utils/useMasterCopy';
+import { useAddressContractType } from '../../utils/useAddressContractType';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
@@ -21,7 +21,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
   const { chain } = useNetworkConfig();
 
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
 
   const publicClient = usePublicClient();
 
@@ -45,8 +45,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         });
 
         const azoriusGuardAddress = await azoriusContract.read.getGuard();
-        const { isFreezeGuardAzorius } =
-          await getZodiacModuleProxyMasterCopyData(azoriusGuardAddress);
+        const { isFreezeGuardAzorius } = await getAddressContractType(azoriusGuardAddress);
         if (azoriusGuardAddress === zeroAddress || !isFreezeGuardAzorius) {
           return {
             freezeGuardContractAddress: undefined,
@@ -63,8 +62,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         });
 
         const freezeVotingAddress = await freezeGuardContract.read.freezeVoting();
-        const freezeVotingPossibilities =
-          await getZodiacModuleProxyMasterCopyData(freezeVotingAddress);
+        const freezeVotingPossibilities = await getAddressContractType(freezeVotingAddress);
         let freezeVotingType;
         if (freezeVotingPossibilities.isFreezeVotingMultisig) {
           freezeVotingType = FreezeVotingType.MULTISIG;
@@ -83,7 +81,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
           freezeGuardType: FreezeGuardType.AZORIUS,
         };
       } else if (guard) {
-        const masterCopyData = await getZodiacModuleProxyMasterCopyData(guard);
+        const masterCopyData = await getAddressContractType(guard);
         if (!masterCopyData.isFreezeGuardMultisig || _safe.guard === zeroAddress) {
           return {
             freezeGuardContractAddress: undefined,
@@ -100,7 +98,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         });
 
         const votingAddress = await multisigFreezeGuardContract.read.freezeVoting();
-        const freezeVotingMasterCopyData = await getZodiacModuleProxyMasterCopyData(votingAddress);
+        const freezeVotingMasterCopyData = await getAddressContractType(votingAddress);
         const freezeVotingType = freezeVotingMasterCopyData.isFreezeVotingMultisig
           ? FreezeVotingType.MULTISIG
           : freezeVotingMasterCopyData.isFreezeVotingErc721
@@ -122,7 +120,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         };
       }
     },
-    [getZodiacModuleProxyMasterCopyData, publicClient],
+    [getAddressContractType, publicClient],
   );
 
   const setGuardContracts = useCallback(async () => {
