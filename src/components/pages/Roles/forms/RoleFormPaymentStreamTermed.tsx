@@ -107,7 +107,6 @@ function StartDatePicker({ paymentIndex, disabled }: { paymentIndex: number; dis
 function CliffDatePicker({ paymentIndex, disabled }: { paymentIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);
   const { values } = useFormikContext<RoleFormValues>();
-  console.log('🚀 ~ values:', values);
 
   const selectedStartDate = values?.roleEditing?.payments?.[paymentIndex]?.startDate;
   const selectedEndDate = values?.roleEditing?.payments?.[paymentIndex]?.endDate;
