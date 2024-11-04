@@ -34,7 +34,9 @@ function SettingsLink({
       _hover={{ bgColor: 'neutral-3' }}
       bg={
         isCurrentPath ||
-        (!isMobile && isIndexSettingsPage && pathWithoutSearch === '/settings/general')
+        (!isMobile &&
+          isIndexSettingsPage &&
+          pathWithoutSearch === `/${DAO_ROUTES.settingsGeneral.path}`)
           ? 'white-alpha-04'
           : 'transparent'
       }
