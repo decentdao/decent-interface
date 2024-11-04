@@ -29,7 +29,6 @@ export default function Layout() {
 
   useEffect(() => {
     if (!safeParam) {
-      console.log('reset safe state from layout');
       action.resetSafeState();
       resetHatsStore();
     }

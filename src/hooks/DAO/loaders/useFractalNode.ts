@@ -135,8 +135,6 @@ export const useFractalNode = (
       safeAddress === undefined ||
       `${addressPrefix}${safeAddress}` !== currentValidSafe.current
     ) {
-      console.count('reset hats store from useFractalNode because:');
-      console.log({ skip, currentValidSafe: currentValidSafe.current, safeAddress });
       reset({ error: false });
       setDAO();
     }

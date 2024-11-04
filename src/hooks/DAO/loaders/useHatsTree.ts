@@ -28,12 +28,6 @@ const useHatsTree = () => {
     updateRolesWithStreams,
   } = useRolesStore();
 
-  console.log({
-    hatsTreeId,
-    hatsTree,
-    streamsFetched,
-  });
-
   const ipfsClient = useIPFSClient();
   const {
     sablierSubgraph,
@@ -116,15 +110,10 @@ const useHatsTree = () => {
             ? hatIdToTreeId(hexToBigInt(firstHatId))
             : undefined;
 
-          console.log('in tree load');
-          console.log({ fetchedHatsTreeId, hatsTreeId, treeWithFetchedDetails });
-
           if (fetchedHatsTreeId !== hatsTreeId) {
-            console.log('Hats Tree ID does not match the fetched Hats Tree ID');
             return;
           }
 
-          // console.log('treeWithFetchedDetails', treeWithFetchedDetails.hats);
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
             chainId: BigInt(contextChainId),
@@ -134,7 +123,6 @@ const useHatsTree = () => {
             publicClient,
           });
         } catch (e) {
-          console.log('error in tree load', e);
           if (e instanceof DecentHatsError) {
             toast.error(e.message);
           }

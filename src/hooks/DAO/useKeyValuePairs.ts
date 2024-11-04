@@ -69,10 +69,8 @@ const useKeyValuePairs = () => {
 
   useEffect(() => {
     const safeParam = searchParams.get('dao');
-    console.log({ safeAddress, safeParam });
 
     if (!publicClient || !safeAddress || safeAddress !== safeParam?.split(':')[1]) {
-      console.log('not gonna load tree from keyvaluepairs');
       return;
     }
 
