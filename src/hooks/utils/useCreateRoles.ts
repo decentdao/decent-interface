@@ -514,7 +514,7 @@ export default function useCreateRoles() {
    */
   const prepareAdminHatTxs = useCallback(
     (adminHatWearerAddress: Address | undefined, adminHatId: Hex, isAnyRoleTermed: boolean) => {
-      if (adminHatWearerAddress === undefined || !isAnyRoleTermed) {
+      if (adminHatWearerAddress === undefined && !isAnyRoleTermed) {
         return [];
       }
       const isDecentAutonomousAdminV1 = encodeFunctionData({
@@ -552,6 +552,7 @@ export default function useCreateRoles() {
         salt: salt,
         bytecodeHash: keccak256(encodePacked(['bytes'], [deployDecentAutonomousAdminV1Calldata])),
       });
+      // @todo max supply check and increase if maxed
       const mintAdminHat = {
         targetAddress: hatsProtocol,
         calldata: encodeFunctionData({
