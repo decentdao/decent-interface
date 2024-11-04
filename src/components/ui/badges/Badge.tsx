@@ -1,8 +1,9 @@
-import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import { FractalProposalState, DAOState } from '../../../types';
+import { DecentTooltip } from '../DecentTooltip';
 
 type BadgeType = {
   tooltipKey?: string;
@@ -116,7 +117,7 @@ export function Badge({ labelKey, children, size }: IBadge) {
 
   const { t } = useTranslation('proposal');
   return (
-    <Tooltip
+    <DecentTooltip
       label={tooltipKey ? t(tooltipKey) : undefined}
       maxW={TOOLTIP_MAXW}
       placement="top"
@@ -146,6 +147,6 @@ export function Badge({ labelKey, children, size }: IBadge) {
           {children || t(labelKey)}
         </Text>
       </Flex>
-    </Tooltip>
+    </DecentTooltip>
   );
 }

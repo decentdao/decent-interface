@@ -6,14 +6,14 @@ import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { getAzoriusModuleFromModules } from '../../../utils';
-import { useMasterCopy } from '../../utils/useMasterCopy';
+import { useAddressContractType } from '../../utils/useAddressContractType';
 import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
   const { node, action } = useFractal();
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
   const publicClient = usePublicClient();
 
   const { getVotingStrategyAddress } = useVotingStrategyAddress();
@@ -40,7 +40,7 @@ export const useGovernanceContracts = () => {
     let lockReleaseAddress: Address | undefined;
 
     const { isLinearVotingErc20, isLinearVotingErc721 } =
-      await getZodiacModuleProxyMasterCopyData(votingStrategyAddress);
+      await getAddressContractType(votingStrategyAddress);
 
     if (isLinearVotingErc20) {
       if (!publicClient) {
@@ -54,41 +54,40 @@ export const useGovernanceContracts = () => {
         address: linearVotingErc20Address,
         client: publicClient,
       });
+
       const govTokenAddress = await ozLinearVotingContract.read.governanceToken();
+      // govTokenAddress might be either
+      // - a valid VotesERC20 contract
+      // - a valid VotesERC20Wrapper contract
+      // - a valid LockRelease contract
+      // - or none of these which is against business logic
 
-      const possibleERC20Wrapper = getContract({
-        abi: abis.VotesERC20Wrapper,
-        address: govTokenAddress,
-        client: publicClient,
-      });
+      const { isVotesErc20, isVotesErc20Wrapper } = await getAddressContractType(govTokenAddress);
 
-      underlyingTokenAddress = await possibleERC20Wrapper.read.underlying().catch(() => {
-        // if the underlying token is not an ERC20Wrapper, this will throw an error,
-        // so we catch it and return undefined
-        return undefined;
-      });
-      const possibleLockRelease = getContract({
-        address: govTokenAddress,
-        abi: LockReleaseAbi,
-        client: { public: publicClient },
-      });
-
-      let lockedTokenAddress = undefined;
-      try {
-        lockedTokenAddress = await possibleLockRelease.read.token();
-      } catch {
-        // no-op
-        // if the underlying token is not an ERC20Wrapper, this will throw an error,
-        // so we catch it and do nothing
-      }
-
-      if (lockedTokenAddress) {
-        lockReleaseAddress = govTokenAddress;
-        // @dev if the underlying token is an ERC20Wrapper, we use the underlying token as the token contract
-        votesTokenAddress = lockedTokenAddress;
-      } else {
-        // @dev if the no underlying token, we use the governance token as the token contract
+      if (isVotesErc20) {
         votesTokenAddress = govTokenAddress;
+      } else if (isVotesErc20Wrapper) {
+        const wrapperContract = getContract({
+          abi: abis.VotesERC20Wrapper,
+          address: govTokenAddress,
+          client: publicClient,
+        });
+        underlyingTokenAddress = await wrapperContract.read.underlying();
+        votesTokenAddress = govTokenAddress;
+      } else {
+        const possibleLockRelease = getContract({
+          address: govTokenAddress,
+          abi: LockReleaseAbi,
+          client: { public: publicClient },
+        });
+
+        try {
+          const lockedTokenAddress = await possibleLockRelease.read.token();
+          lockReleaseAddress = govTokenAddress;
+          votesTokenAddress = lockedTokenAddress;
+        } catch {
+          throw new Error('Unknown governance token type');
+        }
       }
     } else if (isLinearVotingErc721) {
       // @dev for use with the ERC721 voting contract
@@ -108,13 +107,7 @@ export const useGovernanceContracts = () => {
         },
       });
     }
-  }, [
-    action,
-    fractalModules,
-    getVotingStrategyAddress,
-    getZodiacModuleProxyMasterCopyData,
-    publicClient,
-  ]);
+  }, [action, fractalModules, getVotingStrategyAddress, getAddressContractType, publicClient]);
 
   useEffect(() => {
     if (currentValidAddress.current !== daoAddress && isModulesLoaded) {

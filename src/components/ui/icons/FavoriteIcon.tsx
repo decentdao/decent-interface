@@ -1,10 +1,11 @@
-import { Box, BoxProps, Button, Tooltip, Icon, IconButton } from '@chakra-ui/react';
+import { Box, BoxProps, Button, Icon, IconButton } from '@chakra-ui/react';
 import { Star } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { DecentTooltip } from '../DecentTooltip';
 
 interface Props extends BoxProps {
   safeAddress: Address;
@@ -20,7 +21,7 @@ export function FavoriteIcon({ safeAddress, ...rest }: Props) {
   const { t } = useTranslation();
   return (
     <Box {...rest}>
-      <Tooltip label={t('favoriteTooltip')}>
+      <DecentTooltip label={t('favoriteTooltip')}>
         <Button
           variant="tertiary"
           size="icon-md"
@@ -39,7 +40,7 @@ export function FavoriteIcon({ safeAddress, ...rest }: Props) {
           }}
           aria-label={t('favoriteTooltip')}
         />
-      </Tooltip>
+      </DecentTooltip>
     </Box>
   );
 }

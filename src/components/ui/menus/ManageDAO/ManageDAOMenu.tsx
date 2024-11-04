@@ -12,9 +12,9 @@ import {
 } from '../../../../helpers/freezePeriodHelpers';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
+import { useAddressContractType } from '../../../../hooks/utils/useAddressContractType';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
-import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
 import useVotingStrategyAddress from '../../../../hooks/utils/useVotingStrategyAddress';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -53,7 +53,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
   const safeAddress = node.daoAddress;
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, null, false);
   const { handleClawBack } = useClawBack({
@@ -73,7 +73,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
           let result = GovernanceType.MULTISIG;
           const votingContractAddress = await getVotingStrategyAddress();
           if (votingContractAddress) {
-            const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress);
+            const masterCopyData = await getAddressContractType(votingContractAddress);
 
             if (masterCopyData.isLinearVotingErc20) {
               result = GovernanceType.AZORIUS_ERC20;
@@ -90,7 +90,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     loadGovernanceType();
   }, [
     getVotingStrategyAddress,
-    getZodiacModuleProxyMasterCopyData,
+    getAddressContractType,
     node?.fractalModules,
     node.safe,
     safeAddress,

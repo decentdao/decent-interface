@@ -1,4 +1,4 @@
-import { Button, Tooltip, Box, Text, Image, Flex, Radio, RadioGroup, Icon } from '@chakra-ui/react';
+import { Button, Box, Text, Image, Flex, Radio, RadioGroup, Icon } from '@chakra-ui/react';
 import { Check, CheckCircle } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ import {
   FractalProposalState,
   VOTE_CHOICES,
 } from '../../../types';
+import { DecentTooltip } from '../../ui/DecentTooltip';
 import WeightedInput from '../../ui/forms/WeightedInput';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 
@@ -160,7 +161,7 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
   }
 
   return (
-    <Tooltip
+    <DecentTooltip
       placement="left"
       maxW={TOOLTIP_MAXW}
       title={
@@ -209,6 +210,6 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
           {t('vote')}
         </Button>
       </RadioGroup>
-    </Tooltip>
+    </DecentTooltip>
   );
 }
