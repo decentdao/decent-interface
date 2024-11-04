@@ -1,9 +1,10 @@
-import { Divider, HStack, Flex, Tooltip, Text, Image, Box } from '@chakra-ui/react';
+import { Divider, HStack, Flex, Text, Image, Box } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { TokenBalance } from '../../../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import { formatPercentage, formatUSD, formatCoin } from '../../../../utils/numberFormats';
+import { DecentTooltip } from '../../../ui/DecentTooltip';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
 
 export function CoinHeader() {
@@ -101,12 +102,12 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
           width="100%"
           isTruncated
         >
-          <Tooltip
+          <DecentTooltip
             label={formatCoin(asset.balance, false, asset.decimals, asset.symbol)}
             placement="top-start"
           >
             {formatCoin(asset.balance, true, asset.decimals, asset.symbol, false)}
-          </Tooltip>
+          </DecentTooltip>
         </Text>
         {asset.usdPrice && asset.usdValue && (
           <Text
@@ -114,12 +115,12 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
             color="neutral-7"
             width="100%"
           >
-            <Tooltip
+            <DecentTooltip
               label={`1 ${asset.symbol} = ${formatUSD(asset.usdPrice)}`}
               placement="top-start"
             >
               {formatUSD(asset.usdValue)}
-            </Tooltip>
+            </DecentTooltip>
           </Text>
         )}
       </Flex>

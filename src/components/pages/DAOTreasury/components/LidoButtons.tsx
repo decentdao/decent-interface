@@ -1,5 +1,6 @@
-import { Button, HStack, Text, Tooltip, Show, Divider } from '@chakra-ui/react';
+import { Button, HStack, Text, Show, Divider } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { DecentTooltip } from '../../../ui/DecentTooltip';
 import useTreasuryLidoInteractions from '../hooks/useTreasuryLidoInteractions';
 
 export default function LidoButtons() {
@@ -49,7 +50,7 @@ export default function LidoButtons() {
               </Button>
             )}
             {showClaimETHButton && (
-              <Tooltip label={!isLidoClaimable ? t('nonClaimableYet') : ''}>
+              <DecentTooltip label={!isLidoClaimable ? t('nonClaimableYet') : ''}>
                 <Button
                   size="sm"
                   isDisabled={!isLidoClaimable}
@@ -57,7 +58,7 @@ export default function LidoButtons() {
                 >
                   {t('claimUnstakedETH')}
                 </Button>
-              </Tooltip>
+              </DecentTooltip>
             )}
           </HStack>
         </Show>

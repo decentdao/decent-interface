@@ -11,6 +11,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { FractalGuardContracts, FreezeVotingType } from '../../../types';
 import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
+import { useMasterCopy } from '../../utils/useMasterCopy';
 import useUserERC721VotingTokens from '../proposal/useUserERC721VotingTokens';
 import { FreezeGuard } from './../../../types/fractal';
 
@@ -34,6 +35,7 @@ export const useFractalFreeze = ({
   );
 
   const publicClient = usePublicClient();
+  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
   const loadFractalFreezeGuard = useCallback(
     async ({
@@ -138,9 +140,14 @@ export const useFractalFreeze = ({
           address: freezeVotingContractAddress,
           client: publicClient,
         });
+        const votesERC20Address = await freezeERC20VotingContract.read.votesERC20();
+        const { isVotesErc20 } = await getZodiacModuleProxyMasterCopyData(votesERC20Address);
+        if (!isVotesErc20) {
+          throw new Error('votesERC20Address is not a valid VotesERC20 contract');
+        }
         const votesTokenContract = getContract({
           abi: abis.VotesERC20,
-          address: await freezeERC20VotingContract.read.votesERC20(),
+          address: votesERC20Address,
           client: publicClient,
         });
         const currentTimestamp = await getTimeStamp('latest', publicClient);
@@ -179,7 +186,13 @@ export const useFractalFreeze = ({
       isFreezeSet.current = true;
       return freeze;
     },
-    [account, publicClient, getUserERC721VotingTokens, parentSafeAddress],
+    [
+      account,
+      publicClient,
+      getZodiacModuleProxyMasterCopyData,
+      getUserERC721VotingTokens,
+      parentSafeAddress,
+    ],
   );
 
   const setFractalFreezeGuard = useCallback(

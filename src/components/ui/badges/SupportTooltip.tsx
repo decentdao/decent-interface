@@ -1,7 +1,8 @@
-import { Tooltip, TooltipProps, Icon } from '@chakra-ui/react';
+import { TooltipProps, Icon } from '@chakra-ui/react';
 import { Icon as PhosphorIcon, Question } from '@phosphor-icons/react';
 import { RefObject } from 'react';
 import { TOOLTIP_MAXW } from '../../../constants/common';
+import { DecentTooltip } from '../DecentTooltip';
 import ModalTooltip from '../modals/ModalTooltip';
 
 interface Props extends Omit<TooltipProps, 'children'> {
@@ -37,13 +38,13 @@ export default function SupportTooltip({ containerRef, IconComponent, ...rest }:
   }
 
   return (
-    <Tooltip
+    <DecentTooltip
       maxW={TOOLTIP_MAXW}
       placement="top"
       {...rest}
       color="white"
     >
       {icon}
-    </Tooltip>
+    </DecentTooltip>
   );
 }

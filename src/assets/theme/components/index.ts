@@ -7,7 +7,6 @@ import Progress from './progress';
 import Switch from './switch';
 import Tabs from './tabs';
 import Textarea from './textarea';
-import Tooltip from './tooltip';
 
 export default {
   Alert,
@@ -19,5 +18,4 @@ export default {
   Progress,
   Switch,
   Tabs,
-  Tooltip,
 };

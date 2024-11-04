@@ -1,5 +1,6 @@
-import { Box, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import DisplayTransaction from '../../ui/links/DisplayTransaction';
+import { DecentTooltip } from '../DecentTooltip';
 
 export default function InfoRow({
   property,
@@ -31,7 +32,7 @@ export default function InfoRow({
           <Text>{value}</Text>
         )
       ) : (
-        <Tooltip label={tooltip}>
+        <DecentTooltip label={tooltip}>
           {txHash ? (
             <DisplayTransaction
               isTextLink
@@ -40,7 +41,7 @@ export default function InfoRow({
           ) : (
             <Text color="white-0">{value}</Text>
           )}
-        </Tooltip>
+        </DecentTooltip>
       )}
     </Box>
   );

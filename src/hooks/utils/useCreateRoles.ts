@@ -413,7 +413,7 @@ export default function useCreateRoles() {
     [prepareBatchLinearStreamCreation],
   );
 
-  const getStreamsWithFundsToClaimFromFromHat = useCallback((formHat: RoleHatFormValueEdited) => {
+  const getMemberChangedStreamsWithFundsToClaim = useCallback((formHat: RoleHatFormValueEdited) => {
     return (formHat.payments ?? []).filter(
       payment => (payment?.withdrawableAmount ?? 0n) > 0n && !payment.isCancelling,
     );
@@ -427,7 +427,7 @@ export default function useCreateRoles() {
     return (formHat.payments ?? []).filter(payment => payment.isCancelling && !!payment.streamId);
   }, []);
 
-  const getStreamsWithFundsToClaimFromFormHat = useCallback((formHat: RoleHatFormValueEdited) => {
+  const getRoleRemovedStreamsWithFundsToClaim = useCallback((formHat: RoleHatFormValueEdited) => {
     return (formHat.payments ?? []).filter(payment => (payment?.withdrawableAmount ?? 0n) > 0n);
   }, []);
 
@@ -513,7 +513,7 @@ export default function useCreateRoles() {
             targetAddress: hatsProtocol,
           });
 
-          const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFormHat(formHat);
+          const streamsWithFundsToClaim = getRoleRemovedStreamsWithFundsToClaim(formHat);
 
           if (streamsWithFundsToClaim.length) {
             // This role is being removed.
@@ -598,7 +598,7 @@ export default function useCreateRoles() {
               throw new Error('Cannot find original hat');
             }
 
-            const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFromHat(formHat);
+            const streamsWithFundsToClaim = getMemberChangedStreamsWithFundsToClaim(formHat);
 
             if (streamsWithFundsToClaim.length) {
               // If there are unclaimed funds on any streams on the hat, we need to flush them to the original wearer.
@@ -740,13 +740,13 @@ export default function useCreateRoles() {
       prepareNewHatTxs,
       getHat,
       hatsProtocol,
-      getStreamsWithFundsToClaimFromFormHat,
+      getRoleRemovedStreamsWithFundsToClaim,
       getActiveStreamsFromFormHat,
       prepareFlushStreamTxs,
       prepareCancelStreamTxs,
       uploadHatDescription,
       hatsDetailsBuilder,
-      getStreamsWithFundsToClaimFromFromHat,
+      getMemberChangedStreamsWithFundsToClaim,
       getCancelledStreamsFromFormHat,
       getNewStreamsFromFormHat,
       predictSmartAccount,

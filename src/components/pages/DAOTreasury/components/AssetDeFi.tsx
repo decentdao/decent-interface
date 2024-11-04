@@ -1,9 +1,10 @@
-import { Divider, HStack, Flex, Tooltip, Text, Image, Box } from '@chakra-ui/react';
+import { Divider, HStack, Flex, Text, Image, Box } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { DefiBalance } from '../../../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import { formatPercentage, formatUSD, formatCoin } from '../../../../utils/numberFormats';
+import { DecentTooltip } from '../../../ui/DecentTooltip';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
 
 export function DeFiHeader() {
@@ -72,7 +73,7 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
         alignItems="center"
         gap="0.5rem"
       >
-        <Tooltip
+        <DecentTooltip
           label={tooltipLabel}
           placement="top-start"
         >
@@ -84,7 +85,7 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
             w="1rem"
             h="1rem"
           />
-        </Tooltip>
+        </DecentTooltip>
         <EtherscanLink
           color="white-0"
           _hover={{ bg: 'transparent' }}
@@ -104,12 +105,12 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
         flexWrap="wrap"
       >
         {asset.position?.balanceUsd && (
-          <Tooltip
+          <DecentTooltip
             label={tooltipLabel}
             placement="top-start"
           >
             <Text width="100%">{formatUSD(asset.position.balanceUsd)}</Text>
-          </Tooltip>
+          </DecentTooltip>
         )}
       </Flex>
 
