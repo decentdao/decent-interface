@@ -4,7 +4,7 @@ import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useMasterCopy } from '../../../utils/useMasterCopy';
+import { useAddressContractType } from '../../../utils/useAddressContractType';
 
 export function useERC20Claim() {
   const {
@@ -14,7 +14,7 @@ export function useERC20Claim() {
   } = useFractal();
   const publicClient = usePublicClient();
 
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
 
   const loadTokenClaimContract = useCallback(async () => {
     if (!votesTokenAddress || !publicClient) {
@@ -35,7 +35,7 @@ export function useERC20Claim() {
       return;
     }
 
-    const { isClaimErc20 } = await getZodiacModuleProxyMasterCopyData(approvals[0].args.spender);
+    const { isClaimErc20 } = await getAddressContractType(approvals[0].args.spender);
     if (!isClaimErc20) {
       return;
     }
@@ -45,7 +45,7 @@ export function useERC20Claim() {
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
       payload: approvals[0].args.spender,
     });
-  }, [action, getZodiacModuleProxyMasterCopyData, publicClient, votesTokenAddress]);
+  }, [action, getAddressContractType, publicClient, votesTokenAddress]);
 
   const loadKey = useRef<string>();
 

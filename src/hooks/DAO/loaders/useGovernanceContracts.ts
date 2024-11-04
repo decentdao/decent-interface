@@ -6,14 +6,14 @@ import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { getAzoriusModuleFromModules } from '../../../utils';
-import { useMasterCopy } from '../../utils/useMasterCopy';
+import { useAddressContractType } from '../../utils/useAddressContractType';
 import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
   const { node, action } = useFractal();
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
   const publicClient = usePublicClient();
 
   const { getVotingStrategyAddress } = useVotingStrategyAddress();
@@ -40,7 +40,7 @@ export const useGovernanceContracts = () => {
     let lockReleaseAddress: Address | undefined;
 
     const { isLinearVotingErc20, isLinearVotingErc721 } =
-      await getZodiacModuleProxyMasterCopyData(votingStrategyAddress);
+      await getAddressContractType(votingStrategyAddress);
 
     if (isLinearVotingErc20) {
       if (!publicClient) {
@@ -62,8 +62,7 @@ export const useGovernanceContracts = () => {
       // - a valid LockRelease contract
       // - or none of these which is against business logic
 
-      const { isVotesErc20, isVotesErc20Wrapper } =
-        await getZodiacModuleProxyMasterCopyData(govTokenAddress);
+      const { isVotesErc20, isVotesErc20Wrapper } = await getAddressContractType(govTokenAddress);
 
       if (isVotesErc20) {
         votesTokenAddress = govTokenAddress;
@@ -108,13 +107,7 @@ export const useGovernanceContracts = () => {
         },
       });
     }
-  }, [
-    action,
-    fractalModules,
-    getVotingStrategyAddress,
-    getZodiacModuleProxyMasterCopyData,
-    publicClient,
-  ]);
+  }, [action, fractalModules, getVotingStrategyAddress, getAddressContractType, publicClient]);
 
   useEffect(() => {
     if (currentValidAddress.current !== daoAddress && isModulesLoaded) {

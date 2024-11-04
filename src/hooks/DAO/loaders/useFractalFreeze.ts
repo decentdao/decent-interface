@@ -11,7 +11,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { FractalGuardContracts, FreezeVotingType } from '../../../types';
 import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
-import { useMasterCopy } from '../../utils/useMasterCopy';
+import { useAddressContractType } from '../../utils/useAddressContractType';
 import useUserERC721VotingTokens from '../proposal/useUserERC721VotingTokens';
 import { FreezeGuard } from './../../../types/fractal';
 
@@ -35,7 +35,7 @@ export const useFractalFreeze = ({
   );
 
   const publicClient = usePublicClient();
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
 
   const loadFractalFreezeGuard = useCallback(
     async ({
@@ -141,7 +141,7 @@ export const useFractalFreeze = ({
           client: publicClient,
         });
         const votesERC20Address = await freezeERC20VotingContract.read.votesERC20();
-        const { isVotesErc20 } = await getZodiacModuleProxyMasterCopyData(votesERC20Address);
+        const { isVotesErc20 } = await getAddressContractType(votesERC20Address);
         if (!isVotesErc20) {
           throw new Error('votesERC20Address is not a valid VotesERC20 contract');
         }
@@ -186,13 +186,7 @@ export const useFractalFreeze = ({
       isFreezeSet.current = true;
       return freeze;
     },
-    [
-      account,
-      publicClient,
-      getZodiacModuleProxyMasterCopyData,
-      getUserERC721VotingTokens,
-      parentSafeAddress,
-    ],
+    [account, publicClient, getAddressContractType, getUserERC721VotingTokens, parentSafeAddress],
   );
 
   const setFractalFreezeGuard = useCallback(
