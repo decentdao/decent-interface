@@ -126,35 +126,42 @@ export const useRolesSchema = () => {
                 ),
               }),
           }),
-        newRoleTerm: Yup.object().shape({
-          nominee: Yup.string()
-            .required(t('roleInfoErrorMemberRequired'))
-            .test(addressValidationTest),
-          termEndDate: Yup.date()
-            .required('roleInfoErrorTermEndDateRequired')
-            .test({
-              name: 'term-end-date-after-now',
-              message: t('roleInfoErrorTermEndDateInvalid'),
-              test: (termEndDate, cxt) => {
-                if (!termEndDate || !cxt.from) return true;
-                const [, { value: roleForm }] = cxt.from;
-                const { roleTerms } = roleForm.roleEditing;
-                // remove the last element from terms and create a new array with the rest of the elements
-                if (!roleTerms || roleTerms.length === 0) return termEndDate > new Date();
-                const previousTerms = roleTerms.slice(0, -1);
+        newRoleTerm: Yup.object()
+          .default(undefined)
+          .nullable()
+          .when({
+            is: (value: any) => value !== undefined,
+            then: _schema =>
+              _schema.shape({
+                nominee: Yup.string()
+                  .required(t('roleInfoErrorMemberRequired'))
+                  .test(addressValidationTest),
+                termEndDate: Yup.date()
+                  .required('roleInfoErrorTermEndDateRequired')
+                  .test({
+                    name: 'term-end-date-after-now',
+                    message: t('roleInfoErrorTermEndDateInvalid'),
+                    test: (termEndDate, cxt) => {
+                      if (!termEndDate || !cxt.from) return true;
+                      const [, { value: roleForm }] = cxt.from;
+                      const { roleTerms } = roleForm.roleEditing;
+                      // remove the last element from terms and create a new array with the rest of the elements
+                      if (!roleTerms || roleTerms.length === 0) return termEndDate > new Date();
+                      const previousTerms = roleTerms.slice(0, -1);
 
-                if (
-                  !previousTerms.every(
-                    (term: { termEndDate: Date }) =>
-                      term.termEndDate.getTime() < termEndDate.getTime(),
-                  )
-                ) {
-                  return true;
-                }
-                return termEndDate > new Date();
-              },
-            }),
-        }),
+                      if (
+                        !previousTerms.every(
+                          (term: { termEndDate: Date }) =>
+                            term.termEndDate.getTime() < termEndDate.getTime(),
+                        )
+                      ) {
+                        return true;
+                      }
+                      return termEndDate > new Date();
+                    },
+                  }),
+              }),
+          }),
       }),
     [addressValidationTest, assetValidationSchema, bigIntValidationSchema, t],
   );
