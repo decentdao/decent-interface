@@ -277,7 +277,7 @@ export default function RoleTerm({
   termNumber,
   displayLightContainer,
 }: {
-  hatId: Hex;
+  hatId?: Hex;
   termNominatedWearer: Address;
   termEndDate: Date;
   termNumber: number;
@@ -293,6 +293,7 @@ export default function RoleTerm({
   } = useNetworkConfig();
 
   const roleHat = useMemo(() => {
+    if (!hatId) return undefined;
     return getHat(hatId);
   }, [getHat, hatId]);
 
@@ -311,6 +312,9 @@ export default function RoleTerm({
     }
     if (!walletClient) {
       throw new Error('Public client not found');
+    }
+    if (!hatId) {
+      throw new Error('Hat ID not found');
     }
     const decentAutonomousAdminContract = getContract({
       abi: DecentAutonomousAdminTempAbi,

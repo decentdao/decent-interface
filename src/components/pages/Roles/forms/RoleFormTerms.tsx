@@ -170,7 +170,7 @@ function RoleTermRenderer({
   termStatus: RoleFormTermStatus;
   hatId: Hex | undefined;
 }) {
-  if (!roleTerm?.nominee || !roleTerm?.termEndDate || !hatId) {
+  if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
     return null;
   }
   return (
