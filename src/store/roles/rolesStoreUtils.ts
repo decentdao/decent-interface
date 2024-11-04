@@ -80,6 +80,7 @@ export interface RolesStore extends RolesStoreData {
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
   updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
+  updateCurrentTermStatus: (hatId: Hex, termStatus: 'active' | 'inactive') => void;
   resetHatsStore: () => void;
 }
 

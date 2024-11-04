@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
 import { ArrowRight, Calendar, ClockCountdown, Copy } from '@phosphor-icons/react';
 import { format } from 'date-fns';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getContract, Hex } from 'viem';
 import { useWalletClient } from 'wagmi';
@@ -11,6 +11,7 @@ import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
@@ -283,27 +284,26 @@ export default function RoleTerm({
   termStatus: RoleFormTermStatus;
   displayLightContainer?: boolean;
 }) {
-  const { hatsTree, getHat } = useRolesStore();
+  const [contractCall, contractCallPending] = useTransaction();
+  const { hatsTree, getHat, updateCurrentTermStatus } = useRolesStore();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles']);
   const {
     contracts: { hatsProtocol },
   } = useNetworkConfig();
 
-  const currentHatWearer = useMemo(() => {
-    const currentHat = getHat(hatId);
-    if (!currentHat) {
-      return undefined;
-    }
-    return currentHat.wearerAddress;
+  const roleHat = useMemo(() => {
+    return getHat(hatId);
   }, [getHat, hatId]);
 
-  const handleTriggerStartTerm = async () => {
+  const wearerAddress = roleHat?.wearerAddress;
+
+  const handleTriggerStartTerm = useCallback(async () => {
     // @todo check if the wearer address is the Decent Autonomous Admin contract
     // ? @todo if first term wearer === new term nominee, then start term directly?
     const adminHatWearer = hatsTree?.adminHat.wearer;
 
-    if (currentHatWearer === undefined) {
+    if (!wearerAddress) {
       throw new Error('Current hat must be worn by a member');
     }
     if (adminHatWearer === undefined) {
@@ -318,15 +318,35 @@ export default function RoleTerm({
       client: walletClient,
     });
 
-    await decentAutonomousAdminContract.write.triggerStartNextTerm([
-      {
-        currentWearer: currentHatWearer,
-        hatsProtocol,
-        hatId: BigInt(hatId),
-        nominatedWearer: termNominatedWearer,
+    contractCall({
+      contractFn: () =>
+        decentAutonomousAdminContract.write.triggerStartNextTerm([
+          {
+            currentWearer: wearerAddress,
+            hatsProtocol,
+            hatId: BigInt(hatId),
+            nominatedWearer: termNominatedWearer,
+          },
+        ]),
+      pendingMessage: t('startTermPendingToastMessage'),
+      failedMessage: t('startTermFailureToastMessage'),
+      successMessage: t('startTermSuccessToastMessage'),
+      successCallback: () => {
+        updateCurrentTermStatus(hatId, 'active');
       },
-    ]);
-  };
+    });
+  }, [
+    contractCall,
+    hatId,
+    hatsProtocol,
+    hatsTree?.adminHat.wearer,
+    t,
+    termNominatedWearer,
+    updateCurrentTermStatus,
+    walletClient,
+    wearerAddress,
+  ]);
+
   return (
     <Box>
       <RoleTermHeader
@@ -337,22 +357,24 @@ export default function RoleTerm({
       />
       <Container displayLightContainer={displayLightContainer}>
         <Flex justifyContent="space-between">
-          <RoleTermMemberAddress memberAddress={currentHatWearer ?? termNominatedWearer} />
+          <RoleTermMemberAddress memberAddress={wearerAddress ?? termNominatedWearer} />
           <RoleTermEndDate termEndDate={termEndDate} />
         </Flex>
-        {/* {!!currentTerm && currentTerm.termStatus === 'inactive' && ( */}
-        <Button
-          leftIcon={
-            <Icon
-              as={ArrowRight}
-              size="1.25rem"
-            />
-          }
-          onClick={handleTriggerStartTerm}
-        >
-          {t('startTerm')}
-        </Button>
-        {/* )} */}
+        {!!roleHat?.roleTerms.currentTerm &&
+          roleHat.roleTerms.currentTerm.termStatus === 'inactive' && (
+            <Button
+              isDisabled={contractCallPending}
+              leftIcon={
+                <Icon
+                  as={ArrowRight}
+                  size="1.25rem"
+                />
+              }
+              onClick={handleTriggerStartTerm}
+            >
+              {t('startTerm')}
+            </Button>
+          )}
       </Container>
     </Box>
   );

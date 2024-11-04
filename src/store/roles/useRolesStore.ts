@@ -102,6 +102,31 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
 
     set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
   },
+  updateCurrentTermStatus: (hatId: Hex, termStatus: 'inactive' | 'active') => {
+    const currentHatsTree = get().hatsTree;
+    if (!currentHatsTree) return;
+
+    set(() => ({
+      hatsTree: {
+        ...currentHatsTree,
+        roleHats: currentHatsTree.roleHats.map(roleHat => {
+          if (roleHat.id !== hatId) return roleHat;
+          return {
+            ...roleHat,
+            roleTerms: {
+              ...roleHat.roleTerms,
+              currentTerm: roleHat.roleTerms.currentTerm
+                ? {
+                    ...roleHat.roleTerms.currentTerm,
+                    termStatus,
+                  }
+                : undefined,
+            },
+          };
+        }),
+      },
+    }));
+  },
   resetHatsStore: () => set(() => initialHatsStore),
 }));
 

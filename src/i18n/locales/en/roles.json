@@ -125,5 +125,8 @@
   "noActiveTermsNotProposer": "This Role doesn't have any active terms",
   "showPreviousTerms": "Previous terms",
   "startTerm": "Start Term",
-  "termSavedSuccessfully": "Term saved successfully"
+  "termSavedSuccessfully": "Term saved successfully",
+  "startTermPendingToastMessage": "Starting term",
+  "startTermSuccessToastMessage": "Term started successfully",
+  "startTermFailureToastMessage": "Failed to start term"
 }
