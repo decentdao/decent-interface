@@ -34,8 +34,6 @@ import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
 
-/* NON-REACT FUNCTIONS */
-
 function hatsDetailsBuilder(data: { name: string; description: string }) {
   return JSON.stringify({
     type: '1.0',
