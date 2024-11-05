@@ -28,6 +28,10 @@ function AddSignerModal({
   const {
     node: { safe },
   } = useFractal();
+  if (!safe) {
+    throw new Error('Safe not found');
+  }
+
   const { t } = useTranslation(['modals', 'common']);
   const publicClient = usePublicClient();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
@@ -44,10 +48,6 @@ function AddSignerModal({
         if (maybeEnsAddress) {
           validAddress = maybeEnsAddress;
         }
-      }
-
-      if (!safe) {
-        throw new Error('Safe not found');
       }
 
       await addSigner({
