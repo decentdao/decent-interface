@@ -1,14 +1,6 @@
-import { EthAddress } from './utils';
-
 export enum TokenEventType {
   DEPOSIT = 'DEPOSIT',
   WITHDRAW = 'WITHDRAW',
-}
-
-export interface TokenEvent {
-  transactionHash: string;
-  eventType: TokenEventType;
-  blockTimestamp: number;
 }
 
 export type TokenBalance = {
@@ -60,11 +52,12 @@ interface DefiPositionDetails {
   healthFactor?: number;
 }
 
-export type DefiPositionTokenBalance = {
+type DefiPositionTokenBalance = {
   contractAddress?: string;
   tokenType: 'supplied' | 'defi-token';
 } & TokenBalance;
-export type DefiPosition = {
+
+type DefiPosition = {
   label: string;
   tokens: DefiPositionTokenBalance[];
   address?: string;
@@ -113,37 +106,8 @@ export type NFTBalance = {
   possibleSpam: boolean;
 };
 
-export interface TokenDepositEvent extends TokenEvent, EthAddress {
-  amount: bigint;
-}
-
-export interface TokenWithdrawEvent extends TokenEvent {
-  addresses: string[];
-  amount: bigint;
-}
-export interface ERC721TokenEvent extends TokenEvent {
-  contractAddresses: string[];
-  tokenIds: bigint[];
-}
-export interface ERC20TokenEvent extends TokenEvent {
-  contractAddresses: string[];
-  addresses: string[];
-  amounts: bigint[];
-}
-
-export type Transaction =
-  | TokenDepositEvent
-  | TokenWithdrawEvent
-  | ERC20TokenEvent
-  | ERC721TokenEvent;
-
 export enum TransferType {
   ETHER_TRANSFER = 'ETHER_TRANSFER',
   ERC20_TRANSFER = 'ERC20_TRANSFER',
   ERC721_TRANSFER = 'ERC721_TRANSFER',
-}
-
-export enum TokenType {
-  ERC20,
-  ERC721,
 }
