@@ -56,7 +56,7 @@ export default function useUserERC721VotingTokens(
         | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
         | undefined;
 
-      if (!safeAddress || !publicClient || !safeAPI) {
+      if (!globalContextSafeAddress || !publicClient || !safeAPI) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -206,7 +206,6 @@ export default function useUserERC721VotingTokens(
     },
     [
       erc721Tokens,
-      safeAddress,
       publicClient,
       safeAPI,
       globalContextSafeAddress,
