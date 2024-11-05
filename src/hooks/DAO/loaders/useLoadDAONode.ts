@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
-import { getAddress, Address } from 'viem';
+import { Address } from 'viem';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -41,7 +41,7 @@ export const useLoadDAONode = () => {
             childNodes: mapChildNodes(dao as DAO),
           },
           daoName: name as string,
-          address: getAddress(safeAddress),
+          address: safeAddress,
           daoSnapshotENS: snapshotENS as string,
         };
         return currentNode;
