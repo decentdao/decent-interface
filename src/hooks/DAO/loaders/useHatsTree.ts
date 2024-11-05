@@ -1,9 +1,8 @@
 import { useApolloClient } from '@apollo/client';
-import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { formatUnits, getAddress, getContract, hexToBigInt } from 'viem';
+import { formatUnits, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
@@ -105,15 +104,6 @@ const useHatsTree = () => {
 
         const treeWithFetchedDetails: Tree = { ...tree, hats: hatsWithFetchedDetails };
         try {
-          const firstHatId = treeWithFetchedDetails.hats?.at(0)?.id;
-          const fetchedHatsTreeId = !!firstHatId
-            ? hatIdToTreeId(hexToBigInt(firstHatId))
-            : undefined;
-
-          if (fetchedHatsTreeId !== hatsTreeId) {
-            return;
-          }
-
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
             chainId: BigInt(contextChainId),

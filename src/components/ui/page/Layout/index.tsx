@@ -1,6 +1,6 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
-import { useEffect, useRef } from 'react';
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { useRef } from 'react';
+import { Outlet } from 'react-router-dom';
 import {
   MAX_CONTENT_WIDTH,
   SIDEBAR_WIDTH,
@@ -9,8 +9,6 @@ import {
   useHeaderHeight,
 } from '../../../../constants/common';
 import useNavigationScrollReset from '../../../../hooks/utils/useNavigationScrollReset';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';
@@ -19,20 +17,6 @@ import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 export default function Layout() {
   const headerContainerRef = useRef<HTMLDivElement>(null);
-
-  const [searchParams] = useSearchParams();
-  const safeParam = searchParams.get('dao');
-
-  const { resetHatsStore } = useRolesStore();
-
-  const { action } = useFractal();
-
-  useEffect(() => {
-    if (!safeParam) {
-      action.resetSafeState();
-      resetHatsStore();
-    }
-  }, [action, resetHatsStore, safeParam]);
 
   const HEADER_HEIGHT = useHeaderHeight();
   const CONTENT_HEIGHT = useContentHeight();
