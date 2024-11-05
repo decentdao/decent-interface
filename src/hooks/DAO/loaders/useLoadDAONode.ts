@@ -25,8 +25,8 @@ export const useLoadDAONode = () => {
   });
 
   const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, safeAddress: string) => {
-      const demo = loadDemoData(chain, getAddress(safeAddress), result);
+    (result: { data?: DAOQueryQuery }, safeAddress: Address) => {
+      const demo = loadDemoData(chain, safeAddress, result);
       if (!demo.data) {
         return;
       }
