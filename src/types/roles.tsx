@@ -1,4 +1,5 @@
-import { Address, Hex } from 'viem';
+import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
+import { Address, Hex, PublicClient } from 'viem';
 import { SendAssetsData } from '../components/ui/modals/SendAssetsModal';
 import { BigIntValuePair } from './common';
 import { CreateProposalMetadata } from './proposalBuilder';
@@ -165,4 +166,29 @@ export interface RoleDetailsDrawerProps {
   onClose: () => void;
   onEdit: (hatId: Hex) => void;
   isOpen?: boolean;
+}
+
+export interface RolesStoreData {
+  hatsTreeId: undefined | null | number;
+  hatsTree: undefined | null | DecentTree;
+  streamsFetched: boolean;
+  contextChainId: number | null;
+}
+
+export interface RolesStore extends RolesStoreData {
+  getHat: (hatId: Hex) => DecentRoleHat | null;
+  getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
+  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
+  setHatsTree: (params: {
+    hatsTree: Tree | null | undefined;
+    chainId: bigint;
+    hatsProtocol: Address;
+    erc6551Registry: Address;
+    hatsAccountImplementation: Address;
+    publicClient: PublicClient;
+    whitelistingVotingStrategy?: Address;
+  }) => Promise<void>;
+  refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
+  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
+  resetHatsStore: () => void;
 }

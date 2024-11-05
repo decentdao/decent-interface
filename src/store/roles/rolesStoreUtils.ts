@@ -1,9 +1,9 @@
-import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
+import { Hat, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import LinearERC20VotingWithHatsProposalCreationAbi from '../../assets/abi/LinearERC20VotingWithHatsProposalCreation';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
-import { DecentHat, DecentRoleHat, DecentTree, SablierPayment } from '../../types/roles';
+import { DecentHat, DecentRoleHat, DecentTree, RolesStoreData } from '../../types/roles';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -14,31 +14,6 @@ export class DecentHatsError extends Error {
       Error.captureStackTrace(this, DecentHatsError);
     }
   }
-}
-
-interface RolesStoreData {
-  hatsTreeId: undefined | null | number;
-  hatsTree: undefined | null | DecentTree;
-  streamsFetched: boolean;
-  contextChainId: number | null;
-}
-
-export interface RolesStore extends RolesStoreData {
-  getHat: (hatId: Hex) => DecentRoleHat | null;
-  getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
-  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
-  setHatsTree: (params: {
-    hatsTree: Tree | null | undefined;
-    chainId: bigint;
-    hatsProtocol: Address;
-    erc6551Registry: Address;
-    hatsAccountImplementation: Address;
-    publicClient: PublicClient;
-    whitelistingVotingStrategy?: Address;
-  }) => Promise<void>;
-  refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
-  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
-  resetHatsStore: () => void;
 }
 
 const appearsExactlyNumberOfTimes = (

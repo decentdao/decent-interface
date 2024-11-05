@@ -23,6 +23,7 @@ export type CreateProposalMetadata = {
 };
 
 export enum ProposalBuilderMode {
+  PROPOSAL_WITH_ACTIONS = 'PROPOSAL_WITH_ACTIONS',
   PROPOSAL = 'PROPOSAL',
   TEMPLATE = 'TEMPLATE',
 }

@@ -2,8 +2,8 @@ import { getContract, Hex, PublicClient } from 'viem';
 import { create } from 'zustand';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
-import { DecentRoleHat } from '../../types/roles';
-import { initialHatsStore, RolesStore, sanitize } from './rolesStoreUtils';
+import { DecentRoleHat, RolesStore } from '../../types/roles';
+import { initialHatsStore, sanitize } from './rolesStoreUtils';
 
 const useRolesStore = create<RolesStore>()((set, get) => ({
   ...initialHatsStore,
