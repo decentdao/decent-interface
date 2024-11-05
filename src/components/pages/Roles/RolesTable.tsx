@@ -99,7 +99,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
   const { t } = useTranslation('roles');
   return (
     <Td width="60%">
-      <Flex>
+      <Flex alignItems="center">
         {wearerAddress ? (
           <Avatar
             size="icon"
@@ -108,7 +108,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
           />
         ) : (
           <Box
-            boxSize="3rem"
+            boxSize="1.5rem"
             borderRadius="100%"
             bg="white-alpha-04"
           />
