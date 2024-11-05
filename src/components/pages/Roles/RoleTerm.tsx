@@ -373,7 +373,7 @@ export default function RoleTerm({
       />
       <Container displayLightContainer={displayLightContainer}>
         <Flex justifyContent="space-between">
-          <RoleTermMemberAddress memberAddress={wearerAddress ?? termNominatedWearer} />
+          <RoleTermMemberAddress memberAddress={termNominatedWearer} />
           <RoleTermEndDate termEndDate={termEndDate} />
         </Flex>
         {!!roleHat?.roleTerms.currentTerm &&
