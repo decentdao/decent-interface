@@ -44,12 +44,6 @@ export const useFractalGovernance = () => {
       const { daos } = data;
       const dao = daos[0];
 
-      const setEmptyTemplates = () => {
-        action.dispatch({
-          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-          payload: [],
-        });
-      };
       if (dao) {
         const { proposalTemplatesHash } = dao;
         if (proposalTemplatesHash) {
@@ -70,15 +64,15 @@ export const useFractalGovernance = () => {
               type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
               payload: mappedProposalTemplates,
             });
-          } else {
-            setEmptyTemplates();
+            return;
           }
-        } else {
-          setEmptyTemplates();
         }
-      } else {
-        setEmptyTemplates();
       }
+
+      action.dispatch({
+        type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+        payload: [],
+      });
     },
     context: {
       subgraphSpace: subgraph.space,
