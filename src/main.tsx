@@ -10,6 +10,17 @@ import { useNetworkConfig } from './providers/NetworkConfig/NetworkConfigProvide
 import Providers from './providers/Providers';
 import { router } from './router';
 
+declare global {
+  interface BigInt {
+    /** Convert BigInt to string form in JSON.stringify */
+    toJSON: () => string;
+  }
+}
+
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 function DecentRouterProvider() {
   const { addressPrefix } = useNetworkConfig();
   const urlParams = new URLSearchParams(window.location.search);
