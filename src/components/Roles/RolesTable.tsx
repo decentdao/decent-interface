@@ -2,6 +2,7 @@ import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
+import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useRolesStore } from '../../store/roles/useRolesStore';
@@ -13,7 +14,6 @@ import {
   RoleProps,
 } from '../../types/roles';
 import NoDataCard from '../ui/containers/NoDataCard';
-import PencilWithLineIcon from '../ui/icons/PencilWithLineIcon';
 import Avatar from '../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading } from './RolePageCard';

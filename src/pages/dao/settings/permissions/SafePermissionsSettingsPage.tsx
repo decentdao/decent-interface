@@ -2,9 +2,10 @@ import { Box, Button, Flex, IconButton, Show, Text, useBreakpointValue } from '@
 import { Coins, Plus } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
+import { zeroAddress } from 'viem';
+import PencilWithLineIcon from '../../../../assets/theme/custom/icons/PencilWithLineIcon';
 import { Card } from '../../../../components/ui/cards/Card';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
-import PencilWithLineIcon from '../../../../components/ui/icons/PencilWithLineIcon';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
@@ -63,11 +64,13 @@ export function SafePermissionsSettingsPage() {
                 size="icon-md"
                 variant="ghost"
                 color="neutral-6"
+                icon={<Plus size={24} />}
                 onClick={() =>
                   navigate(
                     DAO_ROUTES.settingsPermissionsCreateProposal.relative(
                       addressPrefix,
                       safe.address,
+                      zeroAddress,
                     ),
                   )
                 }

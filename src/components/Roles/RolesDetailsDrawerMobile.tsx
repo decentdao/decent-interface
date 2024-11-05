@@ -1,6 +1,7 @@
 import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import useAddress from '../../hooks/utils/useAddress';
 import { useFractal } from '../../providers/App/AppProvider';
 import {
@@ -11,7 +12,6 @@ import {
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { RoleDetailsDrawerProps } from '../../types/roles';
 import DraggableDrawer from '../ui/containers/DraggableDrawer';
-import PencilWithLineIcon from '../ui/icons/PencilWithLineIcon';
 import Divider from '../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
 import { RolePaymentDetails } from './RolePaymentDetails';

@@ -14,6 +14,7 @@ import {
 import { CheckSquare, List, User, X } from '@phosphor-icons/react';
 import { RefObject, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useAddress from '../../hooks/utils/useAddress';
 import useAvatar from '../../hooks/utils/useAvatar';
@@ -25,7 +26,6 @@ import {
   paymentSorterByWithdrawAmount,
 } from '../../store/roles/rolesStoreUtils';
 import { RoleDetailsDrawerProps } from '../../types/roles';
-import PencilWithLineIcon from '../ui/icons/PencilWithLineIcon';
 import { BarLoader } from '../ui/loaders/BarLoader';
 import ModalTooltip from '../ui/modals/ModalTooltip';
 import Avatar from '../ui/page/Header/Avatar';
