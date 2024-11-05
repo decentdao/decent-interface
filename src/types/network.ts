@@ -32,7 +32,6 @@ export type NetworkConfig = {
     multiSendCallOnly: Address;
 
     zodiacModuleProxyFactory: Address;
-    zodiacModuleProxyFactoryOld: Address;
 
     linearVotingErc20MasterCopy: Address;
     linearVotingErc20WrappedMasterCopy: Address;

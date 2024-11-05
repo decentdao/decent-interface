@@ -58,7 +58,6 @@ export const sepoliaConfig: NetworkConfig = {
     ),
 
     zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
-    zodiacModuleProxyFactoryOld: getAddress(a.ModuleProxyFactory),
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
     linearVotingErc20WrappedMasterCopy: getAddress(a.LinearERC20WrappedVoting),
