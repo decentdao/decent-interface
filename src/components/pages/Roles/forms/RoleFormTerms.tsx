@@ -1,5 +1,17 @@
-import { Box, Button, Flex, FormControl, Icon, IconButton, Text } from '@chakra-ui/react';
-import { Plus, X } from '@phosphor-icons/react';
+import {
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  Icon,
+  IconButton,
+  Text,
+} from '@chakra-ui/react';
+import { CaretDown, CaretRight, Plus, X } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -161,6 +173,7 @@ function RoleTermRenderer({
   roleTerm,
   termStatus,
   hatId,
+  displayLightContainer,
 }: {
   roleTerm?: {
     nominee?: string;
@@ -169,6 +182,7 @@ function RoleTermRenderer({
   };
   termStatus: RoleFormTermStatus;
   hatId: Hex | undefined;
+  displayLightContainer?: boolean;
 }) {
   if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
     return null;
@@ -181,7 +195,88 @@ function RoleTermRenderer({
         termEndDate={roleTerm.termEndDate}
         termStatus={termStatus}
         termNumber={roleTerm.termNumber}
+        displayLightContainer={displayLightContainer}
       />
+    </Box>
+  );
+}
+
+function RoleTermExpiredTerms({
+  hatId,
+  roleTerms,
+}: {
+  hatId: Hex | undefined;
+  roleTerms?: {
+    nominee?: string;
+    termEndDate?: Date;
+    termNumber: number;
+  }[];
+}) {
+  const { t } = useTranslation('roles');
+  if (!roleTerms?.length) {
+    return null;
+  }
+  return (
+    <Box
+      borderRadius="0.5rem"
+      boxShadow="layeredShadowBorder"
+    >
+      <Accordion allowToggle>
+        <AccordionItem
+          borderTop="none"
+          borderBottom="none"
+          borderTopRadius="0.5rem"
+          borderBottomRadius="0.5rem"
+        >
+          {({ isExpanded }) => (
+            <>
+              <AccordionButton
+                borderTopRadius="0.5rem"
+                borderBottomRadius="0.5rem"
+                p="1rem"
+              >
+                <Flex
+                  alignItems="center"
+                  gap={2}
+                >
+                  <Icon
+                    as={!isExpanded ? CaretDown : CaretRight}
+                    boxSize="1.25rem"
+                    color="lilac-0"
+                  />
+                  <Text
+                    textStyle="button-base"
+                    color="lilac-0"
+                  >
+                    {t('showPreviousTerms')}
+                  </Text>
+                </Flex>
+              </AccordionButton>
+              <Flex
+                flexDir="column"
+                gap={4}
+              >
+                {roleTerms.map((term, index) => {
+                  return (
+                    <AccordionPanel
+                      key={index}
+                      px="1rem"
+                    >
+                      <RoleTermRenderer
+                        key={index}
+                        hatId={hatId}
+                        roleTerm={term}
+                        termStatus={RoleFormTermStatus.Expired}
+                        displayLightContainer
+                      />
+                    </AccordionPanel>
+                  );
+                })}
+              </Flex>
+            </>
+          )}
+        </AccordionItem>
+      </Accordion>
     </Box>
   );
 }
@@ -206,9 +301,11 @@ export default function RoleFormTerms() {
   );
 
   // {assumption}: only 2 terms should be unexpired at a time
-  const terms = useMemo(() => {
-    return roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
-  }, [roleFormTerms]);
+  const terms = useMemo(
+    () =>
+      roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate.getTime() > Date.now()),
+    [roleFormTerms],
+  );
 
   // @dev shows the term form when there are no terms
   useEffect(() => {
@@ -266,6 +363,10 @@ export default function RoleFormTerms() {
           termStatus={
             roleHatTerms?.currentTerm ? RoleFormTermStatus.Current : RoleFormTermStatus.Pending
           }
+        />
+        <RoleTermExpiredTerms
+          hatId={roleFormHatId}
+          roleTerms={roleHatTerms?.expiredTerms}
         />
       </Flex>
     </Box>
