@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
-import { isAddress, getAddress } from 'viem';
+import { getAddress, Address } from 'viem';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -52,9 +52,8 @@ export const useLoadDAONode = () => {
   );
 
   const loadDao = useCallback(
-    // Can't `safeAddress` safely be an `Address` type?
-    async (safeAddress: string): Promise<FractalNode | WithError> => {
-      if (isAddress(safeAddress) && safeAPI) {
+    async (safeAddress: Address): Promise<FractalNode | WithError> => {
+      if (safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { safeAddress } }),
@@ -65,10 +64,7 @@ export const useLoadDAONode = () => {
             return { error: 'errorFailedSearch' };
           }
 
-          // safeAPI.getSafeData expects a checksummed address here, so we gotta do getAddress,
-          // even if `daoAddress` passes the isAddress check above
-          const checksummedAddress = getAddress(safeAddress);
-          const safeInfoWithGuard = await safeAPI.getSafeData(checksummedAddress);
+          const safeInfoWithGuard = await safeAPI.getSafeData(safeAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName: graphNodeInfo.daoName ?? (await getSafeName(safeAddress)),
@@ -85,7 +81,6 @@ export const useLoadDAONode = () => {
           return { error: 'errorInvalidSearch' };
         }
       } else {
-        // invalid address
         return { error: 'errorFailedSearch' };
       }
     },
