@@ -112,7 +112,6 @@
   "showLess": "Show Less",
   "show": "Show",
   "hide": "Hide",
-  "poweredBy": "Powered by",
   "goTo": "Go to",
   "none": "None",
   "ipfsLoadingErrorMessage": "Error fetching data from IPFS, please try again later.",

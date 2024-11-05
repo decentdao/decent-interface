@@ -149,12 +149,6 @@ export interface ITokenAccount {
   votingWeightString: string | undefined;
 }
 
-/**
- * @dev This interface represents the store for the Fractal DAO.
- * @param baseContracts - This object contains the base contracts for the Fractal DAO.
- * @param clients - This object contains the clients for the Fractal DAO.
- * @param dispatch - This object contains the dispatch functions for the Fractal DAO.
- */
 export interface FractalStore extends Fractal {
   action: {
     dispatch: Dispatch<FractalActions>;
@@ -343,4 +337,9 @@ export interface TransferDisplayData {
   transactionHash: string;
   tokenId: string;
   tokenInfo?: TokenInfoResponse;
+}
+
+export enum SortBy {
+  Newest = 'newest',
+  Oldest = 'oldest',
 }

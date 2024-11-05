@@ -8,6 +8,7 @@ import RemoveSignerModal from '../../SafeSettings/Signers/modals/RemoveSignerMod
 import DraggableDrawer from '../containers/DraggableDrawer';
 import { DAOSearch } from '../menus/DAOSearch';
 import AddStrategyPermissionModal from './AddStrategyPermissionModal';
+import { ConfirmDeleteStrategyModal } from './ConfirmDeleteStrategyModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
@@ -38,6 +39,7 @@ export enum ModalType {
   WARN_UNSAVED_CHANGES,
   WITHDRAW_PAYMENT,
   CONFIRM_CANCEL_PAYMENT,
+  CONFIRM_DELETE_STRATEGY,
 }
 
 export type CurrentModal = {
@@ -51,6 +53,7 @@ export type ModalPropsTypes = {
   [ModalType.WRAP_TOKEN]: {};
   [ModalType.UNWRAP_TOKEN]: {};
   [ModalType.ADD_PERMISSION]: {};
+  [ModalType.CONFIRM_DELETE_STRATEGY]: {};
   [ModalType.CONFIRM_URL]: { url: string };
   [ModalType.REMOVE_SIGNER]: {
     selectedSigner: Address;
@@ -258,6 +261,10 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         modalContent = <AddStrategyPermissionModal closeModal={closeModal} />;
         modalSize = 'xl';
         break;
+      case ModalType.CONFIRM_DELETE_STRATEGY:
+        modalContent = <ConfirmDeleteStrategyModal onClose={closeModal} />;
+        modalSize = 'xl';
+        break;
       case ModalType.NONE:
       default:
         modalTitle = '';
@@ -290,7 +297,8 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   if (
     current.type === ModalType.WITHDRAW_PAYMENT ||
     current.type === ModalType.CONFIRM_CANCEL_PAYMENT ||
-    current.type === ModalType.ADD_PERMISSION
+    current.type === ModalType.ADD_PERMISSION ||
+    current.type === ModalType.CONFIRM_DELETE_STRATEGY
   ) {
     display = (
       <>

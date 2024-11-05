@@ -35,5 +35,8 @@
   "addPermissionTitle": "Add Permission",
   "permissionCreateProposalsDescription": "Create proposals to the DAO.",
   "permissionComingSoonTitle": "Coming Soon",
-  "permissionComingSoonDescription": "Permissions for more features."
+  "permissionComingSoonDescription": "Permissions for more features.",
+  "areYouSure": "Are you sure?",
+  "nevermind": "Nevermind",
+  "deletePermission": "Delete Permission"
 }

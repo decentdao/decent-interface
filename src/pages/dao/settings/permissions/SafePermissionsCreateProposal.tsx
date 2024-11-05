@@ -28,6 +28,7 @@ export function SafePermissionsCreateProposal() {
   } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
   const openSelectAddPermissionModal = useDecentModal(ModalType.ADD_PERMISSION);
+  const openConfirmDeleteStrategyModal = useDecentModal(ModalType.CONFIRM_DELETE_STRATEGY);
 
   const [proposerThreshold, setProposerThreshold] = useState<BigIntValuePair>({
     bigintValue: BigInt(azoriusGovernance.votingStrategy?.proposerThreshold?.value ?? 0),
@@ -59,13 +60,8 @@ export function SafePermissionsCreateProposal() {
     handleClose();
   };
 
-  const handleDelete = () => {
-    // @todo: handle deleting permission
-    handleClose();
-  };
-
-  const handleSubmit = () => {
-    // @todo: handle proceeding with proposal creation
+  const handleCreateProposal = () => {
+    // @todo: handle proceeding with proposal creation for adjusting strategy
     handleClose();
   };
 
@@ -87,7 +83,7 @@ export function SafePermissionsCreateProposal() {
                 variant="ghost"
                 rightIcon={<Trash size={24} />}
                 padding={0}
-                onClick={handleDelete}
+                onClick={openConfirmDeleteStrategyModal}
                 color="red-1"
               >
                 {t('delete', { ns: 'common' })}
@@ -95,8 +91,6 @@ export function SafePermissionsCreateProposal() {
             </Flex>
           )}
         </NestedPageHeader>
-      </Show>
-      <Show below="md">
         <Card>
           <SettingsPermissionsStrategyForm
             proposerThreshold={proposerThreshold}
@@ -106,7 +100,7 @@ export function SafePermissionsCreateProposal() {
         <Flex justifyContent="flex-end">
           <Button
             variant="primary"
-            onClick={handleSubmit}
+            onClick={handleCreateProposal}
             mt={6}
           >
             {t('createProposal', { ns: 'modals' })}
@@ -143,6 +137,7 @@ export function SafePermissionsCreateProposal() {
                   color="red-1"
                   icon={<Trash size={24} />}
                   aria-label={t('delete', { ns: 'common' })}
+                  onClick={openConfirmDeleteStrategyModal}
                 />
               ) : (
                 <IconButton
@@ -166,7 +161,7 @@ export function SafePermissionsCreateProposal() {
             />
             <Button
               variant="primary"
-              onClick={handleSubmit}
+              onClick={handleCreateProposal}
               width="full"
               mt={6}
             >
