@@ -9,17 +9,7 @@ import './insights';
 import { useNetworkConfig } from './providers/NetworkConfig/NetworkConfigProvider';
 import Providers from './providers/Providers';
 import { router } from './router';
-
-declare global {
-  interface BigInt {
-    /** Convert BigInt to string form in JSON.stringify */
-    toJSON: () => string;
-  }
-}
-
-BigInt.prototype.toJSON = function () {
-  return this.toString();
-};
+import './utils/polyfills';
 
 function DecentRouterProvider() {
   const { addressPrefix } = useNetworkConfig();
