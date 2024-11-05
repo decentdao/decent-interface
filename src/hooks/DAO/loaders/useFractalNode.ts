@@ -38,6 +38,7 @@ export const useFractalNode = (
   const { chain } = useNetworkConfig();
   const { resetHatsStore } = useRolesStore();
 
+  // @todo: There's a near duplicate of this function in useLoadDAONode.ts. DRY?
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }) => {
       if (!safeAddress) return;

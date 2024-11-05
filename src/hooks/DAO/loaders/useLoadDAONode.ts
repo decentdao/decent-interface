@@ -24,6 +24,7 @@ export const useLoadDAONode = () => {
     },
   });
 
+  // @todo There's a near duplicate of this function in useFractalNode.ts. DRY?
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }, safeAddress: Address) => {
       const demo = loadDemoData(chain, safeAddress, result);
