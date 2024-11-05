@@ -6,8 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  Abi,
-  AbiFunction,
   Address,
   encodeFunctionData,
   encodePacked,
@@ -15,10 +13,7 @@ import {
   getContract,
   getCreate2Address,
   Hex,
-  hexToBigInt,
   keccak256,
-  sliceHex,
-  stringToBytes,
   zeroAddress,
 } from 'viem';
 import { usePublicClient } from 'wagmi';
@@ -72,27 +67,6 @@ async function uploadHatDescription(
   return `ipfs://${response.Hash}`;
 }
 
-function calculateInterfaceId(abi: Abi): Hex {
-  // Extract function selectors from ABI and convert each to BigInt for XOR
-  const selectors = (
-    abi.filter(item => item.type === 'function' && item.name && item.inputs) as AbiFunction[]
-  ) // Only consider valid functions
-    .map(func => {
-      // Construct the function signature, e.g., "version()" or "triggerStartNextTerm(TriggerStartArgs)"
-      const inputs = func.inputs.map(input => input.type).join(',');
-      const signature = `${func.name}(${inputs})`;
-      // Encode the signature to Uint8Array and then hash it with keccak256
-      const hash = keccak256(stringToBytes(signature));
-      // Slice the first 4 bytes to get the selector, then convert to BigInt for XOR
-      return hexToBigInt(sliceHex(hash, 0, 4));
-    });
-
-  // XOR all selectors to get the interface ID
-  const interfaceId = selectors.reduce((prev, curr) => prev ^ curr, BigInt(0));
-
-  // Convert the result to a zero-padded hex string, ensuring 4 bytes (8 hex characters)
-  return `0x${interfaceId.toString(16).padStart(8, '0')}`;
-}
 export default function useCreateRoles() {
   const {
     node: { safe, daoAddress, daoName },
@@ -519,8 +493,9 @@ export default function useCreateRoles() {
         abi: DecentAutonomousAdminTempAbi,
         client: publicClient,
       });
+      const DECENT_AUTONOMOUS_ADMIN_V1_INTERFACE_ID = '0x0ac4a8e8';
       return decentAutonomousAdminV1Contract.read.supportsInterface([
-        calculateInterfaceId(DecentAutonomousAdminTempAbi),
+        DECENT_AUTONOMOUS_ADMIN_V1_INTERFACE_ID,
       ]);
     },
     [publicClient],
@@ -533,15 +508,16 @@ export default function useCreateRoles() {
    * @returns an array of transactions to create a deploy Decent Autonomous Admin and mint a new hat
    */
   const prepareAdminHatTxs = useCallback(
-    (adminHatWearerAddress: Address | undefined, adminHatId: Hex, isAnyRoleTermed: boolean) => {
-      if (adminHatWearerAddress === undefined && !isAnyRoleTermed) {
+    async (
+      adminHatWearerAddress: Address | undefined,
+      adminHatId: Hex,
+      isAnyRoleTermed: boolean,
+    ) => {
+      if (!isAnyRoleTermed) {
         return [];
       }
 
-      if (
-        adminHatWearerAddress === undefined ||
-        !!isDecentAutonomousAdminV1(adminHatWearerAddress)
-      ) {
+      if (!!adminHatWearerAddress && (await isDecentAutonomousAdminV1(adminHatWearerAddress))) {
         return [];
       }
 
@@ -570,6 +546,7 @@ export default function useCreateRoles() {
         salt: salt,
         bytecodeHash: keccak256(encodePacked(['bytes'], [deployDecentAutonomousAdminV1Calldata])),
       });
+
       // @todo max supply check and increase if maxed
       const mintAdminHat = {
         targetAddress: hatsProtocol,
@@ -842,11 +819,11 @@ export default function useCreateRoles() {
       //     - allTxs.push(create new stream transactions datas)
 
       allTxs.push(
-        ...prepareAdminHatTxs(
+        ...(await prepareAdminHatTxs(
           hatsTree.adminHat.wearer,
           hatsTree.adminHat.id,
           modifiedHats.some(hat => hat.isTermed),
-        ),
+        )),
       );
 
       for (let index = 0; index < modifiedHats.length; index++) {
@@ -1092,6 +1069,18 @@ export default function useCreateRoles() {
                 targetAddress: adminHatWearer,
               });
             }
+          }
+          if (formHat.editedRole.fieldNames.includes('roleType')) {
+            // deploy new instance of election module
+            // add election module to eligibility
+            // toggle mutability
+            // ? Decent Sablier Mod
+            // flush streams
+            // cancel streams
+            // burn current hat wearer
+            // setNextTerm
+            // elect
+            // mint hat
           }
         } else {
           throw new Error('Invalid Edited Status');
