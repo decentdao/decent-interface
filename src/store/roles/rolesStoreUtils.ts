@@ -179,14 +179,17 @@ export const predictAccountAddress = async (params: {
     address: registryAddress,
     client: publicClient,
   });
-
-  return erc6551RegistryContract.read.account([
+  const predictedAddress = await erc6551RegistryContract.read.account([
     implementation,
     ERC6551_REGISTRY_SALT,
     chainId,
     tokenContract,
     tokenId,
   ]);
+  if (!(await publicClient.getBytecode({ address: predictedAddress }))) {
+    throw new DecentHatsError('Predicted address is not a contract');
+  }
+  return predictedAddress;
 };
 
 export const getCurrentTermStatus = async (
