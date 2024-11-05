@@ -1,11 +1,11 @@
 import { Flex, Icon } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Address } from 'viem';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { FractalNode, WithError, Node } from '../../../types';
+import { FractalNode, WithError } from '../../../types';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../../ui/cards/DAONodeInfoCard';
 
 /**
@@ -33,15 +33,6 @@ export function DaoHierarchyNode({
   const { loadDao } = useLoadDAONode();
   const { daoData } = useLoadDAOData(parentAddress, fractalNode);
 
-  // calculates the total number of descendants below the given node
-  const getTotalDescendants = useCallback((node: Node): number => {
-    let count = node.nodeHierarchy.childNodes.length;
-    node.nodeHierarchy.childNodes.forEach(child => {
-      count += getTotalDescendants(child);
-    });
-    return count;
-  }, []);
-
   useEffect(() => {
     if (safeAddress) {
       loadDao(safeAddress).then(_node => {
@@ -62,7 +53,7 @@ export function DaoHierarchyNode({
         }
       });
     }
-  }, [loadDao, safeAddress, depth, getTotalDescendants]);
+  }, [loadDao, safeAddress, depth]);
 
   return (
     <Flex
