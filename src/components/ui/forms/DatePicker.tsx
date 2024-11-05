@@ -46,7 +46,6 @@ function DateDisplayBox({ date }: { date: Date | undefined }) {
     </Flex>
   );
 }
-// RENAME: RoleTermEndDatePicker.tsx > DatePickerContainer
 
 function SelectedDateDisplay({ selectedDate }: { selectedDate: Date | undefined }) {
   return (
@@ -210,7 +209,7 @@ export function DatePicker({
           }
           onChange={(e: OnDateChangeValue) => {
             if (e instanceof Date) {
-              onChange?.(e);
+              onChange?.(new Date(e.setHours(0, 0, 0, 0)));
               onClose();
             }
           }}

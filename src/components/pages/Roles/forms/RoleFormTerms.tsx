@@ -26,7 +26,7 @@ import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import RoleTerm from '../RoleTerm';
 import { RoleFormTermStatus, RoleFormValues } from '../types';
 
-function RoleTermEndDateInput() {
+function RoleTermEndDateInput({ previousTermEndDate }: { previousTermEndDate: Date | undefined }) {
   const { t } = useTranslation('roles');
   return (
     <FormControl>
@@ -41,8 +41,7 @@ function RoleTermEndDateInput() {
             <DatePicker
               onChange={(date: Date) => setFieldValue(field.name, date)}
               disabled={false}
-              // @todo Set minDate to the end of the previous term
-              minDate={new Date()}
+              minDate={previousTermEndDate ?? new Date(new Date().setHours(0, 0, 0, 0))}
               maxDate={undefined}
               selectedDate={field.value}
             />
@@ -85,7 +84,15 @@ function RoleTermMemberInput() {
   );
 }
 
-function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: () => void }) {
+function RoleTermCreate({
+  onClose,
+  previousTermEndDate,
+  termIndex,
+}: {
+  termIndex: number;
+  previousTermEndDate: Date | undefined;
+  onClose: () => void;
+}) {
   const { t } = useTranslation('roles');
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const publicClient = usePublicClient();
@@ -157,7 +164,7 @@ function RoleTermCreate({ onClose, termIndex }: { termIndex: number; onClose: ()
         gap="1rem"
       >
         <RoleTermMemberInput />
-        <RoleTermEndDateInput />
+        <RoleTermEndDateInput previousTermEndDate={previousTermEndDate} />
         <Button
           isDisabled={!!errors.newRoleTerm}
           onClick={handleAddTerm}
@@ -346,6 +353,7 @@ export default function RoleFormTerms() {
         {values.newRoleTerm !== undefined && (
           <RoleTermCreate
             termIndex={roleFormTerms.length}
+            previousTermEndDate={roleFormTerms.pop()?.termEndDate}
             onClose={() => setFieldValue('newRoleTerm', undefined)}
           />
         )}
