@@ -53,9 +53,10 @@ type DecentRoleHatTerms = {
   nextTerm: RoleTerm | undefined;
   expiredTerms: RoleTerm[];
 };
-export interface DecentRoleHat extends DecentHat {
+export interface DecentRoleHat extends Omit<DecentHat, 'smartAddress'> {
   wearerAddress: Address;
   eligibility?: Address;
+  smartAddress?: Address;
   roleTerms: {
     allTerms: RoleTerm[];
     currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' | undefined }) | undefined;
@@ -381,21 +382,22 @@ export const sanitize = async (
     }
 
     const hatMetadata = getHatMetadata(rawHat);
-    // @todo What to do about this for termed roles?
-    const roleHatSmartAddress = await predictAccountAddress({
-      implementation: hatsAccountImplementation,
-      registryAddress: erc6551Registry,
-      tokenContract: hats,
-      chainId,
-      tokenId: BigInt(rawHat.id),
-      publicClient,
-    });
     const { roleTerms, isTermed } = await getRoleHatTerms(
       rawHat,
       hatsElectionsImplementation,
       publicClient,
     );
-
+    let roleHatSmartAddress: Address | undefined;
+    if (!isTermed) {
+      roleHatSmartAddress = await predictAccountAddress({
+        implementation: hatsAccountImplementation,
+        registryAddress: erc6551Registry,
+        tokenContract: hats,
+        chainId,
+        tokenId: BigInt(rawHat.id),
+        publicClient,
+      });
+    }
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',

@@ -42,12 +42,13 @@ export function RoleFormPaymentStreams() {
   const roleTerms = useMemo(() => {
     const terms =
       values.roleEditing?.roleTerms?.map(term => {
-        if (!term.termEndDate) {
+        if (!term.termEndDate || !term.nominee) {
           return undefined;
         }
         return {
           termEndDate: term.termEndDate,
           termNumber: term.termNumber,
+          nominee: term.nominee,
         };
       }) || [];
     return terms.filter(term => term !== undefined);

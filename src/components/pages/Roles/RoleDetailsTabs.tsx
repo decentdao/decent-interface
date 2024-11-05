@@ -25,12 +25,14 @@ function RolesDetailsPayments({
   payments,
   roleHatSmartAddress,
   roleHatWearerAddress,
+  roleHatId,
   roleTerms,
 }: {
   payments: (Omit<SablierPayment, 'contractAddress' | 'streamId'> & {
     contractAddress?: Address;
     streamId?: string;
   })[];
+  roleHatId: Hex | undefined;
   roleHatWearerAddress: Address | undefined;
   roleHatSmartAddress: Address | undefined;
   roleTerms: RoleTermDetailProp[];
@@ -74,6 +76,7 @@ function RolesDetailsPayments({
           key={index}
           payment={payment}
           roleHatSmartAddress={roleHatSmartAddress}
+          roleHatId={roleHatId}
           roleTerms={roleTerms}
           roleHatWearerAddress={roleHatWearerAddress}
           showWithdraw
@@ -150,6 +153,7 @@ export default function RoleDetailsTabs({
           <RolesDetailsPayments
             payments={sortedPayments}
             roleTerms={roleTerms.allTerms}
+            roleHatId={hatId}
             roleHatSmartAddress={roleHatSmartAddress}
             roleHatWearerAddress={roleHatWearerAddress}
           />

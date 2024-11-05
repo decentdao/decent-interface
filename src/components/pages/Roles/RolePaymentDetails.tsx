@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { TouchEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Address, getAddress } from 'viem';
+import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
@@ -100,7 +100,8 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 interface RolePaymentDetailsProps {
   roleHatWearerAddress?: Address;
   roleHatSmartAddress?: Address;
-  roleTerms: { termEndDate: Date; termNumber: number }[];
+  roleHatId?: Hex;
+  roleTerms: { termEndDate: Date; termNumber: number; nominee: string }[];
   payment: {
     streamId?: string;
     contractAddress?: Address;
@@ -131,6 +132,7 @@ export function RolePaymentDetails({
   showWithdraw,
   roleHatWearerAddress,
   roleHatSmartAddress,
+  roleHatId,
   showCancel,
   onCancel,
   roleTerms,
@@ -152,15 +154,26 @@ export function RolePaymentDetails({
     return false;
   }, [connectedAccount, showWithdraw, roleHatWearerAddress]);
 
+  const assignedTerm = useMemo(() => {
+    return roleTerms.find(term => term.termEndDate.getTime() === payment.endDate.getTime());
+  }, [payment.endDate, roleTerms]);
+
   const [modalType, props] = useMemo(() => {
     if (
       !payment.streamId ||
       !payment.contractAddress ||
       !roleHatWearerAddress ||
-      !roleHatSmartAddress ||
-      !publicClient
+      !publicClient ||
+      !roleHatId
     ) {
       return [ModalType.NONE] as const;
+    }
+    let recipient = roleHatWearerAddress;
+    if (assignedTerm) {
+      if (!assignedTerm.nominee) {
+        throw new Error('Assigned term nominee is missing');
+      }
+      recipient = getAddress(assignedTerm.nominee);
     }
     return [
       ModalType.WITHDRAW_PAYMENT,
@@ -170,16 +183,23 @@ export function RolePaymentDetails({
         paymentAssetDecimals: payment.asset.decimals,
         paymentStreamId: payment.streamId,
         paymentContractAddress: payment.contractAddress,
-        onSuccess: () =>
-          refreshWithdrawableAmount(roleHatSmartAddress, payment.streamId!, publicClient),
+        onSuccess: () => refreshWithdrawableAmount(roleHatId, payment.streamId!, publicClient),
         withdrawInformation: {
           withdrawableAmount: payment.withdrawableAmount,
-          roleHatWearerAddress,
+          recipient,
           roleHatSmartAddress,
         },
       },
     ] as const;
-  }, [payment, roleHatSmartAddress, roleHatWearerAddress, refreshWithdrawableAmount, publicClient]);
+  }, [
+    payment,
+    roleHatSmartAddress,
+    roleHatWearerAddress,
+    refreshWithdrawableAmount,
+    publicClient,
+    roleHatId,
+    assignedTerm,
+  ]);
 
   const withdraw = useDecentModal(modalType, props);
 
@@ -283,10 +303,6 @@ export function RolePaymentDetails({
       setShowInlineDelete(false);
     }
   }, [payment.isCancelling, showInlineDelete]);
-
-  const assignedTerm = useMemo(() => {
-    return roleTerms.find(term => term.termEndDate.getTime() === payment.endDate.getTime());
-  }, [payment.endDate, roleTerms]);
 
   return (
     <Flex

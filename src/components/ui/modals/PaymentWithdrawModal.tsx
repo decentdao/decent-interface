@@ -3,7 +3,7 @@ import { Download } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, encodeFunctionData, getContract } from 'viem';
-import { usePublicClient, useWalletClient } from 'wagmi';
+import { useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
@@ -31,20 +31,17 @@ export default function PaymentWithdrawModal({
   paymentAssetDecimals: number;
   paymentContractAddress?: Address;
   withdrawInformation: {
-    roleHatSmartAddress: Address;
-    roleHatWearerAddress: Address;
+    roleHatSmartAddress: Address | undefined;
+    recipient: Address;
     withdrawableAmount: bigint;
   };
   onSuccess: () => Promise<void>;
   onClose: () => void;
 }) {
-  const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const [contractCall, pendingTransaction] = useTransaction();
   const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
-  const { displayName: accountDisplayName } = useGetAccountName(
-    withdrawInformation.roleHatWearerAddress,
-  );
+  const { displayName: accountDisplayName } = useGetAccountName(withdrawInformation.recipient);
   const avatarURL = useAvatar(accountDisplayName);
   const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
   const { chain } = useNetworkConfig();
@@ -54,25 +51,33 @@ export default function PaymentWithdrawModal({
       paymentContractAddress &&
       paymentStreamId &&
       walletClient &&
-      publicClient &&
-      withdrawInformation.roleHatSmartAddress &&
-      withdrawInformation.roleHatWearerAddress
+      withdrawInformation.recipient
     ) {
-      const hatsAccountContract = getContract({
-        abi: HatsAccount1ofNAbi,
-        address: withdrawInformation.roleHatSmartAddress,
+      const sablierV2LockupLinearContract = getContract({
+        abi: SablierV2LockupLinearAbi,
+        address: paymentContractAddress,
         client: walletClient,
       });
       const bigIntStreamId = convertStreamIdToBigInt(paymentStreamId);
-      let hatsAccountCalldata = encodeFunctionData({
-        abi: SablierV2LockupLinearAbi,
-        functionName: 'withdrawMax',
-        args: [bigIntStreamId, withdrawInformation.roleHatWearerAddress],
-      });
 
       contractCall({
         contractFn: () => {
-          // @todo if termed, call withdrawMax directly
+          if (!withdrawInformation.roleHatSmartAddress) {
+            return sablierV2LockupLinearContract.write.withdrawMax([
+              bigIntStreamId,
+              withdrawInformation.recipient,
+            ]);
+          }
+          const hatsAccountCalldata = encodeFunctionData({
+            abi: SablierV2LockupLinearAbi,
+            functionName: 'withdrawMax',
+            args: [bigIntStreamId, withdrawInformation.recipient],
+          });
+          const hatsAccountContract = getContract({
+            abi: HatsAccount1ofNAbi,
+            address: withdrawInformation.roleHatSmartAddress,
+            client: walletClient,
+          });
           return hatsAccountContract.write.execute([
             paymentContractAddress,
             0n,
@@ -95,9 +100,8 @@ export default function PaymentWithdrawModal({
     paymentContractAddress,
     paymentStreamId,
     walletClient,
-    publicClient,
     withdrawInformation.roleHatSmartAddress,
-    withdrawInformation.roleHatWearerAddress,
+    withdrawInformation.recipient,
     contractCall,
     t,
     onSuccess,
@@ -196,12 +200,12 @@ export default function PaymentWithdrawModal({
             >
               <Box>
                 <Avatar
-                  address={withdrawInformation.roleHatWearerAddress}
+                  address={withdrawInformation.recipient}
                   url={avatarURL}
                   size={iconSize}
                 />
               </Box>
-              <Text textStyle="label-base">{withdrawInformation.roleHatWearerAddress}</Text>
+              <Text textStyle="label-base">{withdrawInformation.recipient}</Text>
             </Flex>
           </Flex>
           <Flex
