@@ -52,19 +52,19 @@ interface DefiPositionDetails {
   healthFactor?: number;
 }
 
-type DefiPositionTokenBalance = {
-  contractAddress?: string;
-  tokenType: 'supplied' | 'defi-token';
-} & TokenBalance;
-
 type DefiPosition = {
   label: string;
-  tokens: DefiPositionTokenBalance[];
+  tokens: TokenBalance &
+    {
+      contractAddress?: string;
+      tokenType: 'supplied' | 'defi-token';
+    }[];
   address?: string;
   balanceUsd: number;
   totalUnclaimedUsdValue: number;
   positionDetails?: DefiPositionDetails;
 };
+
 export type DefiBalance = {
   protocolName?: string;
   protocolId?: string;
