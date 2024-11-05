@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client';
-import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
+import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { formatUnits, getAddress, getContract } from 'viem';
