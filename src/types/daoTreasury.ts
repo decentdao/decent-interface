@@ -54,11 +54,10 @@ interface DefiPositionDetails {
 
 type DefiPosition = {
   label: string;
-  tokens: TokenBalance &
-    {
-      contractAddress?: string;
-      tokenType: 'supplied' | 'defi-token';
-    }[];
+  tokens: (TokenBalance & {
+    contractAddress?: string;
+    tokenType: 'supplied' | 'defi-token';
+  })[];
   address?: string;
   balanceUsd: number;
   totalUnclaimedUsdValue: number;
