@@ -8,6 +8,7 @@ export function DecentTooltip(props: TooltipProps) {
       borderRadius="8px"
       placement="top-start"
       backgroundColor="neutral-9"
+      color="black-0"
       padding="0.25rem 0.5rem"
       {...props}
     />
