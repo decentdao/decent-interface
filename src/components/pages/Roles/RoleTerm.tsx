@@ -14,7 +14,7 @@ import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
-import { DEFAULT_DATE_FORMAT } from '../../../utils';
+import { DEFAULT_DATE_TIME_FORMAT_NO_TZ } from '../../../utils';
 import Avatar from '../../ui/page/Header/Avatar';
 import { RoleFormTermStatus } from './types';
 
@@ -264,7 +264,7 @@ function RoleTermEndDate({ termEndDate }: { termEndDate: Date }) {
           textStyle="label-base"
           color="white"
         >
-          {format(termEndDate, DEFAULT_DATE_FORMAT)}
+          {format(termEndDate, DEFAULT_DATE_TIME_FORMAT_NO_TZ)}
         </Text>
       </Flex>
     </Flex>

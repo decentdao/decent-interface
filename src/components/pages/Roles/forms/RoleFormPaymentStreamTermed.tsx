@@ -17,7 +17,7 @@ import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, DETAILS_BOX_SHADOW } from '../../../../constants/common';
-import { DEFAULT_DATE_FORMAT } from '../../../../utils';
+import { DEFAULT_DATE_TIME_FORMAT_NO_TZ } from '../../../../utils';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { DatePicker } from '../../../ui/forms/DatePicker';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -174,7 +174,7 @@ function TermSelection({
           textStyle="label-small"
           color={defaultDateColor}
         >
-          {format(selectedTermEndDate, DEFAULT_DATE_FORMAT)}
+          {format(selectedTermEndDate, DEFAULT_DATE_TIME_FORMAT_NO_TZ)}
         </Text>
       </Flex>
     </Flex>
