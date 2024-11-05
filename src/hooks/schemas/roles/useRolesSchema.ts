@@ -119,7 +119,7 @@ export const useRolesSchema = () => {
           .when({
             is: (roleEditing: RoleHatFormValue) => roleEditing !== undefined,
             then: _roleEditingSchema =>
-              _roleEditingSchema.when('isTermed', {
+              _roleEditingSchema.when('roleEditing.isTermed', {
                 is: (isTermed: boolean) => isTermed,
                 then: _schema =>
                   _schema.shape({
