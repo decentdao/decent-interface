@@ -324,13 +324,20 @@ export default function RoleFormTerms() {
     }
   }, [values.newRoleTerm, setFieldValue, terms]);
 
+  const isAddButtonDisabled = useMemo(() => {
+    const isFirstTermBeingCreated = !!values.newRoleTerm || !roleFormTerms.length;
+    const isTermCreationPending = (roleHatTerms?.allTerms ?? []).length > roleFormTerms.length;
+    const canCreateNewTerm = terms.length == 2;
+    return isFirstTermBeingCreated || canCreateNewTerm || isTermCreationPending;
+  }, [values.newRoleTerm, roleFormTerms.length, roleHatTerms?.allTerms, terms.length]);
+
   return (
     <Box>
       <Button
         variant="secondary"
         size="sm"
         mb={4}
-        isDisabled={!!values.newRoleTerm || terms.length == 2 || !roleFormTerms.length}
+        isDisabled={isAddButtonDisabled}
         onClick={() => {
           setFieldValue('newRoleTerm', {
             nominee: '',
