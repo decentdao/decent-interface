@@ -51,8 +51,10 @@ export function SafePermissionsSettingsPage() {
       <Show below="md">
         <NestedPageHeader
           title={t('permissionsTitle')}
-          backButtonText={t('settings')}
-          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, safe.address)}
+          backButton={{
+            text: t('settings'),
+            href: DAO_ROUTES.settings.relative(addressPrefix, safe.address),
+          }}
         >
           {!linearVotingErc20Address && (
             <Flex

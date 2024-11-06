@@ -127,8 +127,10 @@ export function SafeGeneralSettingsPage() {
       <Show below="md">
         <NestedPageHeader
           title={t('daoSettingsGeneral')}
-          backButtonText={t('settings')}
-          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
+          backButton={{
+            text: t('settings'),
+            href: DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress),
+          }}
         />
       </Show>
       {!!safe ? (
