@@ -5,7 +5,7 @@ import {
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
-import { getAddress, zeroAddress } from 'viem';
+import { getAddress } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';

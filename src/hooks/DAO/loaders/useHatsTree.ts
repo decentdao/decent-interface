@@ -34,7 +34,7 @@ const useHatsTree = () => {
       hatsProtocol,
       erc6551Registry,
       hatsAccount1ofNMasterCopy: hatsAccountImplementation,
-      hatsElectionsEligibilityImplementationAddress: hatsElectionsImplementation,
+      hatsElectionsEligibilityMasterCopy: hatsElectionsImplementation,
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
