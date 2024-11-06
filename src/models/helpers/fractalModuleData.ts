@@ -9,6 +9,7 @@ import {
   encodeFunctionData,
 } from 'viem';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
+import { ZodiacModuleProxyFactoryAbi } from '../../assets/abi/ZodiacModuleProxyFactoryAbi';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 import { generateContractByteCodeLinear, generateSalt } from './utils';
@@ -44,7 +45,7 @@ export const fractalModuleData = (
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
 
   const deployFractalModuleTx = buildContractCall(
-    abis.ModuleProxyFactory,
+    ZodiacModuleProxyFactoryAbi,
     moduleProxyFactoryAddress,
     'deployModule',
     [fractalModuleMasterCopyAddress, fractalModuleCalldata, saltNum],

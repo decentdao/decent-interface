@@ -12,8 +12,16 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CaretDown, CheckCircle } from '@phosphor-icons/react';
-import { Field, FieldInputProps, FieldProps, FormikErrors, useFormikContext } from 'formik';
+import {
+  Field,
+  FieldMetaProps,
+  FieldInputProps,
+  FormikErrors,
+  useFormikContext,
+  FormikProps,
+} from 'formik';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
@@ -26,7 +34,7 @@ import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues } from '../types';
 
-function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; formIndex: number }) {
+function AssetsList({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation('roles');
   const {
     treasury: { assetsFungible },
@@ -72,12 +80,11 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
             justifyContent="space-between"
             w="full"
             onClick={() => {
-              setFieldValue(field.name, {
-                address: asset.tokenAddress,
+              setFieldValue(`roleEditing.payments.${formIndex}.asset`, {
+                name: asset.name,
+                address: getAddress(asset.tokenAddress),
                 symbol: asset.symbol,
-                logo: asset.logo,
-                balance: asset.balance,
-                balanceFormatted: asset.balanceFormatted,
+                logo: asset.logo ?? '',
                 decimals: asset.decimals,
               });
             }}
@@ -152,8 +159,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         my="0.5rem"
         isDisabled={disabled}
       >
-        <Field name={`roleEditing.payments[${formIndex}].asset`}>
-          {({ field }: FieldProps<string, RoleFormValues>) => (
+        <Field name={`roleEditing.payments.${formIndex}.asset`}>
+          {() => (
             <Menu
               placement="bottom-end"
               offset={[0, 8]}
@@ -233,10 +240,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                         padding="0.25rem"
                         mt="-1rem"
                       >
-                        <AssetsList
-                          field={field}
-                          formIndex={formIndex}
-                        />
+                        <AssetsList formIndex={formIndex} />
                       </Flex>
                     </DraggableDrawer>
                   </Show>
@@ -266,10 +270,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                           mx="-0.25rem"
                           width="calc(100% + 0.5rem)"
                         />
-                        <AssetsList
-                          field={field}
-                          formIndex={formIndex}
-                        />
+                        <AssetsList formIndex={formIndex} />
                       </EaseOutComponent>
                     </MenuList>
                   </Show>
@@ -283,12 +284,16 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         my="1rem"
         isDisabled={disabled}
       >
-        <Field name={`roleEditing.payments[${formIndex}].amount`}>
+        <Field name={`roleEditing.payments.${formIndex}.amount`}>
           {({
             field,
             meta,
             form: { setFieldTouched },
-          }: FieldProps<BigIntValuePair, RoleFormValues>) => {
+          }: {
+            field: FieldInputProps<BigIntValuePair>;
+            meta: FieldMetaProps<BigIntValuePair>;
+            form: FormikProps<RoleFormValues>;
+          }) => {
             const paymentAmountBigIntError = meta.error as FormikErrors<BigIntValuePair>;
             const paymentAmountBigIntTouched = meta.touched;
             const inputDisabled = !values?.roleEditing?.payments?.[formIndex]?.asset || disabled;
@@ -306,11 +311,11 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   value={field.value?.bigintValue}
                   parentFormikValue={values?.roleEditing?.payments?.[formIndex]?.amount}
                   onChange={valuePair => {
-                    setFieldValue(field.name, valuePair, true);
+                    setFieldValue(`roleEditing.payments.${formIndex}.amount`, valuePair, true);
                   }}
                   decimalPlaces={values?.roleEditing?.payments?.[formIndex]?.asset?.decimals}
                   onBlur={() => {
-                    setFieldTouched(field.name, true);
+                    setFieldTouched(`roleEditing.payments.${formIndex}.amount`, true);
                   }}
                   cursor={disabled ? 'not-allowed' : 'pointer'}
                   placeholder="0"

@@ -80,10 +80,11 @@ export interface HatStruct {
   imageURI: string;
   isMutable: boolean; // true
   wearer: Address;
+  termEndDateTs: 0n;
 }
 
 export interface HatStructWithPayments extends HatStruct {
-  sablierParams: {
+  sablierStreamsParams: {
     sablier: Address;
     sender: Address;
     totalAmount: bigint;
@@ -117,13 +118,13 @@ export interface RoleHatFormValueEdited extends RoleHatFormValue {
   editedRole: EditedRole;
 }
 
-export interface RoleFormValues {
+export type RoleFormValues = {
   proposalMetadata: CreateProposalMetadata;
   hats: RoleHatFormValue[];
   roleEditing?: RoleHatFormValue;
   customNonce?: number;
   actions: SendAssetsData[];
-}
+};
 
 export type PreparedNewStreamData = {
   recipient: Address;

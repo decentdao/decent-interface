@@ -1,4 +1,4 @@
-import { Text, Box, Button, Flex, Tooltip } from '@chakra-ui/react';
+import { Text, Box, Button, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import { ExtendedSnapshotProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
+import { DecentTooltip } from '../../ui/DecentTooltip';
 import ContentBox from '../../ui/containers/ContentBox';
 import ExternalLink from '../../ui/links/ExternalLink';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
@@ -117,13 +118,13 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
             {t('votingPower')}
           </Text>
           {showVotingPower ? (
-            <Tooltip
+            <DecentTooltip
               label={t('votingPowerTooltip')}
               placement="left"
               maxW={TOOLTIP_MAXW}
             >
               {ShowVotingPowerButton}
-            </Tooltip>
+            </DecentTooltip>
           ) : (
             ShowVotingPowerButton
           )}
