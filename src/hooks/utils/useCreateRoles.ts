@@ -1,4 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
+import { HATS_MODULES_FACTORY_ADDRESS } from '@hatsprotocol/modules-sdk';
 import { FormikHelpers } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +18,6 @@ import {
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
-import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
@@ -40,11 +40,15 @@ export default function useCreateRoles() {
     chain,
     contracts: {
       hatsProtocol,
-      decentHatsMasterCopy,
+      decentHatsCreationModule,
+      decentHatsModificationModule,
       hatsAccount1ofNMasterCopy,
       erc6551Registry,
       keyValuePairs,
       sablierV2LockupLinear,
+      zodiacModuleProxyFactory,
+      decentAutonomousAdminV1MasterCopy,
+      hatsElectionsEligibilityMasterCopy,
     },
   } = useNetworkConfig();
 
@@ -89,6 +93,7 @@ export default function useCreateRoles() {
         imageURI: '',
         isMutable: true,
         wearer: wearer,
+        termEndDateTs: 0n,
       };
 
       return newHat;
@@ -117,7 +122,7 @@ export default function useCreateRoles() {
 
       const newHatWithPayments: HatStructWithPayments = {
         ...newHat,
-        sablierParams: payments.map(payment => ({
+        sablierStreamsParams: payments.map(payment => ({
           sablier: sablierV2LockupLinear,
           sender: safeAddress,
           totalAmount: payment.totalAmount,
@@ -205,21 +210,21 @@ export default function useCreateRoles() {
     [publicClient, hatsAccount1ofNMasterCopy, chain.id, hatsProtocol, erc6551Registry],
   );
 
-  const getEnableDisableDecentHatsModuleData = useCallback(() => {
+  const getEnableDisableDecentHatsModuleData = useCallback((moduleAddress: Address) => {
     const enableDecentHatsModuleData = encodeFunctionData({
       abi: GnosisSafeL2,
       functionName: 'enableModule',
-      args: [decentHatsMasterCopy],
+      args: [moduleAddress],
     });
 
     const disableDecentHatsModuleData = encodeFunctionData({
       abi: GnosisSafeL2,
       functionName: 'disableModule',
-      args: [SENTINEL_MODULE, decentHatsMasterCopy],
+      args: [SENTINEL_MODULE, moduleAddress],
     });
 
     return { enableDecentHatsModuleData, disableDecentHatsModuleData };
-  }, [decentHatsMasterCopy]);
+  }, []);
 
   const prepareCreateTopHatProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
@@ -228,7 +233,7 @@ export default function useCreateRoles() {
       }
 
       const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
-        getEnableDisableDecentHatsModuleData();
+        getEnableDisableDecentHatsModuleData(decentHatsCreationModule);
 
       const topHatDetails = await uploadHatDescription(
         hatsDetailsBuilder({
@@ -243,36 +248,37 @@ export default function useCreateRoles() {
         }),
       );
 
-      const adminHat: HatStructWithPayments = {
-        maxSupply: 1,
-        details: adminHatDetails,
-        imageURI: '',
-        isMutable: true,
-        wearer: zeroAddress,
-        sablierParams: [],
-      };
-
       const addedHats = await createHatStructsForNewTreeFromRolesFormValues(modifiedHats);
 
       const createAndDeclareTreeData = encodeFunctionData({
-        abi: abis.DecentHats_0_1_0,
+        abi: abis.DecentHatsCreationModule,
         functionName: 'createAndDeclareTree',
         args: [
           {
             hatsProtocol,
+            erc6551Registry,
+            hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
+            moduleProxyFactory: zodiacModuleProxyFactory,
+            keyValuePairs,
+            decentAutonomousAdminImplementation: decentAutonomousAdminV1MasterCopy,
             hatsAccountImplementation: hatsAccount1ofNMasterCopy,
-            registry: erc6551Registry,
-            keyValuePairs: getAddress(keyValuePairs),
-            topHatDetails,
-            topHatImageURI: '',
-            adminHat,
+            hatsElectionsEligibilityImplementation: hatsElectionsEligibilityMasterCopy,
+            topHat: {
+              details: topHatDetails,
+              imageURI: '',
+            },
+            adminHat: {
+              details: adminHatDetails,
+              imageURI: '',
+              isMutable: true,
+            },
             hats: addedHats,
           },
         ],
       });
 
       return {
-        targets: [safeAddress, decentHatsMasterCopy, safeAddress],
+        targets: [safeAddress, decentHatsCreationModule, safeAddress],
         calldatas: [
           enableDecentHatsModuleData,
           createAndDeclareTreeData,
@@ -293,7 +299,10 @@ export default function useCreateRoles() {
       hatsAccount1ofNMasterCopy,
       erc6551Registry,
       keyValuePairs,
-      decentHatsMasterCopy,
+      decentHatsCreationModule,
+      decentAutonomousAdminV1MasterCopy,
+      hatsElectionsEligibilityMasterCopy,
+      zodiacModuleProxyFactory,
     ],
   );
 
@@ -327,41 +336,33 @@ export default function useCreateRoles() {
       );
 
       const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
-        getEnableDisableDecentHatsModuleData();
+        getEnableDisableDecentHatsModuleData(decentHatsModificationModule);
 
       const createNewRoleData = encodeFunctionData({
-        abi: abis.DecentHats_0_1_0,
-        functionName: 'createRoleHat',
+        abi: abis.DecentHatsModificationModule,
+        functionName: 'createRoleHats',
         args: [
-          hatsProtocol,
-          BigInt(hatsTree.adminHat.id),
-          hatStruct,
-          BigInt(hatsTree.topHat.id),
-          hatsTree.topHat.smartAddress,
-          erc6551Registry,
-          hatsAccount1ofNMasterCopy,
-          ERC6551_REGISTRY_SALT,
+          {
+            hatsProtocol,
+            erc6551Registry,
+            hatsAccountImplementation: hatsAccount1ofNMasterCopy,
+            topHatId: BigInt(hatsTree.topHat.id),
+            topHatAccount: hatsTree.topHat.smartAddress,
+            hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
+            hatsElectionsEligibilityImplementation: hatsElectionsEligibilityMasterCopy,
+            adminHatId: BigInt(hatsTree.adminHat.id),
+            hats: [hatStruct],
+          },
         ],
       });
 
-      // Transfer top hat to the DecentHats module so it is authorised to create hats on the tree
-      const transferTopHatToDecentHatsData = encodeFunctionData({
-        abi: HatsAbi,
-        functionName: 'transferHat',
-        args: [BigInt(hatsTree.topHat.id), safeAddress, decentHatsMasterCopy],
-      });
-
       return [
-        {
-          targetAddress: hatsProtocol,
-          calldata: transferTopHatToDecentHatsData,
-        },
         {
           targetAddress: safeAddress,
           calldata: enableDecentHatsModuleData,
         },
         {
-          targetAddress: decentHatsMasterCopy,
+          targetAddress: decentHatsModificationModule,
           calldata: createNewRoleData,
         },
         {
@@ -374,12 +375,13 @@ export default function useCreateRoles() {
       hatsTree,
       safeAddress,
       createHatStructWithPayments,
-      parseSablierPaymentsFromFormRolePayments,
-      getEnableDisableDecentHatsModuleData,
-      hatsProtocol,
+      decentHatsModificationModule,
       erc6551Registry,
+      getEnableDisableDecentHatsModuleData,
       hatsAccount1ofNMasterCopy,
-      decentHatsMasterCopy,
+      hatsElectionsEligibilityMasterCopy,
+      hatsProtocol,
+      parseSablierPaymentsFromFormRolePayments,
     ],
   );
 

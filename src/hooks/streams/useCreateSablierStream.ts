@@ -18,7 +18,7 @@ export function convertStreamIdToBigInt(streamId: string) {
 
 export default function useCreateSablierStream() {
   const {
-    contracts: { sablierV2LockupLinear, sablierV2Batch, decentSablierMasterCopy },
+    contracts: { sablierV2LockupLinear, sablierV2Batch, decentSablierStreamManagementModule },
   } = useNetworkConfig();
   const {
     node: { safe },
@@ -91,17 +91,17 @@ export default function useCreateSablierStream() {
       const enableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'enableModule',
-        args: [decentSablierMasterCopy],
+        args: [decentSablierStreamManagementModule],
       });
 
       const disableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'disableModule',
-        args: [SENTINEL_MODULE, decentSablierMasterCopy],
+        args: [SENTINEL_MODULE, decentSablierStreamManagementModule],
       });
 
       const withdrawMaxFromStreamData = encodeFunctionData({
-        abi: abis.DecentSablierStreamManagement,
+        abi: abis.DecentSablierStreamManagementModule,
         functionName: 'withdrawMaxFromStream',
         args: [sablierV2LockupLinear, smartAccount, convertStreamIdToBigInt(streamId), to],
       });
@@ -112,7 +112,7 @@ export default function useCreateSablierStream() {
           calldata: enableModuleData,
         },
         {
-          targetAddress: decentSablierMasterCopy,
+          targetAddress: decentSablierStreamManagementModule,
           calldata: withdrawMaxFromStreamData,
         },
         {
@@ -121,7 +121,7 @@ export default function useCreateSablierStream() {
         },
       ];
     },
-    [safeAddress, decentSablierMasterCopy, sablierV2LockupLinear],
+    [safeAddress, decentSablierStreamManagementModule, sablierV2LockupLinear],
   );
 
   const prepareCancelStreamTxs = useCallback(
@@ -133,17 +133,17 @@ export default function useCreateSablierStream() {
       const enableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'enableModule',
-        args: [decentSablierMasterCopy],
+        args: [decentSablierStreamManagementModule],
       });
 
       const disableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'disableModule',
-        args: [SENTINEL_MODULE, decentSablierMasterCopy],
+        args: [SENTINEL_MODULE, decentSablierStreamManagementModule],
       });
 
       const cancelStreamData = encodeFunctionData({
-        abi: abis.DecentSablierStreamManagement,
+        abi: abis.DecentSablierStreamManagementModule,
         functionName: 'cancelStream',
         args: [sablierV2LockupLinear, convertStreamIdToBigInt(streamId)],
       });
@@ -154,7 +154,7 @@ export default function useCreateSablierStream() {
           calldata: enableModuleData,
         },
         {
-          targetAddress: decentSablierMasterCopy,
+          targetAddress: decentSablierStreamManagementModule,
           calldata: cancelStreamData,
         },
         {
@@ -163,7 +163,7 @@ export default function useCreateSablierStream() {
         },
       ];
     },
-    [safeAddress, decentSablierMasterCopy, sablierV2LockupLinear],
+    [safeAddress, decentSablierStreamManagementModule, sablierV2LockupLinear],
   );
 
   const prepareBatchLinearStreamCreation = useCallback(
