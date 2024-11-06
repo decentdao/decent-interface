@@ -38,43 +38,39 @@ export const useFractalNode = (
   const { chain } = useNetworkConfig();
   const { resetHatsStore } = useRolesStore();
 
-  // @todo: There's a near duplicate of this function in useLoadDAONode.ts. DRY?
-  const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }) => {
-      if (!safeAddress) return;
-      const demo = loadDemoData(chain, safeAddress, result);
-      if (!demo.data) {
-        return;
-      }
-      const { daos } = demo.data;
-      const dao = daos[0];
-      if (dao) {
-        const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
-
-        const currentNode: Node = {
-          nodeHierarchy: {
-            parentAddress,
-            childNodes: mapChildNodes(dao as DAO),
-          },
-          daoName: name as string,
-          address: safeAddress,
-          daoSnapshotENS: snapshotENS as string,
-          proposalTemplatesHash: proposalTemplatesHash as string,
-        };
-        return currentNode;
-      }
-      return;
-    },
-    [chain, safeAddress],
-  );
-
   const { subgraph } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
     variables: { safeAddress },
     onCompleted: async data => {
       if (!safeAddress) return;
-      const graphNodeInfo = formatDAOQuery({ data });
+
+      const getNodeInfo = (result: { data?: DAOQueryQuery }) => {
+        const demo = loadDemoData(chain, safeAddress, result);
+        if (!demo.data) {
+          return;
+        }
+        const { daos } = demo.data;
+        const dao = daos[0];
+        if (dao) {
+          const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
+
+          const currentNode: Node = {
+            nodeHierarchy: {
+              parentAddress,
+              childNodes: mapChildNodes(dao as DAO),
+            },
+            daoName: name as string,
+            address: safeAddress,
+            daoSnapshotENS: snapshotENS as string,
+            proposalTemplatesHash: proposalTemplatesHash as string,
+          };
+          return currentNode;
+        }
+        return;
+      };
+
+      const graphNodeInfo = getNodeInfo({ data });
       const daoName = graphNodeInfo?.daoName ?? (await getSafeName(safeAddress));
 
       action.dispatch({
