@@ -1,7 +1,7 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { HatsModulesClient, HATS_MODULES_FACTORY_ADDRESS } from '@hatsprotocol/modules-sdk';
+import { HATS_MODULES_FACTORY_ADDRESS } from '@hatsprotocol/modules-sdk';
 import { FormikHelpers } from 'formik';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -95,16 +95,6 @@ export default function useCreateRoles() {
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
   const navigate = useNavigate();
-
-  const hatsModulesClient = useMemo(() => {
-    if (!publicClient) {
-      return null;
-    }
-    const client = new HatsModulesClient({
-      publicClient,
-    });
-    return client;
-  }, [publicClient]);
 
   const createHatStruct = useCallback(
     async (
@@ -306,10 +296,6 @@ export default function useCreateRoles() {
         throw new Error('Can not create top hat without DAO Address');
       }
 
-      if (!hatsModulesClient) {
-        throw new Error('Cannot create Roles proposal without hatsModulesClient');
-      }
-
       const { enableDecentHatsModuleData, disableDecentHatsModuleData } =
         getEnableDisableDecentHatsModuleData(decentHatsCreationModule);
 
@@ -336,13 +322,6 @@ export default function useCreateRoles() {
         isMutable: true,
       };
 
-      await hatsModulesClient.prepare();
-      const module = hatsModulesClient.getModuleByImplementation(
-        hatsElectionsEligibilityMasterCopy,
-      );
-      if (!module) {
-        throw new Error('Could not find module');
-      }
       const addedHats = await createHatStructsForNewTreeFromRolesFormValues(modifiedHats);
       const createAndDeclareTreeData = encodeFunctionData({
         abi: abis.DecentHatsCreationModule,
@@ -350,10 +329,10 @@ export default function useCreateRoles() {
         args: [
           {
             hatsProtocol,
-            erc6551Registry: erc6551Registry,
+            erc6551Registry,
             hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
             moduleProxyFactory: zodiacModuleProxyFactory,
-            keyValuePairs: getAddress(keyValuePairs),
+            keyValuePairs,
             decentAutonomousAdminImplementation: decentAutonomousAdminV1MasterCopy,
             hatsAccountImplementation: hatsAccount1ofNMasterCopy,
             hatsElectionsEligibilityImplementation: hatsElectionsEligibilityMasterCopy,
@@ -377,7 +356,6 @@ export default function useCreateRoles() {
     },
     [
       daoAddress,
-      hatsModulesClient,
       getEnableDisableDecentHatsModuleData,
       decentHatsCreationModule,
       daoName,
