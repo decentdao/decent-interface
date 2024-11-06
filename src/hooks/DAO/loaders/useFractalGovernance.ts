@@ -44,34 +44,41 @@ export const useFractalGovernance = () => {
       const { daos } = data;
       const dao = daos[0];
 
-      if (dao) {
-        const { proposalTemplatesHash } = dao;
-        if (proposalTemplatesHash) {
-          const proposalTemplates: ProposalTemplate[] = await ipfsClient.cat(proposalTemplatesHash);
-          if (proposalTemplates) {
-            const mappedProposalTemplates = proposalTemplates.map(proposalTemplate => ({
-              ...proposalTemplate,
-              transactions: proposalTemplate.transactions.map(transaction => ({
-                ...transaction,
-                ethValue: {
-                  bigintValue: BigInt(transaction.ethValue.bigintValue || 0n),
-                  value: transaction.ethValue.value ?? '0',
-                },
-              })),
-            }));
+      const { proposalTemplatesHash } = dao;
 
-            action.dispatch({
-              type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-              payload: mappedProposalTemplates,
-            });
-            return;
-          }
-        }
+      if (!proposalTemplatesHash) {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+          payload: [],
+        });
+        return;
       }
+
+      const proposalTemplates: ProposalTemplate[] | undefined =
+        await ipfsClient.cat(proposalTemplatesHash);
+
+      if (!proposalTemplates) {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+          payload: [],
+        });
+        return;
+      }
+
+      const mappedProposalTemplates = proposalTemplates.map(proposalTemplate => ({
+        ...proposalTemplate,
+        transactions: proposalTemplate.transactions.map(transaction => ({
+          ...transaction,
+          ethValue: {
+            bigintValue: BigInt(transaction.ethValue.bigintValue || 0n),
+            value: transaction.ethValue.value ?? '0',
+          },
+        })),
+      }));
 
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-        payload: [],
+        payload: mappedProposalTemplates,
       });
     },
     context: {
