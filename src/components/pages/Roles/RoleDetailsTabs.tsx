@@ -86,27 +86,6 @@ function RolesDetailsPayments({
   );
 }
 
-function RolesDetailsTerms({
-  hatId,
-  currentTerm,
-  nextTerm,
-  expiredTerms,
-}: {
-  hatId: Hex | undefined;
-  nextTerm: RoleTermDetailProp | undefined;
-  currentTerm: CurrentTermProp | undefined;
-  expiredTerms: RoleTermDetailProp[];
-}) {
-  return (
-    <RoleTermDetails
-      hatId={hatId}
-      currentTerm={currentTerm}
-      nextTerm={nextTerm}
-      expiredTerms={expiredTerms}
-    />
-  );
-}
-
 export default function RoleDetailsTabs({
   roleTerms,
   hatId,
@@ -141,7 +120,7 @@ export default function RoleDetailsTabs({
       <TabPanels mt={4}>
         {isFeatureEnabled('TERMED_ROLES') && (
           <TabPanel>
-            <RolesDetailsTerms
+            <RoleTermDetails
               hatId={hatId}
               currentTerm={roleTerms.currentTerm}
               nextTerm={roleTerms.nextTerm}
