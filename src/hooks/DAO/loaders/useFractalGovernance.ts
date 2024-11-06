@@ -70,6 +70,7 @@ export const useFractalGovernance = () => {
         transactions: proposalTemplate.transactions.map(transaction => ({
           ...transaction,
           ethValue: {
+            // bigintValue was serialized as a string, so we need to convert it back to a bigint
             bigintValue: BigInt(transaction.ethValue.bigintValue || 0n),
             value: transaction.ethValue.value ?? '0',
           },
