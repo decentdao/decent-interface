@@ -177,21 +177,13 @@ const contractTests: ContractFunctionTest[] = [
   },
   {
     abi: combineAbis(abis.VotesERC20, abis.VotesERC20Wrapper),
-    functionNames: ['DOMAIN_SEPARATOR', 'decimals', 'name', 'owner', 'symbol', 'totalSupply'],
+    functionNames: ['decimals', 'name', 'owner', 'symbol', 'totalSupply'],
     revertFunctionNames: ['underlying'],
     resultKey: 'isVotesErc20',
   },
   {
     abi: abis.VotesERC20Wrapper,
-    functionNames: [
-      'DOMAIN_SEPARATOR',
-      'decimals',
-      'name',
-      'owner',
-      'symbol',
-      'totalSupply',
-      'underlying',
-    ],
+    functionNames: ['decimals', 'name', 'owner', 'symbol', 'totalSupply', 'underlying'],
     resultKey: 'isVotesErc20Wrapper',
   },
 ];
