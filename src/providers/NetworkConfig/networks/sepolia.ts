@@ -58,7 +58,6 @@ export const sepoliaConfig: NetworkConfig = {
     ),
 
     zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
-    zodiacModuleProxyFactoryOld: getAddress(a.ModuleProxyFactory),
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
     linearVotingErc20WrappedMasterCopy: getAddress(a.LinearERC20WrappedVoting),
@@ -79,19 +78,19 @@ export const sepoliaConfig: NetworkConfig = {
 
     claimErc20MasterCopy: getAddress(a.ERC20Claim),
 
+    decentAutonomousAdminV1MasterCopy: getAddress(a.DecentAutonomousAdminV1),
+
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
-    // @todo update addresses when contracts are deployed
-    decentHatsCreationModule: getAddress('0xA7e43c376860Cc398005313F6C1fa2CB15F8978f'),
-    decentAutonomousAdminV1ImplementationAddress: getAddress(
-      '0xbb6d4A16480C81E32bd5284A728DedEd5a439a81',
-    ),
-    decentSablierStreamManagementModule: getAddress('0x633bde1C391E51E7Ee6D04CA707481C76537818F'),
-    decentHatsModificationModule: '0xfB59Ed9Ae3b6351854839e44a9ACd008BFa3847C',
+
+    decentHatsCreationModule: getAddress(a.DecentHatsCreationModule),
+    decentHatsModificationModule: getAddress(a.DecentHatsModificationModule),
+    decentSablierStreamManagementModule: getAddress(a.DecentSablierStreamManagementModule),
 
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
+    hatsElectionsEligibilityMasterCopy: '0xd3b916a8F0C4f9D1d5B6Af29c3C012dbd4f3149E',
     sablierV2Batch: '0x04A9c14b7a000640419aD5515Db4eF4172C00E31',
     sablierV2LockupDynamic: '0x73BB6dD3f5828d60F8b3dBc8798EB10fbA2c5636',
     sablierV2LockupTranched: '0x3a1beA13A8C24c0EA2b8fAE91E4b2762A59D7aF5',

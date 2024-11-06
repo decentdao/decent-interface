@@ -99,7 +99,7 @@ export default function useCreateSablierStream() {
       });
 
       const withdrawMaxFromStreamData = encodeFunctionData({
-        abi: abis.DecentSablierStreamManagement,
+        abi: abis.DecentSablierStreamManagementModule,
         functionName: 'withdrawMaxFromStream',
         args: [sablierV2LockupLinear, smartAccount, convertStreamIdToBigInt(streamId), to],
       });
@@ -141,7 +141,7 @@ export default function useCreateSablierStream() {
       });
 
       const cancelStreamData = encodeFunctionData({
-        abi: abis.DecentSablierStreamManagement,
+        abi: abis.DecentSablierStreamManagementModule,
         functionName: 'cancelStream',
         args: [sablierV2LockupLinear, convertStreamIdToBigInt(streamId)],
       });

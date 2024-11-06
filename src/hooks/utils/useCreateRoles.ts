@@ -33,7 +33,6 @@ import {
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
-import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
@@ -77,15 +76,15 @@ export default function useCreateRoles() {
     chain,
     contracts: {
       hatsProtocol,
+      decentHatsCreationModule,
+      decentHatsModificationModule,
       hatsAccount1ofNMasterCopy,
-      hatsElectionsEligibilityImplementationAddress,
       erc6551Registry,
       keyValuePairs,
       sablierV2LockupLinear,
-      decentHatsCreationModule,
-      decentAutonomousAdminV1ImplementationAddress,
-      decentHatsModificationModule,
       zodiacModuleProxyFactory,
+      decentAutonomousAdminV1MasterCopy,
+      hatsElectionsEligibilityMasterCopy,
     },
   } = useNetworkConfig();
 
@@ -340,15 +339,14 @@ export default function useCreateRoles() {
 
       await hatsModulesClient.prepare();
       const module = hatsModulesClient.getModuleByImplementation(
-        hatsElectionsEligibilityImplementationAddress,
+        hatsElectionsEligibilityMasterCopy,
       );
       if (!module) {
         throw new Error('Could not find module');
       }
       const addedHats = await createHatStructsForNewTreeFromRolesFormValues(modifiedHats);
       const createAndDeclareTreeData = encodeFunctionData({
-        // @todo replace with published abi from package
-        abi: DecentHatsTempAbi,
+        abi: abis.DecentHatsCreationModule,
         functionName: 'createAndDeclareTree',
         args: [
           {
@@ -357,9 +355,9 @@ export default function useCreateRoles() {
             hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
             moduleProxyFactory: zodiacModuleProxyFactory,
             keyValuePairs: getAddress(keyValuePairs),
-            decentAutonomousAdminImplementation: decentAutonomousAdminV1ImplementationAddress,
+            decentAutonomousAdminImplementation: decentAutonomousAdminV1MasterCopy,
             hatsAccountImplementation: hatsAccount1ofNMasterCopy,
-            hatsElectionsEligibilityImplementation: getAddress(module.implementationAddress),
+            hatsElectionsEligibilityImplementation: hatsElectionsEligibilityMasterCopy,
             topHat,
             adminHat,
             hats: addedHats,
@@ -382,17 +380,14 @@ export default function useCreateRoles() {
       daoAddress,
       daoName,
       decentHatsCreationModule,
-      decentAutonomousAdminV1ImplementationAddress,
-      hatsElectionsEligibilityImplementationAddress,
+      decentAutonomousAdminV1MasterCopy,
+      hatsElectionsEligibilityMasterCopy,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsProtocol,
       keyValuePairs,
-      getEnableDisableDecentHatsModuleData,
-      createHatStructsForNewTreeFromRolesFormValues,
-      hatsModulesClient,
+      decentHatsCreationModule,
       zodiacModuleProxyFactory,
-      ipfsClient,
     ],
   );
 
@@ -436,7 +431,7 @@ export default function useCreateRoles() {
         getEnableDisableDecentHatsModuleData(decentHatsModificationModule);
 
       const createNewRoleData = encodeFunctionData({
-        abi: DecentHatsModificationModuleAbi,
+        abi: abis.DecentHatsModificationModule,
         functionName: 'createRoleHats',
         args: [
           {
@@ -444,7 +439,7 @@ export default function useCreateRoles() {
             erc6551Registry,
             hatsAccountImplementation: hatsAccount1ofNMasterCopy,
             hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
-            hatsElectionsEligibilityImplementation: hatsElectionsEligibilityImplementationAddress,
+            hatsElectionsEligibilityImplementation: hatsElectionsEligibilityMasterCopy,
             adminHatId: BigInt(hatsTree.adminHat.id),
             hats: [hatStruct],
             topHatId: BigInt(hatsTree.topHat.id),
@@ -471,15 +466,15 @@ export default function useCreateRoles() {
     [
       hatsTree,
       daoAddress,
-      hatsProtocol,
       parseRoleTermsFromFormRoleTerms,
       createHatStructWithPayments,
       parseSablierPaymentsFromFormRolePayments,
       getEnableDisableDecentHatsModuleData,
+      decentHatsModificationModule,
+      hatsProtocol,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
-      hatsElectionsEligibilityImplementationAddress,
-      decentHatsModificationModule,
+      hatsElectionsEligibilityMasterCopy,
     ],
   );
   // @todo  move to updated 'useMasterCopy` hook
@@ -532,7 +527,7 @@ export default function useCreateRoles() {
         abi: abis.ModuleProxyFactory,
         functionName: 'deployModule',
         args: [
-          decentAutonomousAdminV1ImplementationAddress,
+          decentAutonomousAdminV1MasterCopy,
           encodeFunctionData({
             abi: DecentAutonomousAdminTempAbi,
             functionName: 'setUp',
@@ -564,7 +559,7 @@ export default function useCreateRoles() {
       return [deployDecentAutonomousAdminV1Tx, mintAdminHat];
     },
     [
-      decentAutonomousAdminV1ImplementationAddress,
+      decentAutonomousAdminV1MasterCopy,
       hatsProtocol,
       zodiacModuleProxyFactory,
       isDecentAutonomousAdminV1,
@@ -1020,7 +1015,7 @@ export default function useCreateRoles() {
               formHat.eligibility === undefined ||
               (await isElectionEligibilityModule(
                 formHat.eligibility,
-                hatsElectionsEligibilityImplementationAddress,
+                hatsElectionsEligibilityMasterCopy,
                 publicClient,
               ))
             ) {
@@ -1110,7 +1105,7 @@ export default function useCreateRoles() {
       prepareRolePaymentUpdateTxs,
       prepareTermedRolePaymentUpdateTxs,
       isDecentAutonomousAdminV1,
-      hatsElectionsEligibilityImplementationAddress,
+      hatsElectionsEligibilityMasterCopy,
       parseRoleTermsFromFormRoleTerms,
       getMemberChangedStreamsWithFundsToClaim,
     ],
