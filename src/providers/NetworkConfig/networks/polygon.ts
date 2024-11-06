@@ -95,7 +95,6 @@ export const polygonConfig: NetworkConfig = {
     sablierV2LockupDynamic: '0x4994325F8D4B4A36Bd643128BEb3EC3e582192C0',
     sablierV2LockupTranched: '0xBF67f0A1E847564D0eFAD475782236D3Fa7e9Ec2',
     sablierV2LockupLinear: '0x8D4dDc187a73017a5d7Cef733841f55115B13762',
-    hatsElectionsEligibilityImplementationAddress: '0xd3b916a8F0C4f9D1d5B6Af29c3C012dbd4f3149E',
   },
   staking: {},
   moralis: {

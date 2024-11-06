@@ -69,7 +69,6 @@ export type NetworkConfig = {
     sablierV2LockupDynamic: Address;
     sablierV2LockupTranched: Address;
     sablierV2LockupLinear: Address;
-    hatsElectionsEligibilityImplementationAddress: Address;
   };
   staking: {
     lido?: {
