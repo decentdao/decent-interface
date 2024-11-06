@@ -1,11 +1,11 @@
 import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { ArrowRight, Calendar, ClockCountdown, Copy } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getContract, Hex } from 'viem';
 import { useWalletClient } from 'wagmi';
-import DecentAutonomousAdminTempAbi from '../../../assets/abi/DecentAutonomousAdminTempAbi';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import useAvatar from '../../../hooks/utils/useAvatar';
@@ -311,7 +311,6 @@ export default function RoleTerm({
   const wearerAddress = roleHat?.wearerAddress;
 
   const handleTriggerStartTerm = useCallback(async () => {
-    // @todo check if the wearer address is the Decent Autonomous Admin contract
     // ? @todo if first term wearer === new term nominee, then start term directly?
     const adminHatWearer = hatsTree?.adminHat.wearer;
 
@@ -328,7 +327,7 @@ export default function RoleTerm({
       throw new Error('Hat ID not found');
     }
     const decentAutonomousAdminContract = getContract({
-      abi: DecentAutonomousAdminTempAbi,
+      abi: abis.DecentAutonomousAdminV1,
       address: adminHatWearer,
       client: walletClient,
     });

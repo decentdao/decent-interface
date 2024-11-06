@@ -17,9 +17,6 @@ import {
   zeroAddress,
 } from 'viem';
 import { usePublicClient } from 'wagmi';
-import DecentAutonomousAdminTempAbi from '../../assets/abi/DecentAutonomousAdminTempAbi';
-import DecentHatsModificationModuleAbi from '../../assets/abi/DecentHatsModificationModuleAbi';
-import { DecentHatsTempAbi } from '../../assets/abi/DecentHatsTempAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
@@ -33,6 +30,7 @@ import {
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
+import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
@@ -43,6 +41,7 @@ import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
+import { ZodiacModuleProxyFactoryAbi } from './../../assets/abi/ZodiacModuleProxyFactoryAbi';
 import {
   isElectionEligibilityModule,
   predictAccountAddress,
@@ -378,16 +377,19 @@ export default function useCreateRoles() {
     },
     [
       daoAddress,
+      hatsModulesClient,
+      getEnableDisableDecentHatsModuleData,
+      decentHatsCreationModule,
       daoName,
-      decentHatsCreationModule,
-      decentAutonomousAdminV1MasterCopy,
+      ipfsClient,
       hatsElectionsEligibilityMasterCopy,
-      erc6551Registry,
-      hatsAccount1ofNMasterCopy,
+      createHatStructsForNewTreeFromRolesFormValues,
       hatsProtocol,
-      keyValuePairs,
-      decentHatsCreationModule,
+      erc6551Registry,
       zodiacModuleProxyFactory,
+      keyValuePairs,
+      decentAutonomousAdminV1MasterCopy,
+      hatsAccount1ofNMasterCopy,
     ],
   );
 
@@ -485,7 +487,7 @@ export default function useCreateRoles() {
       }
       const decentAutonomousAdminV1Contract = getContract({
         address: address,
-        abi: DecentAutonomousAdminTempAbi,
+        abi: abis.DecentAutonomousAdminV1,
         client: publicClient,
       });
       const DECENT_AUTONOMOUS_ADMIN_V1_INTERFACE_ID = '0x0ac4a8e8';
@@ -524,12 +526,12 @@ export default function useCreateRoles() {
         ),
       );
       const deployDecentAutonomousAdminV1Calldata = encodeFunctionData({
-        abi: abis.ModuleProxyFactory,
+        abi: ZodiacModuleProxyFactoryAbi,
         functionName: 'deployModule',
         args: [
           decentAutonomousAdminV1MasterCopy,
           encodeFunctionData({
-            abi: DecentAutonomousAdminTempAbi,
+            abi: abis.DecentAutonomousAdminV1,
             functionName: 'setUp',
             args: [zeroAddress],
           }),
@@ -1049,7 +1051,7 @@ export default function useCreateRoles() {
             if (previousTerm.termEndDateTs < Date.now() * 1000) {
               allTxs.push({
                 calldata: encodeFunctionData({
-                  abi: DecentAutonomousAdminTempAbi,
+                  abi: abis.DecentAutonomousAdminV1,
                   functionName: 'triggerStartNextTerm',
                   args: [
                     {
