@@ -50,16 +50,10 @@ function RoleTermHeaderTitle({
   termPosition,
 }: {
   termNumber: number;
-  termPosition?: 'current' | 'next';
+  termPosition?: 'currentTerm' | 'nextTerm';
 }) {
   const { t } = useTranslation(['roles']);
-  const isCurrentTerm = termPosition === 'current';
-  const isNextTerm = termPosition === 'next';
-  const termIndicatorText = isCurrentTerm
-    ? t('currentTerm')
-    : isNextTerm
-      ? t('nextTerm')
-      : undefined;
+
   return (
     <Flex
       gap={2}
@@ -70,7 +64,7 @@ function RoleTermHeaderTitle({
         textStyle="label-small"
         color="neutral-5"
       >
-        {termIndicatorText}
+        {!!termPosition && t(termPosition)}
       </Text>
     </Flex>
   );
@@ -172,7 +166,7 @@ function RoleTermHeader({
   termNumber: number;
   termEndDate: Date;
   termStatus: RoleFormTermStatus;
-  termPosition?: 'current' | 'next';
+  termPosition?: 'currentTerm' | 'nextTerm';
   displayLightContainer?: boolean;
 }) {
   return (
@@ -304,8 +298,8 @@ export default function RoleTerm({
     const currentTermEndDate = roleHat.roleTerms.currentTerm?.termEndDate;
     const nextTermEndDate = roleHat.roleTerms.nextTerm?.termEndDate;
     if (currentTermEndDate && termEndDate.getTime() === currentTermEndDate.getTime())
-      return 'current';
-    if (nextTermEndDate && termEndDate.getTime() === nextTermEndDate.getTime()) return 'next';
+      return 'currentTerm';
+    if (nextTermEndDate && termEndDate.getTime() === nextTermEndDate.getTime()) return 'nextTerm';
   }, [roleHat, termEndDate]);
 
   const wearerAddress = roleHat?.wearerAddress;
