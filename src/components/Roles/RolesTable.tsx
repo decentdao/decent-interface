@@ -1,8 +1,8 @@
 import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
+import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useRolesStore } from '../../store/roles/useRolesStore';
@@ -86,7 +86,7 @@ function RoleNameEditColumn({
         </Flex>
         <Icon
           className="edit-role-icon"
-          as={PencilLine}
+          as={PencilWithLineIcon}
           color="white-0"
           boxSize="1rem"
           opacity={0}

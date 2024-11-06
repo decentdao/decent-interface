@@ -218,9 +218,7 @@ export function SafeRoleEditDetailsPage() {
           <Hide below="md">
             <ModalBase
               isOpen
-              title=""
               onClose={() => {}}
-              isSearchInputModal={false}
             >
               <UnsavedChangesWarningContent
                 onDiscard={blocker.proceed}

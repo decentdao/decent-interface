@@ -1,15 +1,14 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { Box, Flex, Show, Text } from '@chakra-ui/react';
+import { Box, Show } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
+import PencilWithLineIcon from '../../../assets/theme/custom/icons/PencilWithLineIcon';
 import { RoleCard } from '../../../components/Roles/RoleCard';
 import { RoleCardLoading } from '../../../components/Roles/RolePageCard';
 import { RolesTable } from '../../../components/Roles/RolesTable';
 import NoDataCard from '../../../components/ui/containers/NoDataCard';
-import { HatsLogoIcon, SablierLogoIcon, VectorLogoIcon } from '../../../components/ui/icons/Icons';
-import PencilWithLineIcon from '../../../components/ui/icons/PencilWithLineIcon';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
@@ -103,37 +102,6 @@ export function SafeRolesPage() {
           </Show>
         </>
       )}
-
-      <Show below="md">
-        <Flex
-          gap="1rem"
-          color="neutral-6"
-          alignItems="center"
-          mt={7}
-        >
-          <Text
-            fontSize="18px"
-            lineHeight="20px"
-            fontWeight={450}
-            letterSpacing="-0.54px"
-          >
-            {t('poweredBy', { ns: 'common' })}
-          </Text>
-          <HatsLogoIcon
-            width="36.201px"
-            height="13.107px"
-          />
-          <VectorLogoIcon
-            width="12.953px"
-            height="12.953px"
-          />
-          <SablierLogoIcon
-            width="50.741px"
-            height="13px"
-          />
-        </Flex>
-      </Show>
-
       <Outlet />
     </Box>
   );

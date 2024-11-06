@@ -3,7 +3,6 @@ import { Bank, CaretRight, CheckSquare, GearFine, Stack } from '@phosphor-icons/
 import { PropsWithChildren, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useMatch } from 'react-router-dom';
-import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -36,7 +35,7 @@ function SettingsLink({
         isCurrentPath ||
         (!isMobile &&
           isIndexSettingsPage &&
-          pathWithoutSearch === `/${DAO_ROUTES.settingsGeneral.path}`)
+          pathWithoutSearch === `/${DAO_ROUTES.settings.path}/${DAO_ROUTES.settingsGeneral.path}`)
           ? 'white-alpha-04'
           : 'transparent'
       }
@@ -100,11 +99,12 @@ export default function SettingsNavigation() {
       gap="0.25rem"
       flexDirection="column"
       borderRadius="0.75rem"
-      border="1px solid"
+      borderTopRightRadius={{ base: '0.75rem', md: '0' }}
+      borderBottomRightRadius={{ base: '0.75rem', md: '0' }}
+      borderRight={{ base: 'none', md: '1px solid var(--colors-neutral-3)' }}
       borderColor="neutral-3"
-      boxShadow={DETAILS_BOX_SHADOW}
+      boxShadow="1px 0px 0px 0px #100414"
       minWidth="220px"
-      alignSelf="flex-start"
       width={{ base: '100%', md: 'auto' }}
     >
       {!safe ? (

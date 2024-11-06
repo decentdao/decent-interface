@@ -1,4 +1,4 @@
-import { EthAddress } from './utils';
+import { Address } from 'viem';
 
 export enum TokenEventType {
   DEPOSIT = 'DEPOSIT',
@@ -114,8 +114,9 @@ export type NFTBalance = {
   possibleSpam: boolean;
 };
 
-export interface TokenDepositEvent extends TokenEvent, EthAddress {
+export interface TokenDepositEvent extends TokenEvent {
   amount: bigint;
+  address: Address;
 }
 
 export interface TokenWithdrawEvent extends TokenEvent {

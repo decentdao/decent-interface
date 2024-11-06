@@ -1,4 +1,4 @@
-import { Flex, Show, Text } from '@chakra-ui/react';
+import { Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { InfoGovernance } from '../../../../components/DaoDashboard/Info/InfoGovernance';
@@ -11,6 +11,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { GovernanceType } from '../../../../types';
+import { SettingsContentBox } from '../SettingsContentBox';
 
 export function SafeGovernanceSettingsPage() {
   const { t } = useTranslation('settings');
@@ -33,14 +34,16 @@ export function SafeGovernanceSettingsPage() {
       <Show below="md">
         <NestedPageHeader
           title={t('daoSettingsGovernance')}
-          backButtonText={t('settings')}
-          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
+          backButton={{
+            text: t('settings'),
+            href: DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress),
+          }}
         />
       </Show>
-      <Flex
+      <SettingsContentBox
+        display="flex"
         flexDirection="column"
         gap="3rem"
-        width="100%"
       >
         {(isERC20Governance || isERC721Governance) && (
           <StyledBox width="100%">
@@ -55,7 +58,7 @@ export function SafeGovernanceSettingsPage() {
         ) : isMultisigGovernance ? (
           <SignersContainer />
         ) : null}
-      </Flex>
+      </SettingsContentBox>
     </>
   );
 }

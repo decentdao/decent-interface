@@ -11,9 +11,10 @@ import {
   IconButton,
   Text,
 } from '@chakra-ui/react';
-import { CheckSquare, List, PencilLine, User, X } from '@phosphor-icons/react';
+import { CheckSquare, List, User, X } from '@phosphor-icons/react';
 import { RefObject, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useAddress from '../../hooks/utils/useAddress';
 import useAvatar from '../../hooks/utils/useAvatar';
@@ -146,7 +147,7 @@ export default function RolesDetailsDrawer({
                 variant="tertiary"
                 size="icon-sm"
                 aria-label="Edit Role"
-                as={PencilLine}
+                as={PencilWithLineIcon}
                 onClick={() => onEdit(roleHat.id)}
               />
             </Flex>
