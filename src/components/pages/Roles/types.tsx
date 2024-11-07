@@ -154,6 +154,7 @@ export type RoleFormValues = {
   newRoleTerm?: {
     nominee: string;
     termEndDate: Date;
+    termNumber: number;
   };
 };
 
