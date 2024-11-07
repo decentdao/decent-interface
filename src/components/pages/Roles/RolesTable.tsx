@@ -99,7 +99,7 @@ function MemberColumn({
 }: {
   isTermed?: boolean;
   wearerAddress?: Address;
-  currentRoleTermStatus?: 'active' | 'inactive' | undefined;
+  currentRoleTermStatus?: 'active' | 'inactive';
 }) {
   const { displayName: accountDisplayName } = useGetAccountName(wearerAddress);
   const avatarURL = useAvatar(accountDisplayName);

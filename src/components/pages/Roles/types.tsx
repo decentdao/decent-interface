@@ -35,7 +35,7 @@ export interface RoleProps {
   wearerAddress?: Address;
   paymentsCount?: number;
   isTermed: boolean;
-  currentRoleTermStatus: 'active' | 'inactive' | undefined;
+  currentRoleTermStatus?: 'active' | 'inactive';
 }
 
 export interface RoleEditProps
