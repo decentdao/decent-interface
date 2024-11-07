@@ -317,9 +317,7 @@ function RoleFormMemberTermToggle() {
                 setFieldValue('roleEditing.isTermed', true);
                 onClose();
               }}
-              onCancelClick={() => {
-                onClose();
-              }}
+              onCancelClick={onClose}
               isOpen={isOpen}
               onOpen={onOpen}
               onClose={onClose}
