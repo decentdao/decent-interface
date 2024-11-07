@@ -13,7 +13,7 @@ export default function EditBadge({ editStatus }: EditBadgeProps) {
   const displayText = t(BadgeStatus[editStatus]);
   return (
     <Box
-      rounded="0.25rem"
+      rounded="0.75rem"
       w="fit-content"
       textStyle="label-base"
       borderColor={displayColor}
