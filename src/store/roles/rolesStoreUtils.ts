@@ -49,7 +49,7 @@ export type RoleTerm = {
 
 type DecentRoleHatTerms = {
   allTerms: RoleTerm[];
-  currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' | undefined }) | undefined;
+  currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
   nextTerm: RoleTerm | undefined;
   expiredTerms: RoleTerm[];
 };
@@ -57,12 +57,7 @@ export interface DecentRoleHat extends Omit<DecentHat, 'smartAddress'> {
   wearerAddress: Address;
   eligibility?: Address;
   smartAddress?: Address;
-  roleTerms: {
-    allTerms: RoleTerm[];
-    currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' | undefined }) | undefined;
-    nextTerm: RoleTerm | undefined;
-    expiredTerms: RoleTerm[];
-  };
+  roleTerms: DecentRoleHatTerms;
   isTermed: boolean;
 }
 
@@ -196,7 +191,7 @@ export const getCurrentTermStatus = async (
   currentTermEndDateTs: bigint,
   eligibility: Address,
   publicClient: PublicClient,
-): Promise<'inactive' | 'active' | undefined> => {
+): Promise<'inactive' | 'active'> => {
   const electionContract = getContract({
     abi: HatsElectionsEligibilityAbi,
     address: eligibility,
@@ -204,7 +199,6 @@ export const getCurrentTermStatus = async (
   });
 
   const nextTermEndTs = await electionContract.read.nextTermEnd();
-  if (nextTermEndTs === 0n) return;
   return nextTermEndTs === currentTermEndDateTs ? 'inactive' : 'active';
 };
 
