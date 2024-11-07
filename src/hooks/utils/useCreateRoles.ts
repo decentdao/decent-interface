@@ -979,7 +979,10 @@ export default function useCreateRoles() {
               throw new Error('Cannot prepare transactions for edited role without role terms');
             }
 
-            if (adminHatWearer === undefined || !!isDecentAutonomousAdminV1(adminHatWearer)) {
+            if (
+              adminHatWearer === undefined ||
+              !(await isDecentAutonomousAdminV1(adminHatWearer))
+            ) {
               throw new Error(
                 'Cannot prepare transactions for edited role without decent auto admin hat wearer',
               );
@@ -987,7 +990,7 @@ export default function useCreateRoles() {
 
             if (
               formHat.eligibility === undefined ||
-              (await isElectionEligibilityModule(
+              !(await isElectionEligibilityModule(
                 formHat.eligibility,
                 hatsElectionsEligibilityMasterCopy,
                 publicClient,
