@@ -326,7 +326,7 @@ export default function RoleFormTerms() {
 
   const isAddButtonDisabled = useMemo(() => {
     const isFirstTermBeingCreated = !!values.newRoleTerm || !roleFormTerms.length;
-    const isTermCreationPending = (roleHatTerms?.allTerms ?? []).length > roleFormTerms.length;
+    const isTermCreationPending = (roleHatTerms?.allTerms ?? []).length < roleFormTerms.length;
     const canCreateNewTerm = terms.length == 2;
     return isFirstTermBeingCreated || canCreateNewTerm || isTermCreationPending;
   }, [values.newRoleTerm, roleFormTerms.length, roleHatTerms?.allTerms, terms.length]);
