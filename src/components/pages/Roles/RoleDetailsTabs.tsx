@@ -23,7 +23,7 @@ type CurrentTermProp = RoleTermDetailProp & { termStatus: 'active' | 'inactive' 
 
 function RolesDetailsPayments({
   payments,
-  roleHatSmartAddress,
+  roleHatSmartAccountAddress,
   roleHatWearerAddress,
   roleHatId,
   roleTerms,
@@ -34,7 +34,7 @@ function RolesDetailsPayments({
   })[];
   roleHatId: Hex | undefined;
   roleHatWearerAddress: Address | undefined;
-  roleHatSmartAddress: Address | undefined;
+  roleHatSmartAccountAddress: Address | undefined;
   roleTerms: RoleTermDetailProp[];
 }) {
   const { t } = useTranslation(['roles']);
@@ -75,7 +75,7 @@ function RolesDetailsPayments({
         <RolePaymentDetails
           key={index}
           payment={payment}
-          roleHatSmartAddress={roleHatSmartAddress}
+          roleHatSmartAccountAddress={roleHatSmartAccountAddress}
           roleHatId={roleHatId}
           roleTerms={roleTerms}
           roleHatWearerAddress={roleHatWearerAddress}
@@ -90,7 +90,7 @@ export default function RoleDetailsTabs({
   roleTerms,
   hatId,
   roleHatWearerAddress,
-  roleHatSmartAddress,
+  roleHatSmartAccountAddress,
   sortedPayments,
 }: {
   hatId: Hex | undefined;
@@ -101,7 +101,7 @@ export default function RoleDetailsTabs({
     allTerms: RoleTermDetailProp[];
   };
   roleHatWearerAddress: Address | undefined;
-  roleHatSmartAddress: Address | undefined;
+  roleHatSmartAccountAddress: Address | undefined;
   sortedPayments: (Omit<SablierPayment, 'contractAddress' | 'streamId'> & {
     contractAddress?: Address;
     streamId?: string;
@@ -133,7 +133,7 @@ export default function RoleDetailsTabs({
             payments={sortedPayments}
             roleTerms={roleTerms.allTerms}
             roleHatId={hatId}
-            roleHatSmartAddress={roleHatSmartAddress}
+            roleHatSmartAccountAddress={roleHatSmartAccountAddress}
             roleHatWearerAddress={roleHatWearerAddress}
           />
         </TabPanel>

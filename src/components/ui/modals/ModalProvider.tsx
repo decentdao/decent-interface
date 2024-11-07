@@ -73,7 +73,7 @@ export type ModalPropsTypes = {
     paymentStreamId?: string;
     paymentContractAddress: Address;
     withdrawInformation: {
-      roleHatSmartAddress: Address | undefined;
+      roleHatSmartAccountAddress: Address | undefined;
       recipient: Address;
       withdrawableAmount: bigint;
     };

@@ -31,7 +31,7 @@ export default function PaymentWithdrawModal({
   paymentAssetDecimals: number;
   paymentContractAddress?: Address;
   withdrawInformation: {
-    roleHatSmartAddress: Address | undefined;
+    roleHatSmartAccountAddress: Address | undefined;
     recipient: Address;
     withdrawableAmount: bigint;
   };
@@ -62,7 +62,7 @@ export default function PaymentWithdrawModal({
 
       contractCall({
         contractFn: () => {
-          if (!withdrawInformation.roleHatSmartAddress) {
+          if (!withdrawInformation.roleHatSmartAccountAddress) {
             return sablierV2LockupLinearContract.write.withdrawMax([
               bigIntStreamId,
               withdrawInformation.recipient,
@@ -75,7 +75,7 @@ export default function PaymentWithdrawModal({
           });
           const hatsAccountContract = getContract({
             abi: HatsAccount1ofNAbi,
-            address: withdrawInformation.roleHatSmartAddress,
+            address: withdrawInformation.roleHatSmartAccountAddress,
             client: walletClient,
           });
           return hatsAccountContract.write.execute([
@@ -100,7 +100,7 @@ export default function PaymentWithdrawModal({
     paymentContractAddress,
     paymentStreamId,
     walletClient,
-    withdrawInformation.roleHatSmartAddress,
+    withdrawInformation.roleHatSmartAccountAddress,
     withdrawInformation.recipient,
     contractCall,
     t,

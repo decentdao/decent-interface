@@ -99,7 +99,7 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 
 interface RolePaymentDetailsProps {
   roleHatWearerAddress?: Address;
-  roleHatSmartAddress?: Address;
+  roleHatSmartAccountAddress?: Address;
   roleHatId?: Hex;
   roleTerms: { termEndDate: Date; termNumber: number; nominee: string }[];
   payment: {
@@ -131,7 +131,7 @@ export function RolePaymentDetails({
   onClick,
   showWithdraw,
   roleHatWearerAddress,
-  roleHatSmartAddress,
+  roleHatSmartAccountAddress,
   roleHatId,
   showCancel,
   onCancel,
@@ -187,13 +187,13 @@ export function RolePaymentDetails({
         withdrawInformation: {
           withdrawableAmount: payment.withdrawableAmount,
           recipient,
-          roleHatSmartAddress,
+          roleHatSmartAccountAddress,
         },
       },
     ] as const;
   }, [
     payment,
-    roleHatSmartAddress,
+    roleHatSmartAccountAddress,
     roleHatWearerAddress,
     refreshWithdrawableAmount,
     publicClient,

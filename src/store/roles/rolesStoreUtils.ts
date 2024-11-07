@@ -383,9 +383,9 @@ export const sanitize = async (
       hatsElectionsImplementation,
       publicClient,
     );
-    let roleHatSmartAddress: Address | undefined;
+    let roleHatSmartAccountAddress: Address | undefined;
     if (!isTermed) {
-      roleHatSmartAddress = await predictAccountAddress({
+      roleHatSmartAccountAddress = await predictAccountAddress({
         implementation: hatsAccountImplementation,
         registryAddress: erc6551Registry,
         tokenContract: hats,
@@ -400,7 +400,7 @@ export const sanitize = async (
       name: hatMetadata.name,
       description: hatMetadata.description,
       wearerAddress: getAddress(rawHat.wearers[0].id),
-      smartAddress: roleHatSmartAddress,
+      smartAddress: roleHatSmartAccountAddress,
       eligibility: rawHat.eligibility,
       roleTerms,
       isTermed,
