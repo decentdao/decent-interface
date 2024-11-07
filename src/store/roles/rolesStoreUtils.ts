@@ -196,7 +196,7 @@ export const getCurrentTermStatus = async (
   currentTermEndDateTs: bigint,
   eligibility: Address,
   publicClient: PublicClient,
-) => {
+): Promise<'inactive' | 'active' | undefined> => {
   const electionContract = getContract({
     abi: HatsElectionsEligibilityAbi,
     address: eligibility,
@@ -218,7 +218,6 @@ export const isElectionEligibilityModule = async (
   const hatsModuleClient = new HatsModulesClient({
     publicClient,
   });
-  // @todo probably don't need to prepare every time
   await hatsModuleClient.prepare();
 
   const possibleElectionModule = await hatsModuleClient.getModuleByInstance(eligibility);
@@ -234,14 +233,6 @@ const getRoleHatTerms = async (
   roleTerms: DecentRoleHatTerms;
   isTermed: boolean;
 }> => {
-  let roleTerms: DecentRoleHatTerms = {
-    allTerms: [],
-    expiredTerms: [],
-    currentTerm: undefined,
-    nextTerm: undefined,
-  };
-  let isTermed: boolean = false;
-
   if (
     rawHat.eligibility &&
     (await isElectionEligibilityModule(
@@ -250,7 +241,6 @@ const getRoleHatTerms = async (
       publicClient,
     ))
   ) {
-    isTermed = true;
     // @dev check if the eligibility is an election contract
     try {
       const electionContract = getContract({
@@ -261,7 +251,7 @@ const getRoleHatTerms = async (
       const rawTerms = await electionContract.getEvents.ElectionCompleted({
         fromBlock: 0n,
       });
-      const allRoleTerms = rawTerms
+      const allTerms = rawTerms
         .map(term => {
           const nominee = term.args.winners?.[0];
           const termEnd = term.args.termEnd;
@@ -279,9 +269,9 @@ const getRoleHatTerms = async (
         .sort((a, b) => a.termEndDate.getTime() - b.termEndDate.getTime())
         .map((term, index) => ({ ...term, termNumber: index + 1 }));
 
-      const activeTerms = allRoleTerms.filter(term => term.termEndDate > new Date());
-      roleTerms = {
-        allTerms: allRoleTerms,
+      const activeTerms = allTerms.filter(term => term.termEndDate > new Date());
+      const roleTerms = {
+        allTerms,
         currentTerm: !!activeTerms[0]
           ? {
               ...activeTerms[0],
@@ -293,7 +283,7 @@ const getRoleHatTerms = async (
             }
           : undefined,
         nextTerm: activeTerms[1],
-        expiredTerms: allRoleTerms
+        expiredTerms: allTerms
           .filter(term => term.termEndDate <= new Date())
           .sort((a, b) => {
             if (!a.termEndDate || !b.termEndDate) {
@@ -302,12 +292,15 @@ const getRoleHatTerms = async (
             return b.termEndDate.getTime() - a.termEndDate.getTime();
           }),
       };
+      return { roleTerms, isTermed: true };
     } catch {
       console.error('Failed to get election terms or not a valid election contract');
     }
   }
-
-  return { roleTerms, isTermed };
+  return {
+    roleTerms: { allTerms: [], currentTerm: undefined, nextTerm: undefined, expiredTerms: [] },
+    isTermed: false,
+  };
 };
 
 export const sanitize = async (
