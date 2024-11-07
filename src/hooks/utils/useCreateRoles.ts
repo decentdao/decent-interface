@@ -141,15 +141,9 @@ export default function useCreateRoles() {
       if (daoAddress === null) {
         throw new Error('Can not create Hat Struct (with payments) without DAO Address');
       }
-
-      const newHat = await createHatStruct(
-        name,
-        description,
-        wearer,
-        // @dev if termEndDateTs is not 0, then the role is termed and is not mutable
-        termEndDateTs !== BigInt(0) ? false : true,
-        termEndDateTs,
-      );
+      // @dev if termEndDateTs is not 0, then the role is termed and is not mutable
+      const isMutable = termEndDateTs === BigInt(0);
+      const newHat = await createHatStruct(name, description, wearer, isMutable, termEndDateTs);
 
       const newHatWithPayments: HatStructWithPayments = {
         ...newHat,
