@@ -118,7 +118,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           prettyId: roleHat.id,
           name: roleHat.name,
           description: roleHat.description,
-          wearer: wearer,
+          wearer,
           roleTerms,
           isTermed: roleHat.isTermed ?? false,
           payments: roleHat.payments

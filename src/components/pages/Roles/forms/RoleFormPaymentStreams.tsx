@@ -51,7 +51,7 @@ export function RoleFormPaymentStreams() {
           nominee: term.nominee,
         };
       }) || [];
-    return terms.filter(term => term !== undefined);
+    return terms.filter(term => !!term);
   }, [values.roleEditing?.roleTerms]);
 
   return (

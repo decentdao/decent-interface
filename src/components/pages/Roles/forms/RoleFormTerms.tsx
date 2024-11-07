@@ -307,7 +307,7 @@ export default function RoleFormTerms() {
     [values.roleEditing?.roleTerms],
   );
 
-  // {assumption}: only 2 terms should be unexpired at a time
+  // @note only 2 terms should be unexpired at a time
   const terms = useMemo(
     () =>
       roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate.getTime() > Date.now()),
@@ -332,7 +332,7 @@ export default function RoleFormTerms() {
   }, [values.newRoleTerm, roleFormTerms.length, roleHatTerms?.allTerms, terms.length]);
 
   return (
-    <Box>
+    <>
       <Button
         variant="secondary"
         size="sm"
@@ -384,6 +384,6 @@ export default function RoleFormTerms() {
           roleTerms={roleHatTerms?.expiredTerms}
         />
       </Flex>
-    </Box>
+    </>
   );
 }
