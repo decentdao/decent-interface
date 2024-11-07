@@ -201,7 +201,7 @@ export default function useCreateRoles() {
           throw new Error('Nominee of added Role is undefined.');
         }
         return {
-          termEndDateTs: BigInt(term.termEndDate.getTime() / 1000),
+          termEndDateTs: BigInt(term.termEndDate.getTime()) * 1000n,
           nominatedWearers: [getAddress(term.nominee)],
         };
       });
