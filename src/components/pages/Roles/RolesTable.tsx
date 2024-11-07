@@ -255,6 +255,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearerAddress}
                 handleRoleClick={() => handleRoleClick(role.id)}
+                currentRoleTermStatus={role.roleTerms.currentTerm?.termStatus}
                 paymentsCount={
                   role.payments === undefined
                     ? undefined

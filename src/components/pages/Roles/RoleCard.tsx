@@ -171,8 +171,8 @@ export function RoleCard({
   name,
   wearerAddress,
   paymentsCount,
-  editStatus,
   handleRoleClick,
+  currentRoleTermStatus,
 }: RoleProps) {
   return (
     <Card
@@ -190,7 +190,9 @@ export function RoleCard({
           alignItems="center"
           gap="1rem"
         >
-          <EditBadge editStatus={editStatus} />
+          <EditBadge
+            editStatus={currentRoleTermStatus === 'inactive' ? EditBadgeStatus.Inactive : undefined}
+          />
         </Flex>
       </Flex>
     </Card>

@@ -30,17 +30,21 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
 }
 
 export interface RoleProps {
-  editStatus?: EditBadgeStatus;
   handleRoleClick: () => void;
   name: string;
   wearerAddress?: Address;
   paymentsCount?: number;
+  currentRoleTermStatus: 'active' | 'inactive' | undefined;
 }
 
 export interface RoleEditProps
-  extends Omit<RoleProps, 'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name'> {
+  extends Omit<
+    RoleProps,
+    'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name' | 'currentRoleTermStatus'
+  > {
   name?: string;
   handleRoleClick: () => void;
+  editStatus?: EditBadgeStatus;
   payments?: SablierPaymentFormValues[];
 }
 
@@ -63,18 +67,21 @@ export enum EditBadgeStatus {
   New,
   Removed,
   NewTermedRole,
+  Inactive,
 }
 export const BadgeStatus: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Updated]: 'updated',
   [EditBadgeStatus.New]: 'new',
   [EditBadgeStatus.Removed]: 'removed',
   [EditBadgeStatus.NewTermedRole]: 'newTermedRole',
+  [EditBadgeStatus.Inactive]: 'Inactive',
 };
 export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Updated]: 'lilac-0',
   [EditBadgeStatus.New]: 'celery--2',
   [EditBadgeStatus.Removed]: 'red-1',
   [EditBadgeStatus.NewTermedRole]: 'celery--2',
+  [EditBadgeStatus.Inactive]: 'neutral-6',
 };
 
 export interface TermedParams {
@@ -83,6 +90,7 @@ export interface TermedParams {
 }
 
 export enum RoleFormTermStatus {
+  ReadyToStart,
   Current,
   Queued,
   Expired,

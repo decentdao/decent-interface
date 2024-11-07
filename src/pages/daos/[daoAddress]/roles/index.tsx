@@ -102,6 +102,7 @@ function Roles() {
                 wearerAddress={roleHat.wearerAddress}
                 handleRoleClick={() => handleNavigateToRole(roleHat.id)}
                 paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
+                currentRoleTermStatus={roleHat.roleTerms.currentTerm?.termStatus}
               />
             ))}
           </Show>

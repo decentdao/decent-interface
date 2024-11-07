@@ -9,6 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
 import NoDataCard from '../../ui/containers/NoDataCard';
@@ -136,6 +137,16 @@ export default function RoleTermDetails({
   currentTerm: CurrentTermProp | undefined;
   expiredTerms: RoleTermDetailProp[];
 }) {
+  const currentTermStatus = useMemo(() => {
+    if (!!currentTerm) {
+      if (currentTerm.termStatus === 'inactive') {
+        return RoleFormTermStatus.ReadyToStart;
+      }
+      return RoleFormTermStatus.Current;
+    }
+    return RoleFormTermStatus.Pending;
+  }, [currentTerm]);
+
   return (
     <Flex
       flexDir="column"
@@ -148,15 +159,17 @@ export default function RoleTermDetails({
           emptyTextNotProposer="noActiveTermsNotProposer"
         />
       )}
+      {/* Next Term */}
       <RoleTermRenderer
         hatId={hatId}
         roleTerm={nextTerm}
         termStatus={nextTerm ? RoleFormTermStatus.Queued : RoleFormTermStatus.Pending}
       />
+      {/* Current Term */}
       <RoleTermRenderer
         hatId={hatId}
         roleTerm={currentTerm}
-        termStatus={currentTerm ? RoleFormTermStatus.Current : RoleFormTermStatus.Pending}
+        termStatus={currentTermStatus}
       />
       <RoleTermExpiredTerms
         roleTerms={expiredTerms}
