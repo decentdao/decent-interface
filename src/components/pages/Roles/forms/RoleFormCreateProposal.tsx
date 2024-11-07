@@ -111,7 +111,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           nextTerm: drawerViewingRole?.roleTerms.nextTerm,
           expiredTerms: allRoleTerms.filter(term => term.termEndDate <= new Date()),
         };
-        const wearer = allRoleTerms.pop()?.nominee ?? roleHat.wearer ?? zeroAddress;
+        const wearer = [...allRoleTerms].pop()?.nominee ?? roleHat.wearer ?? zeroAddress;
         return {
           ...roleHat,
           editedRole: roleHat.editedRole,

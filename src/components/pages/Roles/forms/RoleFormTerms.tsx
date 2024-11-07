@@ -360,7 +360,7 @@ export default function RoleFormTerms() {
         {values.newRoleTerm !== undefined && (
           <RoleTermCreate
             termIndex={roleFormTerms.length}
-            previousTermEndDate={roleFormTerms.pop()?.termEndDate}
+            previousTermEndDate={[...roleFormTerms].pop()?.termEndDate}
             onClose={() => setFieldValue('newRoleTerm', undefined)}
           />
         )}
