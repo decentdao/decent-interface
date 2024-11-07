@@ -95,7 +95,9 @@ function RoleNameEditColumn({
 function MemberColumn({
   wearerAddress,
   currentRoleTermStatus,
+  isTermed,
 }: {
+  isTermed?: boolean;
   wearerAddress?: Address;
   currentRoleTermStatus?: 'active' | 'inactive' | undefined;
 }) {
@@ -121,7 +123,7 @@ function MemberColumn({
         )}
         <Text
           textStyle="body-base"
-          color={currentRoleTermStatus ? 'neutral-6' : 'white-0'}
+          color={isTermed && currentRoleTermStatus === 'inactive' ? 'neutral-6' : 'white-0'}
           ml="0.5rem"
         >
           {wearerAddress ? accountDisplayName : t('unassigned')}
@@ -171,6 +173,7 @@ export function RolesRow({
   paymentsCount,
   handleRoleClick,
   currentRoleTermStatus,
+  isTermed,
 }: RoleProps) {
   return (
     <Tr
@@ -197,6 +200,7 @@ export function RolesRow({
       <MemberColumn
         wearerAddress={wearerAddress}
         currentRoleTermStatus={currentRoleTermStatus}
+        isTermed={isTermed}
       />
       <PaymentsColumn paymentsCount={paymentsCount} />
     </Tr>
@@ -270,8 +274,8 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearerAddress}
                 handleRoleClick={() => handleRoleClick(role.id)}
-                // currentRoleTermStatus={role.roleTerms.currentTerm?.termStatus}
-                currentRoleTermStatus={'inactive'}
+                currentRoleTermStatus={role.roleTerms.currentTerm?.termStatus}
+                isTermed={role.isTermed}
                 paymentsCount={
                   role.payments === undefined
                     ? undefined

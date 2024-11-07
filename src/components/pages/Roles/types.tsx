@@ -34,13 +34,14 @@ export interface RoleProps {
   name: string;
   wearerAddress?: Address;
   paymentsCount?: number;
+  isTermed: boolean;
   currentRoleTermStatus: 'active' | 'inactive' | undefined;
 }
 
 export interface RoleEditProps
   extends Omit<
     RoleProps,
-    'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name' | 'currentRoleTermStatus'
+    'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name' | 'currentRoleTermStatus' | 'isTermed'
   > {
   name?: string;
   handleRoleClick: () => void;
