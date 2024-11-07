@@ -92,7 +92,13 @@ function RoleNameEditColumn({
   );
 }
 
-function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
+function MemberColumn({
+  wearerAddress,
+  currentRoleTermStatus,
+}: {
+  wearerAddress?: Address;
+  currentRoleTermStatus?: 'active' | 'inactive' | undefined;
+}) {
   const { displayName: accountDisplayName } = useGetAccountName(wearerAddress);
   const avatarURL = useAvatar(accountDisplayName);
 
@@ -115,7 +121,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
         )}
         <Text
           textStyle="body-base"
-          color="white-0"
+          color={currentRoleTermStatus ? 'neutral-6' : 'white-0'}
           ml="0.5rem"
         >
           {wearerAddress ? accountDisplayName : t('unassigned')}
@@ -159,7 +165,13 @@ function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
   );
 }
 
-export function RolesRow({ name, wearerAddress, paymentsCount, handleRoleClick }: RoleProps) {
+export function RolesRow({
+  name,
+  wearerAddress,
+  paymentsCount,
+  handleRoleClick,
+  currentRoleTermStatus,
+}: RoleProps) {
   return (
     <Tr
       sx={{
@@ -182,7 +194,10 @@ export function RolesRow({ name, wearerAddress, paymentsCount, handleRoleClick }
       >
         {name}
       </Td>
-      <MemberColumn wearerAddress={wearerAddress} />
+      <MemberColumn
+        wearerAddress={wearerAddress}
+        currentRoleTermStatus={currentRoleTermStatus}
+      />
       <PaymentsColumn paymentsCount={paymentsCount} />
     </Tr>
   );
@@ -255,7 +270,8 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearerAddress}
                 handleRoleClick={() => handleRoleClick(role.id)}
-                currentRoleTermStatus={role.roleTerms.currentTerm?.termStatus}
+                // currentRoleTermStatus={role.roleTerms.currentTerm?.termStatus}
+                currentRoleTermStatus={'inactive'}
                 paymentsCount={
                   role.payments === undefined
                     ? undefined
