@@ -19,7 +19,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex, isHex } from 'viem';
-import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
+import { RoleFormTabs } from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import {
   EditBadgeStatus,
   EditedRole,
@@ -127,7 +127,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
   );
 }
 
-export default function RoleEditDetails() {
+export function RoleEditDetails() {
   const headerHeight = useHeaderHeight();
   const { t } = useTranslation(['roles']);
   const {

@@ -331,7 +331,7 @@ function RoleFormMemberTermToggle() {
   );
 }
 
-export default function RoleFormMember() {
+export function RoleFormMember() {
   const { values } = useFormikContext<RoleFormValues>();
 
   if (!!values.roleEditing?.isTermed) {

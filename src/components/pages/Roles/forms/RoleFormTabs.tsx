@@ -10,13 +10,13 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
-import RoleFormMember from './RoleFormMember';
+import { RoleFormMember } from './RoleFormMember';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
 import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 
-export default function RoleFormTabs({
+export function RoleFormTabs({
   hatId,
   pushRole,
   blocker,

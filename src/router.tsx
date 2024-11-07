@@ -18,9 +18,9 @@ import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import SablierProposalCreatePage from './pages/daos/[daoAddress]/proposals/new/sablier';
 import Roles from './pages/daos/[daoAddress]/roles';
-import RoleDetails from './pages/daos/[daoAddress]/roles/details';
+import { RoleDetails } from './pages/daos/[daoAddress]/roles/details';
 import RolesEdit from './pages/daos/[daoAddress]/roles/edit';
-import RoleEditDetails from './pages/daos/[daoAddress]/roles/edit/details';
+import { RoleEditDetails } from './pages/daos/[daoAddress]/roles/edit/details';
 import EditProposalSummary from './pages/daos/[daoAddress]/roles/edit/summary';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 import HomePage from './pages/home/HomePage';
