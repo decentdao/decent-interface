@@ -43,10 +43,12 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
   }, [values.roleEditing]);
 
   const isRoleTypeUpdated = useMemo(() => {
-    return !!existingRoleHat && values.roleEditing?.isTermed !== existingRoleHat.isTermed;
+    const isTermToggled = !!values.roleEditing?.isTermed;
+    const isExistingRoleNotTerm = !!existingRoleHat && !existingRoleHat.isTermed;
+    return isExistingRoleNotTerm && isTermToggled;
   }, [existingRoleHat, values.roleEditing]);
 
-  const isRoleTermedUpdated = useMemo(() => {
+  const isRoleTermUpdated = useMemo(() => {
     return (
       !!existingRoleHat &&
       values.roleEditing?.roleTerms?.length !== existingRoleHat.roleTerms.allTerms.length
@@ -66,7 +68,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
     fieldNames = addRemoveField(fieldNames, 'payments', isPaymentsUpdated);
     fieldNames = addRemoveField(fieldNames, 'roleType', isRoleTypeUpdated);
-    fieldNames = addRemoveField(fieldNames, 'newTerm', isRoleTermedUpdated);
+    fieldNames = addRemoveField(fieldNames, 'newTerm', isRoleTermUpdated);
 
     return {
       fieldNames,
@@ -79,7 +81,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     isMemberUpdated,
     isPaymentsUpdated,
     isRoleTypeUpdated,
-    isRoleTermedUpdated,
+    isRoleTermUpdated,
   ]);
 
   const isRoleUpdated = useMemo(() => {
@@ -89,7 +91,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
       !!isMemberUpdated ||
       !!isPaymentsUpdated ||
       !!isRoleTypeUpdated ||
-      !!isRoleTermedUpdated
+      !!isRoleTermUpdated
     );
   }, [
     isRoleNameUpdated,
@@ -97,7 +99,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     isMemberUpdated,
     isPaymentsUpdated,
     isRoleTypeUpdated,
-    isRoleTermedUpdated,
+    isRoleTermUpdated,
   ]);
 
   return {
