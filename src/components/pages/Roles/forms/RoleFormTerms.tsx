@@ -17,7 +17,7 @@ import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { getAddress, Hex } from 'viem';
-import { usePublicClient, useWalletClient } from 'wagmi';
+import { usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { DatePicker } from '../../../ui/forms/DatePicker';
@@ -291,7 +291,6 @@ export default function RoleFormTerms() {
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const { getHat } = useRolesStore();
   const roleFormHatId = values.roleEditing?.id;
-  const { data: walletClient } = useWalletClient();
   const roleHatTerms = useMemo(() => {
     if (!roleFormHatId) {
       return undefined;
@@ -331,32 +330,6 @@ export default function RoleFormTerms() {
 
   return (
     <>
-      <Flex gap={2}>
-        <Button
-          textStyle="unstyled"
-          bg="lightblue"
-          onClick={() => {
-            setFieldValue('newRoleTerm', {
-              nominee: walletClient!.account.address,
-              termEndDate: new Date(Date.now() + 10 * 60 * 1000),
-            });
-          }}
-        >
-          Add 10 Min Term
-        </Button>
-        <Button
-          textStyle="unstyled"
-          bg="lightblue"
-          onClick={() => {
-            setFieldValue('newRoleTerm', {
-              nominee: walletClient!.account.address,
-              termEndDate: new Date(Date.now() + 20 * 60 * 1000),
-            });
-          }}
-        >
-          Add 20 Min Term
-        </Button>
-      </Flex>
       <Button
         variant="secondary"
         size="sm"
