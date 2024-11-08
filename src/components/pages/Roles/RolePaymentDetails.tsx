@@ -105,6 +105,7 @@ interface RolePaymentDetailsProps {
   payment: {
     streamId?: string;
     contractAddress?: Address;
+    recipient?: Address;
     asset: {
       logo: string;
       symbol: string;
@@ -148,11 +149,11 @@ export function RolePaymentDetails({
   const navigate = useNavigate();
   const publicClient = usePublicClient();
   const canWithdraw = useMemo(() => {
-    if (connectedAccount && connectedAccount === roleHatWearerAddress && !!showWithdraw) {
+    if (connectedAccount && connectedAccount === payment.recipient && !!showWithdraw) {
       return true;
     }
     return false;
-  }, [connectedAccount, showWithdraw, roleHatWearerAddress]);
+  }, [connectedAccount, payment.recipient, showWithdraw]);
 
   const assignedTerm = useMemo(() => {
     return roleTerms.find(term => term.termEndDate.getTime() === payment.endDate.getTime());

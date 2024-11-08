@@ -187,6 +187,7 @@ const useHatsTree = () => {
           return {
             streamId: lockupLinearStream.id,
             contractAddress: lockupLinearStream.contract.address,
+            recipient: getAddress(lockupLinearStream.recipient),
             asset: {
               address: getAddress(lockupLinearStream.asset.address),
               name: lockupLinearStream.asset.name,
@@ -244,7 +245,6 @@ const useHatsTree = () => {
   useEffect(() => {
     async function getHatsStreams() {
       if (hatsTree && hatsTree.roleHats.length > 0 && !streamsFetched) {
-        console.count('getHatsStreams');
         const updatedHatsRoles = await Promise.all(
           hatsTree.roleHats.map(async hat => {
             if (hat.payments?.length) {
