@@ -1023,7 +1023,10 @@ export default function useCreateRoles() {
               targetAddress: formHat.eligibility,
             });
             // current term has ended
-            if (previousTerm.termEndDateTs < Date.now() * 1000) {
+            if (
+              previousTerm.termEndDateTs < Date.now() * 1000 &&
+              previousTerm.nominatedWearers[0] !== newTerm.nominatedWearers[0]
+            ) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: abis.DecentAutonomousAdminV1,

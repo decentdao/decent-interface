@@ -263,7 +263,9 @@ const getRoleHatTerms = async (
         .sort((a, b) => a.termEndDate.getTime() - b.termEndDate.getTime())
         .map((term, index) => ({ ...term, termNumber: index + 1 }));
 
-      const activeTerms = allTerms.filter(term => term.termEndDate > new Date());
+      const activeTerms = allTerms.filter(
+        term => term.termEndDate.getTime() > new Date().getTime(),
+      );
       const roleTerms = {
         allTerms,
         currentTerm: !!activeTerms[0]
