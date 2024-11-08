@@ -77,8 +77,6 @@ function RoleTermHeaderStatus({
   termEndDate: Date;
   termStatus: RoleFormTermStatus;
 }) {
-  // @todo implement isReadyToStart
-  const isReadyToStart = false;
   const { t } = useTranslation(['roles']);
   const dateDisplay = useDateTimeDisplay(termEndDate);
 
@@ -115,9 +113,7 @@ function RoleTermHeaderStatus({
         iconColor: 'red-1',
       },
     };
-    if (isReadyToStart) {
-      return statusTextData.readyToStart;
-    }
+
     switch (termStatus) {
       case RoleFormTermStatus.Expired:
         return statusTextData.ended;
@@ -127,6 +123,8 @@ function RoleTermHeaderStatus({
         return statusTextData.pending;
       case RoleFormTermStatus.Current:
         return statusTextData.active;
+      case RoleFormTermStatus.ReadyToStart:
+        return statusTextData.readyToStart;
       default:
         return {
           text: undefined,
@@ -134,7 +132,7 @@ function RoleTermHeaderStatus({
           iconColor: undefined,
         };
     }
-  }, [isReadyToStart, dateDisplay, termStatus, t]);
+  }, [dateDisplay, termStatus, t]);
   return (
     <Flex
       gap={1}
