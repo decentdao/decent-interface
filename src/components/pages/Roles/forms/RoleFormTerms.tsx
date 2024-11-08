@@ -195,16 +195,14 @@ function RoleTermRenderer({
     return null;
   }
   return (
-    <Box>
-      <RoleTerm
-        hatId={hatId}
-        termNominatedWearer={getAddress(roleTerm.nominee)}
-        termEndDate={roleTerm.termEndDate}
-        termStatus={termStatus}
-        termNumber={roleTerm.termNumber}
-        displayLightContainer={displayLightContainer}
-      />
-    </Box>
+    <RoleTerm
+      hatId={hatId}
+      termNominatedWearer={getAddress(roleTerm.nominee)}
+      termEndDate={roleTerm.termEndDate}
+      termStatus={termStatus}
+      termNumber={roleTerm.termNumber}
+      displayLightContainer={displayLightContainer}
+    />
   );
 }
 
