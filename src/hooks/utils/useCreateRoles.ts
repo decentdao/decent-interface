@@ -1002,6 +1002,24 @@ export default function useCreateRoles() {
             // @dev {assupmtion}: There were always be more than one term in this workflow.
             const [previousTerm, newTerm] = terms.slice(-2);
 
+            const electionsContract = getContract({
+              address: formHat.eligibility,
+              abi: HatsElectionsEligibilityAbi,
+              client: publicClient,
+            });
+            const nextTermEndDateTs = await electionsContract.read.nextTermEnd();
+            if (nextTermEndDateTs !== 0n) {
+              // previous term was never triggered, and must be triggered before we can set the next term
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsElectionsEligibilityAbi,
+                  functionName: 'startNextTerm',
+                  args: [],
+                }),
+                targetAddress: formHat.eligibility,
+              });
+            }
+
             allTxs.push({
               calldata: encodeFunctionData({
                 abi: HatsElectionsEligibilityAbi,
@@ -1010,6 +1028,7 @@ export default function useCreateRoles() {
               }),
               targetAddress: formHat.eligibility,
             });
+
             allTxs.push({
               calldata: encodeFunctionData({
                 abi: HatsElectionsEligibilityAbi,
@@ -1019,26 +1038,37 @@ export default function useCreateRoles() {
               targetAddress: formHat.eligibility,
             });
             // current term has ended
-            if (
-              previousTerm.termEndDateTs < Date.now() * 1000 &&
-              previousTerm.nominatedWearers[0] !== newTerm.nominatedWearers[0]
-            ) {
-              allTxs.push({
-                calldata: encodeFunctionData({
-                  abi: abis.DecentAutonomousAdminV1,
-                  functionName: 'triggerStartNextTerm',
-                  args: [
-                    {
-                      // @dev formHat.wearer is not changeable for term roles. It will always be the current wearer.
-                      currentWearer: getAddress(previousTerm.nominatedWearers[0]),
-                      hatsProtocol: hatsProtocol,
-                      hatId: BigInt(formHat.id),
-                      nominatedWearer: newTerm.nominatedWearers[0],
-                    },
-                  ],
-                }),
-                targetAddress: adminHatWearer,
-              });
+            if (previousTerm.termEndDateTs < Date.now() * 1000) {
+              if (
+                previousTerm.nominatedWearers[0].toLocaleLowerCase() !==
+                newTerm.nominatedWearers[0].toLocaleLowerCase()
+              ) {
+                allTxs.push({
+                  calldata: encodeFunctionData({
+                    abi: abis.DecentAutonomousAdminV1,
+                    functionName: 'triggerStartNextTerm',
+                    args: [
+                      {
+                        // @dev formHat.wearer is not changeable for term roles. It will always be the current wearer.
+                        currentWearer: getAddress(previousTerm.nominatedWearers[0]),
+                        hatsProtocol: hatsProtocol,
+                        hatId: BigInt(formHat.id),
+                        nominatedWearer: newTerm.nominatedWearers[0],
+                      },
+                    ],
+                  }),
+                  targetAddress: adminHatWearer,
+                });
+              } else {
+                allTxs.push({
+                  calldata: encodeFunctionData({
+                    abi: HatsElectionsEligibilityAbi,
+                    functionName: 'startNextTerm',
+                    args: [],
+                  }),
+                  targetAddress: formHat.eligibility,
+                });
+              }
             }
           }
           if (formHat.editedRole.fieldNames.includes('roleType')) {
@@ -1057,7 +1087,6 @@ export default function useCreateRoles() {
           throw new Error('Invalid Edited Status');
         }
       }
-
       return {
         targets: allTxs.map(({ targetAddress }) => targetAddress),
         calldatas: allTxs.map(({ calldata }) => calldata),
