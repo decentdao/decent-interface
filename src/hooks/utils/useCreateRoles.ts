@@ -1040,7 +1040,7 @@ export default function useCreateRoles() {
               targetAddress: formHat.eligibility,
             });
             // current term has ended
-            if (previousTerm.termEndDateTs < Date.now() * 1000) {
+            if (previousTerm.termEndDateTs < BigInt(Date.now()) / 1000n) {
               if (
                 previousTerm.nominatedWearers[0].toLocaleLowerCase() !==
                 newTerm.nominatedWearers[0].toLocaleLowerCase()
