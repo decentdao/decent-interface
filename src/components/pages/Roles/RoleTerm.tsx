@@ -271,7 +271,7 @@ export default function RoleTerm({
   termNumber,
   displayLightContainer,
 }: {
-  hatId?: Hex;
+  hatId: Hex | undefined;
   termNominatedWearer: Address;
   termEndDate: Date;
   termNumber: number;
@@ -367,8 +367,8 @@ export default function RoleTerm({
           <RoleTermMemberAddress memberAddress={termNominatedWearer} />
           <RoleTermEndDate termEndDate={termEndDate} />
         </Flex>
-        {!!roleHat?.roleTerms.currentTerm &&
-          roleHat.roleTerms.currentTerm.termStatus === 'inactive' && (
+        {roleHat?.roleTerms.currentTerm?.termStatus === 'inactive' &&
+          termPosition === 'currentTerm' && (
             <Button
               isDisabled={contractCallPending}
               leftIcon={

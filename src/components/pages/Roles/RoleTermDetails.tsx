@@ -35,7 +35,7 @@ function RoleTermRenderer({
   termStatus: RoleFormTermStatus;
   displayLightContainer?: boolean;
 }) {
-  if (!roleTerm?.nominee || !roleTerm?.termEndDate || !hatId) {
+  if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
     return null;
   }
   return (

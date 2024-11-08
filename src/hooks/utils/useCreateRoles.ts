@@ -200,8 +200,9 @@ export default function useCreateRoles() {
         if (term.nominee === undefined) {
           throw new Error('Nominee of added Role is undefined.');
         }
+
         return {
-          termEndDateTs: BigInt(term.termEndDate.getTime() / 1000),
+          termEndDateTs: BigInt(term.termEndDate.getTime()) / 1000n,
           nominatedWearers: [getAddress(term.nominee)],
         };
       });
@@ -217,9 +218,6 @@ export default function useCreateRoles() {
             throw new Error('Hat name or description of added hat is undefined.');
           }
 
-          if (role.wearer === undefined) {
-            throw new Error('Hat wearer of added hat is undefined.');
-          }
           const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments ?? []);
 
           const [firstTerm] = parseRoleTermsFromFormRoleTerms(role.roleTerms ?? []);
@@ -228,10 +226,15 @@ export default function useCreateRoles() {
           }
 
           // @note for new termed roles, we set the first wearer to the first nominee
-          const wearer = role.isTermed
-            ? getAddress(firstTerm.nominatedWearers[0])
-            : getAddress(role.wearer);
           const termEndDateTs = role.isTermed ? firstTerm.termEndDateTs : BigInt(0);
+          let wearer: Address;
+          if (role.isTermed) {
+            wearer = firstTerm.nominatedWearers[0];
+          } else if (!role.isTermed && role.wearer) {
+            wearer = getAddress(role.wearer);
+          } else {
+            throw new Error('A wearer is required');
+          }
 
           return createHatStructWithPayments(
             role.name,
@@ -369,10 +372,6 @@ export default function useCreateRoles() {
     async (formRole: RoleHatFormValueEdited) => {
       if (formRole.name === undefined || formRole.description === undefined) {
         throw new Error('Role name or description is undefined.');
-      }
-
-      if (formRole.wearer === undefined) {
-        throw new Error('Role member is undefined.');
       }
 
       if (!hatsTree) {
@@ -797,11 +796,7 @@ export default function useCreateRoles() {
 
       for (let index = 0; index < modifiedHats.length; index++) {
         const formHat = modifiedHats[index];
-        if (
-          formHat.name === undefined ||
-          formHat.description === undefined ||
-          formHat.wearer === undefined
-        ) {
+        if (formHat.name === undefined || formHat.description === undefined) {
           throw new Error('Role details are missing', {
             cause: formHat,
           });
@@ -904,6 +899,9 @@ export default function useCreateRoles() {
             });
           }
           if (formHat.editedRole.fieldNames.includes('member') && !formHat.isTermed) {
+            if (!formHat.wearer) {
+              throw new Error('Cannot prepare transactions for edited role without wearer');
+            }
             const newWearer = getAddress(formHat.wearer);
             if (formHat.smartAddress === undefined) {
               throw new Error('Cannot prepare transactions for edited role without smart address');
@@ -979,7 +977,10 @@ export default function useCreateRoles() {
               throw new Error('Cannot prepare transactions for edited role without role terms');
             }
 
-            if (adminHatWearer === undefined || !!isDecentAutonomousAdminV1(adminHatWearer)) {
+            if (
+              adminHatWearer === undefined ||
+              !(await isDecentAutonomousAdminV1(adminHatWearer))
+            ) {
               throw new Error(
                 'Cannot prepare transactions for edited role without decent auto admin hat wearer',
               );
@@ -987,7 +988,7 @@ export default function useCreateRoles() {
 
             if (
               formHat.eligibility === undefined ||
-              (await isElectionEligibilityModule(
+              !(await isElectionEligibilityModule(
                 formHat.eligibility,
                 hatsElectionsEligibilityMasterCopy,
                 publicClient,
@@ -1003,6 +1004,24 @@ export default function useCreateRoles() {
             // @dev {assupmtion}: There were always be more than one term in this workflow.
             const [previousTerm, newTerm] = terms.slice(-2);
 
+            const electionsContract = getContract({
+              address: formHat.eligibility,
+              abi: HatsElectionsEligibilityAbi,
+              client: publicClient,
+            });
+            const nextTermEndDateTs = await electionsContract.read.nextTermEnd();
+            if (nextTermEndDateTs !== 0n) {
+              // previous term was never triggered, and must be triggered before we can set the next term
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsElectionsEligibilityAbi,
+                  functionName: 'startNextTerm',
+                  args: [],
+                }),
+                targetAddress: formHat.eligibility,
+              });
+            }
+
             allTxs.push({
               calldata: encodeFunctionData({
                 abi: HatsElectionsEligibilityAbi,
@@ -1011,6 +1030,7 @@ export default function useCreateRoles() {
               }),
               targetAddress: formHat.eligibility,
             });
+
             allTxs.push({
               calldata: encodeFunctionData({
                 abi: HatsElectionsEligibilityAbi,
@@ -1021,22 +1041,36 @@ export default function useCreateRoles() {
             });
             // current term has ended
             if (previousTerm.termEndDateTs < Date.now() * 1000) {
-              allTxs.push({
-                calldata: encodeFunctionData({
-                  abi: abis.DecentAutonomousAdminV1,
-                  functionName: 'triggerStartNextTerm',
-                  args: [
-                    {
-                      // @dev formHat.wearer is not changeable for term roles. It will always be the current wearer.
-                      currentWearer: getAddress(formHat.wearer),
-                      hatsProtocol: hatsProtocol,
-                      hatId: BigInt(formHat.id),
-                      nominatedWearer: newTerm.nominatedWearers[0],
-                    },
-                  ],
-                }),
-                targetAddress: adminHatWearer,
-              });
+              if (
+                previousTerm.nominatedWearers[0].toLocaleLowerCase() !==
+                newTerm.nominatedWearers[0].toLocaleLowerCase()
+              ) {
+                allTxs.push({
+                  calldata: encodeFunctionData({
+                    abi: abis.DecentAutonomousAdminV1,
+                    functionName: 'triggerStartNextTerm',
+                    args: [
+                      {
+                        // @dev formHat.wearer is not changeable for term roles. It will always be the current wearer.
+                        currentWearer: getAddress(previousTerm.nominatedWearers[0]),
+                        hatsProtocol: hatsProtocol,
+                        hatId: BigInt(formHat.id),
+                        nominatedWearer: newTerm.nominatedWearers[0],
+                      },
+                    ],
+                  }),
+                  targetAddress: adminHatWearer,
+                });
+              } else {
+                allTxs.push({
+                  calldata: encodeFunctionData({
+                    abi: HatsElectionsEligibilityAbi,
+                    functionName: 'startNextTerm',
+                    args: [],
+                  }),
+                  targetAddress: formHat.eligibility,
+                });
+              }
             }
           }
           if (formHat.editedRole.fieldNames.includes('roleType')) {
@@ -1055,7 +1089,6 @@ export default function useCreateRoles() {
           throw new Error('Invalid Edited Status');
         }
       }
-
       return {
         targets: allTxs.map(({ targetAddress }) => targetAddress),
         calldatas: allTxs.map(({ calldata }) => calldata),
