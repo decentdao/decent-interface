@@ -155,13 +155,7 @@ const useHatsTree = () => {
 
   const getPaymentStreams = useCallback(
     async (paymentRecipient: Address): Promise<SablierPayment[]> => {
-      if (
-        !sablierSubgraph ||
-        !hatsTree ||
-        hatsTree.roleHats.length === 0 ||
-        streamsFetched ||
-        !publicClient
-      ) {
+      if (!sablierSubgraph || !publicClient) {
         return [];
       }
       const streamQueryResult = await apolloClient.query({
@@ -244,12 +238,13 @@ const useHatsTree = () => {
       }
       return [];
     },
-    [apolloClient, hatsTree, publicClient, sablierSubgraph, streamsFetched],
+    [apolloClient, publicClient, sablierSubgraph],
   );
 
   useEffect(() => {
     async function getHatsStreams() {
-      if (hatsTree && hatsTree.roleHats.length > 0) {
+      if (hatsTree && hatsTree.roleHats.length > 0 && !streamsFetched) {
+        console.count('getHatsStreams');
         const updatedHatsRoles = await Promise.all(
           hatsTree.roleHats.map(async hat => {
             if (hat.payments?.length) {
@@ -275,7 +270,7 @@ const useHatsTree = () => {
     }
 
     getHatsStreams();
-  }, [hatsTree, updateRolesWithStreams, getPaymentStreams]);
+  }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched]);
 };
 
 export { useHatsTree };
