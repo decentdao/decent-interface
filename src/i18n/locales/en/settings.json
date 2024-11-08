@@ -38,5 +38,11 @@
   "permissionComingSoonDescription": "Permissions for more features.",
   "areYouSure": "Are you sure?",
   "nevermind": "Nevermind",
-  "deletePermission": "Delete Permission"
+  "createProposals": "Create Proposals",
+  "deletePermission": "Delete Permission",
+  "editPermission": "Edit Permission",
+  "votingWeightThreshold": "Voting Weight Threshold",
+  "editPermissionActionDescription": "permission with",
+  "editPermissionActionDescription2": "requirement",
+  "cannotDeleteStrategy": "Cannot delete permission without at least one role with “Can create proposals” permission toggled."
 }

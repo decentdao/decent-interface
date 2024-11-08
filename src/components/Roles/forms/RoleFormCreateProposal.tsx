@@ -1,13 +1,12 @@
-import { Box, Button, Card, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
-import { ArrowsDownUp, SquaresFour, Trash } from '@phosphor-icons/react';
+import { Box, Button, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
+import { SquaresFour } from '@phosphor-icons/react';
 import { Field, FieldInputProps, FormikProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { formatUnits, Hex } from 'viem';
+import { Hex } from 'viem';
 import { CARD_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
@@ -15,6 +14,7 @@ import {
   RoleDetailsDrawerEditingRoleHatProp,
   RoleFormValues,
 } from '../../../types/roles';
+import { SendAssetsAction } from '../../ProposalBuilder/ProposalActionCard';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
@@ -23,53 +23,6 @@ import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-
-function SendAssetsAction({
-  index,
-  action,
-  onRemove,
-}: {
-  index: number;
-  action: SendAssetsData;
-  onRemove: (index: number) => void;
-}) {
-  const { t } = useTranslation('common');
-  const { displayName } = useGetAccountName(action.destinationAddress);
-
-  return (
-    <Card my="0.5rem">
-      <Flex justifyContent="space-between">
-        <Flex
-          alignItems="center"
-          gap="0.5rem"
-        >
-          <Icon
-            as={ArrowsDownUp}
-            w="1.5rem"
-            h="1.5rem"
-            color="lilac-0"
-          />
-          <Text>{t('transfer')}</Text>
-          <Text color="lilac-0">
-            {formatUnits(action.transferAmount, action.asset.decimals)} {action.asset.symbol}
-          </Text>
-          <Text>{t('to').toLowerCase()}</Text>
-          <Text color="lilac-0">{displayName}</Text>
-        </Flex>
-        <Button
-          color="red-0"
-          variant="tertiary"
-          size="sm"
-          onClick={() => {
-            onRemove(index);
-          }}
-        >
-          <Icon as={Trash} />
-        </Button>
-      </Flex>
-    </Card>
-  );
-}
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerEditingRoleHatProp>();

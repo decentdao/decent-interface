@@ -1,5 +1,5 @@
-import { Box, Flex, Grid, GridItem } from '@chakra-ui/react';
-import { Trash } from '@phosphor-icons/react';
+import { Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { SquaresFour, Trash } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,10 +12,18 @@ import useCreateProposalSchema from '../../hooks/schemas/proposalBuilder/useCrea
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
 import { CreateProposalSteps, ProposalExecuteData } from '../../types';
-import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
+import {
+  CreateProposalForm,
+  ProposalActionType,
+  ProposalBuilderMode,
+} from '../../types/proposalBuilder';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
+import { AddActions } from '../ui/modals/AddActions';
+import { SendAssetsData } from '../ui/modals/SendAssetsModal';
 import PageHeader from '../ui/page/Header/PageHeader';
+import { ProposalActionCard } from './ProposalActionCard';
 import ProposalDetails from './ProposalDetails';
 import ProposalMetadata from './ProposalMetadata';
 import ProposalTransactionsForm from './ProposalTransactionsForm';
@@ -40,7 +48,8 @@ export function ProposalBuilder({
   const step = (paths[paths.length - 1] || paths[paths.length - 2]) as
     | CreateProposalSteps
     | undefined;
-  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
+  const isProposalMode =
+    mode === ProposalBuilderMode.PROPOSAL || mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS;
 
   const {
     node: { daoAddress, safe },
@@ -50,10 +59,32 @@ export function ProposalBuilder({
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { createProposalValidation } = useCreateProposalSchema();
+  const { addAction, actions, resetActions } = useProposalActionsStore();
+
+  const handleAddSendAssetsAction = (data: SendAssetsData) => {
+    addAction({
+      actionType: ProposalActionType.TRANSFER,
+      content: <></>,
+      transactions: [
+        {
+          targetAddress: data.asset.tokenAddress,
+          ethValue: {
+            bigintValue: 0n,
+            value: '0',
+          },
+          functionName: 'transfer',
+          parameters: [
+            { signature: 'address', value: data.destinationAddress },
+            { signature: 'uint256', value: data.transferAmount.toString() },
+          ],
+        },
+      ],
+    });
+  };
 
   const successCallback = () => {
     if (daoAddress) {
-      // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
+      // Redirecting to proposals page so that user will see newly created Proposal
       navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
   };
@@ -135,14 +166,18 @@ export function ProposalBuilder({
                 buttonProps={{
                   isDisabled: pendingCreateTx,
                   variant: 'secondary',
-                  onClick: () =>
+                  onClick: () => {
+                    if (mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS && actions.length > 0) {
+                      resetActions();
+                    }
                     navigate(
                       daoAddress
                         ? isProposalMode
                           ? DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)
                           : DAO_ROUTES.proposalTemplates.relative(addressPrefix, daoAddress)
                         : BASE_ROUTES.landing,
-                    ),
+                    );
+                  },
                 }}
               />
               <Grid
@@ -217,6 +252,45 @@ export function ProposalBuilder({
                         />
                       </Routes>
                     </Box>
+                    {mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS && (
+                      <Flex
+                        flexDirection="column"
+                        gap="1.5rem"
+                      >
+                        <Flex
+                          flexDirection="column"
+                          gap="0.5rem"
+                        >
+                          <Flex
+                            mt={4}
+                            mb={2}
+                            alignItems="center"
+                          >
+                            <Icon
+                              as={SquaresFour}
+                              w="1.5rem"
+                              h="1.5rem"
+                            />
+                            <Text
+                              textStyle="display-lg"
+                              ml={2}
+                            >
+                              {t('actions', { ns: 'actions' })}
+                            </Text>
+                          </Flex>
+                          {actions.map((action, index) => {
+                            return (
+                              <ProposalActionCard
+                                key={index}
+                                action={action}
+                                index={index}
+                              />
+                            );
+                          })}
+                        </Flex>
+                        <AddActions addSendAssetsAction={handleAddSendAssetsAction} />
+                      </Flex>
+                    )}
                     <StepButtons
                       {...formikProps}
                       mode={mode}

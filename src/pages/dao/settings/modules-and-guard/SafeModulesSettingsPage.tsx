@@ -1,6 +1,7 @@
 import { Flex, Hide, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
+import { SettingsContentBox } from '../../../../components/SafeSettings/SettingsContentBox';
 import { DisplayAddress } from '../../../../components/ui/links/DisplayAddress';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
@@ -10,7 +11,6 @@ import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountNam
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalModuleType } from '../../../../types';
-import { SettingsContentBox } from '../SettingsContentBox';
 
 export function SafeModulesSettingsPage() {
   const { t } = useTranslation('settings');

@@ -21,8 +21,7 @@ import { usePublicClient } from 'wagmi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
-import LinearERC20VotingWithHatsProposalCreation from '../../assets/abi/LinearERC20VotingWithHatsProposalCreation';
-import LinearERC721VotingWithHatsProposalCreation from '../../assets/abi/LinearERC721VotingWithHatsProposalCreation';
+import { ZodiacModuleProxyFactoryAbi } from '../../assets/abi/ZodiacModuleProxyFactoryAbi';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { getRandomBytes } from '../../helpers';
@@ -132,14 +131,14 @@ export default function useCreateRoles() {
         );
 
         const encodedStrategySetupData = encodeFunctionData({
-          abi: LinearERC20VotingWithHatsProposalCreation,
+          abi: abis.LinearERC20VotingWithHatsProposalCreation,
           functionName: 'setUp',
           args: [encodedStrategyInitParams],
         });
 
         const deployWhitelistingVotingStrategyTx = {
           calldata: encodeFunctionData({
-            abi: abis.ModuleProxyFactory,
+            abi: ZodiacModuleProxyFactoryAbi,
             functionName: 'deployModule',
             args: [
               linearVotingErc20HatsWhitelistingMasterCopy,
@@ -209,14 +208,14 @@ export default function useCreateRoles() {
         );
 
         const encodedStrategySetupData = encodeFunctionData({
-          abi: LinearERC721VotingWithHatsProposalCreation,
+          abi: abis.LinearERC721VotingWithHatsProposalCreation,
           functionName: 'setUp',
           args: [encodedStrategyInitParams],
         });
 
         const deployWhitelistingVotingStrategyTx = {
           calldata: encodeFunctionData({
-            abi: abis.ModuleProxyFactory,
+            abi: ZodiacModuleProxyFactoryAbi,
             functionName: 'deployModule',
             args: [
               linearVotingErc721HatsWhitelistingMasterCopy,
@@ -988,7 +987,7 @@ export default function useCreateRoles() {
             allTxs.push({
               targetAddress: whitelistingVotingStrategyAddress,
               calldata: encodeFunctionData({
-                abi: LinearERC20VotingWithHatsProposalCreation,
+                abi: abis.LinearERC20VotingWithHatsProposalCreation,
                 functionName: 'whitelistHat',
                 args: [hatId],
               }),
@@ -1010,7 +1009,7 @@ export default function useCreateRoles() {
           allTxs.push({
             targetAddress: whitelistingVotingStrategyAddress,
             calldata: encodeFunctionData({
-              abi: LinearERC20VotingWithHatsProposalCreation,
+              abi: abis.LinearERC20VotingWithHatsProposalCreation,
               functionName: 'removeHatFromWhitelist',
               args: [hatId],
             }),

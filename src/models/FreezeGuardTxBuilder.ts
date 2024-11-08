@@ -1,17 +1,18 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import {
-  getCreate2Address,
-  keccak256,
-  encodePacked,
+  Abi,
   Address,
-  Hex,
   encodeAbiParameters,
+  encodeFunctionData,
+  encodePacked,
+  getCreate2Address,
+  Hex,
+  keccak256,
   parseAbiParameters,
   PublicClient,
-  Abi,
-  encodeFunctionData,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
+import { ZodiacModuleProxyFactoryAbi } from '../assets/abi/ZodiacModuleProxyFactoryAbi';
 import { buildContractCall } from '../helpers';
 import { SafeTransaction, SubDAO, VotingStrategyType } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -95,7 +96,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   public buildDeployZodiacModuleTx(): SafeTransaction {
     return buildContractCall(
-      abis.ModuleProxyFactory,
+      ZodiacModuleProxyFactoryAbi,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [
@@ -172,7 +173,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   public buildDeployFreezeGuardTx() {
     return buildContractCall(
-      abis.ModuleProxyFactory,
+      ZodiacModuleProxyFactoryAbi,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.getGuardMasterCopyAddress(), this.freezeGuardCallData!, this.saltNum],

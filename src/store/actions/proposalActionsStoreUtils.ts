@@ -1,6 +1,9 @@
-
+import { ProposalActionsStore } from '../../types';
 
 export const initialProposalActionsStore: ProposalActionsStore = {
-  proposalActions: [],
-  setProposalActions: () => {},
+  actions: [],
+  addAction: () => {},
+  removeAction: () => {},
+  resetActions: () => {},
+  getTransactions: () => [],
 };

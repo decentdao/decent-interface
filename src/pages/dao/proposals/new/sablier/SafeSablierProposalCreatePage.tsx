@@ -28,7 +28,7 @@ import {
   Trash,
   WarningCircle,
 } from '@phosphor-icons/react';
-import { groupBy } from 'lodash';
+import groupBy from 'lodash.groupby';
 import {
   Dispatch,
   FormEvent,

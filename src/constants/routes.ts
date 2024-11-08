@@ -77,6 +77,11 @@ export const DAO_ROUTES = {
       `/proposals/new/metadata${getDaoQueryParam(addressPrefix, daoAddress)}`,
     path: 'proposals/new/metadata',
   },
+  proposalWithActionsNew: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/proposals/actions/new/metadata${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'proposals/actions/new/metadata',
+  },
   settings: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/settings${getDaoQueryParam(addressPrefix, daoAddress)}`,

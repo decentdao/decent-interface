@@ -1,7 +1,7 @@
-import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { ZodiacModuleProxyFactoryAbi } from '../../assets/abi/ZodiacModuleProxyFactoryAbi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 // import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
 // import { getValue, setValue } from './cache/useLocalStorage';
@@ -85,7 +85,7 @@ export function useMasterCopy() {
       // if (cachedValue) return [cachedValue, null] as const;
 
       const moduleProxyFactoryContract = getContract({
-        abi: abis.ModuleProxyFactory,
+        abi: ZodiacModuleProxyFactoryAbi,
         address: moduleProxyFactoryContractAddress,
         client: publicClient,
       });

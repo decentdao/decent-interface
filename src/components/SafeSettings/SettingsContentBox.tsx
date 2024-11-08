@@ -1,7 +1,7 @@
 import { BoxProps } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
-import { StyledBox } from '../../../components/ui/containers/StyledBox';
-import { NEUTRAL_2_84 } from '../../../constants/common';
+import { NEUTRAL_2_84 } from '../../constants/common';
+import { StyledBox } from '../ui/containers/StyledBox';
 
 export function SettingsContentBox({ children, ...props }: PropsWithChildren<BoxProps>) {
   return (

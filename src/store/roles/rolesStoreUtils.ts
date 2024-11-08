@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { Hat, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
-import LinearERC20VotingWithHatsProposalCreationAbi from '../../assets/abi/LinearERC20VotingWithHatsProposalCreation';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DecentHat, DecentRoleHat, DecentTree, RolesStoreData } from '../../types/roles';
 
@@ -157,11 +157,15 @@ export const sanitize = async (
 
   const whitelistingVotingContract = whitelistingVotingStrategy
     ? getContract({
-        abi: LinearERC20VotingWithHatsProposalCreationAbi,
+        abi: abis.LinearERC20VotingWithHatsProposalCreation,
         address: whitelistingVotingStrategy,
         client: publicClient,
       })
     : undefined;
+  let whitelistedHatsIds: bigint[] = [];
+  if (whitelistingVotingContract) {
+    whitelistedHatsIds = [...(await whitelistingVotingContract.read.getWhitelistedHatIds())];
+  }
 
   const topHat: DecentHat = {
     id: rawTopHat.id,
@@ -222,7 +226,7 @@ export const sanitize = async (
 
     let canCreateProposals = false;
     if (whitelistingVotingContract) {
-      canCreateProposals = await whitelistingVotingContract.read.isHatWhitelisted([tokenId]);
+      canCreateProposals = whitelistedHatsIds.includes(tokenId);
     }
 
     roleHats.push({
