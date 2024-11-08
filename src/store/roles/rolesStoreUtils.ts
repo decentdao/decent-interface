@@ -42,7 +42,7 @@ interface RolesStoreData {
 }
 
 export type RoleTerm = {
-  nominee: string;
+  nominee: Address;
   termEndDate: Date;
   termNumber: number;
 };
