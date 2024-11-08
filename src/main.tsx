@@ -9,7 +9,6 @@ import './insights';
 import { useNetworkConfig } from './providers/NetworkConfig/NetworkConfigProvider';
 import Providers from './providers/Providers';
 import { router } from './router';
-import './utils/polyfills';
 
 function DecentRouterProvider() {
   const { addressPrefix } = useNetworkConfig();
