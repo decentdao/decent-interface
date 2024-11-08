@@ -6,7 +6,7 @@ import './assets/css/Markdown.css';
 import './assets/css/sentry.css';
 import './assets/css/Toast.css';
 import './insights';
-import { runMigrations } from './hooks/utils/cache/useMigrate';
+import { runMigrations } from './hooks/utils/cache/runMigrations';
 import { useNetworkConfig } from './providers/NetworkConfig/NetworkConfigProvider';
 import Providers from './providers/Providers';
 import { router } from './router';
