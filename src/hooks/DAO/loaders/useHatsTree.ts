@@ -171,7 +171,7 @@ const useHatsTree = () => {
             }
             const streamQueryResult = await apolloClient.query({
               query: StreamsQueryDocument,
-              variables: { recipientAddress: hat.smartAddress },
+              variables: { recipientAddress: hat.isTermed ? hat.wearerAddress : hat.smartAddress },
               context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
             });
 
