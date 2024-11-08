@@ -34,8 +34,10 @@ export function SafeGovernanceSettingsPage() {
       <Show below="md">
         <NestedPageHeader
           title={t('daoSettingsGovernance')}
-          backButtonText={t('settings')}
-          backButtonHref={DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress)}
+          backButton={{
+            text: t('settings'),
+            href: DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress),
+          }}
         />
       </Show>
       <SettingsContentBox

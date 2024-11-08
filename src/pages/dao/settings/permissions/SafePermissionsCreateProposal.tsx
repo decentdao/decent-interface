@@ -299,9 +299,12 @@ export function SafePermissionsCreateProposal() {
       <Show below="md">
         <NestedPageHeader
           title={t('permissionCreateProposalsTitle')}
-          onGoBack={votingStrategyAddress ? undefined : handleGoBack}
-          backButtonText={t('back', { ns: 'common' })}
-          backButtonHref={settingsPermissionsPath}
+          backButton={{
+            text: t('back', { ns: 'common' }),
+            ...(votingStrategyAddress
+              ? { href: settingsPermissionsPath }
+              : { onClick: handleGoBack }),
+          }}
         >
           {votingStrategyAddress && votingStrategyAddress !== zeroAddress && (
             <Flex
