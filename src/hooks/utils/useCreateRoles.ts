@@ -218,9 +218,6 @@ export default function useCreateRoles() {
             throw new Error('Hat name or description of added hat is undefined.');
           }
 
-          if (role.wearer === undefined) {
-            throw new Error('Hat wearer of added hat is undefined.');
-          }
           const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments ?? []);
 
           const [firstTerm] = parseRoleTermsFromFormRoleTerms(role.roleTerms ?? []);
@@ -229,10 +226,15 @@ export default function useCreateRoles() {
           }
 
           // @note for new termed roles, we set the first wearer to the first nominee
-          const wearer = role.isTermed
-            ? getAddress(firstTerm.nominatedWearers[0])
-            : getAddress(role.wearer);
           const termEndDateTs = role.isTermed ? firstTerm.termEndDateTs : BigInt(0);
+          let wearer: Address;
+          if (role.isTermed) {
+            wearer = firstTerm.nominatedWearers[0];
+          } else if (!role.isTermed && role.wearer) {
+            wearer = getAddress(role.wearer);
+          } else {
+            throw new Error('A wearer is required');
+          }
 
           return createHatStructWithPayments(
             role.name,
