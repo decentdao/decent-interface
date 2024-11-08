@@ -316,13 +316,13 @@ export default function RoleFormTerms() {
 
   // @dev shows the term form when there are no terms
   useEffect(() => {
-    if (terms[0] === undefined && values.newRoleTerm === undefined) {
+    if (values.newRoleTerm === undefined && roleFormTerms.length === 0) {
       setFieldValue('newRoleTerm', {
         nominee: '',
         termEndDate: undefined,
       });
     }
-  }, [values.newRoleTerm, setFieldValue, terms]);
+  }, [values.newRoleTerm, setFieldValue, roleFormTerms.length]);
 
   const isAddButtonDisabled = useMemo(() => {
     const isFirstTermBeingCreated = !!values.newRoleTerm || !roleFormTerms.length;

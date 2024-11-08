@@ -200,8 +200,9 @@ export default function useCreateRoles() {
         if (term.nominee === undefined) {
           throw new Error('Nominee of added Role is undefined.');
         }
+
         return {
-          termEndDateTs: BigInt(term.termEndDate.getTime()) * 1000n,
+          termEndDateTs: BigInt(term.termEndDate.getTime()) / 1000n,
           nominatedWearers: [getAddress(term.nominee)],
         };
       });
@@ -369,10 +370,6 @@ export default function useCreateRoles() {
     async (formRole: RoleHatFormValueEdited) => {
       if (formRole.name === undefined || formRole.description === undefined) {
         throw new Error('Role name or description is undefined.');
-      }
-
-      if (formRole.wearer === undefined) {
-        throw new Error('Role member is undefined.');
       }
 
       if (!hatsTree) {
@@ -797,11 +794,7 @@ export default function useCreateRoles() {
 
       for (let index = 0; index < modifiedHats.length; index++) {
         const formHat = modifiedHats[index];
-        if (
-          formHat.name === undefined ||
-          formHat.description === undefined ||
-          formHat.wearer === undefined
-        ) {
+        if (formHat.name === undefined || formHat.description === undefined) {
           throw new Error('Role details are missing', {
             cause: formHat,
           });
@@ -904,6 +897,9 @@ export default function useCreateRoles() {
             });
           }
           if (formHat.editedRole.fieldNames.includes('member') && !formHat.isTermed) {
+            if (!formHat.wearer) {
+              throw new Error('Cannot prepare transactions for edited role without wearer');
+            }
             const newWearer = getAddress(formHat.wearer);
             if (formHat.smartAddress === undefined) {
               throw new Error('Cannot prepare transactions for edited role without smart address');
@@ -1034,7 +1030,7 @@ export default function useCreateRoles() {
                   args: [
                     {
                       // @dev formHat.wearer is not changeable for term roles. It will always be the current wearer.
-                      currentWearer: getAddress(formHat.wearer),
+                      currentWearer: getAddress(previousTerm.nominatedWearers[0]),
                       hatsProtocol: hatsProtocol,
                       hatId: BigInt(formHat.id),
                       nominatedWearer: newTerm.nominatedWearers[0],
