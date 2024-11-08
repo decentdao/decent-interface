@@ -6,6 +6,7 @@ import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 export interface SablierPayment {
   streamId: string;
   contractAddress: Address;
+  recipient: Address;
   asset: {
     address: Address;
     name: string;
