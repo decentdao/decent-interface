@@ -67,6 +67,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
     }
 
     setFieldValue('roleEditing', undefined);
+    setFieldValue('addMewTerm', undefined);
     setTimeout(() => onRemove(), 50);
   };
 
@@ -163,6 +164,7 @@ export function RoleEditDetails() {
     setTimeout(() => {
       setTouched({});
       setFieldValue('roleEditing', undefined);
+      setFieldValue('addMewTerm', undefined);
       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
     }, 50);
   };
