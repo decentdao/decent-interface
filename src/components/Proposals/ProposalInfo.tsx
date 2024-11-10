@@ -3,10 +3,11 @@ import { ArrowUpRight } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shield } from '../../assets/theme/custom/icons/Shield';
+import { isDemoMode } from '../../constants/common';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../providers/App/AppProvider';
-import { ExtendedSnapshotProposal, FractalProposal } from '../../types';
+import { ExtendedSnapshotProposal, FractalProposal, FractalProposalState } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
 import { Badge } from '../ui/badges/Badge';
 import { SnapshotButton } from '../ui/badges/Snapshot';
@@ -15,6 +16,7 @@ import { useDecentModal } from '../ui/modals/useDecentModal';
 import { ProposalCountdown } from '../ui/proposal/ProposalCountdown';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
+import { DemoProposalActions } from './DemoProposalActions';
 
 export function ProposalInfo({
   proposal,
@@ -53,10 +55,16 @@ export function ProposalInfo({
         gap={2}
         alignItems="center"
       >
+        {/* Simulate expired proposal for demo */}
         {proposal.state && (
           <Badge
             size="base"
-            labelKey={proposal.state}
+            labelKey={
+              proposal.transactionHash ===
+                '0xb6066f0979c96a1d56d5d6bae3bf6d2a04707ebf84bcc0d84b15c9eff4759173' && isDemoMode()
+                ? FractalProposalState.EXPIRED
+                : proposal.state
+            }
           />
         )}
         <ProposalCountdown
@@ -103,6 +111,11 @@ export function ProposalInfo({
             text={metaData.documentationUrl}
           />
         )}
+        {isDemoMode() &&
+          proposal.transactionHash ===
+            '0x642672a027d13d31ef366dcd18a4cd89d2ef7b67b22c41b9cff91c2306b4b964' && (
+            <DemoProposalActions />
+          )}
         <ProposalExecutableCode proposal={proposal} />
       </Box>
     </Box>

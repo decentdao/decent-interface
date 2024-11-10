@@ -8,6 +8,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { erc20Abi, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { isDemoMode } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -143,12 +144,27 @@ export const useDecentTreasury = () => {
       (prev, curr) => prev + (curr.usdValue || 0),
       0,
     );
+
+    const demoTotalAssetsFungibleUsd = assetsFungible.reduce((prev, curr) => {
+      if (
+        getAddress(curr.tokenAddress) === '0xecDa721f05cE637f970434B2319852e2b98d6678' &&
+        isDemoMode()
+      ) {
+        console.log(prev + Number(curr.balanceFormatted));
+
+        return prev + Number(curr.balanceFormatted);
+      }
+
+      return prev + (curr.usdValue || 0);
+    }, 0);
+
     const totalAssetsDeFiUsd = assetsDeFi.reduce(
       (prev, curr) => prev + (curr.position?.balanceUsd || 0),
       0,
     );
 
-    const totalUsdValue = totalAssetsFungibleUsd + totalAssetsDeFiUsd;
+    const totalUsdValue =
+      (isDemoMode() ? demoTotalAssetsFungibleUsd : totalAssetsFungibleUsd) + totalAssetsDeFiUsd;
 
     const treasuryData = {
       assetsFungible,
