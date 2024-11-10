@@ -16,6 +16,7 @@ import { useDecentModal } from '../ui/modals/useDecentModal';
 import { ProposalCountdown } from '../ui/proposal/ProposalCountdown';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
+import { DemoProposalActions } from './DemoProposalActions';
 
 export function ProposalInfo({
   proposal,
@@ -110,6 +111,7 @@ export function ProposalInfo({
             text={metaData.documentationUrl}
           />
         )}
+        <DemoProposalActions />
         <ProposalExecutableCode proposal={proposal} />
       </Box>
     </Box>

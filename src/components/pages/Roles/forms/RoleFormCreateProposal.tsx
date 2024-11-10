@@ -21,14 +21,14 @@ import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
 import { EditedRole, RoleDetailsDrawerEditingRoleHatProp, RoleFormValues } from '../types';
 
-function SendAssetsAction({
+export function SendAssetsAction({
   index,
   action,
   onRemove,
 }: {
   index: number;
   action: SendAssetsData;
-  onRemove: (index: number) => void;
+  onRemove?: (index: number) => void;
 }) {
   const { t } = useTranslation('common');
   const { displayName } = useGetAccountName(action.destinationAddress);
@@ -53,16 +53,18 @@ function SendAssetsAction({
           <Text>{t('to').toLowerCase()}</Text>
           <Text color="lilac-0">{displayName}</Text>
         </Flex>
-        <Button
-          color="red-0"
-          variant="tertiary"
-          size="sm"
-          onClick={() => {
-            onRemove(index);
-          }}
-        >
-          <Icon as={Trash} />
-        </Button>
+        {onRemove && (
+          <Button
+            color="red-0"
+            variant="tertiary"
+            size="sm"
+            onClick={() => {
+              onRemove(index);
+            }}
+          >
+            <Icon as={Trash} />
+          </Button>
+        )}
       </Flex>
     </Card>
   );
