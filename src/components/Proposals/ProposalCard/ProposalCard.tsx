@@ -2,10 +2,16 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { isDemoMode } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { AzoriusProposal, FractalProposal, SnapshotProposal } from '../../../types';
+import {
+  AzoriusProposal,
+  FractalProposal,
+  FractalProposalState,
+  SnapshotProposal,
+} from '../../../types';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { ActivityDescription } from '../../Activity/ActivityDescription';
 import { Badge } from '../../ui/badges/Badge';
@@ -50,7 +56,13 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
             w={{ base: '100%', md: 'auto' }}
           >
             <Badge
-              labelKey={proposal.state!}
+              labelKey={
+                proposal.transactionHash ===
+                  '0xb6066f0979c96a1d56d5d6bae3bf6d2a04707ebf84bcc0d84b15c9eff4759173' &&
+                isDemoMode()
+                  ? FractalProposalState.EXPIRED
+                  : proposal.state!
+              }
               size="sm"
             />
             <ProposalCountdown

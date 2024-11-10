@@ -3,10 +3,11 @@ import { ArrowUpRight } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shield } from '../../assets/theme/custom/icons/Shield';
+import { isDemoMode } from '../../constants/common';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../providers/App/AppProvider';
-import { ExtendedSnapshotProposal, FractalProposal } from '../../types';
+import { ExtendedSnapshotProposal, FractalProposal, FractalProposalState } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
 import { Badge } from '../ui/badges/Badge';
 import { SnapshotButton } from '../ui/badges/Snapshot';
@@ -53,10 +54,16 @@ export function ProposalInfo({
         gap={2}
         alignItems="center"
       >
+        {/* Simulate expired proposal for demo */}
         {proposal.state && (
           <Badge
             size="base"
-            labelKey={proposal.state}
+            labelKey={
+              proposal.transactionHash ===
+                '0xb6066f0979c96a1d56d5d6bae3bf6d2a04707ebf84bcc0d84b15c9eff4759173' && isDemoMode()
+                ? FractalProposalState.EXPIRED
+                : proposal.state
+            }
           />
         )}
         <ProposalCountdown
