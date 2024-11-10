@@ -111,7 +111,11 @@ export function ProposalInfo({
             text={metaData.documentationUrl}
           />
         )}
-        <DemoProposalActions />
+        {isDemoMode() &&
+          proposal.transactionHash ===
+            '0x642672a027d13d31ef366dcd18a4cd89d2ef7b67b22c41b9cff91c2306b4b964' && (
+            <DemoProposalActions />
+          )}
         <ProposalExecutableCode proposal={proposal} />
       </Box>
     </Box>
