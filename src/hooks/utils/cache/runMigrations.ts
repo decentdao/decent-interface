@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import { CacheExpiry, CacheKeys } from './cacheDefaults';
 import { getValue, setValue } from './useLocalStorage';
@@ -26,15 +25,4 @@ export const runMigrations = async (
     }
   }
   setValue({ cacheName: CacheKeys.MIGRATION }, newVersion, CacheExpiry.NEVER);
-};
-
-export const useMigrate = () => {
-  const isMounted = useRef(false);
-
-  useEffect(() => {
-    // prevent multiple calls
-    if (isMounted.current) return;
-    runMigrations();
-    isMounted.current = true;
-  }, []);
 };

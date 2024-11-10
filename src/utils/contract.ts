@@ -31,6 +31,9 @@ export const getAverageBlockTime = async (publicClient: PublicClient) => {
 };
 
 export const getTimeStamp = async (blockNumber: number | 'latest', publicClient: PublicClient) => {
+  if (blockNumber === 0) {
+    return 0;
+  }
   if (blockNumber === 'latest') {
     const latestBlock = await publicClient.getBlock();
     return Number(latestBlock.timestamp);
