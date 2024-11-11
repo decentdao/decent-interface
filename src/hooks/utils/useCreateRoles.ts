@@ -22,6 +22,7 @@ import { usePublicClient } from 'wagmi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
+import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
 import { ZodiacModuleProxyFactoryAbi } from '../../assets/abi/ZodiacModuleProxyFactoryAbi';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -31,7 +32,6 @@ import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../store/roles/useRolesStore';
-import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
 import {
   AzoriusGovernance,
   CreateProposalMetadata,
@@ -50,10 +50,10 @@ import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import { predictAccountAddress, predictHatId } from './../../store/roles/rolesStoreUtils';
 import {
   isElectionEligibilityModule,
   predictAccountAddress,
+  predictHatId,
 } from './../../store/roles/rolesStoreUtils';
 
 function hatsDetailsBuilder(data: { name: string; description: string }) {
@@ -112,13 +112,6 @@ export default function useCreateRoles() {
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
   const navigate = useNavigate();
-
-  const hatsDetailsBuilder = useCallback((data: { name: string; description: string }) => {
-    return JSON.stringify({
-      type: '1.0',
-      data,
-    });
-  }, []);
 
   const buildDeployWhitelistingStrategy = useCallback(
     async (whitelistedHatsIds: bigint[]) => {
@@ -296,14 +289,6 @@ export default function useCreateRoles() {
       publicClient,
       zodiacModuleProxyFactory,
     ],
-  );
-
-  const uploadHatDescription = useCallback(
-    async (hatDescription: string) => {
-      const response = await ipfsClient.add(hatDescription);
-      return `ipfs://${response.Hash}`;
-    },
-    [ipfsClient],
   );
 
   const createHatStruct = useCallback(
@@ -1396,6 +1381,8 @@ export default function useCreateRoles() {
       daoAddress,
       publicClient,
       prepareAdminHatTxs,
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721WithHatsWhitelistingAddress,
       prepareNewHatTxs,
       getHat,
       hatsProtocol,
@@ -1403,16 +1390,14 @@ export default function useCreateRoles() {
       getActiveStreamsFromFormHat,
       prepareFlushStreamTxs,
       prepareCancelStreamTxs,
-      uploadHatDescription,
-      hatsDetailsBuilder,
-      getStreamsWithFundsToClaimFromFromHat,
-      getCancelledStreamsFromFormHat,
-      getNewStreamsFromFormHat,
-      predictSmartAccount,
-      createBatchLinearStreamCreationTx,
+      ipfsClient,
+      getMemberChangedStreamsWithFundsToClaim,
+      prepareRolePaymentUpdateTxs,
+      prepareTermedRolePaymentUpdateTxs,
+      isDecentAutonomousAdminV1,
+      hatsElectionsEligibilityMasterCopy,
+      parseRoleTermsFromFormRoleTerms,
       buildDeployWhitelistingStrategy,
-      linearVotingErc20WithHatsWhitelistingAddress,
-      linearVotingErc721WithHatsWhitelistingAddress,
     ],
   );
 

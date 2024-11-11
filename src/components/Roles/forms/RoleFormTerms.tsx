@@ -18,13 +18,13 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { getAddress, Hex } from 'viem';
 import { usePublicClient } from 'wagmi';
-import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
-import { useRolesStore } from '../../../../store/roles/useRolesStore';
-import { DatePicker } from '../../../ui/forms/DatePicker';
-import { AddressInput } from '../../../ui/forms/EthAddressInput';
-import LabelWrapper from '../../../ui/forms/LabelWrapper';
+import { DETAILS_BOX_SHADOW } from '../../../constants/common';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
+import { RoleFormTermStatus, RoleFormValues } from '../../../types/roles';
+import { DatePicker } from '../../ui/forms/DatePicker';
+import { AddressInput } from '../../ui/forms/EthAddressInput';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
 import RoleTerm from '../RoleTerm';
-import { RoleFormTermStatus, RoleFormValues } from '../types';
 
 function RoleTermEndDateInput({ previousTermEndDate }: { previousTermEndDate: Date | undefined }) {
   const { t } = useTranslation('roles');

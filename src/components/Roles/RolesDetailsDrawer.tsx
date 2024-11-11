@@ -30,7 +30,7 @@ import { BarLoader } from '../ui/loaders/BarLoader';
 import ModalTooltip from '../ui/modals/ModalTooltip';
 import Avatar from '../ui/page/Header/Avatar';
 import Divider from '../ui/utils/Divider';
-import { RolePaymentDetails } from './RolePaymentDetails';
+import RoleDetailsTabs from './RoleDetailsTabs';
 
 export function RoleProposalPermissionBadge({
   containerRef,

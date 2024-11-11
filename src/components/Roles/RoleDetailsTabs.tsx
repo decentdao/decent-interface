@@ -1,17 +1,17 @@
-import { Tabs, TabList, Tab, TabPanels, TabPanel, Divider, Text } from '@chakra-ui/react';
+import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
-import { isFeatureEnabled } from '../../../constants/common';
+import { isFeatureEnabled } from '../../constants/common';
 import {
-  paymentSorterByWithdrawAmount,
-  paymentSorterByStartDate,
   paymentSorterByActiveStatus,
-} from '../../../store/roles/rolesStoreUtils';
-import NoDataCard from '../../ui/containers/NoDataCard';
+  paymentSorterByStartDate,
+  paymentSorterByWithdrawAmount,
+} from '../../store/roles/rolesStoreUtils';
+import { SablierPayment } from '../../types/roles';
+import NoDataCard from '../ui/containers/NoDataCard';
 import { RolePaymentDetails } from './RolePaymentDetails';
 import RoleTermDetails from './RoleTermDetails';
-import { SablierPayment } from './types';
 
 type RoleTermDetailProp = {
   termEndDate: Date;

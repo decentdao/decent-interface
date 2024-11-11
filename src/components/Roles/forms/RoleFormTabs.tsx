@@ -31,7 +31,7 @@ export function RoleFormTabs({
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
-  const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
+  const { isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue, errors, setTouched } = useFormikContext<RoleFormValues>();
 

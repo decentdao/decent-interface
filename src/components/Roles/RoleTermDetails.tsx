@@ -1,20 +1,20 @@
 import {
-  Box,
   Accordion,
-  AccordionItem,
   AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+  Box,
   Flex,
   Icon,
-  AccordionPanel,
   Text,
 } from '@chakra-ui/react';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
-import NoDataCard from '../../ui/containers/NoDataCard';
+import { RoleFormTermStatus } from '../../types/roles';
+import NoDataCard from '../ui/containers/NoDataCard';
 import RoleTerm from './RoleTerm';
-import { RoleFormTermStatus } from './types';
 
 type RoleTermDetailProp = {
   nominee: string;

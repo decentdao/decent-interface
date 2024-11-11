@@ -12,9 +12,8 @@ import {
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { RoleDetailsDrawerProps } from '../../types/roles';
 import DraggableDrawer from '../ui/containers/DraggableDrawer';
-import Divider from '../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
-import { RolePaymentDetails } from './RolePaymentDetails';
+import RoleDetailsTabs from './RoleDetailsTabs';
 import { RoleProposalPermissionBadge } from './RolesDetailsDrawer';
 
 export default function RolesDetailsDrawerMobile({

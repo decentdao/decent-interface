@@ -19,7 +19,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex, isHex } from 'viem';
-import { RoleFormTabs } from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
+import { RoleFormTabs } from '../../../../../components/Roles/forms/RoleFormTabs';
+import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
+import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
+import { UnsavedChangesWarningContent } from '../../../../../components/ui/modals/UnsavedChangesWarningContent';
 import {
   BACKGROUND_SEMI_TRANSPARENT,
   CARD_SHADOW,

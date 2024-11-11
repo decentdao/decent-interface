@@ -6,17 +6,17 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getContract, Hex } from 'viem';
 import { useWalletClient } from 'wagmi';
-import { DETAILS_BOX_SHADOW } from '../../../constants/common';
-import { useDateTimeDisplay } from '../../../helpers/dateTime';
-import useAvatar from '../../../hooks/utils/useAvatar';
-import { useCopyText } from '../../../hooks/utils/useCopyText';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { useTransaction } from '../../../hooks/utils/useTransaction';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../store/roles/useRolesStore';
-import { DEFAULT_DATE_TIME_FORMAT_NO_TZ } from '../../../utils';
-import Avatar from '../../ui/page/Header/Avatar';
-import { RoleFormTermStatus } from './types';
+import { DETAILS_BOX_SHADOW } from '../../constants/common';
+import { useDateTimeDisplay } from '../../helpers/dateTime';
+import useAvatar from '../../hooks/utils/useAvatar';
+import { useCopyText } from '../../hooks/utils/useCopyText';
+import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
+import { useTransaction } from '../../hooks/utils/useTransaction';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesStore } from '../../store/roles/useRolesStore';
+import { RoleFormTermStatus } from '../../types/roles';
+import { DEFAULT_DATE_TIME_FORMAT_NO_TZ } from '../../utils';
+import Avatar from '../ui/page/Header/Avatar';
 
 function Container({
   children,

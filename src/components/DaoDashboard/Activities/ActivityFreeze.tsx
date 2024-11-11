@@ -5,6 +5,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { DAOState } from '../../../types';
 import { ActivityCard } from '../../Activity/ActivityCard';
 import { FreezeButton } from '../../Activity/FreezeButton';
+import { DecentTooltip } from '../../ui/DecentTooltip';
 import { Badge } from '../../ui/badges/Badge';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {

@@ -6,6 +6,7 @@ import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TokenEventType, TransferDisplayData, TransferType } from '../../../types';
+import { DecentTooltip } from '../../ui/DecentTooltip';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import { BarLoader } from '../../ui/loaders/BarLoader';

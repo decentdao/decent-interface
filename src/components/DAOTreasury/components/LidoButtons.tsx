@@ -1,6 +1,6 @@
-import { Button, HStack, Text, Show, Divider } from '@chakra-ui/react';
+import { Button, Divider, HStack, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { DecentTooltip } from '../../../ui/DecentTooltip';
+import { DecentTooltip } from '../../ui/DecentTooltip';
 import useTreasuryLidoInteractions from '../hooks/useTreasuryLidoInteractions';
 
 export default function LidoButtons() {

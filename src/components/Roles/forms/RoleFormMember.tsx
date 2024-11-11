@@ -17,18 +17,18 @@ import {
   Warning,
   WarningDiamond,
 } from '@phosphor-icons/react';
-import { FieldInputProps, FormikProps, FieldMetaProps, useFormikContext, Field } from 'formik';
+import { Field, FieldInputProps, FieldMetaProps, FormikProps, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DecentHourGlass } from '../../../../assets/theme/custom/icons/DecentHourGlass';
-import { DETAILS_BOX_SHADOW, isFeatureEnabled } from '../../../../constants/common';
-import useAddress from '../../../../hooks/utils/useAddress';
-import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
-import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
-import { AddressInput } from '../../../ui/forms/EthAddressInput';
-import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { ModalBase } from '../../../ui/modals/ModalBase';
-import { RoleFormValues } from '../types';
+import { DecentHourGlass } from '../../../assets/theme/custom/icons/DecentHourGlass';
+import { DETAILS_BOX_SHADOW, isFeatureEnabled } from '../../../constants/common';
+import useAddress from '../../../hooks/utils/useAddress';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { RoleFormValues } from '../../../types/roles';
+import DraggableDrawer from '../../ui/containers/DraggableDrawer';
+import { AddressInput } from '../../ui/forms/EthAddressInput';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
+import { ModalBase } from '../../ui/modals/ModalBase';
 import RoleFormTerms from './RoleFormTerms';
 
 function RoleMemberWearerInput() {

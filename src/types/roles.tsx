@@ -10,16 +10,36 @@ export interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
-  canCreateProposals: boolean;
+  eligibility?: Address;
   payments?: SablierPayment[];
 }
 
 export interface DecentTopHat extends DecentHat {}
 
-export interface DecentAdminHat extends DecentHat {}
+export interface DecentAdminHat extends DecentHat {
+  wearer?: Address;
+}
 
-export interface DecentRoleHat extends DecentHat {
+export type RoleTerm = {
+  nominee: Address;
+  termEndDate: Date;
+  termNumber: number;
+};
+
+type DecentRoleHatTerms = {
+  allTerms: RoleTerm[];
+  currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
+  nextTerm: RoleTerm | undefined;
+  expiredTerms: RoleTerm[];
+};
+
+export interface DecentRoleHat extends Omit<DecentHat, 'smartAddress'> {
   wearerAddress: Address;
+  eligibility?: Address;
+  smartAddress?: Address;
+  roleTerms: DecentRoleHatTerms;
+  isTermed: boolean;
+  canCreateProposals: boolean;
 }
 
 export interface DecentTree {
@@ -151,7 +171,8 @@ export type EditedRoleFieldNames =
   | 'member'
   | 'payments'
   | 'roleType'
-  | 'newTerm';
+  | 'newTerm'
+  | 'canCreateProposals';
 export interface EditedRole {
   fieldNames: EditedRoleFieldNames[];
   status: EditBadgeStatus;
@@ -211,8 +232,9 @@ export interface RoleDetailsDrawerProps {
   isOpen?: boolean;
 }
 
-export interface RolesStoreData {
+interface RolesStoreData {
   hatsTreeId: undefined | null | number;
+  decentHatsAddress: Address | null | undefined;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
   contextChainId: number | null;

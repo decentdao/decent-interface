@@ -1,9 +1,10 @@
-import { Divider, HStack, Flex, Text, Image, Box } from '@chakra-ui/react';
+import { Box, Divider, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { DefiBalance } from '../../../types';
 import { formatCoin, formatPercentage, formatUSD } from '../../../utils';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
+import { DecentTooltip } from '../../ui/DecentTooltip';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 
 export function DeFiHeader() {

@@ -1,19 +1,6 @@
 import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
-import { DecentTree, EditBadgeStatus, EditedRole, RoleFormValues } from '../../../types/roles';
-
-const addRemoveField = (
-  fieldNames: EditedRoleFieldNames[],
-  fieldName: EditedRoleFieldNames,
-  hasChanges: boolean,
-): EditedRoleFieldNames[] => {
-  if (fieldNames.includes(fieldName) && !hasChanges) {
-    return fieldNames.filter(field => field !== fieldName);
-  } else if (!fieldNames.includes(fieldName) && !hasChanges) {
-    return fieldNames;
-  }
-  return [...fieldNames, fieldName];
-};
+import { DecentTree, RoleFormValues } from '../../../types/roles';
 
 export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | undefined | null }) {
   const { values } = useFormikContext<RoleFormValues>();
@@ -58,48 +45,13 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     );
   }, [existingRoleHat, values.roleEditing]);
 
-  const editedRoleData = useMemo<EditedRole>(() => {
-    if (!existingRoleHat) {
-      return {
-        fieldNames: [],
-        status: EditBadgeStatus.New,
-      };
-    }
-    let fieldNames: EditedRoleFieldNames[] = [];
-    fieldNames = addRemoveField(fieldNames, 'roleName', isRoleNameUpdated);
-    fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
-    fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
-    fieldNames = addRemoveField(fieldNames, 'payments', isPaymentsUpdated);
-    fieldNames = addRemoveField(fieldNames, 'canCreateProposals', isCanCreateProposalsUpdated);
-    fieldNames = addRemoveField(fieldNames, 'roleType', isRoleTypeUpdated);
-    fieldNames = addRemoveField(fieldNames, 'newTerm', isRoleTermUpdated);
-
-    return {
-      fieldNames,
-      status: EditBadgeStatus.Updated,
-    };
-  }, [
-    existingRoleHat,
-    isRoleNameUpdated,
-    isRoleDescriptionUpdated,
-    isMemberUpdated,
-    isPaymentsUpdated,
-    isCanCreateProposalsUpdated,
-    isRoleTypeUpdated,
-    isRoleTermUpdated,
-  ]);
-
   const isRoleUpdated = useMemo(() => {
     return (
       !!isRoleNameUpdated ||
       !!isRoleDescriptionUpdated ||
       !!isMemberUpdated ||
       !!isPaymentsUpdated ||
-      !!isCanCreateProposalsUpdated
-      !!isRoleNameUpdated ||
-      !!isRoleDescriptionUpdated ||
-      !!isMemberUpdated ||
-      !!isPaymentsUpdated ||
+      !!isCanCreateProposalsUpdated ||
       !!isRoleTypeUpdated ||
       !!isRoleTermUpdated
     );
@@ -115,7 +67,6 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
 
   return {
     existingRoleHat,
-    editedRoleData,
     isRoleUpdated,
   };
 }
