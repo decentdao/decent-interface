@@ -60,9 +60,13 @@ export const sepoliaConfig: NetworkConfig = {
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
     linearVotingErc20WrappedMasterCopy: getAddress(a.LinearERC20WrappedVoting),
-    linearVotingErc20HatsWhitelistingMasterCopy: '0x4F5d44477C0Da5df31c2c5Bdd291224035708C39', // @todo - change to address from @fractal-framework/fractal-contracts
+    linearVotingErc20HatsWhitelistingMasterCopy: getAddress(
+      a.LinearERC20VotingWithHatsProposalCreation,
+    ),
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
-    linearVotingErc721HatsWhitelistingMasterCopy: '0x17C592C9Ce1ED1ba0e9a593d8c38978448D21157', // @todo - change to address from @fractal-framework/fractal-contracts
+    linearVotingErc721HatsWhitelistingMasterCopy: getAddress(
+      a.LinearERC721VotingWithHatsProposalCreation,
+    ),
 
     moduleAzoriusMasterCopy: getAddress(a.Azorius),
     moduleFractalMasterCopy: getAddress(a.FractalModule),
