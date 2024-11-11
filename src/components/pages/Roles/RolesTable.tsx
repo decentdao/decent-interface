@@ -92,14 +92,22 @@ function RoleNameEditColumn({
   );
 }
 
-function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
+function MemberColumn({
+  wearerAddress,
+  currentRoleTermStatus,
+  isTermed,
+}: {
+  isTermed?: boolean;
+  wearerAddress?: Address;
+  currentRoleTermStatus?: 'active' | 'inactive';
+}) {
   const { displayName: accountDisplayName } = useGetAccountName(wearerAddress);
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');
   return (
     <Td width="60%">
-      <Flex>
+      <Flex alignItems="center">
         {wearerAddress ? (
           <Avatar
             size="icon"
@@ -108,14 +116,14 @@ function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
           />
         ) : (
           <Box
-            boxSize="3rem"
+            boxSize="1.5rem"
             borderRadius="100%"
             bg="white-alpha-04"
           />
         )}
         <Text
           textStyle="body-base"
-          color="white-0"
+          color={isTermed && currentRoleTermStatus === 'inactive' ? 'neutral-6' : 'white-0'}
           ml="0.5rem"
         >
           {wearerAddress ? accountDisplayName : t('unassigned')}
@@ -159,7 +167,14 @@ function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
   );
 }
 
-export function RolesRow({ name, wearerAddress, paymentsCount, handleRoleClick }: RoleProps) {
+export function RolesRow({
+  name,
+  wearerAddress,
+  paymentsCount,
+  handleRoleClick,
+  currentRoleTermStatus,
+  isTermed,
+}: RoleProps) {
   return (
     <Tr
       sx={{
@@ -182,7 +197,11 @@ export function RolesRow({ name, wearerAddress, paymentsCount, handleRoleClick }
       >
         {name}
       </Td>
-      <MemberColumn wearerAddress={wearerAddress} />
+      <MemberColumn
+        wearerAddress={wearerAddress}
+        currentRoleTermStatus={currentRoleTermStatus}
+        isTermed={isTermed}
+      />
       <PaymentsColumn paymentsCount={paymentsCount} />
     </Tr>
   );
@@ -255,6 +274,8 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearerAddress}
                 handleRoleClick={() => handleRoleClick(role.id)}
+                currentRoleTermStatus={role.roleTerms.currentTerm?.termStatus}
+                isTermed={role.isTermed}
                 paymentsCount={
                   role.payments === undefined
                     ? undefined
