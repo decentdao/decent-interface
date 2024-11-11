@@ -4,8 +4,9 @@ import { ArrowRight, Calendar, ClockCountdown, Copy } from '@phosphor-icons/reac
 import { format } from 'date-fns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getContract, Hex } from 'viem';
+import { Address, getAddress, getContract, Hex } from 'viem';
 import { useWalletClient } from 'wagmi';
+import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { useDateTimeDisplay } from '../../helpers/dateTime';
 import useAvatar from '../../hooks/utils/useAvatar';
@@ -303,7 +304,6 @@ export default function RoleTerm({
   const wearerAddress = roleHat?.wearerAddress;
 
   const handleTriggerStartTerm = useCallback(async () => {
-    // ? @todo if first term wearer === new term nominee, then start term directly?
     const adminHatWearer = hatsTree?.adminHat.wearer;
 
     if (!wearerAddress) {
@@ -315,9 +315,17 @@ export default function RoleTerm({
     if (!walletClient) {
       throw new Error('Public client not found');
     }
-    if (!hatId) {
-      throw new Error('Hat ID not found');
+    if (!roleHat) {
+      throw new Error('roleHat not found');
     }
+    const eligibilityAddress = roleHat.eligibility;
+    if (!eligibilityAddress) {
+      throw new Error('Election eligibility contract not found');
+    }
+
+    const [currentTerm, previousTerm] = roleHat.roleTerms.allTerms.sort(
+      (a, b) => a.termNumber - b.termNumber,
+    );
     const decentAutonomousAdminContract = getContract({
       abi: abis.DecentAutonomousAdminV1,
       address: adminHatWearer,
@@ -325,27 +333,37 @@ export default function RoleTerm({
     });
 
     contractCall({
-      contractFn: () =>
-        decentAutonomousAdminContract.write.triggerStartNextTerm([
-          {
-            currentWearer: wearerAddress,
-            hatsProtocol,
-            hatId: BigInt(hatId),
-            nominatedWearer: termNominatedWearer,
-          },
-        ]),
+      contractFn: () => {
+        if (getAddress(previousTerm.nominee) === getAddress(currentTerm.nominee)) {
+          const electionsContract = getContract({
+            abi: HatsElectionsEligibilityAbi,
+            address: eligibilityAddress,
+            client: walletClient,
+          });
+          return electionsContract.write.startNextTerm();
+        } else {
+          return decentAutonomousAdminContract.write.triggerStartNextTerm([
+            {
+              currentWearer: wearerAddress,
+              hatsProtocol,
+              hatId: BigInt(roleHat.id),
+              nominatedWearer: termNominatedWearer,
+            },
+          ]);
+        }
+      },
       pendingMessage: t('startTermPendingToastMessage'),
       failedMessage: t('startTermFailureToastMessage'),
       successMessage: t('startTermSuccessToastMessage'),
       successCallback: () => {
-        updateCurrentTermStatus(hatId, 'active');
+        updateCurrentTermStatus(roleHat.id, 'active');
       },
     });
   }, [
     contractCall,
-    hatId,
     hatsProtocol,
     hatsTree?.adminHat.wearer,
+    roleHat,
     t,
     termNominatedWearer,
     updateCurrentTermStatus,
