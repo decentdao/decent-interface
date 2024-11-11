@@ -34,7 +34,10 @@ function SendAssetsAction({
   const { displayName } = useGetAccountName(action.destinationAddress);
 
   return (
-    <Card my="0.5rem">
+    <Card
+      borderRadius="0.75rem"
+      my="0.5rem"
+    >
       <Flex justifyContent="space-between">
         <Flex
           alignItems="center"
