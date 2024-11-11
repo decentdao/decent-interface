@@ -123,7 +123,8 @@ const contractTests: ContractFunctionTest[] = [
     resultKey: 'isFreezeVotingMultisig',
   },
   {
-    abi: abis.LinearERC20Voting,
+    abi: combineAbis(abis.LinearERC20Voting, abis.LinearERC20VotingWithHatsProposalCreation),
+    revertFunctionNames: ['getWhitelistedHatIds'],
     functionNames: [
       'BASIS_DENOMINATOR',
       'QUORUM_DENOMINATOR',
@@ -154,7 +155,8 @@ const contractTests: ContractFunctionTest[] = [
     resultKey: 'isLinearVotingErc20WithHatsProposalCreation',
   },
   {
-    abi: abis.LinearERC721Voting,
+    abi: combineAbis(abis.LinearERC721Voting, abis.LinearERC721VotingWithHatsProposalCreation),
+    revertFunctionNames: ['getWhitelistedHatIds'],
     functionNames: [
       'BASIS_DENOMINATOR',
       'azoriusModule',
@@ -168,7 +170,7 @@ const contractTests: ContractFunctionTest[] = [
     resultKey: 'isLinearVotingErc721',
   },
   {
-    abi: abis.LinearERC20VotingWithHatsProposalCreation,
+    abi: abis.LinearERC721VotingWithHatsProposalCreation,
     functionNames: [
       'BASIS_DENOMINATOR',
       'azoriusModule',
