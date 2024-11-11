@@ -1,10 +1,18 @@
 import { abis } from '@fractal-framework/fractal-contracts';
+import { HatsModulesClient } from '@hatsprotocol/modules-sdk';
 import { Hat, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
-import { DecentHat, DecentRoleHat, DecentTree, RolesStoreData } from '../../types/roles';
+import {
+  DecentAdminHat,
+  DecentHat,
+  DecentRoleHat,
+  DecentRoleHatTerms,
+  DecentTree,
+  RolesStoreData,
+} from '../../types/roles';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {

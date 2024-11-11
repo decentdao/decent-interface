@@ -69,8 +69,9 @@ export default function useUserERC721VotingTokens(
         if (votingStrategies) {
           const votingStrategyAddress = votingStrategies.find(
             strategy =>
-              strategy.isLinearVotingErc721 || strategy.isLinearVotingErc721WithWhitelisting,
-          )?.address;
+              strategy.isLinearVotingErc721 ||
+              strategy.isLinearVotingErc721WithHatsProposalCreation,
+          )?.strategyAddress;
           if (votingStrategyAddress) {
             votingContract = getContract({
               abi: abis.LinearERC721Voting,

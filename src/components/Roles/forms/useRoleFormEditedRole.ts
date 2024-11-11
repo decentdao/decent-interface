@@ -1,6 +1,25 @@
 import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
-import { DecentTree, RoleFormValues } from '../../../types/roles';
+import {
+  DecentTree,
+  EditBadgeStatus,
+  EditedRole,
+  EditedRoleFieldNames,
+  RoleFormValues,
+} from '../../../types/roles';
+
+const addRemoveField = (
+  fieldNames: EditedRoleFieldNames[],
+  fieldName: EditedRoleFieldNames,
+  hasChanges: boolean,
+): EditedRoleFieldNames[] => {
+  if (fieldNames.includes(fieldName) && !hasChanges) {
+    return fieldNames.filter(field => field !== fieldName);
+  } else if (!fieldNames.includes(fieldName) && !hasChanges) {
+    return fieldNames;
+  }
+  return [...fieldNames, fieldName];
+};
 
 export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | undefined | null }) {
   const { values } = useFormikContext<RoleFormValues>();
@@ -28,10 +47,6 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     });
   }, [values.roleEditing]);
 
-  const isCanCreateProposalsUpdated =
-    !!existingRoleHat &&
-    values.roleEditing?.canCreateProposals !== existingRoleHat.canCreateProposals;
-
   const isRoleTypeUpdated = useMemo(() => {
     const isTermToggled = !!values.roleEditing?.isTermed;
     const isExistingRoleNotTerm = !!existingRoleHat && !existingRoleHat.isTermed;
@@ -45,28 +60,64 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     );
   }, [existingRoleHat, values.roleEditing]);
 
+  const isCanCreateProposalsUpdated =
+    !!existingRoleHat &&
+    values.roleEditing?.canCreateProposals !== existingRoleHat.canCreateProposals;
+
+  const editedRoleData = useMemo<EditedRole>(() => {
+    if (!existingRoleHat) {
+      return {
+        fieldNames: [],
+        status: EditBadgeStatus.New,
+      };
+    }
+    let fieldNames: EditedRoleFieldNames[] = [];
+    fieldNames = addRemoveField(fieldNames, 'roleName', isRoleNameUpdated);
+    fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
+    fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
+    fieldNames = addRemoveField(fieldNames, 'payments', isPaymentsUpdated);
+    fieldNames = addRemoveField(fieldNames, 'roleType', isRoleTypeUpdated);
+    fieldNames = addRemoveField(fieldNames, 'newTerm', isRoleTermUpdated);
+    fieldNames = addRemoveField(fieldNames, 'canCreateProposals', isCanCreateProposalsUpdated);
+
+    return {
+      fieldNames,
+      status: EditBadgeStatus.Updated,
+    };
+  }, [
+    existingRoleHat,
+    isRoleNameUpdated,
+    isRoleDescriptionUpdated,
+    isMemberUpdated,
+    isPaymentsUpdated,
+    isRoleTypeUpdated,
+    isRoleTermUpdated,
+    isCanCreateProposalsUpdated,
+  ]);
+
   const isRoleUpdated = useMemo(() => {
     return (
       !!isRoleNameUpdated ||
       !!isRoleDescriptionUpdated ||
       !!isMemberUpdated ||
       !!isPaymentsUpdated ||
-      !!isCanCreateProposalsUpdated ||
       !!isRoleTypeUpdated ||
-      !!isRoleTermUpdated
+      !!isRoleTermUpdated ||
+      !!isCanCreateProposalsUpdated
     );
   }, [
     isRoleNameUpdated,
     isRoleDescriptionUpdated,
     isMemberUpdated,
     isPaymentsUpdated,
-    isCanCreateProposalsUpdated,
     isRoleTypeUpdated,
     isRoleTermUpdated,
+    isCanCreateProposalsUpdated,
   ]);
 
   return {
     existingRoleHat,
+    editedRoleData,
     isRoleUpdated,
   };
 }

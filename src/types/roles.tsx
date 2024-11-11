@@ -12,6 +12,7 @@ export interface DecentHat {
   smartAddress: Address;
   eligibility?: Address;
   payments?: SablierPayment[];
+  canCreateProposals: boolean;
 }
 
 export interface DecentTopHat extends DecentHat {}
@@ -26,7 +27,7 @@ export type RoleTerm = {
   termNumber: number;
 };
 
-type DecentRoleHatTerms = {
+export type DecentRoleHatTerms = {
   allTerms: RoleTerm[];
   currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
   nextTerm: RoleTerm | undefined;
@@ -39,7 +40,6 @@ export interface DecentRoleHat extends Omit<DecentHat, 'smartAddress'> {
   smartAddress?: Address;
   roleTerms: DecentRoleHatTerms;
   isTermed: boolean;
-  canCreateProposals: boolean;
 }
 
 export interface DecentTree {
@@ -232,7 +232,7 @@ export interface RoleDetailsDrawerProps {
   isOpen?: boolean;
 }
 
-interface RolesStoreData {
+export interface RolesStoreData {
   hatsTreeId: undefined | null | number;
   decentHatsAddress: Address | null | undefined;
   hatsTree: undefined | null | DecentTree;
@@ -250,10 +250,12 @@ export interface RolesStore extends RolesStoreData {
     hatsProtocol: Address;
     erc6551Registry: Address;
     hatsAccountImplementation: Address;
+    hatsElectionsImplementation: Address;
     publicClient: PublicClient;
     whitelistingVotingStrategy?: Address;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
   updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
+  updateCurrentTermStatus: (hatId: Hex, termStatus: 'active' | 'inactive') => void;
   resetHatsStore: () => void;
 }

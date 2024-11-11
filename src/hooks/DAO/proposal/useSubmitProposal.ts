@@ -326,7 +326,7 @@ export default function useSubmitProposal() {
             const votingContract = getContract({
               abi: abis.LinearERC20Voting,
               client: publicClient,
-              address: votingStrategy.address,
+              address: votingStrategy.strategyAddress,
             });
             const isProposer = await votingContract.read.isProposer([userAddress]);
             return isProposer;
@@ -344,7 +344,7 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
             azoriusAddress: azoriusModule.moduleAddress,
-            votingStrategyAddress: userProposerVotingStrategy.address,
+            votingStrategyAddress: userProposerVotingStrategy.strategyAddress,
           });
         }
       } else {

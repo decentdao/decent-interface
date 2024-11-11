@@ -4,7 +4,7 @@ import { Field, FieldInputProps, FormikProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Hex } from 'viem';
+import { getAddress, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';

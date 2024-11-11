@@ -6,6 +6,7 @@ import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { getAzoriusModuleFromModules } from '../../../utils';
+import { useAddressContractType } from '../../utils/useAddressContractType';
 import useVotingStrategyAddress from '../../utils/useVotingStrategiesAddresses';
 
 export const useGovernanceContracts = () => {
@@ -13,6 +14,7 @@ export const useGovernanceContracts = () => {
   const currentValidAddress = useRef<string | null>();
   const { node, action } = useFractal();
   const publicClient = usePublicClient();
+  const { getAddressContractType } = useAddressContractType();
 
   const { getVotingStrategies } = useVotingStrategyAddress();
 
@@ -87,15 +89,6 @@ export const useGovernanceContracts = () => {
           throw new Error('Unknown governance token type');
         }
       }
-
-      if (lockedTokenAddress) {
-        lockReleaseAddress = govTokenAddress;
-        // @dev if the underlying token is an ERC20Wrapper, we use the underlying token as the token contract
-        votesTokenAddress = lockedTokenAddress;
-      } else {
-        // @dev if the no underlying token, we use the governance token as the token contract
-        votesTokenAddress = govTokenAddress;
-      }
     };
 
     await Promise.all(
@@ -104,18 +97,18 @@ export const useGovernanceContracts = () => {
           strategyAddress,
           isLinearVotingErc20,
           isLinearVotingErc721,
-          isLinearVotingErc20WithWhitelisting,
-          isLinearVotingErc721WithWhitelisting,
+          isLinearVotingErc20WithHatsProposalCreation,
+          isLinearVotingErc721WithHatsProposalCreation,
         } = votingStrategy;
         if (isLinearVotingErc20) {
           linearVotingErc20Address = strategyAddress;
           await setGovTokenAddress(strategyAddress);
         } else if (isLinearVotingErc721) {
           linearVotingErc721Address = strategyAddress;
-        } else if (isLinearVotingErc20WithWhitelisting) {
+        } else if (isLinearVotingErc20WithHatsProposalCreation) {
           linearVotingErc20WithHatsWhitelistingAddress = strategyAddress;
           await setGovTokenAddress(strategyAddress);
-        } else if (isLinearVotingErc721WithWhitelisting) {
+        } else if (isLinearVotingErc721WithHatsProposalCreation) {
           linearVotingErc721WithHatsWhitelistingAddress = strategyAddress;
         }
       }),
@@ -141,7 +134,7 @@ export const useGovernanceContracts = () => {
         },
       });
     }
-  }, [action, fractalModules, getVotingStrategies, publicClient]);
+  }, [action, fractalModules, getVotingStrategies, publicClient, getAddressContractType]);
 
   useEffect(() => {
     if (currentValidAddress.current !== daoAddress && isModulesLoaded) {
