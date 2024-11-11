@@ -193,19 +193,21 @@ export default function useCreateRoles() {
   );
   const parseRoleTermsFromFormRoleTerms = useCallback(
     (formRoleTerms: { termEndDate?: Date; nominee?: string }[]) => {
-      return formRoleTerms.map(term => {
-        if (term.termEndDate === undefined) {
-          throw new Error('Term end date of added Role is undefined.');
-        }
-        if (term.nominee === undefined) {
-          throw new Error('Nominee of added Role is undefined.');
-        }
+      return formRoleTerms
+        .map(term => {
+          if (term.termEndDate === undefined) {
+            throw new Error('Term end date of added Role is undefined.');
+          }
+          if (term.nominee === undefined) {
+            throw new Error('Nominee of added Role is undefined.');
+          }
 
-        return {
-          termEndDateTs: BigInt(term.termEndDate.getTime()) / 1000n,
-          nominatedWearers: [getAddress(term.nominee)],
-        };
-      });
+          return {
+            termEndDateTs: BigInt(term.termEndDate.getTime()) / 1000n,
+            nominatedWearers: [getAddress(term.nominee)],
+          };
+        })
+        .sort((a, b) => Number(b.termEndDateTs) - Number(a.termEndDateTs));
     },
     [],
   );
@@ -1002,13 +1004,14 @@ export default function useCreateRoles() {
             const terms = parseRoleTermsFromFormRoleTerms(formHat.roleTerms);
             // @dev {assupmtion}: We are only dealing with a single term here, either the next term or a new current term when there is no term set.
             // @dev {assupmtion}: There were always be more than one term in this workflow.
-            const [previousTerm, newTerm] = terms.slice(-2);
-
+            const [newTerm, previousTerm] = terms;
+            console.log('🚀 ~ terms:', terms);
             const electionsContract = getContract({
               address: formHat.eligibility,
               abi: HatsElectionsEligibilityAbi,
               client: publicClient,
             });
+
             const nextTermEndDateTs = await electionsContract.read.nextTermEnd();
             if (nextTermEndDateTs !== 0n) {
               // previous term was never triggered, and must be triggered before we can set the next term
