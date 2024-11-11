@@ -1,6 +1,8 @@
 import { Box, Input, RadioGroup } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -28,6 +30,24 @@ export function EstablishEssentials(props: ICreationStepProps) {
   } = useFractal();
 
   const isEdit = mode === DAOCreateMode.EDIT;
+
+  const disconnectedToast = useRef<string | number>();
+  const { isConnected } = useAccount();
+
+  useEffect(() => {
+    if (!isConnected) {
+      disconnectedToast.current = toast.info(
+        t('toastDisconnectedPersistent', { ns: 'daoCreate' }),
+        {
+          duration: Infinity,
+        },
+      );
+    }
+
+    return () => {
+      toast.dismiss();
+    };
+  }, [isConnected, t]);
 
   useEffect(() => {
     if (isEdit) {
