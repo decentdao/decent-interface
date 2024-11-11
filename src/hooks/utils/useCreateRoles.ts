@@ -441,7 +441,6 @@ export default function useCreateRoles() {
     [
       hatsTree,
       safeAddress,
-      hatsTree,
       parseRoleTermsFromFormRoleTerms,
       createHatStructWithPayments,
       parseSablierPaymentsFromFormRolePayments,
@@ -625,7 +624,7 @@ export default function useCreateRoles() {
 
   const prepareRolePaymentUpdateTxs = useCallback(
     async (formHat: RoleHatFormValueEdited) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Cannot prepare transactions without DAO address');
       }
       if (formHat.wearer === undefined) {
@@ -653,7 +652,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
+              args: [BigInt(formHat.id), originalHat.wearerAddress, safeAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -681,7 +680,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+              args: [BigInt(formHat.id), safeAddress, getAddress(formHat.wearer)],
             }),
             targetAddress: hatsProtocol,
           });
@@ -703,10 +702,10 @@ export default function useCreateRoles() {
       return paymentTxs;
     },
     [
+      safeAddress,
       getCancelledStreamsFromFormHat,
       getNewStreamsFromFormHat,
       getHat,
-      daoAddress,
       hatsProtocol,
       prepareCancelStreamTxs,
       prepareFlushStreamTxs,
@@ -717,7 +716,7 @@ export default function useCreateRoles() {
 
   const prepareTermedRolePaymentUpdateTxs = useCallback(
     (formHat: RoleHatFormValueEdited) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Cannot prepare transactions without DAO address');
       }
       if (formHat.wearer === undefined) {
@@ -739,7 +738,7 @@ export default function useCreateRoles() {
     },
     [
       createBatchLinearStreamCreationTx,
-      daoAddress,
+      safeAddress,
       getNewStreamsFromFormHat,
       getPaymentTermRecipients,
     ],
