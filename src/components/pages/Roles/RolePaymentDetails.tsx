@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { DETAILS_BOX_SHADOW } from '../../../constants/common';
+import { DETAILS_BOX_SHADOW, isDemoMode } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -152,7 +152,7 @@ export function RolePaymentDetails({
     if (connectedAccount && connectedAccount === payment.recipient && !!showWithdraw) {
       return true;
     }
-    return false;
+    return isDemoMode();
   }, [connectedAccount, payment.recipient, showWithdraw]);
 
   const assignedTerm = useMemo(() => {
