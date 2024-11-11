@@ -46,6 +46,9 @@ export const useFractalGovernance = () => {
       const { daos } = data;
       const dao = daos[0];
 
+      // `dao` might be undefined despite what the type says
+      if (!dao) return;
+
       const { proposalTemplatesHash } = dao;
 
       if (!proposalTemplatesHash) {
