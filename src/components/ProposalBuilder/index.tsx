@@ -220,7 +220,6 @@ export function ProposalBuilder({
                     <StepButtons
                       {...formikProps}
                       mode={mode}
-                      canUserCreateProposal={canUserCreateProposal}
                       pendingTransaction={pendingCreateTx}
                     />
                   </Flex>
