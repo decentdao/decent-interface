@@ -322,15 +322,19 @@ export default function useSubmitProposal() {
             safeAddress,
           });
         } else {
-          const userProposerVotingStrategy = votingStrategies.find(async votingStrategy => {
-            const votingContract = getContract({
-              abi: abis.LinearERC20Voting,
-              client: publicClient,
-              address: votingStrategy.strategyAddress,
-            });
-            const isProposer = await votingContract.read.isProposer([userAddress]);
-            return isProposer;
-          });
+          const userProposerVotingStrategy = (
+            await Promise.all(
+              votingStrategies.map(async votingStrategy => {
+                const votingContract = getContract({
+                  abi: abis.LinearERC20Voting,
+                  client: publicClient,
+                  address: votingStrategy.strategyAddress,
+                });
+                const isProposer = await votingContract.read.isProposer([userAddress]);
+                return { isProposer, votingStrategy };
+              }),
+            )
+          ).find(votingStrategy => votingStrategy.isProposer);
 
           if (!userProposerVotingStrategy) {
             throw new Error('User is not a proposer!');
@@ -344,7 +348,7 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
             azoriusAddress: azoriusModule.moduleAddress,
-            votingStrategyAddress: userProposerVotingStrategy.strategyAddress,
+            votingStrategyAddress: userProposerVotingStrategy.votingStrategy.strategyAddress,
           });
         }
       } else {
@@ -366,6 +370,32 @@ export default function useSubmitProposal() {
             safeAddress: safe?.address,
           });
         } else {
+          const userProposerVotingStrategy = (
+            await Promise.all(
+              [
+                linearVotingErc20Address,
+                linearVotingErc20WithHatsWhitelistingAddress,
+                linearVotingErc721Address,
+                linearVotingErc721WithHatsWhitelistingAddress,
+                freezeVotingContractAddress,
+              ].map(async votingStrategy => {
+                if (!votingStrategy) {
+                  return { isProposer: false, votingStrategy };
+                }
+                const votingContract = getContract({
+                  abi: abis.LinearERC20Voting,
+                  client: publicClient,
+                  address: votingStrategy,
+                });
+                const isProposer = await votingContract.read.isProposer([userAddress]);
+                return { isProposer, votingStrategy };
+              }),
+            )
+          ).find(votingStrategy => votingStrategy.isProposer);
+
+          if (!userProposerVotingStrategy || !userProposerVotingStrategy.votingStrategy) {
+            throw new Error('User is not a proposer!');
+          }
           await submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
@@ -373,7 +403,7 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
-            votingStrategyAddress,
+            votingStrategyAddress: userProposerVotingStrategy.votingStrategy,
             azoriusAddress: globalAzoriusContract.address,
             safeAddress: safe?.address,
           });
