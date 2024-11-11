@@ -112,7 +112,7 @@
   "customNonce": "Custom Nonce (advanced)",
   "customNonceTrimmed": "Custom Nonce",
   "customNonceTooltip": "Optionally set a custom proposal nonce to avoid collisions.",
-  "notActiveNonceTooltip": "There is a proposal with a lower nonce that must be executed first. If you have recently executed all lower nonce proposals, please reload in a few minutes.",
+  "notActiveNonceTooltip": "A proposal with a lower nonce must be executed first. If you've already executed all lower nonce proposals, please reload in a few minutes.",
   "nonce": "Nonce",
   "votingTooltip": "Time remaining to cast your vote.",
   "timeLockedTooltip": "This proposal can be executed once its timelock period has passed.",

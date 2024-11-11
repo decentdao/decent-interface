@@ -4,6 +4,7 @@ import { zeroAddress } from 'viem';
 import { InfoGovernance } from '../../../../components/DaoDashboard/Info/InfoGovernance';
 import { ERC20TokenContainer } from '../../../../components/SafeSettings/ERC20TokenContainer';
 import { ERC721TokensContainer } from '../../../../components/SafeSettings/ERC721TokensContainer';
+import { SettingsContentBox } from '../../../../components/SafeSettings/SettingsContentBox';
 import { SignersContainer } from '../../../../components/SafeSettings/Signers/SignersContainer';
 import { StyledBox } from '../../../../components/ui/containers/StyledBox';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
@@ -11,7 +12,6 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { GovernanceType } from '../../../../types';
-import { SettingsContentBox } from '../SettingsContentBox';
 
 export function SafeGovernanceSettingsPage() {
   const { t } = useTranslation('settings');

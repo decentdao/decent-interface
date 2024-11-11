@@ -1,5 +1,6 @@
-import { Box, Flex, FormLabel, Text, Tooltip, Image } from '@chakra-ui/react';
+import { Box, Flex, FormLabel, Text, Image } from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
+import { DecentTooltip } from '../DecentTooltip';
 
 // @todo there is some type cleanup needed here
 export interface LabelWrapperProps {
@@ -36,13 +37,13 @@ function LabelWrapper({
           <Text>{label}</Text>
           {isRequired && <Text color="lilac-0">*</Text>}
           {!!tooltipContent && (
-            <Tooltip
+            <DecentTooltip
               hasArrow
               label={tooltipContent}
               closeDelay={500}
             >
               <Info />
-            </Tooltip>
+            </DecentTooltip>
           )}
         </Flex>
         {children}

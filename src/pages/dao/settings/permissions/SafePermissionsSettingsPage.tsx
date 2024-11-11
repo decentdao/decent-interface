@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import { zeroAddress } from 'viem';
 import PencilWithLineIcon from '../../../../assets/theme/custom/icons/PencilWithLineIcon';
+import { SettingsContentBox } from '../../../../components/SafeSettings/SettingsContentBox';
 import { Card } from '../../../../components/ui/cards/Card';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
@@ -16,7 +17,6 @@ import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubm
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AzoriusGovernance } from '../../../../types';
-import { SettingsContentBox } from '../SettingsContentBox';
 
 export function SafePermissionsSettingsPage() {
   const { t } = useTranslation(['settings', 'common']);

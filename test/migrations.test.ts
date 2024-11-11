@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import * as logging from '../src/helpers/errorLogging';
 import { CacheKeys } from '../src/hooks/utils/cache/cacheDefaults';
 import migration1 from '../src/hooks/utils/cache/migrations/1';
+import { runMigrations } from '../src/hooks/utils/cache/runMigrations';
 import { getValue } from '../src/hooks/utils/cache/useLocalStorage';
-import { runMigrations } from '../src/hooks/utils/cache/useMigrate';
 
 describe('func migrateCacheToV1', () => {
   beforeEach(() => {

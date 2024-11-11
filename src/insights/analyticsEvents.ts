@@ -12,6 +12,7 @@ export const analyticsEvents = {
   ProposalsPageOpened: 'ProposalsPageOpened',
   ProposalDetailsPageOpened: 'ProposalDetailsPageOpened',
   CreateProposalPageOpened: 'CreateProposalPageOpened',
+  SafeProposalWithActionsCreatePageOpened: 'SafeProposalWithActionsCreatePageOpened',
   SafeSettingsPageOpened: 'SafeSettingsPageOpened',
   TreasuryPageOpened: 'TreasuryPageOpened',
   SablierProposalCreatePageOpened: 'SablierProposalCreatePageOpened',

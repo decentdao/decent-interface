@@ -30,7 +30,7 @@ import { BarLoader } from '../ui/loaders/BarLoader';
 import ModalTooltip from '../ui/modals/ModalTooltip';
 import Avatar from '../ui/page/Header/Avatar';
 import Divider from '../ui/utils/Divider';
-import { RolePaymentDetails } from './RolePaymentDetails';
+import RoleDetailsTabs from './RoleDetailsTabs';
 
 export function RoleProposalPermissionBadge({
   containerRef,
@@ -227,29 +227,17 @@ export default function RolesDetailsDrawer({
               )}
             </GridItem>
           </Grid>
-          {roleHat.payments && (
-            <>
-              <Divider
-                variant="darker"
-                my={4}
-              />
-              <Text
-                textStyle="display-lg"
-                color="white-0"
-              >
-                {t('payments')}
-              </Text>
-              {sortedPayments.map((payment, index) => (
-                <RolePaymentDetails
-                  key={index}
-                  payment={payment}
-                  roleHatSmartAddress={roleHat.smartAddress}
-                  roleHatWearerAddress={roleHatWearerAddress}
-                  showWithdraw
-                />
-              ))}
-            </>
-          )}
+          <Divider
+            variant="darker"
+            my={4}
+          />
+          <RoleDetailsTabs
+            hatId={roleHat.id}
+            roleHatSmartAccountAddress={roleHat.smartAddress}
+            roleTerms={roleHat.roleTerms}
+            roleHatWearerAddress={roleHatWearerAddress}
+            sortedPayments={sortedPayments}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

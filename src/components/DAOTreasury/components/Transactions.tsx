@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, HStack, Icon, Image, Text } from '@chakra-ui/react';
 import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
@@ -6,6 +6,7 @@ import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TokenEventType, TransferDisplayData, TransferType } from '../../../types';
+import { DecentTooltip } from '../../ui/DecentTooltip';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import { BarLoader } from '../../ui/loaders/BarLoader';
@@ -58,7 +59,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             w="1.25rem"
             h="1.25rem"
           />
-          <Tooltip
+          <DecentTooltip
             label={
               displayData.transferType === TransferType.ERC721_TRANSFER
                 ? undefined
@@ -77,7 +78,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
               {(displayData.eventType == TokenEventType.WITHDRAW ? '- ' : '+ ') +
                 displayData.assetDisplay}
             </Text>
-          </Tooltip>
+          </DecentTooltip>
         </HStack>
         <HStack
           w="40%"

@@ -1,10 +1,10 @@
 import { Box, Button, Flex, Grid, GridItem, Icon, Image, Show, Tag, Text } from '@chakra-ui/react';
-import { CalendarBlank, Download, Trash } from '@phosphor-icons/react';
+import { CalendarBlank, Download, Link, Trash } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { TouchEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Address, getAddress } from 'viem';
+import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -49,6 +49,39 @@ function PaymentDate({ label, date }: { label: string; date?: Date }) {
   );
 }
 
+function TermedAssigned({ termNumber }: { termNumber: number }) {
+  const { t } = useTranslation(['roles']);
+  return (
+    <Flex
+      flexDir="column"
+      gap="0.5rem"
+    >
+      <Text
+        textStyle="label-small"
+        color="neutral-7"
+      >
+        {t('assigned')}
+      </Text>
+      <Flex
+        alignItems="center"
+        gap={2}
+      >
+        <Icon
+          boxSize="1rem"
+          as={Link}
+          color="lila-0"
+        />
+        <Text
+          textStyle="label-small"
+          color="white-0"
+        >
+          {t('termNumber', { number: termNumber })}
+        </Text>
+      </Flex>
+    </Flex>
+  );
+}
+
 function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
   if (!isStreaming) {
     return null;
@@ -66,10 +99,13 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 
 interface RolePaymentDetailsProps {
   roleHatWearerAddress?: Address;
-  roleHatSmartAddress?: Address;
+  roleHatSmartAccountAddress?: Address;
+  roleHatId?: Hex;
+  roleTerms: { termEndDate: Date; termNumber: number; nominee: string }[];
   payment: {
     streamId?: string;
     contractAddress?: Address;
+    recipient?: Address;
     asset: {
       logo: string;
       symbol: string;
@@ -96,9 +132,11 @@ export function RolePaymentDetails({
   onClick,
   showWithdraw,
   roleHatWearerAddress,
-  roleHatSmartAddress,
+  roleHatSmartAccountAddress,
+  roleHatId,
   showCancel,
   onCancel,
+  roleTerms,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
@@ -111,21 +149,32 @@ export function RolePaymentDetails({
   const navigate = useNavigate();
   const publicClient = usePublicClient();
   const canWithdraw = useMemo(() => {
-    if (connectedAccount && connectedAccount === roleHatWearerAddress && !!showWithdraw) {
+    if (connectedAccount && connectedAccount === payment.recipient && !!showWithdraw) {
       return true;
     }
     return false;
-  }, [connectedAccount, showWithdraw, roleHatWearerAddress]);
+  }, [connectedAccount, payment.recipient, showWithdraw]);
+
+  const assignedTerm = useMemo(() => {
+    return roleTerms.find(term => term.termEndDate.getTime() === payment.endDate.getTime());
+  }, [payment.endDate, roleTerms]);
 
   const [modalType, props] = useMemo(() => {
     if (
       !payment.streamId ||
       !payment.contractAddress ||
       !roleHatWearerAddress ||
-      !roleHatSmartAddress ||
-      !publicClient
+      !publicClient ||
+      !roleHatId
     ) {
       return [ModalType.NONE] as const;
+    }
+    let recipient = roleHatWearerAddress;
+    if (assignedTerm) {
+      if (!assignedTerm.nominee) {
+        throw new Error('Assigned term nominee is missing');
+      }
+      recipient = getAddress(assignedTerm.nominee);
     }
     return [
       ModalType.WITHDRAW_PAYMENT,
@@ -135,16 +184,23 @@ export function RolePaymentDetails({
         paymentAssetDecimals: payment.asset.decimals,
         paymentStreamId: payment.streamId,
         paymentContractAddress: payment.contractAddress,
-        onSuccess: () =>
-          refreshWithdrawableAmount(roleHatSmartAddress, payment.streamId!, publicClient),
+        onSuccess: () => refreshWithdrawableAmount(roleHatId, payment.streamId!, publicClient),
         withdrawInformation: {
           withdrawableAmount: payment.withdrawableAmount,
-          roleHatWearerAddress,
-          roleHatSmartAddress,
+          recipient,
+          roleHatSmartAccountAddress,
         },
       },
     ] as const;
-  }, [payment, roleHatSmartAddress, roleHatWearerAddress, refreshWithdrawableAmount, publicClient]);
+  }, [
+    payment,
+    roleHatSmartAccountAddress,
+    roleHatWearerAddress,
+    refreshWithdrawableAmount,
+    publicClient,
+    roleHatId,
+    assignedTerm,
+  ]);
 
   const withdraw = useDecentModal(modalType, props);
 
@@ -370,10 +426,14 @@ export function RolePaymentDetails({
             templateColumns="1fr 24px 1fr 24px 1fr"
           >
             <GridItem area="starting">
-              <PaymentDate
-                label="starting"
-                date={payment.startDate}
-              />
+              {assignedTerm ? (
+                <TermedAssigned termNumber={assignedTerm.termNumber} />
+              ) : (
+                <PaymentDate
+                  label="starting"
+                  date={payment.startDate}
+                />
+              )}
             </GridItem>
             <GridItem area="dividerOne">
               <Box

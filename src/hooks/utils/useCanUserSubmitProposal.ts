@@ -45,7 +45,7 @@ export function useCanUserCreateProposal() {
               if (!isProposer && user.address) {
                 const votingContract = getContract({
                   abi: abis.LinearERC20Voting,
-                  address: strategy.address,
+                  address: strategy.strategyAddress,
                   client: publicClient,
                 });
                 isProposer = await votingContract.read.isProposer([user.address]);

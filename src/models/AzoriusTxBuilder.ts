@@ -1,25 +1,26 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import {
-  getCreate2Address,
   Address,
   Hex,
-  encodePacked,
-  keccak256,
-  encodeAbiParameters,
-  parseAbiParameters,
-  isAddress,
-  encodeFunctionData,
   PublicClient,
-  getContract,
+  encodeAbiParameters,
+  encodeFunctionData,
+  encodePacked,
   getAddress,
+  getContract,
+  getCreate2Address,
+  isAddress,
+  keccak256,
+  parseAbiParameters,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
+import { ZodiacModuleProxyFactoryAbi } from '../assets/abi/ZodiacModuleProxyFactoryAbi';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
-  SafeTransaction,
-  AzoriusGovernanceDAO,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  AzoriusGovernanceDAO,
+  SafeTransaction,
   VotingStrategyType,
 } from '../types';
 import { SENTINEL_MODULE } from '../utils/address';
@@ -213,7 +214,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildCreateTokenTx(): SafeTransaction {
     return buildContractCall(
-      abis.ModuleProxyFactory,
+      ZodiacModuleProxyFactoryAbi,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.votesErc20MasterCopy, this.encodedSetupTokenData, this.tokenNonce],
@@ -226,7 +227,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const daoData = this.daoData as AzoriusGovernanceDAO;
 
     return buildContractCall(
-      abis.ModuleProxyFactory,
+      ZodiacModuleProxyFactoryAbi,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [
@@ -243,7 +244,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildDeployAzoriusTx(): SafeTransaction {
     return buildContractCall(
-      abis.ModuleProxyFactory,
+      ZodiacModuleProxyFactoryAbi,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.moduleAzoriusMasterCopy, this.encodedSetupAzoriusData, this.azoriusNonce],
@@ -254,7 +255,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildDeployTokenClaim() {
     return buildContractCall(
-      abis.ModuleProxyFactory,
+      ZodiacModuleProxyFactoryAbi,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.claimErc20MasterCopy, this.encodedSetupTokenClaimData, this.claimNonce],
@@ -281,7 +282,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildCreateTokenWrapperTx(): SafeTransaction {
     return buildContractCall(
-      abis.ModuleProxyFactory,
+      ZodiacModuleProxyFactoryAbi,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.votesErc20WrapperMasterCopy, this.encodedSetupERC20WrapperData, this.tokenNonce],

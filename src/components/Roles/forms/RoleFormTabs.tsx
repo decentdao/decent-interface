@@ -10,11 +10,13 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import RoleFormInfo from './RoleFormInfo';
+import { RoleFormMember } from './RoleFormMember';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
+import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 
-export default function RoleFormTabs({
+export function RoleFormTabs({
   hatId,
   pushRole,
   blocker,
@@ -58,7 +60,13 @@ export default function RoleFormTabs({
   if (!daoAddress) return null;
 
   if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
-    return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
+    if (values.roleEditing?.isTermed) {
+      return (
+        <RoleFormPaymentStreamTermed paymentIndex={values.roleEditing?.roleEditingPaymentIndex} />
+      );
+    } else {
+      return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
+    }
   }
 
   return (
@@ -66,11 +74,15 @@ export default function RoleFormTabs({
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
+          <Tab>{t('member')}</Tab>
           <Tab>{t('payments')}</Tab>
         </TabList>
         <TabPanels my="1.75rem">
           <TabPanel>
             <RoleFormInfo />
+          </TabPanel>
+          <TabPanel>
+            <RoleFormMember />
           </TabPanel>
           <TabPanel>
             <RoleFormPaymentStreams />
@@ -93,7 +105,10 @@ export default function RoleFormTabs({
               if (isRoleUpdated || editedRoleData.status === EditBadgeStatus.New) {
                 setFieldValue(`hats.${hatIndex}`, roleUpdated);
               } else if (existingRoleHat !== undefined) {
-                setFieldValue(`hats.${hatIndex}`, existingRoleHat);
+                setFieldValue(`hats.${hatIndex}`, {
+                  ...existingRoleHat,
+                  roleTerms: existingRoleHat.roleTerms.allTerms,
+                });
               }
             }
             setFieldValue('roleEditing', undefined);

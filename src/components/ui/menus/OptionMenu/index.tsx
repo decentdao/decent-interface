@@ -1,7 +1,8 @@
-import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip, Portal, Box } from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, As, MenuProps, Portal, Box } from '@chakra-ui/react';
 import { MouseEvent, ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
+import { DecentTooltip } from '../../DecentTooltip';
 import { EaseOutComponent } from '../../utils/EaseOutComponent';
 import { OptionsList } from './OptionsList';
 import { IOption, IOptionsList } from './types';
@@ -69,7 +70,7 @@ export function OptionMenu({
       isLazy
       {...rest}
     >
-      <Tooltip
+      <DecentTooltip
         closeDelay={0}
         hasArrow
         label={tooltipKey ? t(tooltipKey) : undefined}
@@ -84,7 +85,7 @@ export function OptionMenu({
         >
           {trigger}
         </MenuButton>
-      </Tooltip>
+      </DecentTooltip>
       {containerRef !== undefined ? (
         <Portal containerRef={containerRef}>{menuList}</Portal>
       ) : (

@@ -8,13 +8,13 @@ import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { FractalModuleData } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
 import { useFractalModules } from '../DAO/loaders/useFractalModules';
-import { useMasterCopy } from './useMasterCopy';
+import { useAddressContractType } from './useAddressContractType';
 
 const useVotingStrategiesAddresses = () => {
   const { node } = useFractal();
   const publicClient = usePublicClient();
   const safeAPI = useSafeAPI();
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
   const lookupModules = useFractalModules();
 
   const getVotingStrategies = useCallback(
@@ -53,13 +53,13 @@ const useVotingStrategiesAddresses = () => {
               strategyAddress !== SENTINEL_ADDRESS && strategyAddress !== zeroAddress,
           )
           .map(async strategyAddress => ({
-            ...(await getZodiacModuleProxyMasterCopyData(strategyAddress)),
+            ...(await getAddressContractType(strategyAddress)),
             strategyAddress,
           })),
       );
       return result;
     },
-    [lookupModules, getZodiacModuleProxyMasterCopyData, node.fractalModules, publicClient, safeAPI],
+    [lookupModules, getAddressContractType, node.fractalModules, publicClient, safeAPI],
   );
 
   return { getVotingStrategies };

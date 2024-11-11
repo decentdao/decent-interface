@@ -4,10 +4,7 @@ import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-// get list of approvals; approval [0] should be token claim
-// query using attach = masterTokenClaim.attach(approval[0]).queryFilter()
-// check if module is tokenClaim;
-// set token claim;
+import { useAddressContractType } from '../../../utils/useAddressContractType';
 
 export function useERC20Claim() {
   const {
@@ -16,6 +13,8 @@ export function useERC20Claim() {
     action,
   } = useFractal();
   const publicClient = usePublicClient();
+
+  const { getAddressContractType } = useAddressContractType();
 
   const loadTokenClaimContract = useCallback(async () => {
     if (!votesTokenAddress || !publicClient) {
@@ -36,21 +35,8 @@ export function useERC20Claim() {
       return;
     }
 
-    const possibleTokenClaimContract = getContract({
-      abi: abis.ERC20Claim,
-      address: approvals[0].args.spender,
-      client: publicClient,
-    });
-
-    const tokenClaimArray = await possibleTokenClaimContract.getEvents
-      .ERC20ClaimCreated({ fromBlock: 0n })
-      .catch(() => []);
-
-    if (!tokenClaimArray.length) return;
-
-    const childToken = tokenClaimArray[0].args.childToken;
-
-    if (!childToken || childToken === votesTokenAddress) {
+    const { isClaimErc20 } = await getAddressContractType(approvals[0].args.spender);
+    if (!isClaimErc20) {
       return;
     }
 
@@ -59,7 +45,7 @@ export function useERC20Claim() {
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
       payload: approvals[0].args.spender,
     });
-  }, [action, publicClient, votesTokenAddress]);
+  }, [action, getAddressContractType, publicClient, votesTokenAddress]);
 
   const loadKey = useRef<string>();
 

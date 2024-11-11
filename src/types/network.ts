@@ -32,10 +32,10 @@ export type NetworkConfig = {
     multiSendCallOnly: Address;
 
     zodiacModuleProxyFactory: Address;
-    zodiacModuleProxyFactoryOld: Address;
 
     linearVotingErc20MasterCopy: Address;
     linearVotingErc20HatsWhitelistingMasterCopy: Address;
+    linearVotingErc20WrappedMasterCopy: Address;
     linearVotingErc721MasterCopy: Address;
     linearVotingErc721HatsWhitelistingMasterCopy: Address;
 
@@ -54,15 +54,19 @@ export type NetworkConfig = {
 
     claimErc20MasterCopy: Address;
 
+    decentAutonomousAdminV1MasterCopy: Address;
+
     fractalRegistry: Address;
     keyValuePairs: Address;
 
-    decentHatsMasterCopy: Address;
-    decentSablierMasterCopy: Address;
+    decentHatsCreationModule: Address;
+    decentHatsModificationModule: Address;
+    decentSablierStreamManagementModule: Address;
 
     hatsProtocol: Address;
     erc6551Registry: Address;
     hatsAccount1ofNMasterCopy: Address;
+    hatsElectionsEligibilityMasterCopy: Address;
     sablierV2Batch: Address;
     sablierV2LockupDynamic: Address;
     sablierV2LockupTranched: Address;
