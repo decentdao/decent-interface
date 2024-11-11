@@ -31,7 +31,10 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
 
   const azoriusProposal = proposal as AzoriusProposal;
 
-  const { castVote, castVotePending } = useCastVote(proposal.proposalId);
+  const { castVote, castVotePending } = useCastVote(
+    proposal.proposalId,
+    azoriusProposal.votingStrategy,
+  );
 
   const {
     castSnapshotVote,
