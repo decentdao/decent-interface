@@ -1,11 +1,13 @@
-import { Button, Card, Flex, Icon, Text } from '@chakra-ui/react';
-import { ArrowsDownUp, Trash } from '@phosphor-icons/react';
+import { Button, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
+import { ArrowsDownUp, CheckSquare, Trash } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { formatUnits, getAddress, zeroAddress } from 'viem';
+import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
 import { CreateProposalAction, ProposalActionType } from '../../types/proposalBuilder';
+import { Card } from '../ui/cards/Card';
 import { SendAssetsData } from '../ui/modals/SendAssetsModal';
 
 export function SendAssetsAction({
@@ -96,5 +98,37 @@ export function ProposalActionCard({
       />
     );
   }
-  return <></>;
+
+  const isAddAction = action.actionType === ProposalActionType.ADD;
+  const isEditAction = action.actionType === ProposalActionType.EDIT;
+  const isDeleteAction = action.actionType === ProposalActionType.DELETE;
+
+  return (
+    <Flex
+      gap={4}
+      alignItems="center"
+    >
+      <Card
+        backgroundColor={
+          isAddAction || isEditAction ? 'neutral-2' : isDeleteAction ? 'red-2' : 'neutral-3'
+        }
+      >
+        <Flex
+          gap={2}
+          alignItems="center"
+        >
+          <Icon as={isAddAction ? CheckSquare : isEditAction ? PencilWithLineIcon : Trash} />
+          {action.content}
+        </Flex>
+      </Card>
+      <IconButton
+        aria-label="Remove action"
+        icon={<Trash />}
+        variant="ghost"
+        size="icon-sm"
+        color="red-1"
+        onClick={() => removeAction(index)}
+      />
+    </Flex>
+  );
 }

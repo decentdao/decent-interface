@@ -74,21 +74,23 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
     addAction({
       actionType: ProposalActionType.DELETE,
       content: (
-        <Box>
-          <Text as="span">{t('editPermission')}</Text>
+        <Box width="100%">
+          <Text as="span">{t('deletePermission')} </Text>
           <Text
             color="lilac-0"
             as="span"
           >
             {t('createProposals')}
           </Text>
-          <Text>{t('editPermissionActionDescription')}</Text>
+          <Text as="span">{t('editPermissionActionDescription')} </Text>
           <Icon
             as={Coins}
             color="lilac-0"
           />
-          <Text>{`${azoriusGovernance.votingStrategy?.proposerThreshold?.value} ${t('votingWeightThreshold')}`}</Text>
-          <Text>{t('editPermissionActionDescription2')}</Text>
+          <Text as="span">
+            {`${azoriusGovernance.votingStrategy?.proposerThreshold?.value} ${t('votingWeightThreshold')}`}{' '}
+          </Text>
+          <Text as="span">{t('editPermissionActionDescription2')}</Text>
         </Box>
       ),
       transactions: [transaction],

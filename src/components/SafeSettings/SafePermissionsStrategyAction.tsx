@@ -1,4 +1,4 @@
-import { Box, Icon, Text } from '@chakra-ui/react';
+import { Flex, Icon, Text } from '@chakra-ui/react';
 import { Coins } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -23,21 +23,26 @@ export function SafePermissionsStrategyAction({
         : t('deletePermission');
 
   return (
-    <Box>
+    <Flex
+      width="100%"
+      alignItems="center"
+    >
       <Text as="span">{title}</Text>
       <Text
         color="lilac-0"
         as="span"
       >
-        {t('createProposals')}
+        {t('createProposals')}{' '}
       </Text>
-      <Text>{t('editPermissionActionDescription')}</Text>
+      <Text as="span">{t('editPermissionActionDescription')}</Text>
       <Icon
         as={Coins}
         color="lilac-0"
       />
-      <Text>{`${proposerThreshold.value} ${azoriusGovernance.votesToken?.symbol || t('votingWeightThreshold')}`}</Text>
-      <Text>{t('editPermissionActionDescription2')}</Text>
-    </Box>
+      <Text as="span">
+        {`${proposerThreshold.value} ${azoriusGovernance.votesToken?.symbol || t('votingWeightThreshold')}`}{' '}
+      </Text>
+      <Text as="span">{t('editPermissionActionDescription2')}</Text>
+    </Flex>
   );
 }
