@@ -1,6 +1,5 @@
 import { Box, Center, Flex, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { isDemoMode } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -15,12 +14,7 @@ import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
  * Info card used on the DAO homepage.
  */
 export function DAOInfoCard() {
-  const {
-    node,
-    guardContracts,
-    guard,
-    readOnly: { user },
-  } = useFractal();
+  const { node, guardContracts, guard } = useFractal();
 
   const parentAddress = node.nodeHierarchy.parentAddress;
   const childCount = node.nodeHierarchy.childNodes.length;
@@ -84,13 +78,11 @@ export function DAOInfoCard() {
             )}
           </Flex>
           {/* SETTINGS MENU BUTTON */}
-          {(isDemoMode() || !!user.address) && (
-            <ManageDAOMenu
-              parentAddress={parentAddress}
-              freezeGuard={guard}
-              guardContracts={guardContracts}
-            />
-          )}
+          <ManageDAOMenu
+            parentAddress={parentAddress}
+            freezeGuard={guard}
+            guardContracts={guardContracts}
+          />
         </Flex>
         {/* DAO NAME AND ACTIONS */}
 
