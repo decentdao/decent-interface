@@ -645,7 +645,7 @@ export default function useCreateRoles() {
       hatsElectionsEligibilityMasterCopy,
     ],
   );
-  // @todo  move to updated 'useMasterCopy` hook
+
   const isDecentAutonomousAdminV1 = useCallback(
     async (address: Address) => {
       if (!publicClient) {

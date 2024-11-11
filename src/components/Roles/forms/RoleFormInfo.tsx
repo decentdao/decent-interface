@@ -1,17 +1,12 @@
 import { Box, Flex, FormControl, Switch, Text } from '@chakra-ui/react';
 import { Field, FieldInputProps, FieldMetaProps, FormikProps, useFormikContext } from 'formik';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
-import useAddress from '../../../hooks/utils/useAddress';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { GovernanceType } from '../../../types';
 import { RoleFormValues } from '../../../types/roles';
-import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
-import LabelWrapper from '../../ui/forms/LabelWrapper';
 
 export default function RoleFormInfo() {
   const { t } = useTranslation('roles');
@@ -20,19 +15,7 @@ export default function RoleFormInfo() {
   } = useFractal();
   const { hatsTree, hatsTreeId } = useRolesStore();
 
-  const [roleWearerString, setRoleWearerString] = useState<string>('');
-  const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
-    useAddress(roleWearerString);
-
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
-
-  useEffect(() => {
-    if (isValidWearerAddress) {
-      setFieldValue('roleEditing.resolvedWearer', resolvedWearerAddress);
-    }
-  }, [isValidWearerAddress, resolvedWearerAddress, setFieldValue]);
-
-  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer, false);
 
   return (
     <>
@@ -118,45 +101,13 @@ export default function RoleFormInfo() {
             )}
           </Field>
         </FormControl>
-        <FormControl>
-          <Field name="roleEditing.wearer">
-            {({
-              field,
-              form: { setFieldTouched },
-              meta,
-            }: {
-              field: FieldInputProps<string>;
-              form: FormikProps<RoleFormValues>;
-              meta: FieldMetaProps<string>;
-            }) => (
-              <LabelWrapper
-                label={t('member')}
-                errorMessage={meta.touched && meta.error ? meta.error : undefined}
-                isRequired
-                labelColor="neutral-7"
-              >
-                <AddressInput
-                  value={displayName ?? field.value}
-                  onBlur={() => {
-                    setFieldTouched('roleEditing.wearer', true);
-                  }}
-                  onChange={e => {
-                    const inputWearer = e.target.value;
-                    setRoleWearerString(inputWearer);
-                    setFieldValue('roleEditing.wearer', inputWearer);
-                  }}
-                />
-              </LabelWrapper>
-            )}
-          </Field>
-        </FormControl>
       </Box>
       {/* @dev - deploying whitelisting voting strategy is feasible from UI/UX standpoint only when Safe has Azorius module AND hatsTree been created already */}
       {type !== GovernanceType.MULTISIG &&
         !!hatsTree &&
         !!hatsTreeId &&
         import.meta.env.VITE_APP_FLAG_WHITELISTING === 'ON' && (
-          <FormControl mt={4}>
+          <FormControl>
             <Field name="roleEditing.canCreateProposals">
               {() => (
                 <Flex
