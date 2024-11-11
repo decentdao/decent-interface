@@ -4,13 +4,13 @@ export function DecentTooltip(props: TooltipProps) {
   return (
     <Tooltip
       maxW="20rem"
+      placement="top-start"
+      {...props}
       hasArrow
       borderRadius="8px"
-      placement="top-start"
-      backgroundColor="neutral-9"
-      color="black-0"
       padding="0.25rem 0.5rem"
-      {...props}
+      color="black-0"
+      backgroundColor="neutral-9"
     />
   );
 }
