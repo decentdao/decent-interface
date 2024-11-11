@@ -2,7 +2,6 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import { isDemoMode } from '../../../../constants/common';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -116,7 +115,7 @@ export function VoteContextProvider({
         } else if (type === GovernanceType.MULTISIG) {
           newCanVote = !!safe?.owners.includes(user.address);
         } else {
-          newCanVote = isDemoMode();
+          newCanVote = false;
         }
       }
 
