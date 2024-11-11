@@ -290,7 +290,6 @@ export function SafePermissionsCreateProposal() {
         transactions,
       });
       navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safe.address));
-      handleClose();
     }
   };
 

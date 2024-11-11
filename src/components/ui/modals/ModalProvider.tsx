@@ -263,7 +263,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         break;
       case ModalType.CONFIRM_DELETE_STRATEGY:
         modalContent = <ConfirmDeleteStrategyModal onClose={closeModal} />;
-        modalSize = 'xl';
         break;
       case ModalType.NONE:
       default:

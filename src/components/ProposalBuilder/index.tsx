@@ -288,7 +288,9 @@ export function ProposalBuilder({
                             );
                           })}
                         </Flex>
-                        <AddActions addSendAssetsAction={handleAddSendAssetsAction} />
+                        <Flex>
+                          <AddActions addSendAssetsAction={handleAddSendAssetsAction} />
+                        </Flex>
                       </Flex>
                     )}
                     <StepButtons

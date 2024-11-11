@@ -56,8 +56,9 @@ export default function ProposalMetadata({
         rows={12}
       />
       <InputComponent
-        label={t('proposalDocumentationTitle')}
-        placeholder={t('proposalDocumentationPlaceholder')}
+        label={t('proposalAdditionalResources', { ns: 'proposal' })}
+        placeholder={t('proposalAdditionalResourcesPlaceholder', { ns: 'proposal' })}
+        helper={t('proposalAdditionalResourcesHelper', { ns: 'proposal' })}
         value={proposalMetadata.documentationUrl || ''}
         onChange={e => setFieldValue('proposalMetadata.documentationUrl', e.target.value)}
         testId="metadata.documentationUrl"
