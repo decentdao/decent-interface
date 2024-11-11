@@ -33,7 +33,12 @@ export default function Providers({ children }: { children: ReactNode }) {
                     pauseWhenPageIsHidden
                     theme="dark"
                     closeButton
-                    toastOptions={{ className: 'sonner-toast' }}
+                    toastOptions={{
+                      className: 'sonner-toast',
+                      style: {
+                        borderRadius: '0.75rem',
+                      },
+                    }}
                   />
                   {children}
                 </AppProvider>
