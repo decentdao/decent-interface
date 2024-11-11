@@ -13,7 +13,7 @@ import { ProposalBuilderMode } from '../../../../../types';
 
 export function SafeProposalWithActionsCreatePage() {
   useEffect(() => {
-    amplitude.track(analyticsEvents.CreateProposalPageOpened);
+    amplitude.track(analyticsEvents.SafeProposalWithActionsCreatePageOpened);
   }, []);
   const {
     node: { daoAddress, safe },
