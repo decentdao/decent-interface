@@ -7,7 +7,7 @@ import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
 
-export default function RoleDetails() {
+export function RoleDetails() {
   const {
     node: { safe },
   } = useFractal();

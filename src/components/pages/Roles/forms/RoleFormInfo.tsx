@@ -1,31 +1,14 @@
 import { Box, FormControl } from '@chakra-ui/react';
 import { Field, FieldInputProps, FieldMetaProps, FormikProps, useFormikContext } from 'formik';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
-import useAddress from '../../../../hooks/utils/useAddress';
-import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
-import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
-import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleFormValues } from '../types';
 
 export default function RoleFormInfo() {
   const { t } = useTranslation('roles');
 
-  const [roleWearerString, setRoleWearerString] = useState<string>('');
-  const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
-    useAddress(roleWearerString);
-
-  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
-
-  useEffect(() => {
-    if (isValidWearerAddress) {
-      setFieldValue('roleEditing.resolvedWearer', resolvedWearerAddress);
-    }
-  }, [isValidWearerAddress, resolvedWearerAddress, setFieldValue]);
-
-  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer, false);
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
 
   return (
     <Box
@@ -107,38 +90,6 @@ export default function RoleFormInfo() {
               label={t('roleDescription')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
             />
-          )}
-        </Field>
-      </FormControl>
-      <FormControl>
-        <Field name="roleEditing.wearer">
-          {({
-            field,
-            form: { setFieldTouched },
-            meta,
-          }: {
-            field: FieldInputProps<string>;
-            form: FormikProps<RoleFormValues>;
-            meta: FieldMetaProps<string>;
-          }) => (
-            <LabelWrapper
-              label={t('member')}
-              errorMessage={meta.touched && meta.error ? meta.error : undefined}
-              isRequired
-              labelColor="neutral-7"
-            >
-              <AddressInput
-                value={displayName ?? field.value}
-                onBlur={() => {
-                  setFieldTouched('roleEditing.wearer', true);
-                }}
-                onChange={e => {
-                  const inputWearer = e.target.value;
-                  setRoleWearerString(inputWearer);
-                  setFieldValue('roleEditing.wearer', inputWearer);
-                }}
-              />
-            </LabelWrapper>
           )}
         </Field>
       </FormControl>

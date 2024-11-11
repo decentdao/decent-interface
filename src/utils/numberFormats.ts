@@ -3,6 +3,7 @@ import { formatEther, formatUnits } from 'viem';
 import { TokenBalance } from '../types';
 
 export const DEFAULT_DATE_TIME_FORMAT = 'MMM dd, yyyy, h:mm aa O';
+export const DEFAULT_DATE_TIME_FORMAT_NO_TZ = 'MMM dd, yyyy, h:mm aa';
 export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 
 export const formatPercentage = (

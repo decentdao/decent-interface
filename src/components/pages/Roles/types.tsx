@@ -6,6 +6,7 @@ import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 export interface SablierPayment {
   streamId: string;
   contractAddress: Address;
+  recipient: Address;
   asset: {
     address: Address;
     name: string;
@@ -30,17 +31,22 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
 }
 
 export interface RoleProps {
-  editStatus?: EditBadgeStatus;
   handleRoleClick: () => void;
   name: string;
   wearerAddress?: Address;
   paymentsCount?: number;
+  isTermed: boolean;
+  currentRoleTermStatus?: 'active' | 'inactive';
 }
 
 export interface RoleEditProps
-  extends Omit<RoleProps, 'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name'> {
+  extends Omit<
+    RoleProps,
+    'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name' | 'currentRoleTermStatus' | 'isTermed'
+  > {
   name?: string;
   handleRoleClick: () => void;
+  editStatus?: EditBadgeStatus;
   payments?: SablierPaymentFormValues[];
 }
 
@@ -62,25 +68,43 @@ export enum EditBadgeStatus {
   Updated,
   New,
   Removed,
+  NewTermedRole,
+  Inactive,
 }
 export const BadgeStatus: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Updated]: 'updated',
   [EditBadgeStatus.New]: 'new',
   [EditBadgeStatus.Removed]: 'removed',
+  [EditBadgeStatus.NewTermedRole]: 'newTermedRole',
+  [EditBadgeStatus.Inactive]: 'Inactive',
 };
 export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Updated]: 'lilac-0',
   [EditBadgeStatus.New]: 'celery--2',
   [EditBadgeStatus.Removed]: 'red-1',
+  [EditBadgeStatus.NewTermedRole]: 'celery--2',
+  [EditBadgeStatus.Inactive]: 'neutral-6',
 };
 
+export interface TermedParams {
+  termEndDateTs: bigint;
+  nominatedWearers: Address[];
+}
+
+export enum RoleFormTermStatus {
+  ReadyToStart,
+  Current,
+  Queued,
+  Expired,
+  Pending,
+}
 export interface HatStruct {
   maxSupply: 1; // No more than this number of wearers. Hardcode to 1
   details: string; // IPFS url/hash to JSON { version: '1.0', data: { name, description, ...arbitraryData } }
   imageURI: string;
   isMutable: boolean; // true
   wearer: Address;
-  termEndDateTs: 0n;
+  termEndDateTs: bigint; // 0 for non-termed roles
 }
 
 export interface HatStructWithPayments extends HatStruct {
@@ -96,13 +120,20 @@ export interface HatStructWithPayments extends HatStruct {
   }[];
 }
 
+export type EditedRoleFieldNames =
+  | 'roleName'
+  | 'roleDescription'
+  | 'member'
+  | 'payments'
+  | 'roleType'
+  | 'newTerm';
 export interface EditedRole {
-  fieldNames: string[];
+  fieldNames: EditedRoleFieldNames[];
   status: EditBadgeStatus;
 }
 
 export interface RoleHatFormValue
-  extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments'>> {
+  extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments' | 'roleTerms'>> {
   id: Hex;
   wearer?: string;
   // Not a user-input field.
@@ -112,6 +143,12 @@ export interface RoleHatFormValue
   // form specific state
   editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;
+  isTermed?: boolean;
+  roleTerms?: {
+    nominee?: string;
+    termEndDate?: Date;
+    termNumber: number;
+  }[];
 }
 
 export interface RoleHatFormValueEdited extends RoleHatFormValue {
@@ -124,6 +161,11 @@ export type RoleFormValues = {
   roleEditing?: RoleHatFormValue;
   customNonce?: number;
   actions: SendAssetsData[];
+  newRoleTerm?: {
+    nominee: string;
+    termEndDate: Date;
+    termNumber: number;
+  };
 };
 
 export type PreparedNewStreamData = {

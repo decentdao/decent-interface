@@ -300,6 +300,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
             return (
               <LabelWrapper
                 label={t('totalAmount')}
+                labelColor="neutral-7"
                 errorMessage={
                   !!paymentAmountBigIntTouched && paymentAmountBigIntError?.bigintValue
                     ? paymentAmountBigIntError?.bigintValue

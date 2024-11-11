@@ -4,7 +4,7 @@ import { Field, FieldInputProps, FormikProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { formatUnits, Hex } from 'viem';
+import { formatUnits, Hex, getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
@@ -87,19 +87,51 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     return values.hats
       .filter(hat => !!hat.editedRole)
       .map(roleHat => {
-        if (!roleHat.wearer || !roleHat.name || !roleHat.description || !roleHat.editedRole) {
+        if (!roleHat.name || !roleHat.description || !roleHat.editedRole) {
           throw new Error('Role missing data', {
             cause: roleHat,
           });
         }
-
+        const allRoleTerms =
+          roleHat.roleTerms?.map(term => {
+            if (!term.termEndDate || term.nominee === undefined || term.termNumber === undefined) {
+              throw new Error('Role term missing data', {
+                cause: term,
+              });
+            }
+            return {
+              termEndDate: term.termEndDate,
+              nominee: getAddress(term.nominee),
+              termNumber: term.termNumber,
+            };
+          }) || [];
+        const roleTerms = {
+          allTerms: allRoleTerms,
+          currentTerm: drawerViewingRole?.roleTerms.currentTerm,
+          nextTerm: drawerViewingRole?.roleTerms.nextTerm,
+          expiredTerms: allRoleTerms.filter(term => term.termEndDate <= new Date()),
+        };
+        const termedNominee = drawerViewingRole?.roleTerms.currentTerm?.nominee;
+        const wearer =
+          roleHat.isTermed && !!termedNominee
+            ? termedNominee
+            : !!roleHat?.wearer
+              ? getAddress(roleHat.wearer)
+              : undefined;
+        if (!wearer) {
+          throw new Error('Role missing wearer', {
+            cause: roleHat,
+          });
+        }
         return {
           ...roleHat,
           editedRole: roleHat.editedRole,
           prettyId: roleHat.id,
           name: roleHat.name,
           description: roleHat.description,
-          wearer: roleHat.wearer,
+          wearer,
+          roleTerms,
+          isTermed: roleHat.isTermed ?? false,
           payments: roleHat.payments
             ? roleHat.payments.map(payment => {
                 if (!payment.startDate || !payment.endDate || !payment.amount || !payment.asset) {
@@ -109,6 +141,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                 }
                 return {
                   ...payment,
+                  recipient: wearer,
                   startDate: payment.startDate,
                   endDate: payment.endDate,
                   amount: payment.amount,
@@ -121,7 +154,11 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             : [],
         };
       });
-  }, [values.hats]);
+  }, [
+    drawerViewingRole?.roleTerms.currentTerm,
+    drawerViewingRole?.roleTerms.nextTerm,
+    values.hats,
+  ]);
 
   const {
     node: { safe },
