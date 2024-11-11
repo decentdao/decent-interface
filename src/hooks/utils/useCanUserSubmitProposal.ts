@@ -95,7 +95,7 @@ export function useCanUserCreateProposal() {
 
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
-      const newCanCreateProposal = isDemoMode() ? true : await getCanUserCreateProposal();
+      const newCanCreateProposal = isDemoMode() ?? (await getCanUserCreateProposal());
       if (newCanCreateProposal !== canUserCreateProposal) {
         setCanUserCreateProposal(newCanCreateProposal);
       }

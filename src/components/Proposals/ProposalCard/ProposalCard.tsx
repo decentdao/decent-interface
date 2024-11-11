@@ -2,7 +2,6 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { isDemoMode } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -55,11 +54,11 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
             alignItems="center"
             w={{ base: '100%', md: 'auto' }}
           >
+            {/* Simulate expired proposal for demo */}
             <Badge
               labelKey={
                 proposal.transactionHash ===
-                  '0xb6066f0979c96a1d56d5d6bae3bf6d2a04707ebf84bcc0d84b15c9eff4759173' &&
-                isDemoMode()
+                '0xb6066f0979c96a1d56d5d6bae3bf6d2a04707ebf84bcc0d84b15c9eff4759173'
                   ? FractalProposalState.EXPIRED
                   : proposal.state!
               }

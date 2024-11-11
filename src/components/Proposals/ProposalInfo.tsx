@@ -3,7 +3,6 @@ import { ArrowUpRight } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shield } from '../../assets/theme/custom/icons/Shield';
-import { isDemoMode } from '../../constants/common';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -61,7 +60,7 @@ export function ProposalInfo({
             size="base"
             labelKey={
               proposal.transactionHash ===
-                '0xb6066f0979c96a1d56d5d6bae3bf6d2a04707ebf84bcc0d84b15c9eff4759173' && isDemoMode()
+              '0xb6066f0979c96a1d56d5d6bae3bf6d2a04707ebf84bcc0d84b15c9eff4759173'
                 ? FractalProposalState.EXPIRED
                 : proposal.state
             }
@@ -111,11 +110,10 @@ export function ProposalInfo({
             text={metaData.documentationUrl}
           />
         )}
-        {isDemoMode() &&
-          proposal.transactionHash ===
-            '0x642672a027d13d31ef366dcd18a4cd89d2ef7b67b22c41b9cff91c2306b4b964' && (
-            <DemoProposalActions />
-          )}
+        {proposal.transactionHash ===
+          '0x642672a027d13d31ef366dcd18a4cd89d2ef7b67b22c41b9cff91c2306b4b964' && (
+          <DemoProposalActions />
+        )}
         <ProposalExecutableCode proposal={proposal} />
       </Box>
     </Box>
