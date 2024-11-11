@@ -1005,7 +1005,6 @@ export default function useCreateRoles() {
             // @dev {assupmtion}: We are only dealing with a single term here, either the next term or a new current term when there is no term set.
             // @dev {assupmtion}: There were always be more than one term in this workflow.
             const [newTerm, previousTerm] = terms;
-            console.log('🚀 ~ terms:', terms);
             const electionsContract = getContract({
               address: formHat.eligibility,
               abi: HatsElectionsEligibilityAbi,
