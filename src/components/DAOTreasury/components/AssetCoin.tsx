@@ -96,12 +96,12 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
           width="100%"
           isTruncated
         >
-          <Tooltip
+          <DecentTooltip
             label={formatCoin(asset.balance, false, asset.decimals, asset.symbol)}
             placement="top-start"
           >
             {formatCoin(asset.balance, true, asset.decimals, asset.symbol, false)}
-          </Tooltip>
+          </DecentTooltip>
         </Text>
         {asset.usdPrice && asset.usdValue && (
           <Text
@@ -109,12 +109,12 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
             color="neutral-7"
             width="100%"
           >
-            <Tooltip
+            <DecentTooltip
               label={`1 ${asset.symbol} = ${formatUSD(asset.usdPrice)}`}
               placement="top-start"
             >
               {formatUSD(asset.usdValue)}
-            </Tooltip>
+            </DecentTooltip>
           </Text>
         )}
       </Flex>

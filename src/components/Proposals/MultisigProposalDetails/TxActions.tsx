@@ -1,4 +1,4 @@
-import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +16,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MultisigProposal, FractalProposalState } from '../../../types';
+import { DecentTooltip } from '../../ui/DecentTooltip';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
@@ -296,7 +297,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         <ProposalCountdown proposal={proposal} />
       </Flex>
       <Box marginTop={4}>
-        <Tooltip
+        <DecentTooltip
           placement="top-start"
           label={t('notActiveNonceTooltip')}
           isDisabled={isActiveNonce}
@@ -309,7 +310,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
           >
             {t(buttonProps[proposal.state!].text, { ns: 'common' })}
           </Button>
-        </Tooltip>
+        </DecentTooltip>
       </Box>
     </ContentBox>
   );

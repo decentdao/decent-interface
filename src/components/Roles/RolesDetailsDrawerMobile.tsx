@@ -115,31 +115,13 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        {roleHat.payments && (
-          <>
-            <Divider
-              variant="darker"
-              my={4}
-            />
-            <Text
-              textStyle="display-lg"
-              color="white-0"
-              mt="1.5rem"
-              mb="1rem"
-            >
-              {t('payments')}
-            </Text>
-            {sortedPayments.map((payment, index) => (
-              <RolePaymentDetails
-                key={index}
-                payment={payment}
-                roleHatSmartAddress={roleHat.smartAddress}
-                roleHatWearerAddress={roleHatWearerAddress}
-                showWithdraw
-              />
-            ))}
-          </>
-        )}
+        <RoleDetailsTabs
+          hatId={roleHat.id}
+          roleHatSmartAccountAddress={roleHat.smartAddress}
+          roleTerms={roleHat.roleTerms}
+          roleHatWearerAddress={roleHatWearerAddress}
+          sortedPayments={sortedPayments}
+        />
       </Box>
     </DraggableDrawer>
   );

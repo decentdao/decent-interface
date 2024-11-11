@@ -227,29 +227,17 @@ export default function RolesDetailsDrawer({
               )}
             </GridItem>
           </Grid>
-          {roleHat.payments && (
-            <>
-              <Divider
-                variant="darker"
-                my={4}
-              />
-              <Text
-                textStyle="display-lg"
-                color="white-0"
-              >
-                {t('payments')}
-              </Text>
-              {sortedPayments.map((payment, index) => (
-                <RolePaymentDetails
-                  key={index}
-                  payment={payment}
-                  roleHatSmartAddress={roleHat.smartAddress}
-                  roleHatWearerAddress={roleHatWearerAddress}
-                  showWithdraw
-                />
-              ))}
-            </>
-          )}
+          <Divider
+            variant="darker"
+            my={4}
+          />
+          <RoleDetailsTabs
+            hatId={roleHat.id}
+            roleHatSmartAccountAddress={roleHat.smartAddress}
+            roleTerms={roleHat.roleTerms}
+            roleHatWearerAddress={roleHatWearerAddress}
+            sortedPayments={sortedPayments}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

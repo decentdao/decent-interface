@@ -5,7 +5,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { GovernanceType } from '../../../types';
+import { GovernanceType, ProposalTemplate } from '../../../types';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useERC721LinearStrategy } from './governance/useERC721LinearStrategy';
@@ -44,27 +44,43 @@ export const useFractalGovernance = () => {
       const { daos } = data;
       const dao = daos[0];
 
-      if (dao) {
-        const { proposalTemplatesHash } = dao;
-        if (proposalTemplatesHash) {
-          const proposalTemplates = await ipfsClient.cat(proposalTemplatesHash);
+      const { proposalTemplatesHash } = dao;
 
-          action.dispatch({
-            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-            payload: proposalTemplates || [],
-          });
-        } else {
-          action.dispatch({
-            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-            payload: [],
-          });
-        }
-      } else {
+      if (!proposalTemplatesHash) {
         action.dispatch({
           type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
           payload: [],
         });
+        return;
       }
+
+      const proposalTemplates: ProposalTemplate[] | undefined =
+        await ipfsClient.cat(proposalTemplatesHash);
+
+      if (!proposalTemplates) {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+          payload: [],
+        });
+        return;
+      }
+
+      const mappedProposalTemplates = proposalTemplates.map(proposalTemplate => ({
+        ...proposalTemplate,
+        transactions: proposalTemplate.transactions.map(transaction => ({
+          ...transaction,
+          ethValue: {
+            // bigintValue was serialized as a string, so we need to convert it back to a bigint
+            bigintValue: BigInt(transaction.ethValue.bigintValue || 0n),
+            value: transaction.ethValue.value ?? '0',
+          },
+        })),
+      }));
+
+      action.dispatch({
+        type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+        payload: mappedProposalTemplates,
+      });
     },
     context: {
       subgraphSpace: subgraph.space,

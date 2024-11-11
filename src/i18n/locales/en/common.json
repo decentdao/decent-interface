@@ -116,5 +116,6 @@
   "none": "None",
   "ipfsLoadingErrorMessage": "Error fetching data from IPFS, please try again later.",
   "ipfsSavingErrorMessage": "Error saving data to IPFS, please try again later.",
+  "confirm": "Confirm",
   "automaticChainSwitchingErrorMessage": "We couldn't automatically switch network to the Safe's netowrk. Please, try to switch network in your wallet application."
 }

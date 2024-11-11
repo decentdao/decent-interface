@@ -11,6 +11,14 @@ import { ProposalExecuteData } from '../../../types';
 import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { validateENSName } from '../../../utils/url';
 
+const customSerializer = (_: string, value: any) => {
+  if (typeof value === 'bigint') {
+    // need to convert bigint to string
+    return value.toString();
+  }
+  return value;
+};
+
 export default function useCreateProposalTemplate() {
   const publicClient = usePublicClient();
   const client = useIPFSClient();
@@ -58,7 +66,7 @@ export default function useCreateProposalTemplate() {
 
         const updatedTemplatesList = [...proposalTemplates, proposalTemplateData];
 
-        const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
+        const { Hash } = await client.add(JSON.stringify(updatedTemplatesList, customSerializer));
 
         const encodedUpdateValues = encodeFunctionData({
           abi: abis.KeyValuePairs,

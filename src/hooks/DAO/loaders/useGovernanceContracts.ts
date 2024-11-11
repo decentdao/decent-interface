@@ -52,32 +52,40 @@ export const useGovernanceContracts = () => {
         address: erc20VotingStrategyAddress,
         client: publicClient,
       });
+
       const govTokenAddress = await ozLinearVotingContract.read.governanceToken();
+      // govTokenAddress might be either
+      // - a valid VotesERC20 contract
+      // - a valid VotesERC20Wrapper contract
+      // - a valid LockRelease contract
+      // - or none of these which is against business logic
 
-      const possibleERC20Wrapper = getContract({
-        abi: abis.VotesERC20Wrapper,
-        address: govTokenAddress,
-        client: publicClient,
-      });
+      const { isVotesErc20, isVotesErc20Wrapper } = await getAddressContractType(govTokenAddress);
 
-      underlyingTokenAddress = await possibleERC20Wrapper.read.underlying().catch(() => {
-        // if the underlying token is not an ERC20Wrapper, this will throw an error,
-        // so we catch it and return undefined
-        return undefined;
-      });
-      const possibleLockRelease = getContract({
-        address: govTokenAddress,
-        abi: LockReleaseAbi,
-        client: { public: publicClient },
-      });
+      if (isVotesErc20) {
+        votesTokenAddress = govTokenAddress;
+      } else if (isVotesErc20Wrapper) {
+        const wrapperContract = getContract({
+          abi: abis.VotesERC20Wrapper,
+          address: govTokenAddress,
+          client: publicClient,
+        });
+        underlyingTokenAddress = await wrapperContract.read.underlying();
+        votesTokenAddress = govTokenAddress;
+      } else {
+        const possibleLockRelease = getContract({
+          address: govTokenAddress,
+          abi: LockReleaseAbi,
+          client: { public: publicClient },
+        });
 
-      let lockedTokenAddress = undefined;
-      try {
-        lockedTokenAddress = await possibleLockRelease.read.token();
-      } catch {
-        // no-op
-        // if the underlying token is not an ERC20Wrapper, this will throw an error,
-        // so we catch it and do nothing
+        try {
+          const lockedTokenAddress = await possibleLockRelease.read.token();
+          lockReleaseAddress = govTokenAddress;
+          votesTokenAddress = lockedTokenAddress;
+        } catch {
+          throw new Error('Unknown governance token type');
+        }
       }
 
       if (lockedTokenAddress) {

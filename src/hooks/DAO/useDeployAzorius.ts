@@ -22,14 +22,14 @@ import {
   VotingStrategyType,
   WithError,
 } from '../../types';
+import { useAddressContractType } from '../utils/useAddressContractType';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
-import { useMasterCopy } from '../utils/useMasterCopy';
 import { useLoadDAONode } from './loaders/useLoadDAONode';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 const useDeployAzorius = () => {
   const navigate = useNavigate();
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
   const {
     contracts: {
       compatibilityFallbackHandler,
@@ -110,7 +110,7 @@ const useDeployAzorius = () => {
             const strategies = await azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n]);
             parentStrategyAddress = strategies[1];
 
-            const masterCopyData = await getZodiacModuleProxyMasterCopyData(parentStrategyAddress);
+            const masterCopyData = await getAddressContractType(parentStrategyAddress);
             if (masterCopyData.isLinearVotingErc20) {
               const votingStrategyContract = getContract({
                 abi: abis.LinearERC20Voting,
@@ -243,7 +243,7 @@ const useDeployAzorius = () => {
       navigate,
       addressPrefix,
       loadDao,
-      getZodiacModuleProxyMasterCopyData,
+      getAddressContractType,
       parentAddress,
     ],
   );

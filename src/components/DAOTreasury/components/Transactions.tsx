@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, HStack, Icon, Image, Text } from '@chakra-ui/react';
 import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
@@ -58,7 +58,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             w="1.25rem"
             h="1.25rem"
           />
-          <Tooltip
+          <DecentTooltip
             label={
               displayData.transferType === TransferType.ERC721_TRANSFER
                 ? undefined
@@ -77,7 +77,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
               {(displayData.eventType == TokenEventType.WITHDRAW ? '- ' : '+ ') +
                 displayData.assetDisplay}
             </Text>
-          </Tooltip>
+          </DecentTooltip>
         </HStack>
         <HStack
           w="40%"

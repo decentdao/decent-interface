@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 import { getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { FractalModuleData, FractalModuleType } from '../../../types';
-import { useMasterCopy } from '../../utils/useMasterCopy';
+import { useAddressContractType } from '../../utils/useAddressContractType';
 
 export const useFractalModules = () => {
-  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { getAddressContractType } = useAddressContractType();
   const publicClient = usePublicClient();
   const lookupModules = useCallback(
     async (_moduleAddresses: string[]) => {
@@ -13,7 +13,7 @@ export const useFractalModules = () => {
         _moduleAddresses.map(async moduleAddressString => {
           const moduleAddress = getAddress(moduleAddressString);
 
-          const masterCopyData = await getZodiacModuleProxyMasterCopyData(moduleAddress);
+          const masterCopyData = await getAddressContractType(moduleAddress);
 
           let safeModule: FractalModuleData;
 
@@ -39,7 +39,7 @@ export const useFractalModules = () => {
       );
       return modules;
     },
-    [getZodiacModuleProxyMasterCopyData, publicClient],
+    [getAddressContractType, publicClient],
   );
   return lookupModules;
 };

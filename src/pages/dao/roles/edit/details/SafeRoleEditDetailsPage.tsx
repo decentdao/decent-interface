@@ -19,10 +19,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex, isHex } from 'viem';
-import RoleFormTabs from '../../../../../components/Roles/forms/RoleFormTabs';
-import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
-import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
-import { UnsavedChangesWarningContent } from '../../../../../components/ui/modals/UnsavedChangesWarningContent';
+import { RoleFormTabs } from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import {
   BACKGROUND_SEMI_TRANSPARENT,
   CARD_SHADOW,
@@ -67,6 +64,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
     }
 
     setFieldValue('roleEditing', undefined);
+    setFieldValue('addMewTerm', undefined);
     setTimeout(() => onRemove(), 50);
   };
 
@@ -163,6 +161,7 @@ export function SafeRoleEditDetailsPage() {
     setTimeout(() => {
       setTouched({});
       setFieldValue('roleEditing', undefined);
+      setFieldValue('addMewTerm', undefined);
       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
     }, 50);
   };

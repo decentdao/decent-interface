@@ -90,15 +90,19 @@ export function SafeRolesPage() {
           </Show>
 
           <Show below="md">
-            {hatsTree.roleHats.map(roleHat => (
-              <RoleCard
-                key={roleHat.id}
-                name={roleHat.name}
-                wearerAddress={roleHat.wearerAddress}
-                handleRoleClick={() => handleNavigateToRole(roleHat.id)}
-                paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
-              />
-            ))}
+            {hatsTree.roleHats.map(roleHat => {
+              return (
+                <RoleCard
+                  key={roleHat.id}
+                  name={roleHat.name}
+                  isTermed={roleHat.isTermed}
+                  wearerAddress={roleHat.wearerAddress}
+                  handleRoleClick={() => handleNavigateToRole(roleHat.id)}
+                  paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
+                  currentRoleTermStatus={roleHat.roleTerms.currentTerm?.termStatus}
+                />
+              );
+            })}
           </Show>
         </>
       )}

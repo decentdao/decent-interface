@@ -1,4 +1,4 @@
-import { Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -69,12 +69,12 @@ export function ActivityFreeze() {
         >
           <Text textStyle="text-base-sans-regular">
             {!isFrozen && freezeVotesThreshold !== null && freezeVotesThreshold > 0n && (
-              <Tooltip
+              <DecentTooltip
                 label={t('tipFreeze', { amount: voteToThreshold })}
                 placement="bottom"
               >
                 {voteToThreshold}
-              </Tooltip>
+              </DecentTooltip>
             )}
           </Text>
           {!isFreezeProposalDeadlinePassed && !isFreezeDeadlinePassed && (

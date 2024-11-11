@@ -1,9 +1,10 @@
-import { Center, Tooltip } from '@chakra-ui/react';
+import { Center } from '@chakra-ui/react';
+import { DecentTooltip } from '../../DecentTooltip';
 
 export function NavigationTooltip({ label, children }: { label: string; children: JSX.Element }) {
   return (
     <Center>
-      <Tooltip
+      <DecentTooltip
         closeDelay={250}
         gutter={10}
         hasArrow
@@ -11,7 +12,7 @@ export function NavigationTooltip({ label, children }: { label: string; children
         placement="right"
       >
         {children}
-      </Tooltip>
+      </DecentTooltip>
     </Center>
   );
 }
