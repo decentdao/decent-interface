@@ -11,7 +11,12 @@ export function useCanUserCreateProposal() {
   const {
     node: { safe },
     governance: { type },
-    governanceContracts: { linearVotingErc20Address, linearVotingErc721Address },
+    governanceContracts: {
+      linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721Address,
+      linearVotingErc721WithHatsWhitelistingAddress,
+    },
     readOnly: { user },
   } = useFractal();
   const safeAPI = useSafeAPI();
@@ -61,36 +66,44 @@ export function useCanUserCreateProposal() {
         if (type === GovernanceType.MULTISIG) {
           const { owners } = safe || {};
           return checkIsMultisigOwner(owners);
-        } else if (type === GovernanceType.AZORIUS_ERC20) {
-          if (linearVotingErc20Address) {
-            const ozLinearVotingContract = getContract({
-              abi: abis.LinearERC20Voting,
-              address: linearVotingErc20Address,
-              client: publicClient,
-            });
-
-            const isProposer = await ozLinearVotingContract.read.isProposer([user.address]);
-            return isProposer;
-          }
-        } else if (type === GovernanceType.AZORIUS_ERC721 && linearVotingErc721Address) {
-          const erc721LinearVotingContract = getContract({
-            abi: abis.LinearERC721Voting,
-            address: linearVotingErc721Address,
-            client: publicClient,
-          });
-
-          const isProposer = await erc721LinearVotingContract.read.isProposer([user.address]);
+        } else if (
+          type === GovernanceType.AZORIUS_ERC20 ||
+          type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING ||
+          type === GovernanceType.AZORIUS_ERC721 ||
+          type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING
+        ) {
+          let isProposer = false;
+          await Promise.all(
+            [
+              linearVotingErc20Address,
+              linearVotingErc20WithHatsWhitelistingAddress,
+              linearVotingErc721Address,
+              linearVotingErc721WithHatsWhitelistingAddress,
+            ].map(async votingStrategyAddress => {
+              if (!isProposer && votingStrategyAddress) {
+                const votingContract = getContract({
+                  abi: abis.LinearERC20Voting,
+                  address: votingStrategyAddress,
+                  client: publicClient,
+                });
+                if (user.address) {
+                  isProposer = await votingContract.read.isProposer([user.address]);
+                }
+              }
+            }),
+          );
           return isProposer;
         } else {
           return;
         }
       }
-      return;
     },
     [
       linearVotingErc721Address,
+      linearVotingErc721WithHatsWhitelistingAddress,
       getVotingStrategies,
       linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
       publicClient,
       safe,
       safeAPI,
