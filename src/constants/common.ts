@@ -56,6 +56,7 @@ export const MAX_CONTENT_WIDTH = '80rem';
 const features = {
   developmentMode: 'DEVELOPMENT_MODE',
   termedRoles: 'TERMED_ROLES',
+  demoMode: 'DEMO_MODE',
 } as const;
 
 type FeatureFlag = (typeof features)[keyof typeof features];
@@ -71,6 +72,7 @@ export const isFeatureEnabled = (feature: FeatureFlag) => {
 
 export const isDevMode = () => isFeatureEnabled(features.developmentMode);
 export const isTermedRolesEnabled = () => isFeatureEnabled(features.termedRoles);
+export const isDemoMode = () => isFeatureEnabled(features.demoMode);
 
 /**
  * @dev DO NOT CHANGE THE SALT
