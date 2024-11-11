@@ -1,5 +1,6 @@
 import { Box, Center, Flex, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
+import { isDemoMode } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -83,7 +84,7 @@ export function DAOInfoCard() {
             )}
           </Flex>
           {/* SETTINGS MENU BUTTON */}
-          {!!user.address && (
+          {(isDemoMode() || !!user.address) && (
             <ManageDAOMenu
               parentAddress={parentAddress}
               freezeGuard={guard}
