@@ -16,15 +16,16 @@ export function SafeProposalWithActionsCreatePage() {
     amplitude.track(analyticsEvents.SafeProposalWithActionsCreatePageOpened);
   }, []);
   const {
-    node: { daoAddress, safe },
+    node: { safe },
     governance: { type },
   } = useFractal();
+
   const { prepareProposal } = usePrepareProposal();
   const { getTransactions } = useProposalActionsStore();
 
   const HEADER_HEIGHT = useHeaderHeight();
 
-  if (!type || !daoAddress || !safe) {
+  if (!type || !safe?.address || !safe) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />

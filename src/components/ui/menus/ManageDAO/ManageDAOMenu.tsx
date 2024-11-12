@@ -30,9 +30,9 @@ export function ManageDAOMenu() {
   } = useFractal();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = node.daoAddress;
+  const safeAddress = node.safe?.address;
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, null, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress ?? null, null, false);
   const { handleClawBack } = useClawBack({
     parentAddress: node.nodeHierarchy.parentAddress,
     childSafeInfo: node,

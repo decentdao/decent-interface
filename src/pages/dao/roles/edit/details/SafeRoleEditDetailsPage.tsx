@@ -132,7 +132,7 @@ export function SafeRoleEditDetailsPage() {
   const headerHeight = useHeaderHeight();
   const { t } = useTranslation(['roles']);
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { getPayment } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
@@ -152,7 +152,7 @@ export function SafeRoleEditDetailsPage() {
   const backupTouched = useRef(touched.roleEditing);
 
   if (!isHex(hatEditingId)) return null;
-  if (!daoAddress) return null;
+  if (!safe?.address) return null;
   if (hatEditingId === undefined) return null;
 
   const goBackToRolesEdit = () => {
@@ -165,7 +165,7 @@ export function SafeRoleEditDetailsPage() {
       setTouched({});
       setFieldValue('roleEditing', undefined);
       setFieldValue('addMewTerm', undefined);
-      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
+      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address), { replace: true });
     }, 50);
   };
 

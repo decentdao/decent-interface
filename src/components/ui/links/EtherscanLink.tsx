@@ -6,6 +6,7 @@ import ModalTooltip from '../modals/ModalTooltip';
 import ExternalLink from './ExternalLink';
 
 export interface EtherscanLinkProps extends LinkProps {
+  // @todo: Remove `type`; create separate optional props for each type; type it so that only one of them can be passed, use that to determine the type of the link when setting `href` below
   type: 'address' | 'block' | 'token' | 'tx';
   value: string | null;
   secondaryValue?: string;

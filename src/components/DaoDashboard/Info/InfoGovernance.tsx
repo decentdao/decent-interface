@@ -14,7 +14,7 @@ import { BarLoader } from '../../ui/loaders/BarLoader';
 export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
   const { t } = useTranslation(['dashboard', 'daoCreate', 'common']);
   const {
-    node: { daoAddress },
+    node: { safe },
     governance,
     guardContracts: { freezeGuardType, freezeGuardContractAddress },
     readOnly: { dao },
@@ -79,7 +79,7 @@ export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
     governanceAzorius,
   ]);
 
-  if (!daoAddress || !governance.type) {
+  if (!safe?.address || !governance.type) {
     return (
       <Flex
         h="8.5rem"

@@ -16,7 +16,7 @@ export function SafeHierarchyPage() {
 
   const {
     node: {
-      daoAddress,
+      safe,
       daoName,
       nodeHierarchy: { parentAddress },
       isHierarchyLoaded,
@@ -26,7 +26,9 @@ export function SafeHierarchyPage() {
 
   const HEADER_HEIGHT = useHeaderHeight();
 
-  if (!daoAddress || !isHierarchyLoaded) {
+  const safeAddress = safe?.address;
+
+  if (!safeAddress || !isHierarchyLoaded) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />
@@ -50,7 +52,7 @@ export function SafeHierarchyPage() {
       />
       <DaoHierarchyNode
         parentAddress={null}
-        daoAddress={parentAddress || daoAddress}
+        safeAddress={parentAddress || safeAddress}
         depth={0}
       />
     </Box>

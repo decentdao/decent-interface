@@ -7,13 +7,13 @@ import { BarLoader } from '../../ui/loaders/BarLoader';
 
 export function InfoTreasury() {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { totalUsdValue },
   } = useFractal();
 
   const { t } = useTranslation('dashboard');
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return (
       <Flex
         h="8.5rem"

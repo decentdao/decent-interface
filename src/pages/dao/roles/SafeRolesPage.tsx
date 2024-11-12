@@ -26,16 +26,17 @@ export function SafeRolesPage() {
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
 
   const { canUserCreateProposal } = useCanUserCreateProposal();
+  const safeAddress = safe?.address;
 
-  if (!daoAddress) return null;
+  if (!safeAddress) return null;
 
   const handleNavigateToRole = (hatId: Hex) =>
-    navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, daoAddress, hatId));
+    navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, safeAddress, hatId));
 
   const hatsTreeLoading = hatsTree === undefined;
   const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
@@ -66,7 +67,7 @@ export function SafeRolesPage() {
                 ),
                 gap: 0,
                 children: t('editRoles'),
-                onClick: () => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress)),
+                onClick: () => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress)),
               }
             : undefined
         }

@@ -10,19 +10,19 @@ const useRemoveSigner = ({
   signerToRemove,
   threshold,
   nonce,
-  daoAddress,
+  safeAddress,
 }: {
   prevSigner: Address | undefined;
   signerToRemove: Address;
   threshold: number;
   nonce: number | undefined;
-  daoAddress: Address | null;
+  safeAddress: Address | null;
 }) => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
 
   const removeSigner = useCallback(async () => {
-    if (!daoAddress || !prevSigner) {
+    if (!safeAddress || !prevSigner) {
       return;
     }
     const description = 'Remove Signers';
@@ -36,7 +36,7 @@ const useRemoveSigner = ({
     const calldatas = [encodedRemoveOwner];
 
     const proposalData: ProposalExecuteData = {
-      targets: [daoAddress],
+      targets: [safeAddress],
       values: [0n],
       calldatas,
       metaData: {
@@ -53,7 +53,7 @@ const useRemoveSigner = ({
       successToastMessage: t('removeSignerSuccessToastMessage'),
       failedToastMessage: t('removeSignerFailureToastMessage'),
     });
-  }, [prevSigner, signerToRemove, threshold, daoAddress, submitProposal, nonce, t]);
+  }, [prevSigner, signerToRemove, threshold, safeAddress, submitProposal, nonce, t]);
 
   return removeSigner;
 };

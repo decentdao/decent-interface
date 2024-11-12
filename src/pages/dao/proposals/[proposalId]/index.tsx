@@ -25,7 +25,7 @@ export function SafeProposalDetailsPage() {
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
   const {
-    node: { daoAddress },
+    node: { safe },
     governance: { proposals, loadingProposals, allProposalsLoaded },
     readOnly: { dao },
   } = useFractal();
@@ -58,7 +58,7 @@ export function SafeProposalDetailsPage() {
 
   const { snapshotProposal } = useSnapshotProposal(contextProposal);
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return null;
   }
 
@@ -69,7 +69,7 @@ export function SafeProposalDetailsPage() {
         breadcrumbs={[
           {
             terminus: t('proposals', { ns: 'breadcrumbs' }),
-            path: DAO_ROUTES.proposals.relative(addressPrefix, daoAddress),
+            path: DAO_ROUTES.proposals.relative(addressPrefix, safe.address),
           },
           {
             terminus: t('proposal', {

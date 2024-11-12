@@ -9,11 +9,11 @@ import Divider from '../utils/Divider';
 export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
   const { t } = useTranslation('modals');
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return null;
   }
 
@@ -32,7 +32,7 @@ export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
       >
         {t('confirmAction')}
       </Text>
-      <Link to={DAO_ROUTES.modifyGovernance.relative(addressPrefix, daoAddress)}>
+      <Link to={DAO_ROUTES.modifyGovernance.relative(addressPrefix, safe.address)}>
         <Button
           width="100%"
           onClick={close}

@@ -83,7 +83,7 @@ export default function RolesDetailsDrawer({
   onEdit,
 }: RoleDetailsDrawerProps) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const permissionsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -108,7 +108,7 @@ export default function RolesDetailsDrawer({
     [roleHat.payments],
   );
 
-  if (!daoAddress) return null;
+  if (!safe?.address) return null;
 
   return (
     <Drawer

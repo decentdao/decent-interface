@@ -44,7 +44,10 @@ interface ISubmitProposal {
   pendingToastMessage: string;
   failedToastMessage: string;
   successToastMessage: string;
-  successCallback?: (addressPrefix: string, daoAddress: string) => void;
+  successCallback?: (addressPrefix: string, safeAddress: Address) => void;
+  /**
+   * @param safeAddress - provided address of DAO to which proposal will be submitted
+   */
   safeAddress?: Address;
 }
 

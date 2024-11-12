@@ -16,21 +16,23 @@ export function SafeRolesEditProposalSummaryPage() {
   const headerHeight = useHeaderHeight();
   const navigate = useNavigate();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation(['roles', 'breadcrumbs']);
   const { addressPrefix } = useNetworkConfig();
   const { values } = useFormikContext<RoleFormValues>();
 
+  const safeAddress = safe?.address;
+
   // @dev redirects back to roles edit page if no roles are edited (user refresh)
   useEffect(() => {
     const editedRoles = values.hats.filter(hat => !!hat.editedRole);
-    if (!editedRoles.length && daoAddress) {
-      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+    if (!editedRoles.length && safeAddress) {
+      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress));
     }
-  }, [values.hats, daoAddress, navigate, addressPrefix]);
+  }, [values.hats, safeAddress, navigate, addressPrefix]);
 
-  if (!daoAddress) return null;
+  if (!safeAddress) return null;
   return (
     <Box>
       <Show below="md">
@@ -55,7 +57,7 @@ export function SafeRolesEditProposalSummaryPage() {
                 alignItems="center"
                 aria-label={t('proposalNew', { ns: 'breadcrumbs' })}
                 onClick={() => {
-                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress));
                 }}
               >
                 <Icon
@@ -66,7 +68,7 @@ export function SafeRolesEditProposalSummaryPage() {
               </Flex>
             </Flex>
             <RoleFormCreateProposal
-              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress))}
             />
           </Box>
         </Portal>
@@ -95,7 +97,7 @@ export function SafeRolesEditProposalSummaryPage() {
               ]}
             />
             <RoleFormCreateProposal
-              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress))}
             />
           </Box>
         </Portal>

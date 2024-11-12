@@ -47,13 +47,16 @@ export function CoinHeader() {
 
 export function CoinRow({ asset }: { asset: TokenBalance }) {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { totalUsdValue },
   } = useFractal();
 
   const isNativeCoin =
     asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase() ||
     asset.nativeToken;
+
+  const etherscanLinkValue = isNativeCoin ? (safe?.address ?? null) : asset.tokenAddress;
+
   return (
     <Flex
       my="0.5rem"
@@ -80,7 +83,7 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
           textStyle="body-base"
           padding={0}
           borderWidth={0}
-          value={isNativeCoin ? daoAddress : asset.tokenAddress}
+          value={etherscanLinkValue}
           type={isNativeCoin ? 'address' : 'token'}
           wordBreak="break-word"
         >

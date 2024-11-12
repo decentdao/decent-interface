@@ -157,7 +157,7 @@ export type CreateDAOFunc = (
   daoData: SafeMultisigDAO,
   successCallback: DeployDAOSuccessCallback,
 ) => void;
-export type DeployDAOSuccessCallback = (daoAddress: string) => void;
+export type DeployDAOSuccessCallback = (address: string) => void;
 export type DAODetails = {
   daoName: string;
   governance: GovernanceType;

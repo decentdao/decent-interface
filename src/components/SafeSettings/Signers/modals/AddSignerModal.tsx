@@ -26,8 +26,12 @@ function AddSignerModal({
   currentThreshold: number;
 }) {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
+  if (!safe) {
+    throw new Error('Safe not found');
+  }
+
   const { t } = useTranslation(['modals', 'common']);
   const publicClient = usePublicClient();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
@@ -50,11 +54,11 @@ function AddSignerModal({
         newSigner: getAddress(validAddress),
         threshold: threshold,
         nonce: nonce,
-        daoAddress: daoAddress,
+        safeAddress: safe.address,
         close: close,
       });
     },
-    [addSigner, close, daoAddress, publicClient],
+    [addSigner, close, safe, publicClient],
   );
 
   const addSignerValidationSchema = Yup.object().shape({

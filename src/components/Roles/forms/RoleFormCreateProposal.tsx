@@ -113,18 +113,20 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   ]);
 
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
 
+  const safeAddress = safe?.address;
+
   const handleEditRoleClick = useCallback(
     (hatId: Hex) => {
-      if (!!daoAddress) {
-        navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
+      if (!!safeAddress) {
+        navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, safeAddress, hatId));
       }
     },
-    [navigate, addressPrefix, daoAddress],
+    [navigate, addressPrefix, safeAddress],
   );
 
   const handleCloseDrawer = () => setDrawerViewingRole(undefined);

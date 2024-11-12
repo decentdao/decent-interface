@@ -18,10 +18,11 @@ export function DAOInfoCard() {
 
   const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
-  const { displayName } = useGetAccountName(node?.daoAddress);
+  const displayedAddress = node.safe?.address;
+  const { displayName } = useGetAccountName(displayedAddress);
 
   // node hasn't loaded yet
-  if (!node || !node.daoAddress) {
+  if (!node || !displayedAddress) {
     return (
       <Flex
         w="full"
@@ -33,8 +34,6 @@ export function DAOInfoCard() {
       </Flex>
     );
   }
-
-  const displayedAddress = node.daoAddress;
 
   return (
     <Box>

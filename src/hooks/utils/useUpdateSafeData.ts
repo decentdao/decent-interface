@@ -5,21 +5,21 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../providers/App/node/action';
 
-export const useUpdateSafeData = (daoAddress?: Address) => {
+export const useUpdateSafeData = (safeAddress?: Address) => {
   const { action } = useFractal();
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
 
   useEffect(() => {
-    if (!safeAPI || !daoAddress) {
+    if (!safeAPI || !safeAddress) {
       return;
     }
 
     // Retrieve lastest safe info on page/url change
     if (prevPathname.current !== location.pathname) {
       (async () => {
-        const safeInfo = await safeAPI.getSafeData(daoAddress);
+        const safeInfo = await safeAPI.getSafeData(safeAddress);
 
         action.dispatch({
           type: NodeAction.SET_SAFE_INFO,
@@ -28,5 +28,5 @@ export const useUpdateSafeData = (daoAddress?: Address) => {
       })();
       prevPathname.current = location.pathname;
     }
-  }, [action, daoAddress, safeAPI, location]);
+  }, [action, safeAddress, safeAPI, location]);
 };

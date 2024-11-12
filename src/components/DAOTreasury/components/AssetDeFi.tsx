@@ -47,7 +47,7 @@ export function DeFiHeader() {
 
 export function DeFiRow({ asset }: { asset: DefiBalance }) {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { totalUsdValue },
   } = useFractal();
 
@@ -92,7 +92,7 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
           textStyle="body-base"
           padding={0}
           borderWidth={0}
-          value={isNativePosition ? daoAddress : asset.position?.address || null}
+          value={isNativePosition ? (safe?.address ?? null) : asset.position?.address || null}
           type={isNativePosition ? 'address' : 'token'}
           wordBreak="break-word"
         >

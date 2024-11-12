@@ -16,7 +16,7 @@ interface StepButtonsProps extends FormikProps<CreateProposalForm> {
 
 export default function StepButtons(props: StepButtonsProps) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,7 +33,7 @@ export default function StepButtons(props: StepButtonsProps) {
   } = props;
   const { t } = useTranslation(['common', 'proposal']);
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return null;
   }
 

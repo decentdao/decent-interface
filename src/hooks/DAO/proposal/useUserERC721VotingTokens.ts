@@ -28,7 +28,7 @@ export default function useUserERC721VotingTokens(
   const [remainingTokenAddresses, setRemainingTokenAddresses] = useState<Address[]>([]);
 
   const {
-    node: { daoAddress },
+    node: { safe },
     governanceContracts: { linearVotingErc721Address },
     governance,
     readOnly: { user },
@@ -40,6 +40,8 @@ export default function useUserERC721VotingTokens(
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
+
+  const globalContextSafeAddress = safe?.address;
 
   const getUserERC721VotingTokens = useCallback(
     async (_safeAddress: Address | null, _proposalId: number | null) => {
@@ -54,7 +56,7 @@ export default function useUserERC721VotingTokens(
         | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
         | undefined;
 
-      if (!daoAddress || !publicClient || !safeAPI) {
+      if (!globalContextSafeAddress || !publicClient || !safeAPI) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -63,7 +65,7 @@ export default function useUserERC721VotingTokens(
         };
       }
 
-      if (_safeAddress && daoAddress !== _safeAddress) {
+      if (_safeAddress && globalContextSafeAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
         const votingStrategies = await getVotingStrategies(_safeAddress);
         if (votingStrategies) {
@@ -210,12 +212,12 @@ export default function useUserERC721VotingTokens(
       };
     },
     [
-      daoAddress,
-      linearVotingErc721Address,
       erc721Tokens,
       getVotingStrategies,
       publicClient,
       safeAPI,
+      globalContextSafeAddress,
+      linearVotingErc721Address,
       user.address,
     ],
   );

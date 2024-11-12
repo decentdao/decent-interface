@@ -10,6 +10,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
     governance: { loadingProposals, allProposalsLoaded },
   } = useFractal();
+
   return (
     <Flex
       flexDirection="column"

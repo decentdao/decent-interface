@@ -10,7 +10,7 @@ import { MySafes } from './MySafes';
 
 export default function HomePage() {
   const {
-    node: { daoAddress },
+    node: { safe },
     action,
   } = useFractal();
 
@@ -18,11 +18,11 @@ export default function HomePage() {
   const { resetHatsStore } = useRolesStore();
 
   useEffect(() => {
-    if (daoAddress) {
+    if (safe?.address) {
       action.resetSafeState();
       resetHatsStore();
     }
-  }, [daoAddress, action, resetHatsStore]);
+  }, [safe?.address, action, resetHatsStore]);
 
   return (
     <Flex

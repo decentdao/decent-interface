@@ -7,19 +7,20 @@ import { useSafeTransactions } from '../../../utils/useSafeTransactions';
 
 export const useSafeMultisigProposals = () => {
   const {
-    node: { daoAddress },
+    node: { safe },
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
+  const safeAddress = safe?.address;
 
   const { parseTransactions } = useSafeTransactions();
 
   const loadSafeMultisigProposals = useCallback(async () => {
-    if (!daoAddress || !safeAPI) {
+    if (!safeAddress || !safeAPI) {
       return;
     }
     try {
-      const multisigTransactions = await safeAPI.getMultisigTransactions(daoAddress);
+      const multisigTransactions = await safeAPI.getMultisigTransactions(safeAddress);
       const activities = await parseTransactions(multisigTransactions);
 
       action.dispatch({
@@ -38,7 +39,7 @@ export const useSafeMultisigProposals = () => {
     } catch (e) {
       logError(e);
     }
-  }, [daoAddress, safeAPI, parseTransactions, action]);
+  }, [safeAddress, safeAPI, parseTransactions, action]);
 
   return { loadSafeMultisigProposals };
 };

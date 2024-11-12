@@ -76,7 +76,7 @@ async function uploadHatDescription(
 
 export default function useCreateRoles() {
   const {
-    node: { safe, daoAddress, daoName },
+    node: { safe, daoName },
     governance,
     governanceContracts: {
       linearVotingErc20WithHatsWhitelistingAddress,
@@ -106,6 +106,8 @@ export default function useCreateRoles() {
 
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
 
+  const safeAddress = safe?.address;
+
   const { submitProposal } = useSubmitProposal();
   const { prepareBatchLinearStreamCreation, prepareFlushStreamTxs, prepareCancelStreamTxs } =
     useCreateSablierStream();
@@ -115,7 +117,7 @@ export default function useCreateRoles() {
 
   const buildDeployWhitelistingStrategy = useCallback(
     async (whitelistedHatsIds: bigint[]) => {
-      if (!publicClient || !daoAddress || !moduleAzoriusAddress) {
+      if (!publicClient || !safeAddress || !moduleAzoriusAddress) {
         return;
       }
       const azoriusGovernance = governance as AzoriusGovernance;
@@ -139,7 +141,7 @@ export default function useCreateRoles() {
             'address, address, address, uint32, uint256, uint256, address, uint256[]',
           ),
           [
-            daoAddress, // owner
+            safeAddress, // owner
             votesToken.address, // governance token
             moduleAzoriusAddress, // Azorius module
             Number(votingStrategy.votingPeriod.value),
@@ -215,7 +217,7 @@ export default function useCreateRoles() {
             'address, address[], uint256[], address, uint32, uint256, uint256, address, uint256[]',
           ),
           [
-            daoAddress, // owner
+            safeAddress, // owner
             erc721Tokens.map(token => token.address), // governance tokens addresses
             erc721Tokens.map(token => token.votingWeight), // governance tokens weights
             moduleAzoriusAddress, // Azorius module
@@ -280,7 +282,7 @@ export default function useCreateRoles() {
       }
     },
     [
-      daoAddress,
+      safeAddress,
       governance,
       hatsProtocol,
       linearVotingErc20HatsWhitelistingMasterCopy,
@@ -333,7 +335,7 @@ export default function useCreateRoles() {
       }[],
       termEndDateTs: bigint,
     ) => {
-      if (daoAddress === null) {
+      if (safeAddress === undefined) {
         throw new Error('Can not create Hat Struct (with payments) without DAO Address');
       }
       // @dev if termEndDateTs is not 0, then the role is termed and is not mutable
@@ -344,7 +346,7 @@ export default function useCreateRoles() {
         ...newHat,
         sablierStreamsParams: payments.map(payment => ({
           sablier: sablierV2LockupLinear,
-          sender: daoAddress,
+          sender: safeAddress,
           totalAmount: payment.totalAmount,
           asset: payment.asset,
           cancelable: true,
@@ -360,7 +362,7 @@ export default function useCreateRoles() {
 
       return newHatWithPayments;
     },
-    [createHatStruct, daoAddress, sablierV2LockupLinear],
+    [createHatStruct, safeAddress, sablierV2LockupLinear],
   );
 
   const parseSablierPaymentsFromFormRolePayments = useCallback(
@@ -486,7 +488,7 @@ export default function useCreateRoles() {
 
   const prepareCreateTopHatProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Can not create top hat without DAO Address');
       }
 
@@ -496,7 +498,7 @@ export default function useCreateRoles() {
       const topHat = {
         details: await uploadHatDescription(
           hatsDetailsBuilder({
-            name: daoName || daoAddress,
+            name: daoName || safeAddress,
             description: '',
           }),
           ipfsClient,
@@ -538,7 +540,7 @@ export default function useCreateRoles() {
       });
 
       return {
-        targets: [daoAddress, decentHatsCreationModule, daoAddress],
+        targets: [safeAddress, decentHatsCreationModule, safeAddress],
         calldatas: [
           enableDecentHatsModuleData,
           createAndDeclareTreeData,
@@ -549,7 +551,7 @@ export default function useCreateRoles() {
       };
     },
     [
-      daoAddress,
+      safeAddress,
       getEnableDisableDecentHatsModuleData,
       decentHatsCreationModule,
       daoName,
@@ -575,8 +577,8 @@ export default function useCreateRoles() {
         throw new Error('Cannot create new hat without hats tree');
       }
 
-      if (!daoAddress) {
-        throw new Error('Cannot create new hat without DAO address');
+      if (!safeAddress) {
+        throw new Error('Cannot create new hat without Safe address');
       }
 
       const [firstTerm] = parseRoleTermsFromFormRoleTerms(formRole.roleTerms ?? []);
@@ -620,7 +622,7 @@ export default function useCreateRoles() {
 
       return [
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: enableDecentHatsModuleData,
         },
         {
@@ -628,14 +630,14 @@ export default function useCreateRoles() {
           calldata: createNewRoleData,
         },
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: disableDecentHatsModuleData,
         },
       ];
     },
     [
       hatsTree,
-      daoAddress,
+      safeAddress,
       parseRoleTermsFromFormRoleTerms,
       createHatStructWithPayments,
       parseSablierPaymentsFromFormRolePayments,
@@ -819,7 +821,7 @@ export default function useCreateRoles() {
 
   const prepareRolePaymentUpdateTxs = useCallback(
     async (formHat: RoleHatFormValueEdited) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Cannot prepare transactions without DAO address');
       }
       if (formHat.wearer === undefined) {
@@ -847,7 +849,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
+              args: [BigInt(formHat.id), originalHat.wearerAddress, safeAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -875,7 +877,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+              args: [BigInt(formHat.id), safeAddress, getAddress(formHat.wearer)],
             }),
             targetAddress: hatsProtocol,
           });
@@ -897,10 +899,10 @@ export default function useCreateRoles() {
       return paymentTxs;
     },
     [
+      safeAddress,
       getCancelledStreamsFromFormHat,
       getNewStreamsFromFormHat,
       getHat,
-      daoAddress,
       hatsProtocol,
       prepareCancelStreamTxs,
       prepareFlushStreamTxs,
@@ -911,7 +913,7 @@ export default function useCreateRoles() {
 
   const prepareTermedRolePaymentUpdateTxs = useCallback(
     (formHat: RoleHatFormValueEdited) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Cannot prepare transactions without DAO address');
       }
       if (formHat.wearer === undefined) {
@@ -933,7 +935,7 @@ export default function useCreateRoles() {
     },
     [
       createBatchLinearStreamCreationTx,
-      daoAddress,
+      safeAddress,
       getNewStreamsFromFormHat,
       getPaymentTermRecipients,
     ],
@@ -941,7 +943,7 @@ export default function useCreateRoles() {
 
   const prepareCreateRolesModificationsProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
-      if (!hatsTree || !daoAddress) {
+      if (!hatsTree || !safeAddress) {
         throw new Error('Cannot prepare transactions without hats tree or DAO address');
       }
 
@@ -1036,7 +1038,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
+              args: [BigInt(formHat.id), originalHat.wearerAddress, safeAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -1144,7 +1146,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
+                  args: [BigInt(formHat.id), originalHat.wearerAddress, safeAddress],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -1169,7 +1171,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), daoAddress, newWearer],
+                  args: [BigInt(formHat.id), safeAddress, newWearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -1380,7 +1382,7 @@ export default function useCreateRoles() {
     },
     [
       hatsTree,
-      daoAddress,
+      safeAddress,
       publicClient,
       prepareAdminHatTxs,
       linearVotingErc20WithHatsWhitelistingAddress,
@@ -1479,8 +1481,8 @@ export default function useCreateRoles() {
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
           successCallback: () => {
-            if (daoAddress) {
-              navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+            if (safeAddress) {
+              navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
             }
           },
         });
@@ -1493,7 +1495,7 @@ export default function useCreateRoles() {
     },
     [
       addressPrefix,
-      daoAddress,
+      safeAddress,
       hatsTree,
       hatsTreeId,
       navigate,

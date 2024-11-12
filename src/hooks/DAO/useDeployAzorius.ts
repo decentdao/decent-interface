@@ -56,7 +56,6 @@ const useDeployAzorius = () => {
   } = useNetworkConfig();
   const {
     node: {
-      daoAddress,
       safe,
       nodeHierarchy: { parentAddress },
     },
@@ -65,8 +64,10 @@ const useDeployAzorius = () => {
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
+
   const publicClient = usePublicClient();
   const { loadDao } = useLoadDAONode();
+  const safeAddress = safe?.address;
 
   const deployAzorius = useCallback(
     async (
@@ -78,7 +79,7 @@ const useDeployAzorius = () => {
       },
     ) => {
       const { shouldSetName, shouldSetSnapshot } = opts;
-      if (!daoAddress || !canUserCreateProposal || !safe || !publicClient) {
+      if (!safeAddress || !canUserCreateProposal || !safe || !publicClient) {
         return;
       }
 
@@ -161,7 +162,7 @@ const useDeployAzorius = () => {
         parentTokenAddress,
       );
 
-      txBuilderFactory.setSafeContract(daoAddress);
+      txBuilderFactory.setSafeContract(safeAddress);
 
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder({
         attachFractalModule,
@@ -195,7 +196,7 @@ const useDeployAzorius = () => {
       // Otherwise - we need to provide some UI / UX that will inform user about the impact of modifying governance without ability to swap Guard contracts.
 
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress, multiSendCallOnly],
+        targets: [safeAddress, multiSendCallOnly],
         values: [0n, 0n],
         calldatas: [encodedAddOwnerWithThreshold, encodedMultisend],
         metaData: {
@@ -211,14 +212,15 @@ const useDeployAzorius = () => {
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)),
+        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)),
       });
     },
     [
-      daoAddress,
+      safeAddress,
       canUserCreateProposal,
       safe,
       publicClient,
+      parentAddress,
       compatibilityFallbackHandler,
       votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
@@ -240,11 +242,10 @@ const useDeployAzorius = () => {
       moduleAzoriusMasterCopy,
       submitProposal,
       t,
+      loadDao,
       navigate,
       addressPrefix,
-      loadDao,
       getAddressContractType,
-      parentAddress,
     ],
   );
 

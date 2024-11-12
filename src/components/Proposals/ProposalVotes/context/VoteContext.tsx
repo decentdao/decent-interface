@@ -31,7 +31,7 @@ interface IVoteContext {
   getHasVoted: () => void;
 }
 
-export const VoteContext = createContext<IVoteContext>({
+const VoteContext = createContext<IVoteContext>({
   canVote: false,
   canVoteLoading: false,
   hasVoted: false,

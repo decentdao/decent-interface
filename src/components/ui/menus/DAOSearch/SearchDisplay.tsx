@@ -29,7 +29,7 @@ export function SearchDisplay({
   const { addressPrefix } = useNetworkConfig();
 
   const isCurrentSafe = useMemo(
-    () => !!node && !!node.daoAddress && node.daoAddress === address,
+    () => !!node && !!node?.safe?.address && node.safe.address === address,
     [node, address],
   );
 

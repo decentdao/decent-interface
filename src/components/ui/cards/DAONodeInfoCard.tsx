@@ -31,14 +31,15 @@ export interface InfoProps extends FlexProps {
  */
 export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: InfoProps) {
   const {
-    node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
+    node: { safe: currentSafe }, // used ONLY to determine if we're on the current DAO
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
-  const { displayName } = useGetAccountName(node?.daoAddress);
+  const displayedAddress = node?.safe?.address;
+  const { displayName } = useGetAccountName(displayedAddress);
 
   // node hasn't loaded yet
-  if (!node || !node.daoAddress) {
+  if (!node || !displayedAddress) {
     return (
       <Flex
         w="full"
@@ -52,8 +53,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
     );
   }
 
-  const displayedAddress = node.daoAddress;
-  const isCurrentDAO = displayedAddress === currentDAOAddress;
+  const isCurrentDAO = displayedAddress === currentSafe?.address;
 
   return (
     <Link
