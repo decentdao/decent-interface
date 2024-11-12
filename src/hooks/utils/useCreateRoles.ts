@@ -1012,7 +1012,6 @@ export default function useCreateRoles() {
 
         if (formHat.editedRole.status === EditBadgeStatus.New) {
           allTxs.push(...(await prepareNewHatTxs(formHat)));
-          newHatsCount++;
           if (formHat.canCreateProposals) {
             const newHatId = predictHatId({
               adminHatId: hatsTree.adminHat.id,
@@ -1020,6 +1019,7 @@ export default function useCreateRoles() {
             });
             whitelistingPermissionAddedHats.push(newHatId);
           }
+          newHatsCount++;
         } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
           if (formHat.smartAddress === undefined) {
             throw new Error(
