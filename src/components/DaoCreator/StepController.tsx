@@ -1,7 +1,8 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   ChildERC20Steps,
@@ -30,6 +31,24 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
   const { values, mode, setFieldValue } = props;
 
   const { redirectToInitialStep } = useStepRedirect({ values, redirectOnMount: false });
+
+  const disconnectedToast = useRef<string | number>();
+  const { isConnected } = useAccount();
+
+  useEffect(() => {
+    if (!isConnected) {
+      disconnectedToast.current = toast.info(
+        t('toastDisconnectedPersistent', { ns: 'daoCreate' }),
+        {
+          duration: Infinity,
+        },
+      );
+    }
+
+    return () => {
+      toast.dismiss();
+    };
+  }, [isConnected, t]);
 
   const steps = useMemo(() => {
     const isMultisig = values.essentials.governance === GovernanceType.MULTISIG;

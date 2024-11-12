@@ -1,10 +1,9 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Address } from 'viem';
-import { useAccount } from 'wagmi';
 import DaoCreator from '../../components/DaoCreator';
 import { DAOCreateMode } from '../../components/DaoCreator/formComponents/EstablishEssentials';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
@@ -23,28 +22,9 @@ export function SafeCreatePage() {
   const { t } = useTranslation('transaction');
   const safeAPI = useSafeAPI();
 
-  const disconnectedToast = useRef<string | number>();
-
-  const { isConnected } = useAccount();
-
   useEffect(() => {
     amplitude.track(analyticsEvents.DaoCreatePageOpened);
   }, []);
-
-  useEffect(() => {
-    if (!isConnected) {
-      disconnectedToast.current = toast.info(
-        t('toastDisconnectedPersistent', { ns: 'daoCreate' }),
-        {
-          duration: Infinity,
-        },
-      );
-    }
-
-    return () => {
-      toast.dismiss();
-    };
-  }, [isConnected, t]);
 
   const successCallback = useCallback(
     async (addressPrefix: string, safeAddress: Address) => {

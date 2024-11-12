@@ -2,6 +2,7 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { isDemoMode } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { GovernanceType } from '../../types';
@@ -114,7 +115,7 @@ export function useCanUserCreateProposal() {
 
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
-      const newCanCreateProposal = await getCanUserCreateProposal();
+      const newCanCreateProposal = isDemoMode() ?? (await getCanUserCreateProposal());
       if (newCanCreateProposal !== canUserCreateProposal) {
         setCanUserCreateProposal(newCanCreateProposal);
       }
