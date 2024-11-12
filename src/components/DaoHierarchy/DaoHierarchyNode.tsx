@@ -63,7 +63,8 @@ export function DaoHierarchyNode({
         }
       });
     }
-  }, [loadDao, daoAddress, depth, getTotalDescendants]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Flex
