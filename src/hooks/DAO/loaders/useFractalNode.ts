@@ -101,6 +101,8 @@ export const useFractalNode = ({
         if (!safeAPI) throw new Error('SafeAPI not set');
         safeInfo = await safeAPI.getSafeData(safeAddress);
       } catch (e) {
+        // TODO: this is the thing causing an error when
+        // trying to load a DAO with a valid address which is not a Safe
         reset({ error: true });
         return;
       }
@@ -120,11 +122,7 @@ export const useFractalNode = ({
   }, [action, lookupModules, reset, safeAPI, addressPrefix, safeAddress]);
 
   useEffect(() => {
-    if (
-      addressPrefix === undefined ||
-      safeAddress === undefined ||
-      `${addressPrefix}${safeAddress}` !== currentValidSafe.current
-    ) {
+    if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current) {
       reset({ error: false });
       setDAO();
     }
