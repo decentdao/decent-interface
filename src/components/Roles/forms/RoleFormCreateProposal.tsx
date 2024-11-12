@@ -4,7 +4,7 @@ import { Field, FieldInputProps, FormikProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress, Hex } from 'viem';
+import { getAddress, Hex, zeroAddress } from 'viem';
 import { CARD_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -73,12 +73,8 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             ? termedNominee
             : !!roleHat?.wearer
               ? getAddress(roleHat.wearer)
-              : undefined;
-        if (!wearer) {
-          throw new Error('Role missing wearer', {
-            cause: roleHat,
-          });
-        }
+              : zeroAddress;
+
         return {
           ...roleHat,
           editedRole: roleHat.editedRole,
