@@ -3,7 +3,9 @@ import { GovernanceContractAction, GovernanceContractActions } from './action';
 
 export const initialGovernanceContractsState: FractalGovernanceContracts = {
   linearVotingErc721Address: undefined,
+  linearVotingErc721WithHatsWhitelistingAddress: undefined,
   linearVotingErc20Address: undefined,
+  linearVotingErc20WithHatsWhitelistingAddress: undefined,
   moduleAzoriusAddress: undefined,
   votesTokenAddress: undefined,
   lockReleaseAddress: undefined,

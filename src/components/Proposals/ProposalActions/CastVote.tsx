@@ -31,7 +31,10 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
 
   const azoriusProposal = proposal as AzoriusProposal;
 
-  const { castVote, castVotePending } = useCastVote(proposal.proposalId);
+  const { castVote, castVotePending } = useCastVote(
+    proposal.proposalId,
+    azoriusProposal.votingStrategy,
+  );
 
   const {
     castSnapshotVote,
@@ -64,6 +67,7 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
     azoriusProposal.state !== FractalProposalState.ACTIVE ||
     proposalStartBlockNotFinalized ||
     canVoteLoading ||
+    hasVoted ||
     hasVotedLoading;
 
   if (snapshotProposal && extendedSnapshotProposal) {

@@ -1,18 +1,18 @@
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
-  ICreationStepProps,
+  ChildERC20Steps,
+  ChildERC721Steps,
+  ChildMultisigSteps,
   CreatorSteps,
   GovernanceType,
-  RootMultisigSteps,
-  ChildMultisigSteps,
+  ICreationStepProps,
   RootERC20Steps,
-  ChildERC20Steps,
   RootERC721Steps,
-  ChildERC721Steps,
+  RootMultisigSteps,
 } from '../../types';
 import { AzoriusGovernance } from './formComponents/AzoriusGovernance';
 import AzoriusNFTDetails from './formComponents/AzoriusNFTDetails';
@@ -32,22 +32,26 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
   const { redirectToInitialStep } = useStepRedirect({ values, redirectOnMount: false });
 
   const steps = useMemo(() => {
+    const isMultisig = values.essentials.governance === GovernanceType.MULTISIG;
+    const isERC20 = values.essentials.governance === GovernanceType.AZORIUS_ERC20;
+    const isERC721 = values.essentials.governance === GovernanceType.AZORIUS_ERC721;
+
     if (mode === DAOCreateMode.ROOTDAO || mode === DAOCreateMode.EDIT) {
-      if (values.essentials.governance === GovernanceType.MULTISIG) {
+      if (isMultisig) {
         return RootMultisigSteps;
-      } else if (values.essentials.governance === GovernanceType.AZORIUS_ERC20) {
+      } else if (isERC20) {
         return RootERC20Steps;
-      } else if (values.essentials.governance === GovernanceType.AZORIUS_ERC721) {
+      } else if (isERC721) {
         return RootERC721Steps;
       } else {
         throw new Error('Unknown Governance Type');
       }
     } else {
-      if (values.essentials.governance === GovernanceType.MULTISIG) {
+      if (isMultisig) {
         return ChildMultisigSteps;
-      } else if (values.essentials.governance === GovernanceType.AZORIUS_ERC20) {
+      } else if (isERC20) {
         return ChildERC20Steps;
-      } else if (values.essentials.governance === GovernanceType.AZORIUS_ERC721) {
+      } else if (isERC721) {
         return ChildERC721Steps;
       } else {
         throw new Error('Unknown Governance Type');

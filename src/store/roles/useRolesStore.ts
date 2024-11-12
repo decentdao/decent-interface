@@ -2,7 +2,8 @@ import { getContract, Hex, PublicClient } from 'viem';
 import { create } from 'zustand';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
-import { DecentRoleHat, initialHatsStore, RolesStore, sanitize } from './rolesStoreUtils';
+import { DecentRoleHat, RolesStore } from '../../types/roles';
+import { initialHatsStore, sanitize } from './rolesStoreUtils';
 
 const useRolesStore = create<RolesStore>()((set, get) => ({
   ...initialHatsStore,
@@ -52,10 +53,12 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
     const hatsTree = await sanitize(
       params.hatsTree,
       params.hatsAccountImplementation,
+      params.hatsElectionsImplementation,
       params.erc6551Registry,
       params.hatsProtocol,
       params.chainId,
       params.publicClient,
+      params.whitelistingVotingStrategy,
     );
     set(() => ({ hatsTree }));
   },
@@ -100,6 +103,31 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
     };
 
     set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
+  },
+  updateCurrentTermStatus: (hatId: Hex, termStatus: 'inactive' | 'active') => {
+    const currentHatsTree = get().hatsTree;
+    if (!currentHatsTree) return;
+
+    set(() => ({
+      hatsTree: {
+        ...currentHatsTree,
+        roleHats: currentHatsTree.roleHats.map(roleHat => {
+          if (roleHat.id !== hatId) return roleHat;
+          return {
+            ...roleHat,
+            roleTerms: {
+              ...roleHat.roleTerms,
+              currentTerm: roleHat.roleTerms.currentTerm
+                ? {
+                    ...roleHat.roleTerms.currentTerm,
+                    termStatus,
+                  }
+                : undefined,
+            },
+          };
+        }),
+      },
+    }));
   },
   resetHatsStore: () => set(() => initialHatsStore),
 }));

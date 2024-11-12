@@ -20,6 +20,10 @@ export const theme = mergeThemeOverride({
     initialColorMode: 'dark',
     useSystemColorMode: false,
   },
+  shadows: {
+    layeredShadowBorder:
+      '0px 0px 0px 1px #100414, inset 0px 0px 0px 1px rgba(248, 244, 252, 0.04), inset 0px 1px 0px rgba(248, 244, 252, 0.04)',
+  },
   styles,
   breakpoints,
   colors,

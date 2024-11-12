@@ -1,9 +1,9 @@
 import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { SquaresFour } from '@phosphor-icons/react';
 import { useFractal } from '../../providers/App/AppProvider';
-import { RoleCardShort } from '../pages/Roles/RoleCard';
-import { SendAssetsAction } from '../pages/Roles/forms/RoleFormCreateProposal';
-import { EditBadgeStatus } from '../pages/Roles/types';
+import { EditBadgeStatus } from '../../types/roles';
+import { SendAssetsAction } from '../ProposalBuilder/ProposalActionCard';
+import { RoleCardShort } from '../Roles/RoleCard';
 
 export function DemoProposalActions() {
   const {
