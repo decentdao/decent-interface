@@ -67,6 +67,7 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
     azoriusProposal.state !== FractalProposalState.ACTIVE ||
     proposalStartBlockNotFinalized ||
     canVoteLoading ||
+    hasVoted ||
     hasVotedLoading;
 
   if (snapshotProposal && extendedSnapshotProposal) {
