@@ -73,6 +73,7 @@ export function DAOInfoCard() {
               </Link>
             )}
           </Flex>
+          {/* SETTINGS MENU BUTTON */}
           <ManageDAOMenu />
         </Flex>
         {/* DAO NAME AND ACTIONS */}
