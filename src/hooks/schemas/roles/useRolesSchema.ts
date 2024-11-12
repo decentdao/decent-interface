@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import * as Yup from 'yup';
+import { useFractal } from '../../../providers/App/AppProvider';
 import {
   RoleFormValues,
   RoleHatFormValue,
   SablierPayment,
   SablierPaymentFormValues,
-} from '../../../components/pages/Roles/types';
-import { useFractal } from '../../../providers/App/AppProvider';
+} from '../../../types/roles';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -126,6 +126,7 @@ export const useRolesSchema = () => {
                     name: Yup.string().required(t('roleInfoErrorNameRequired')),
                     description: Yup.string().required(t('roleInfoErrorDescriptionRequired')),
                     payments: paymentsSchema,
+                    canCreateProposals: Yup.boolean(),
                   }),
                 otherwise: _schema =>
                   _schema.shape({
@@ -135,6 +136,7 @@ export const useRolesSchema = () => {
                       .required(t('roleInfoErrorMemberRequired'))
                       .test(addressValidationTest),
                     payments: paymentsSchema,
+                    canCreateProposals: Yup.boolean(),
                   }),
               }),
           }),

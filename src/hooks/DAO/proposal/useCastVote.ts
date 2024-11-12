@@ -1,22 +1,22 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getContract } from 'viem';
+import { Address, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceType } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
 
-const useCastVote = (proposalId: string) => {
+const useCastVote = (proposalId: string, strategy: Address) => {
   const {
-    governanceContracts: { linearVotingErc20Address, linearVotingErc721Address },
-    governance,
+    governanceContracts: {
+      linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721Address,
+      linearVotingErc721WithHatsWhitelistingAddress,
+    },
   } = useFractal();
-
-  const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
-  const { type } = azoriusGovernance;
 
   const [contractCall, pending] = useTransaction();
 
@@ -32,10 +32,17 @@ const useCastVote = (proposalId: string) => {
 
   const castVote = useCallback(
     async (vote: number) => {
-      if (type === GovernanceType.AZORIUS_ERC20 && linearVotingErc20Address && walletClient) {
+      if (!walletClient) {
+        return;
+      }
+
+      if (
+        strategy === linearVotingErc20Address ||
+        strategy === linearVotingErc20WithHatsWhitelistingAddress
+      ) {
         const ozLinearVotingContract = getContract({
           abi: abis.LinearERC20Voting,
-          address: linearVotingErc20Address,
+          address: strategy,
           client: walletClient,
         });
         contractCall({
@@ -51,13 +58,12 @@ const useCastVote = (proposalId: string) => {
           },
         });
       } else if (
-        type === GovernanceType.AZORIUS_ERC721 &&
-        linearVotingErc721Address &&
-        walletClient
+        strategy === linearVotingErc721Address ||
+        strategy === linearVotingErc721WithHatsWhitelistingAddress
       ) {
         const erc721LinearVotingContract = getContract({
           abi: abis.LinearERC721Voting,
-          address: linearVotingErc721Address,
+          address: strategy,
           client: walletClient,
         });
         contractCall({
@@ -83,15 +89,17 @@ const useCastVote = (proposalId: string) => {
     [
       contractCall,
       linearVotingErc721Address,
+      linearVotingErc721WithHatsWhitelistingAddress,
       getCanVote,
       getHasVoted,
       linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
       proposalId,
       remainingTokenAddresses,
       remainingTokenIds,
       t,
-      type,
       walletClient,
+      strategy,
     ],
   );
 

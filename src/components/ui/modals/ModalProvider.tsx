@@ -2,12 +2,13 @@ import { Portal, Show, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
-import { UnsavedChangesWarningContent } from '../../../pages/daos/[daoAddress]/roles/edit/unsavedChangesWarningContent';
 import { ProposalTemplate } from '../../../types';
-import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/AddSignerModal';
-import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
+import AddSignerModal from '../../SafeSettings/Signers/modals/AddSignerModal';
+import RemoveSignerModal from '../../SafeSettings/Signers/modals/RemoveSignerModal';
 import DraggableDrawer from '../containers/DraggableDrawer';
 import { DAOSearch } from '../menus/DAOSearch';
+import AddStrategyPermissionModal from './AddStrategyPermissionModal';
+import { ConfirmDeleteStrategyModal } from './ConfirmDeleteStrategyModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
@@ -17,6 +18,7 @@ import PaymentCancelConfirmModal from './PaymentCancelConfirmModal';
 import PaymentWithdrawModal from './PaymentWithdrawModal';
 import ProposalTemplateModal from './ProposalTemplateModal';
 import StakeModal from './Stake';
+import { UnsavedChangesWarningContent } from './UnsavedChangesWarningContent';
 import { UnwrapToken } from './UnwrapToken';
 import { WrapToken } from './WrapToken';
 
@@ -29,6 +31,7 @@ export enum ModalType {
   CONFIRM_URL,
   REMOVE_SIGNER,
   ADD_SIGNER,
+  ADD_PERMISSION,
   CREATE_PROPOSAL_FROM_TEMPLATE,
   COPY_PROPOSAL_TEMPLATE,
   CONFIRM_MODIFY_GOVERNANCE,
@@ -36,6 +39,7 @@ export enum ModalType {
   WARN_UNSAVED_CHANGES,
   WITHDRAW_PAYMENT,
   CONFIRM_CANCEL_PAYMENT,
+  CONFIRM_DELETE_STRATEGY,
 }
 
 export type CurrentModal = {
@@ -48,6 +52,8 @@ export type ModalPropsTypes = {
   [ModalType.STAKE]: {};
   [ModalType.WRAP_TOKEN]: {};
   [ModalType.UNWRAP_TOKEN]: {};
+  [ModalType.ADD_PERMISSION]: {};
+  [ModalType.CONFIRM_DELETE_STRATEGY]: {};
   [ModalType.CONFIRM_URL]: { url: string };
   [ModalType.REMOVE_SIGNER]: {
     selectedSigner: Address;
@@ -95,7 +101,7 @@ export const ModalContext = createContext<IModalContext>({
 });
 
 interface ModalUI {
-  title: string;
+  title?: string;
   warn: boolean;
   content: ReactNode | null;
   isSearchInputModal: boolean;
@@ -251,6 +257,13 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         modalSize = 'sm';
         break;
       }
+      case ModalType.ADD_PERMISSION:
+        modalContent = <AddStrategyPermissionModal closeModal={closeModal} />;
+        modalSize = 'xl';
+        break;
+      case ModalType.CONFIRM_DELETE_STRATEGY:
+        modalContent = <ConfirmDeleteStrategyModal onClose={closeModal} />;
+        break;
       case ModalType.NONE:
       default:
         modalTitle = '';
@@ -259,7 +272,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
     return {
       isSearchInputModal: isSearchInput,
-      title: modalTitle || '',
+      title: modalTitle,
       warn: hasWarning,
       content: modalContent,
       onSetClosed: closeModal,
@@ -282,7 +295,9 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
   if (
     current.type === ModalType.WITHDRAW_PAYMENT ||
-    current.type === ModalType.CONFIRM_CANCEL_PAYMENT
+    current.type === ModalType.CONFIRM_CANCEL_PAYMENT ||
+    current.type === ModalType.ADD_PERMISSION ||
+    current.type === ModalType.CONFIRM_DELETE_STRATEGY
   ) {
     display = (
       <>
