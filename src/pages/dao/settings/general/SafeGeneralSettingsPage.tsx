@@ -131,7 +131,7 @@ export function SafeGeneralSettingsPage() {
           title={t('daoSettingsGeneral')}
           backButton={{
             text: t('settings'),
-            href: DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress),
+            href: DAO_ROUTES.settings.relative(addressPrefix, safeAddress || zeroAddress),
           }}
         />
       </Show>

@@ -17,7 +17,7 @@ export function SafeGovernanceSettingsPage() {
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
   const {
-    node: { daoAddress },
+    node: { safe },
     governance: { type },
   } = useFractal();
 
@@ -36,7 +36,7 @@ export function SafeGovernanceSettingsPage() {
           title={t('daoSettingsGovernance')}
           backButton={{
             text: t('settings'),
-            href: DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress),
+            href: DAO_ROUTES.settings.relative(addressPrefix, safe?.address || zeroAddress),
           }}
         />
       </Show>

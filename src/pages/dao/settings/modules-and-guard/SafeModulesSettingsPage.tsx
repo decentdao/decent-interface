@@ -16,7 +16,7 @@ export function SafeModulesSettingsPage() {
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
   const {
-    node: { fractalModules, isModulesLoaded, safe, daoAddress },
+    node: { fractalModules, isModulesLoaded, safe },
     guardContracts: { freezeGuardContractAddress, freezeVotingContractAddress },
   } = useFractal();
 
@@ -27,7 +27,7 @@ export function SafeModulesSettingsPage() {
           title={t('daoModulesAndGuard')}
           backButton={{
             text: t('settings'),
-            href: DAO_ROUTES.settings.relative(addressPrefix, daoAddress || zeroAddress),
+            href: DAO_ROUTES.settings.relative(addressPrefix, safe?.address || zeroAddress),
           }}
         />
       </Show>
