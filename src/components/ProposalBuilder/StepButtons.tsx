@@ -1,8 +1,8 @@
-import { Flex, Button, Icon } from '@chakra-ui/react';
-import { CaretRight, CaretLeft } from '@phosphor-icons/react';
+import { Button, Flex, Icon } from '@chakra-ui/react';
+import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Routes, Route, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
 import { CreateProposalSteps } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
@@ -21,6 +21,7 @@ export default function StepButtons(props: StepButtonsProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const {
+    mode,
     pendingTransaction,
     errors: {
       transactions: transactionsError,
@@ -52,14 +53,29 @@ export default function StepButtons(props: StepButtonsProps) {
         <Route
           path={CreateProposalSteps.METADATA}
           element={
-            <Button
-              onClick={() => navigate(nextStepUrl)}
-              isDisabled={!!proposalMetadataError || !proposalMetadata.title}
-              px="2rem"
-            >
-              {t('next', { ns: 'common' })}
-              <CaretRight />
-            </Button>
+            mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS ? (
+              <Button
+                px="2rem"
+                type="submit"
+                isDisabled={
+                  !canUserCreateProposal ||
+                  !!transactionsError ||
+                  !!nonceError ||
+                  pendingTransaction
+                }
+              >
+                {t('createProposal', { ns: 'proposal' })}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => navigate(nextStepUrl)}
+                isDisabled={!!proposalMetadataError || !proposalMetadata.title}
+                px="2rem"
+              >
+                {t('next', { ns: 'common' })}
+                <CaretRight />
+              </Button>
+            )
           }
         />
         <Route

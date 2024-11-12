@@ -12,7 +12,7 @@ import {
   isHex,
   parseAbiParameters,
 } from 'viem';
-import { usePublicClient, useWalletClient } from 'wagmi';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
@@ -24,7 +24,7 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CreateProposalMetadata, MetaTransaction, ProposalExecuteData } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
-import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
+import useVotingStrategiesAddresses from '../../utils/useVotingStrategiesAddresses';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useLoadDAOProposals } from '../loaders/useLoadDAOProposals';
 
@@ -63,12 +63,18 @@ export default function useSubmitProposal() {
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
 
-  const { getVotingStrategyAddress } = useVotingStrategyAddress();
+  const { getVotingStrategies } = useVotingStrategiesAddresses();
+  const { address: userAddress } = useAccount();
 
   const {
     node: { safe, fractalModules },
     guardContracts: { freezeVotingContractAddress },
-    governanceContracts: { linearVotingErc20Address, linearVotingErc721Address },
+    governanceContracts: {
+      linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721Address,
+      linearVotingErc721WithHatsWhitelistingAddress,
+    },
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
@@ -298,17 +304,17 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData || !safeAPI) {
+      if (!proposalData || !safeAPI || !publicClient || !userAddress) {
         return;
       }
 
       if (safeAddress && isAddress(safeAddress)) {
         // Submitting proposal to any DAO out of global context
-        const votingStrategyAddress = await getVotingStrategyAddress(safeAddress);
+        const votingStrategies = await getVotingStrategies(safeAddress);
         const safeInfo = await safeAPI.getSafeInfo(safeAddress);
         const modules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(modules);
-        if (!azoriusModule || !votingStrategyAddress) {
+        if (!azoriusModule || !votingStrategies) {
           await submitMultisigProposal({
             proposalData,
             pendingToastMessage,
@@ -319,6 +325,23 @@ export default function useSubmitProposal() {
             safeAddress,
           });
         } else {
+          const userProposerVotingStrategy = (
+            await Promise.all(
+              votingStrategies.map(async votingStrategy => {
+                const votingContract = getContract({
+                  abi: abis.LinearERC20Voting,
+                  client: publicClient,
+                  address: votingStrategy.strategyAddress,
+                });
+                const isProposer = await votingContract.read.isProposer([userAddress]);
+                return { isProposer, votingStrategy };
+              }),
+            )
+          ).find(votingStrategy => votingStrategy.isProposer);
+
+          if (!userProposerVotingStrategy) {
+            throw new Error('User is not a proposer!');
+          }
           await submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
@@ -328,12 +351,16 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
             azoriusAddress: azoriusModule.moduleAddress,
-            votingStrategyAddress,
+            votingStrategyAddress: userProposerVotingStrategy.votingStrategy.strategyAddress,
           });
         }
       } else {
         const votingStrategyAddress =
-          linearVotingErc20Address || linearVotingErc721Address || freezeVotingContractAddress;
+          linearVotingErc20Address ||
+          linearVotingErc20WithHatsWhitelistingAddress ||
+          linearVotingErc721Address ||
+          linearVotingErc721WithHatsWhitelistingAddress ||
+          freezeVotingContractAddress;
 
         if (!globalAzoriusContract || !votingStrategyAddress) {
           await submitMultisigProposal({
@@ -346,6 +373,32 @@ export default function useSubmitProposal() {
             safeAddress: safe?.address,
           });
         } else {
+          const userProposerVotingStrategy = (
+            await Promise.all(
+              [
+                linearVotingErc20Address,
+                linearVotingErc20WithHatsWhitelistingAddress,
+                linearVotingErc721Address,
+                linearVotingErc721WithHatsWhitelistingAddress,
+                freezeVotingContractAddress,
+              ].map(async votingStrategy => {
+                if (!votingStrategy) {
+                  return { isProposer: false, votingStrategy };
+                }
+                const votingContract = getContract({
+                  abi: abis.LinearERC20Voting,
+                  client: publicClient,
+                  address: votingStrategy,
+                });
+                const isProposer = await votingContract.read.isProposer([userAddress]);
+                return { isProposer, votingStrategy };
+              }),
+            )
+          ).find(votingStrategy => votingStrategy.isProposer);
+
+          if (!userProposerVotingStrategy || !userProposerVotingStrategy.votingStrategy) {
+            throw new Error('User is not a proposer!');
+          }
           await submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
@@ -353,7 +406,7 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
-            votingStrategyAddress,
+            votingStrategyAddress: userProposerVotingStrategy.votingStrategy,
             azoriusAddress: globalAzoriusContract.address,
             safeAddress: safe?.address,
           });
@@ -362,15 +415,19 @@ export default function useSubmitProposal() {
     },
     [
       linearVotingErc721Address,
+      linearVotingErc721WithHatsWhitelistingAddress,
       freezeVotingContractAddress,
-      getVotingStrategyAddress,
+      getVotingStrategies,
       globalAzoriusContract,
       lookupModules,
       linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
       safe?.address,
       safeAPI,
       submitAzoriusProposal,
       submitMultisigProposal,
+      publicClient,
+      userAddress,
     ],
   );
 

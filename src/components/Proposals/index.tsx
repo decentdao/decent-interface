@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SortBy, GovernanceType, FractalProposalState } from '../../types';
+import { GovernanceType, FractalProposalState, SortBy } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';

@@ -77,10 +77,40 @@ export const DAO_ROUTES = {
       `/proposals/new/metadata${getDaoQueryParam(addressPrefix, safeAddress)}`,
     path: 'proposals/new/metadata',
   },
+  proposalWithActionsNew: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/proposals/actions/new/metadata${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'proposals/actions/new/metadata',
+  },
   settings: {
     relative: (addressPrefix: string, safeAddress: string) =>
       `/settings${getDaoQueryParam(addressPrefix, safeAddress)}`,
     path: 'settings',
+  },
+  settingsGeneral: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings/general${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'general',
+  },
+  settingsGovernance: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings/governance${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'governance',
+  },
+  settingsModulesAndGuard: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings/modules-and-guard${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'modules-and-guard',
+  },
+  settingsPermissions: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings/permissions${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'permissions',
+  },
+  settingsPermissionsCreateProposal: {
+    relative: (addressPrefix: string, daoAddress: string, votingStrategyAddress?: string) =>
+      `/settings/permissions/create-proposal${getDaoQueryParam(addressPrefix, daoAddress)}${votingStrategyAddress ? `&votingStrategy=${votingStrategyAddress}` : ''}`,
+    path: 'create-proposal',
   },
   proposalTemplates: {
     relative: (addressPrefix: string, safeAddress: string) =>

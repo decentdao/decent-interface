@@ -1,26 +1,26 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import {
-  getCreate2Address,
   Address,
   Hex,
-  encodePacked,
-  keccak256,
-  encodeAbiParameters,
-  parseAbiParameters,
-  isAddress,
-  encodeFunctionData,
   PublicClient,
-  getContract,
+  encodeAbiParameters,
+  encodeFunctionData,
+  encodePacked,
   getAddress,
+  getContract,
+  getCreate2Address,
+  isAddress,
+  keccak256,
+  parseAbiParameters,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import { ZodiacModuleProxyFactoryAbi } from '../assets/abi/ZodiacModuleProxyFactoryAbi';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
-  SafeTransaction,
-  AzoriusGovernanceDAO,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  AzoriusGovernanceDAO,
+  SafeTransaction,
   VotingStrategyType,
 } from '../types';
 import { SENTINEL_MODULE } from '../utils/address';
@@ -525,7 +525,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     }
   }
 
-  // TODO - verify we can use safe contract address
   private setPredictedAzoriusAddress() {
     const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
     const safeContractAddress = this.safeContractAddress;

@@ -1,11 +1,11 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Address, GetContractReturnType, PublicClient, erc721Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
-import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
+import useVotingStrategiesAddresses from '../../utils/useVotingStrategiesAddresses';
 
 /**
  * Retrieves list of ERC-721 voting tokens for the supplied `address`(aka `user.address`) param
@@ -36,7 +36,7 @@ export default function useUserERC721VotingTokens(
   const safeAPI = useSafeAPI();
   const publicClient = usePublicClient();
 
-  const { getVotingStrategyAddress } = useVotingStrategyAddress();
+  const { getVotingStrategies } = useVotingStrategiesAddresses();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
@@ -67,35 +67,42 @@ export default function useUserERC721VotingTokens(
 
       if (_safeAddress && globalContextSafeAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
-        const votingStrategyAddress = await getVotingStrategyAddress(_safeAddress);
-        if (votingStrategyAddress) {
-          votingContract = getContract({
-            abi: abis.LinearERC721Voting,
-            address: votingStrategyAddress,
-            client: publicClient,
-          });
-          const addresses = await votingContract.read.getAllTokenAddresses();
-          governanceTokens = await Promise.all(
-            addresses.map(async tokenAddress => {
-              if (!votingContract) {
-                throw new Error('voting contract is undefined');
-              }
+        const votingStrategies = await getVotingStrategies(_safeAddress);
+        if (votingStrategies) {
+          const votingStrategyAddress = votingStrategies.find(
+            strategy =>
+              strategy.isLinearVotingErc721 ||
+              strategy.isLinearVotingErc721WithHatsProposalCreation,
+          )?.strategyAddress;
+          if (votingStrategyAddress) {
+            votingContract = getContract({
+              abi: abis.LinearERC721Voting,
+              address: votingStrategyAddress,
+              client: publicClient,
+            });
+            const addresses = await votingContract.read.getAllTokenAddresses();
+            governanceTokens = await Promise.all(
+              addresses.map(async tokenAddress => {
+                if (!votingContract) {
+                  throw new Error('Voting contract is undefined');
+                }
 
-              const tokenContract = getContract({
-                abi: erc721Abi,
-                address: tokenAddress,
-                client: publicClient,
-              });
+                const tokenContract = getContract({
+                  abi: erc721Abi,
+                  address: tokenAddress,
+                  client: publicClient,
+                });
 
-              const [votingWeight, name, symbol] = await Promise.all([
-                votingContract.read.getTokenWeight([tokenAddress]),
-                tokenContract.read.name(),
-                tokenContract.read.symbol(),
-              ]);
+                const [votingWeight, name, symbol] = await Promise.all([
+                  votingContract.read.getTokenWeight([tokenAddress]),
+                  tokenContract.read.name(),
+                  tokenContract.read.symbol(),
+                ]);
 
-              return { name, symbol, address: tokenAddress, votingWeight };
-            }),
-          );
+                return { name, symbol, address: tokenAddress, votingWeight };
+              }),
+            );
+          }
         }
       }
 
@@ -175,7 +182,7 @@ export default function useUserERC721VotingTokens(
           await Promise.all(
             [...tokenIdsSet.values()].map(async tokenId => {
               if (!votingContract) {
-                throw new Error('voting contract is undefined');
+                throw new Error('Voting contract is undefined');
               }
 
               totalTokenAddresses.push(tokenAddress);
@@ -206,12 +213,12 @@ export default function useUserERC721VotingTokens(
     },
     [
       erc721Tokens,
+      getVotingStrategies,
       publicClient,
       safeAPI,
       globalContextSafeAddress,
       linearVotingErc721Address,
       user.address,
-      getVotingStrategyAddress,
     ],
   );
 

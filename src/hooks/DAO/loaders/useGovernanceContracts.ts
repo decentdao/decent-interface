@@ -1,22 +1,22 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
-import { getContract, Address } from 'viem';
+import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { getAzoriusModuleFromModules } from '../../../utils';
 import { useAddressContractType } from '../../utils/useAddressContractType';
-import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
+import useVotingStrategyAddress from '../../utils/useVotingStrategiesAddresses';
 
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
   const { node, action } = useFractal();
-  const { getAddressContractType } = useAddressContractType();
   const publicClient = usePublicClient();
+  const { getAddressContractType } = useAddressContractType();
 
-  const { getVotingStrategyAddress } = useVotingStrategyAddress();
+  const { getVotingStrategies } = useVotingStrategyAddress();
   const { fractalModules, isModulesLoaded, safe } = node;
 
   const safeAddress = safe?.address;
@@ -24,9 +24,9 @@ export const useGovernanceContracts = () => {
   const loadGovernanceContracts = useCallback(async () => {
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
 
-    const votingStrategyAddress = await getVotingStrategyAddress();
+    const votingStrategies = await getVotingStrategies();
 
-    if (!azoriusModule || !votingStrategyAddress) {
+    if (!azoriusModule || !votingStrategies) {
       action.dispatch({
         type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES,
         payload: {},
@@ -34,25 +34,25 @@ export const useGovernanceContracts = () => {
       return;
     }
 
+    if (!publicClient) {
+      throw new Error('Public Client is not set!');
+    }
+
     let linearVotingErc20Address: Address | undefined;
     let linearVotingErc721Address: Address | undefined;
+    let linearVotingErc20WithHatsWhitelistingAddress: Address | undefined;
+    let linearVotingErc721WithHatsWhitelistingAddress: Address | undefined;
     let votesTokenAddress: Address | undefined;
     let underlyingTokenAddress: Address | undefined;
     let lockReleaseAddress: Address | undefined;
 
-    const { isLinearVotingErc20, isLinearVotingErc721 } =
-      await getAddressContractType(votingStrategyAddress);
-
-    if (isLinearVotingErc20) {
-      if (!publicClient) {
-        throw new Error('public client not set');
+    const setGovTokenAddress = async (erc20VotingStrategyAddress: Address) => {
+      if (votesTokenAddress) {
+        return;
       }
-
-      linearVotingErc20Address = votingStrategyAddress;
-
       const ozLinearVotingContract = getContract({
         abi: abis.LinearERC20Voting,
-        address: linearVotingErc20Address,
+        address: erc20VotingStrategyAddress,
         client: publicClient,
       });
 
@@ -90,17 +90,44 @@ export const useGovernanceContracts = () => {
           throw new Error('Unknown governance token type');
         }
       }
-    } else if (isLinearVotingErc721) {
-      // @dev for use with the ERC721 voting contract
-      linearVotingErc721Address = votingStrategyAddress;
-    }
+    };
 
-    if (votesTokenAddress || linearVotingErc721Address) {
+    await Promise.all(
+      votingStrategies.map(async votingStrategy => {
+        const {
+          strategyAddress,
+          isLinearVotingErc20,
+          isLinearVotingErc721,
+          isLinearVotingErc20WithHatsProposalCreation,
+          isLinearVotingErc721WithHatsProposalCreation,
+        } = votingStrategy;
+        if (isLinearVotingErc20) {
+          linearVotingErc20Address = strategyAddress;
+          await setGovTokenAddress(strategyAddress);
+        } else if (isLinearVotingErc721) {
+          linearVotingErc721Address = strategyAddress;
+        } else if (isLinearVotingErc20WithHatsProposalCreation) {
+          linearVotingErc20WithHatsWhitelistingAddress = strategyAddress;
+          await setGovTokenAddress(strategyAddress);
+        } else if (isLinearVotingErc721WithHatsProposalCreation) {
+          linearVotingErc721WithHatsWhitelistingAddress = strategyAddress;
+        }
+      }),
+    );
+
+    if (
+      linearVotingErc20Address ||
+      linearVotingErc20WithHatsWhitelistingAddress ||
+      linearVotingErc721Address ||
+      linearVotingErc721WithHatsWhitelistingAddress
+    ) {
       action.dispatch({
         type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES,
         payload: {
           linearVotingErc20Address,
+          linearVotingErc20WithHatsWhitelistingAddress,
           linearVotingErc721Address,
+          linearVotingErc721WithHatsWhitelistingAddress,
           votesTokenAddress,
           underlyingTokenAddress,
           lockReleaseAddress,
@@ -108,7 +135,7 @@ export const useGovernanceContracts = () => {
         },
       });
     }
-  }, [action, fractalModules, getVotingStrategyAddress, getAddressContractType, publicClient]);
+  }, [action, fractalModules, getVotingStrategies, publicClient, getAddressContractType]);
 
   useEffect(() => {
     if (currentValidAddress.current !== safeAddress && isModulesLoaded) {
