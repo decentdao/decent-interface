@@ -6,7 +6,6 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetSafeName } from '../../utils/useGetSafeName';
@@ -36,7 +35,6 @@ export const useFractalNode = (
   const lookupModules = useFractalModules();
 
   const { chain } = useNetworkConfig();
-  const { resetHatsStore } = useRolesStore();
 
   const { subgraph } = useNetworkConfig();
 
@@ -90,10 +88,9 @@ export const useFractalNode = (
     ({ error }: { error: boolean }) => {
       currentValidSafe.current = undefined;
       action.resetSafeState();
-      resetHatsStore();
       setErrorLoading(error);
     },
-    [action, resetHatsStore],
+    [action],
   );
 
   const setDAO = useCallback(async () => {
