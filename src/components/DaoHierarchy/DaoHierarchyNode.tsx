@@ -1,6 +1,6 @@
 import { Flex, Icon } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Address } from 'viem';
 import { useLoadDAONode } from '../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../hooks/DAO/useDAOData';
@@ -29,7 +29,6 @@ export function DaoHierarchyNode({
   const {
     node: { daoAddress: currentDAOAddress },
   } = useFractal();
-  const isMounted = useRef(false);
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
   const { daoData } = useLoadDAOData(parentAddress, fractalNode);
@@ -44,7 +43,7 @@ export function DaoHierarchyNode({
   }, []);
 
   useEffect(() => {
-    if (daoAddress && isMounted.current) {
+    if (daoAddress) {
       loadDao(daoAddress).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
@@ -64,7 +63,6 @@ export function DaoHierarchyNode({
         }
       });
     }
-    isMounted.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
