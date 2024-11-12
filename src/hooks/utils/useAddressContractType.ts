@@ -12,7 +12,9 @@ type ContractType = {
   isFreezeVotingErc721: boolean;
   isFreezeVotingMultisig: boolean;
   isLinearVotingErc20: boolean;
+  isLinearVotingErc20WithHatsProposalCreation: boolean;
   isLinearVotingErc721: boolean;
+  isLinearVotingErc721WithHatsProposalCreation: boolean;
   isModuleAzorius: boolean;
   isModuleFractal: boolean;
   isVotesErc20: boolean;
@@ -32,6 +34,8 @@ const defaultContractType: ContractType = {
   isModuleFractal: false,
   isVotesErc20: false,
   isVotesErc20Wrapper: false,
+  isLinearVotingErc20WithHatsProposalCreation: false,
+  isLinearVotingErc721WithHatsProposalCreation: false,
 };
 
 type ContractFunctionTest = {
@@ -119,7 +123,8 @@ const contractTests: ContractFunctionTest[] = [
     resultKey: 'isFreezeVotingMultisig',
   },
   {
-    abi: abis.LinearERC20Voting,
+    abi: combineAbis(abis.LinearERC20Voting, abis.LinearERC20VotingWithHatsProposalCreation),
+    revertFunctionNames: ['getWhitelistedHatIds'],
     functionNames: [
       'BASIS_DENOMINATOR',
       'QUORUM_DENOMINATOR',
@@ -134,7 +139,24 @@ const contractTests: ContractFunctionTest[] = [
     resultKey: 'isLinearVotingErc20',
   },
   {
-    abi: abis.LinearERC721Voting,
+    abi: abis.LinearERC20VotingWithHatsProposalCreation,
+    functionNames: [
+      'BASIS_DENOMINATOR',
+      'QUORUM_DENOMINATOR',
+      'azoriusModule',
+      'basisNumerator',
+      'governanceToken',
+      'owner',
+      'quorumNumerator',
+      'votingPeriod',
+      'requiredProposerWeight',
+      'getWhitelistedHatIds',
+    ],
+    resultKey: 'isLinearVotingErc20WithHatsProposalCreation',
+  },
+  {
+    abi: combineAbis(abis.LinearERC721Voting, abis.LinearERC721VotingWithHatsProposalCreation),
+    revertFunctionNames: ['getWhitelistedHatIds'],
     functionNames: [
       'BASIS_DENOMINATOR',
       'azoriusModule',
@@ -146,6 +168,21 @@ const contractTests: ContractFunctionTest[] = [
       'votingPeriod',
     ],
     resultKey: 'isLinearVotingErc721',
+  },
+  {
+    abi: abis.LinearERC721VotingWithHatsProposalCreation,
+    functionNames: [
+      'BASIS_DENOMINATOR',
+      'azoriusModule',
+      'basisNumerator',
+      'getAllTokenAddresses',
+      'owner',
+      'proposerThreshold',
+      'quorumThreshold',
+      'votingPeriod',
+      'getWhitelistedHatIds',
+    ],
+    resultKey: 'isLinearVotingErc721WithHatsProposalCreation',
   },
   {
     abi: abis.Azorius,

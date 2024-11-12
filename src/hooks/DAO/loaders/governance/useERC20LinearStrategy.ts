@@ -1,15 +1,16 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useCallback, useEffect, useMemo } from 'react';
-import { getContract } from 'viem';
+import { useCallback, useMemo } from 'react';
+import { formatUnits, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { VotingStrategyType } from '../../../../types';
+import { AzoriusGovernance, VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC20LinearStrategy = () => {
   const {
+    governance,
     governanceContracts: { linearVotingErc20Address, moduleAzoriusAddress },
     action,
   } = useFractal();
@@ -38,13 +39,21 @@ export const useERC20LinearStrategy = () => {
       address: moduleAzoriusAddress,
       client: publicClient,
     });
-    const [votingPeriodBlocks, quorumNumerator, quorumDenominator, timeLockPeriod] =
-      await Promise.all([
-        ozLinearVotingContract.read.votingPeriod(),
-        ozLinearVotingContract.read.quorumNumerator(),
-        ozLinearVotingContract.read.QUORUM_DENOMINATOR(),
-        azoriusContract.read.timelockPeriod(),
-      ]);
+    const azoriusGovernance = governance as AzoriusGovernance;
+    const { votesToken } = azoriusGovernance;
+    const [
+      votingPeriodBlocks,
+      quorumNumerator,
+      quorumDenominator,
+      timeLockPeriod,
+      proposerThreshold,
+    ] = await Promise.all([
+      ozLinearVotingContract.read.votingPeriod(),
+      ozLinearVotingContract.read.quorumNumerator(),
+      ozLinearVotingContract.read.QUORUM_DENOMINATOR(),
+      azoriusContract.read.timelockPeriod(),
+      ozLinearVotingContract.read.requiredProposerWeight(),
+    ]);
 
     const quorumPercentage = (quorumNumerator * 100n) / quorumDenominator;
     const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, publicClient);
@@ -53,6 +62,10 @@ export const useERC20LinearStrategy = () => {
       votingPeriod: {
         value: BigInt(votingPeriodValue),
         formatted: getTimeDuration(votingPeriodValue),
+      },
+      proposerThreshold: {
+        value: proposerThreshold,
+        formatted: formatUnits(proposerThreshold, votesToken?.decimals || 18),
       },
       quorumPercentage: {
         value: quorumPercentage,
@@ -65,51 +78,14 @@ export const useERC20LinearStrategy = () => {
       strategyType: VotingStrategyType.LINEAR_ERC20,
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
-  }, [action, moduleAzoriusAddress, getTimeDuration, ozLinearVotingContract, publicClient]);
-
-  useEffect(() => {
-    if (!ozLinearVotingContract || !publicClient) {
-      return;
-    }
-
-    const unwatch = ozLinearVotingContract.watchEvent.VotingPeriodUpdated({
-      onLogs: logs => {
-        const lastLog = logs.pop();
-        if (lastLog && lastLog.args.votingPeriod) {
-          action.dispatch({
-            type: FractalGovernanceAction.UPDATE_VOTING_PERIOD,
-            payload: BigInt(lastLog.args.votingPeriod),
-          });
-        }
-      },
-    });
-
-    return () => {
-      unwatch();
-    };
-  }, [action, ozLinearVotingContract, publicClient]);
-
-  useEffect(() => {
-    if (!ozLinearVotingContract) {
-      return;
-    }
-
-    const unwatch = ozLinearVotingContract.watchEvent.QuorumNumeratorUpdated({
-      onLogs: logs => {
-        const lastLog = logs.pop();
-        if (lastLog && lastLog.args.quorumNumerator) {
-          action.dispatch({
-            type: FractalGovernanceAction.UPDATE_VOTING_QUORUM,
-            payload: lastLog.args.quorumNumerator,
-          });
-        }
-      },
-    });
-
-    return () => {
-      unwatch();
-    };
-  }, [action, ozLinearVotingContract]);
+  }, [
+    action,
+    moduleAzoriusAddress,
+    getTimeDuration,
+    ozLinearVotingContract,
+    publicClient,
+    governance,
+  ]);
 
   return loadERC20Strategy;
 };

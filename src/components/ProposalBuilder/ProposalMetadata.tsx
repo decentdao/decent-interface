@@ -14,7 +14,8 @@ export default function ProposalMetadata({
   mode,
 }: ProposalMetadataProps) {
   const { t } = useTranslation(['proposalTemplate', 'proposal', 'common']);
-  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
+  const isProposalMode =
+    mode === ProposalBuilderMode.PROPOSAL || mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS;
 
   return (
     <VStack
@@ -53,6 +54,15 @@ export default function ProposalMetadata({
         value={proposalMetadata.description}
         onChange={e => setFieldValue('proposalMetadata.description', e.target.value)}
         rows={12}
+      />
+      <InputComponent
+        label={t('proposalAdditionalResources', { ns: 'proposal' })}
+        placeholder={t('proposalAdditionalResourcesPlaceholder', { ns: 'proposal' })}
+        helper={t('proposalAdditionalResourcesHelper', { ns: 'proposal' })}
+        value={proposalMetadata.documentationUrl || ''}
+        onChange={e => setFieldValue('proposalMetadata.documentationUrl', e.target.value)}
+        testId="metadata.documentationUrl"
+        isRequired={false}
       />
     </VStack>
   );

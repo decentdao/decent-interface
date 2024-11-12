@@ -1,6 +1,6 @@
 import { Blocker, useBlocker } from 'react-router-dom';
-import { RoleFormValues } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
+import { RoleFormValues } from '../../types/roles';
 
 interface RoleEditDetailsNavigationBlockerParams {
   wasRoleActuallyEdited: boolean;

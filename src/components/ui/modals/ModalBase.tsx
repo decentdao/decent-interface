@@ -10,8 +10,8 @@ import Divider from '../utils/Divider';
 
 export type ModalBaseSize = 'sm' | 'md' | 'lg' | 'xl';
 interface ModuleBaseProps {
-  isSearchInputModal: boolean;
-  title: string;
+  isSearchInputModal?: boolean;
+  title?: string;
   warn?: boolean;
   size?: ModalBaseSize;
   isOpen: boolean;

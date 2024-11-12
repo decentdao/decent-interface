@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   Address,
+  encodeAbiParameters,
   encodeFunctionData,
   encodePacked,
   getAddress,
@@ -14,6 +15,7 @@ import {
   getCreate2Address,
   Hex,
   keccak256,
+  parseAbiParameters,
   zeroAddress,
 } from 'viem';
 import { usePublicClient } from 'wagmi';
@@ -21,7 +23,21 @@ import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
-
+import { ZodiacModuleProxyFactoryAbi } from '../../assets/abi/ZodiacModuleProxyFactoryAbi';
+import { ERC6551_REGISTRY_SALT } from '../../constants/common';
+import { DAO_ROUTES } from '../../constants/routes';
+import { getRandomBytes } from '../../helpers';
+import { generateContractByteCodeLinear } from '../../models/helpers/utils';
+import { useFractal } from '../../providers/App/AppProvider';
+import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesStore } from '../../store/roles/useRolesStore';
+import {
+  AzoriusGovernance,
+  CreateProposalMetadata,
+  GovernanceType,
+  ProposalExecuteData,
+} from '../../types';
 import {
   EditBadgeStatus,
   HatStruct,
@@ -29,22 +45,15 @@ import {
   RoleFormValues,
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
-} from '../../components/pages/Roles/types';
-import { ERC6551_REGISTRY_SALT } from '../../constants/common';
-import { DAO_ROUTES } from '../../constants/routes';
-import { useFractal } from '../../providers/App/AppProvider';
-import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../store/roles/useRolesStore';
-import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
+} from '../../types/roles';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import { ZodiacModuleProxyFactoryAbi } from './../../assets/abi/ZodiacModuleProxyFactoryAbi';
 import {
   isElectionEligibilityModule,
   predictAccountAddress,
+  predictHatId,
 } from './../../store/roles/rolesStoreUtils';
 
 function hatsDetailsBuilder(data: { name: string; description: string }) {
@@ -68,6 +77,12 @@ async function uploadHatDescription(
 export default function useCreateRoles() {
   const {
     node: { safe, daoAddress, daoName },
+    governance,
+    governanceContracts: {
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721WithHatsWhitelistingAddress,
+      moduleAzoriusAddress,
+    },
   } = useFractal();
   const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
@@ -81,6 +96,8 @@ export default function useCreateRoles() {
       erc6551Registry,
       keyValuePairs,
       sablierV2LockupLinear,
+      linearVotingErc20HatsWhitelistingMasterCopy,
+      linearVotingErc721HatsWhitelistingMasterCopy,
       zodiacModuleProxyFactory,
       decentAutonomousAdminV1MasterCopy,
       hatsElectionsEligibilityMasterCopy,
@@ -95,6 +112,184 @@ export default function useCreateRoles() {
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
   const navigate = useNavigate();
+
+  const buildDeployWhitelistingStrategy = useCallback(
+    async (whitelistedHatsIds: bigint[]) => {
+      if (!publicClient || !daoAddress || !moduleAzoriusAddress) {
+        return;
+      }
+      const azoriusGovernance = governance as AzoriusGovernance;
+      const { votingStrategy, votesToken, erc721Tokens } = azoriusGovernance;
+      if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
+        if (!votesToken || !votingStrategy?.votingPeriod || !votingStrategy.quorumPercentage) {
+          return;
+        }
+
+        const strategyNonce = getRandomBytes();
+        const linearERC20VotingMasterCopyContract = getContract({
+          abi: abis.LinearERC20Voting,
+          address: linearVotingErc20HatsWhitelistingMasterCopy,
+          client: publicClient,
+        });
+
+        const quorumDenominator =
+          await linearERC20VotingMasterCopyContract.read.QUORUM_DENOMINATOR();
+        const encodedStrategyInitParams = encodeAbiParameters(
+          parseAbiParameters(
+            'address, address, address, uint32, uint256, uint256, address, uint256[]',
+          ),
+          [
+            daoAddress, // owner
+            votesToken.address, // governance token
+            moduleAzoriusAddress, // Azorius module
+            Number(votingStrategy.votingPeriod.value),
+            (votingStrategy.quorumPercentage.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
+            500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
+            hatsProtocol,
+            whitelistedHatsIds,
+          ],
+        );
+
+        const encodedStrategySetupData = encodeFunctionData({
+          abi: abis.LinearERC20VotingWithHatsProposalCreation,
+          functionName: 'setUp',
+          args: [encodedStrategyInitParams],
+        });
+
+        const deployWhitelistingVotingStrategyTx = {
+          calldata: encodeFunctionData({
+            abi: ZodiacModuleProxyFactoryAbi,
+            functionName: 'deployModule',
+            args: [
+              linearVotingErc20HatsWhitelistingMasterCopy,
+              encodedStrategySetupData,
+              strategyNonce,
+            ],
+          }),
+          targetAddress: zodiacModuleProxyFactory,
+        };
+
+        const strategyByteCodeLinear = generateContractByteCodeLinear(
+          linearVotingErc20HatsWhitelistingMasterCopy,
+        );
+
+        const strategySalt = keccak256(
+          encodePacked(
+            ['bytes32', 'uint256'],
+            [keccak256(encodePacked(['bytes'], [encodedStrategySetupData])), strategyNonce],
+          ),
+        );
+
+        const predictedStrategyAddress = getCreate2Address({
+          from: zodiacModuleProxyFactory,
+          salt: strategySalt,
+          bytecodeHash: keccak256(encodePacked(['bytes'], [strategyByteCodeLinear])),
+        });
+
+        const enableDeployedVotingStrategyTx = {
+          targetAddress: moduleAzoriusAddress,
+          calldata: encodeFunctionData({
+            abi: abis.Azorius,
+            functionName: 'enableStrategy',
+            args: [predictedStrategyAddress],
+          }),
+        };
+
+        return [deployWhitelistingVotingStrategyTx, enableDeployedVotingStrategyTx];
+      } else if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC721) {
+        if (!erc721Tokens || !votingStrategy?.votingPeriod || !votingStrategy.quorumThreshold) {
+          return;
+        }
+
+        const strategyNonce = getRandomBytes();
+        const linearERC721VotingMasterCopyContract = getContract({
+          abi: abis.LinearERC20Voting,
+          address: linearVotingErc721HatsWhitelistingMasterCopy,
+          client: publicClient,
+        });
+
+        const quorumDenominator =
+          await linearERC721VotingMasterCopyContract.read.QUORUM_DENOMINATOR();
+        const encodedStrategyInitParams = encodeAbiParameters(
+          parseAbiParameters(
+            'address, address[], uint256[], address, uint32, uint256, uint256, address, uint256[]',
+          ),
+          [
+            daoAddress, // owner
+            erc721Tokens.map(token => token.address), // governance tokens addresses
+            erc721Tokens.map(token => token.votingWeight), // governance tokens weights
+            moduleAzoriusAddress, // Azorius module
+            Number(votingStrategy.votingPeriod.value),
+            (votingStrategy.quorumThreshold.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
+            500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
+            hatsProtocol,
+            whitelistedHatsIds,
+          ],
+        );
+
+        const encodedStrategySetupData = encodeFunctionData({
+          abi: abis.LinearERC721VotingWithHatsProposalCreation,
+          functionName: 'setUp',
+          args: [encodedStrategyInitParams],
+        });
+
+        const deployWhitelistingVotingStrategyTx = {
+          calldata: encodeFunctionData({
+            abi: ZodiacModuleProxyFactoryAbi,
+            functionName: 'deployModule',
+            args: [
+              linearVotingErc721HatsWhitelistingMasterCopy,
+              encodedStrategySetupData,
+              strategyNonce,
+            ],
+          }),
+          targetAddress: zodiacModuleProxyFactory,
+        };
+
+        const strategyByteCodeLinear = generateContractByteCodeLinear(
+          linearVotingErc721HatsWhitelistingMasterCopy,
+        );
+
+        const strategySalt = keccak256(
+          encodePacked(
+            ['bytes32', 'uint256'],
+            [keccak256(encodePacked(['bytes'], [encodedStrategySetupData])), strategyNonce],
+          ),
+        );
+
+        const predictedStrategyAddress = getCreate2Address({
+          from: zodiacModuleProxyFactory,
+          salt: strategySalt,
+          bytecodeHash: keccak256(encodePacked(['bytes'], [strategyByteCodeLinear])),
+        });
+
+        const enableDeployedVotingStrategyTx = {
+          targetAddress: moduleAzoriusAddress,
+          calldata: encodeFunctionData({
+            abi: abis.Azorius,
+            functionName: 'enableStrategy',
+            args: [predictedStrategyAddress],
+          }),
+        };
+
+        return [deployWhitelistingVotingStrategyTx, enableDeployedVotingStrategyTx];
+      } else {
+        throw new Error(
+          'Can not deploy Whitelisting Voting Strategy - unsupported governance type!',
+        );
+      }
+    },
+    [
+      daoAddress,
+      governance,
+      hatsProtocol,
+      linearVotingErc20HatsWhitelistingMasterCopy,
+      linearVotingErc721HatsWhitelistingMasterCopy,
+      moduleAzoriusAddress,
+      publicClient,
+      zodiacModuleProxyFactory,
+    ],
+  );
 
   const createHatStruct = useCallback(
     async (
@@ -452,7 +647,7 @@ export default function useCreateRoles() {
       hatsElectionsEligibilityMasterCopy,
     ],
   );
-  // @todo  move to updated 'useMasterCopy` hook
+
   const isDecentAutonomousAdminV1 = useCallback(
     async (address: Address) => {
       if (!publicClient) {
@@ -757,6 +952,8 @@ export default function useCreateRoles() {
       const topHatAccount = hatsTree.topHat.smartAddress;
       const adminHatWearer = hatsTree.adminHat.wearer;
       const allTxs: { calldata: Hex; targetAddress: Address }[] = [];
+      const whitelistingPermissionAddedHats: bigint[] = [];
+      const whitelistingPermissionRemovedHats: bigint[] = [];
 
       // The Algorithm
       // for each modified role
@@ -769,6 +966,9 @@ export default function useCreateRoles() {
       //     - create smart account for the hat,
       //     - create new streams on the hat if any added
       //  - createRoleHat will transfer the top hat back to the safe
+      //  - does it have proposal creation permission?
+      //   - does Azorius has whitelisting strategy enabled?
+      //     - if no: allTxs.push(deploy new strategy with params based on existing strategy)
       // Deleted Role
       //   - for each inactive stream with funds to claim
       //     - allTxs.push(flush stream transaction data)
@@ -776,6 +976,7 @@ export default function useCreateRoles() {
       //     - allTxs.push(flush stream transaction data)
       //     - allTxs.push(cancel stream transaction data)
       //   - allTxs.push(deactivate role transaction data)
+      //   - for roles with permission to create proposals: allTxs.push(un-whitelist hat)
       // Edited Role
       //   - is the name or description changed?
       //     - allTxs.push(edit details data)
@@ -787,7 +988,12 @@ export default function useCreateRoles() {
       //     - allTxs.push(flush stream transaction data)
       //   - for each new stream
       //     - allTxs.push(create new stream transactions datas)
+      //   - is canCreateProposals changed?
+      //     - does Azorius has whitelisting strategy enabled?
+      //       - if no: allTxs.push(deploy new strategy with params based on existing strategy)
+      //     - allTxs.push(whitelist or un-whitelist)
 
+      let newHatsCount = 0;
       allTxs.push(
         ...(await prepareAdminHatTxs(
           hatsTree.adminHat.wearer,
@@ -806,6 +1012,14 @@ export default function useCreateRoles() {
 
         if (formHat.editedRole.status === EditBadgeStatus.New) {
           allTxs.push(...(await prepareNewHatTxs(formHat)));
+          if (formHat.canCreateProposals) {
+            const newHatId = predictHatId({
+              adminHatId: hatsTree.adminHat.id,
+              hatsCount: hatsTree.roleHats.length + newHatsCount,
+            });
+            whitelistingPermissionAddedHats.push(newHatId);
+          }
+          newHatsCount++;
         } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
           if (formHat.smartAddress === undefined) {
             throw new Error(
@@ -879,6 +1093,10 @@ export default function useCreateRoles() {
             }),
             targetAddress: topHatAccount,
           });
+
+          if (originalHat.canCreateProposals) {
+            whitelistingPermissionRemovedHats.push(BigInt(originalHat.id));
+          }
         } else if (formHat.editedRole.status === EditBadgeStatus.Updated) {
           if (
             formHat.editedRole.fieldNames.includes('roleName') ||
@@ -1075,6 +1293,19 @@ export default function useCreateRoles() {
               }
             }
           }
+
+          if (formHat.editedRole.fieldNames.includes('canCreateProposals')) {
+            const originalHat = getHat(formHat.id);
+            if (!originalHat) {
+              throw new Error('Cannot find original hat');
+            }
+            const hatId = BigInt(originalHat.id);
+            if (!originalHat.canCreateProposals && formHat.canCreateProposals) {
+              whitelistingPermissionAddedHats.push(hatId);
+            } else {
+              whitelistingPermissionRemovedHats.push(hatId);
+            }
+          }
           if (formHat.editedRole.fieldNames.includes('roleType')) {
             // deploy new instance of election module
             // add election module to eligibility
@@ -1091,6 +1322,55 @@ export default function useCreateRoles() {
           throw new Error('Invalid Edited Status');
         }
       }
+
+      const whitelistingVotingStrategyAddress =
+        linearVotingErc20WithHatsWhitelistingAddress ||
+        linearVotingErc721WithHatsWhitelistingAddress;
+      if (whitelistingPermissionAddedHats.length > 0) {
+        if (!whitelistingVotingStrategyAddress) {
+          const deployWhitelistingVotingStrategyCalldata = await buildDeployWhitelistingStrategy(
+            whitelistingPermissionAddedHats,
+          );
+          if (!deployWhitelistingVotingStrategyCalldata) {
+            throw new Error(
+              'Error encoding transaction for deploying whitelisting voting strategy',
+            );
+          }
+          allTxs.push(...deployWhitelistingVotingStrategyCalldata);
+        } else {
+          whitelistingPermissionAddedHats.forEach(hatId => {
+            allTxs.push({
+              targetAddress: whitelistingVotingStrategyAddress,
+              calldata: encodeFunctionData({
+                abi: abis.LinearERC20VotingWithHatsProposalCreation,
+                functionName: 'whitelistHat',
+                args: [hatId],
+              }),
+            });
+          });
+        }
+      }
+
+      if (whitelistingPermissionRemovedHats.length > 0) {
+        if (!whitelistingVotingStrategyAddress) {
+          throw new Error('Can not un-whitelist role from proposal creation permission', {
+            cause: {
+              linearVotingErc20WithHatsWhitelistingAddress,
+              linearVotingErc721WithHatsWhitelistingAddress,
+            },
+          });
+        }
+        whitelistingPermissionRemovedHats.forEach(hatId => {
+          allTxs.push({
+            targetAddress: whitelistingVotingStrategyAddress,
+            calldata: encodeFunctionData({
+              abi: abis.LinearERC20VotingWithHatsProposalCreation,
+              functionName: 'removeHatFromWhitelist',
+              args: [hatId],
+            }),
+          });
+        });
+      }
       return {
         targets: allTxs.map(({ targetAddress }) => targetAddress),
         calldatas: allTxs.map(({ calldata }) => calldata),
@@ -1103,6 +1383,8 @@ export default function useCreateRoles() {
       daoAddress,
       publicClient,
       prepareAdminHatTxs,
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721WithHatsWhitelistingAddress,
       prepareNewHatTxs,
       getHat,
       hatsProtocol,
@@ -1111,12 +1393,13 @@ export default function useCreateRoles() {
       prepareFlushStreamTxs,
       prepareCancelStreamTxs,
       ipfsClient,
+      getMemberChangedStreamsWithFundsToClaim,
       prepareRolePaymentUpdateTxs,
       prepareTermedRolePaymentUpdateTxs,
       isDecentAutonomousAdminV1,
       hatsElectionsEligibilityMasterCopy,
       parseRoleTermsFromFormRoleTerms,
-      getMemberChangedStreamsWithFundsToClaim,
+      buildDeployWhitelistingStrategy,
     ],
   );
 
