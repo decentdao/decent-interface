@@ -53,7 +53,8 @@ export function useLoadDAOData(parentSafeAddress: Address | null, fractalNode?: 
       });
     };
     loadDAOData();
-  }, [fractalNode, loadFractalGuardContracts, loadFractalFreezeGuard]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return { daoData };
 }

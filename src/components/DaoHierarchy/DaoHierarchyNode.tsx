@@ -53,7 +53,8 @@ export function DaoHierarchyNode({
         }
       });
     }
-  }, [loadDao, safeAddress, depth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Flex
