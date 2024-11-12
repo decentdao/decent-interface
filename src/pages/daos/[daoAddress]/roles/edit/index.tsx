@@ -76,6 +76,7 @@ function RolesEdit() {
         ...hat,
         resolvedWearer: hat.wearerAddress,
         wearer: hat.wearerAddress,
+        roleTerms: hat.roleTerms.allTerms,
       })),
       customNonce: safe?.nextNonce || 0,
       actions: [],

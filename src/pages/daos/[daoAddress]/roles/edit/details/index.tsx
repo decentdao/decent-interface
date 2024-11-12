@@ -19,7 +19,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex, isHex } from 'viem';
-import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
+import { RoleFormTabs } from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import {
   EditBadgeStatus,
   EditedRole,
@@ -67,6 +67,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
     }
 
     setFieldValue('roleEditing', undefined);
+    setFieldValue('addMewTerm', undefined);
     setTimeout(() => onRemove(), 50);
   };
 
@@ -127,7 +128,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
   );
 }
 
-export default function RoleEditDetails() {
+export function RoleEditDetails() {
   const headerHeight = useHeaderHeight();
   const { t } = useTranslation(['roles']);
   const {
@@ -163,6 +164,7 @@ export default function RoleEditDetails() {
     setTimeout(() => {
       setTouched({});
       setFieldValue('roleEditing', undefined);
+      setFieldValue('addMewTerm', undefined);
       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
     }, 50);
   };
