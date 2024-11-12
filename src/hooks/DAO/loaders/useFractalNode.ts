@@ -14,16 +14,13 @@ import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
 
-export const useFractalNode = (
-  skip: boolean,
-  {
-    addressPrefix,
-    safeAddress,
-  }: {
-    addressPrefix?: string;
-    safeAddress?: Address;
-  },
-) => {
+export const useFractalNode = ({
+  addressPrefix,
+  safeAddress,
+}: {
+  addressPrefix?: string;
+  safeAddress?: Address;
+}) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
@@ -104,6 +101,8 @@ export const useFractalNode = (
         if (!safeAPI) throw new Error('SafeAPI not set');
         safeInfo = await safeAPI.getSafeData(safeAddress);
       } catch (e) {
+        // TODO: this is the thing causing an error when
+        // trying to load a DAO with a valid address which is not a Safe
         reset({ error: true });
         return;
       }
@@ -123,16 +122,11 @@ export const useFractalNode = (
   }, [action, lookupModules, reset, safeAPI, addressPrefix, safeAddress]);
 
   useEffect(() => {
-    if (
-      skip ||
-      addressPrefix === undefined ||
-      safeAddress === undefined ||
-      `${addressPrefix}${safeAddress}` !== currentValidSafe.current
-    ) {
+    if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current) {
       reset({ error: false });
       setDAO();
     }
-  }, [addressPrefix, safeAddress, setDAO, reset, skip]);
+  }, [addressPrefix, safeAddress, setDAO, reset]);
 
   return { errorLoading };
 };

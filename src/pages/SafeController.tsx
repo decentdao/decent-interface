@@ -1,96 +1,62 @@
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
-import { toast } from 'sonner';
-import { useSwitchChain } from 'wagmi';
-import { logError } from '../helpers/errorLogging';
-import useDAOController from '../hooks/DAO/useDAOController';
+import { useAzoriusListeners } from '../hooks/DAO/loaders/governance/useAzoriusListeners';
+import { useERC20Claim } from '../hooks/DAO/loaders/governance/useERC20Claim';
+import { useSnapshotProposals } from '../hooks/DAO/loaders/snapshot/useSnapshotProposals';
+import { useDecentTreasury } from '../hooks/DAO/loaders/useDecentTreasury';
+import { useFractalFreeze } from '../hooks/DAO/loaders/useFractalFreeze';
+import { useFractalGovernance } from '../hooks/DAO/loaders/useFractalGovernance';
+import { useFractalGuardContracts } from '../hooks/DAO/loaders/useFractalGuardContracts';
+import { useFractalNode } from '../hooks/DAO/loaders/useFractalNode';
+import { useGovernanceContracts } from '../hooks/DAO/loaders/useGovernanceContracts';
+import { useHatsTree } from '../hooks/DAO/loaders/useHatsTree';
+import { useKeyValuePairs } from '../hooks/DAO/useKeyValuePairs';
+import { useParseSafeAddress } from '../hooks/DAO/useParseSafeAddress';
+import { useAutomaticSwitchChain } from '../hooks/utils/useAutomaticSwitchChain';
+import { usePageTitle } from '../hooks/utils/usePageTitle';
+import { useTemporaryProposals } from '../hooks/utils/useTemporaryProposals';
 import { useUpdateSafeData } from '../hooks/utils/useUpdateSafeData';
 import { useFractal } from '../providers/App/AppProvider';
-import { getChainIdFromPrefix } from '../utils/url';
 import LoadingProblem from './LoadingProblem';
 
-const useTemporaryProposals = () => {
-  const {
-    governance: { pendingProposals },
-  } = useFractal();
-  const { t } = useTranslation(['proposal']);
-
-  useEffect(() => {
-    if (pendingProposals === null || pendingProposals.length === 0) {
-      return;
-    }
-
-    const toastId = toast.info(t('pendingProposalNotice'), {
-      duration: Infinity,
-    });
-
-    return () => {
-      toast.dismiss(toastId);
-    };
-  }, [t, pendingProposals]);
-};
-
 export function SafeController() {
-  const { t } = useTranslation('common');
-  const { errorLoading, wrongNetwork, invalidQuery, safeAddress, urlAddressPrefix } =
-    useDAOController();
-  useUpdateSafeData(safeAddress);
+  const { invalidQuery, wrongNetwork, addressPrefix, safeAddress } = useParseSafeAddress();
 
-  const { switchChain } = useSwitchChain({
-    mutation: {
-      onSuccess: () => {
-        window.location.reload();
-      },
-      onError: error => {
-        if (error.name !== 'UserRejectedRequestError') {
-          toast.warning(t('automaticChainSwitchingErrorMessage'));
-        }
-      },
+  useUpdateSafeData(safeAddress);
+  usePageTitle();
+  useTemporaryProposals();
+  useAutomaticSwitchChain({ addressPrefix });
+
+  const {
+    node: {
+      nodeHierarchy: { parentAddress },
     },
+  } = useFractal();
+
+  const { errorLoading } = useFractalNode({
+    addressPrefix,
+    safeAddress,
   });
 
-  const {
-    node: { daoName },
-  } = useFractal();
+  useGovernanceContracts();
+  useFractalGuardContracts({});
+  useFractalFreeze({ parentSafeAddress: parentAddress });
+  useFractalGovernance();
+  useDecentTreasury();
+  useERC20Claim();
+  useSnapshotProposals();
+  useAzoriusListeners();
 
-  useTemporaryProposals();
-
-  useEffect(() => {
-    function switchChainToSafeChain() {
-      if (urlAddressPrefix && wrongNetwork) {
-        try {
-          switchChain({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
-        } catch (e) {
-          logError(e);
-        }
-      }
-    }
-    switchChainToSafeChain();
-  }, [wrongNetwork, switchChain, urlAddressPrefix]);
-
-  useEffect(() => {
-    if (daoName) {
-      document.title = `${import.meta.env.VITE_APP_NAME} | ${daoName}`;
-    }
-
-    return () => {
-      document.title = import.meta.env.VITE_APP_NAME;
-    };
-  }, [daoName]);
-
-  let display;
+  useKeyValuePairs();
+  useHatsTree();
 
   // the order of the if blocks of these next three error states matters
   if (invalidQuery) {
-    display = <LoadingProblem type="badQueryParam" />;
+    return <LoadingProblem type="badQueryParam" />;
   } else if (wrongNetwork) {
-    display = <LoadingProblem type="wrongNetwork" />;
+    return <LoadingProblem type="wrongNetwork" />;
   } else if (errorLoading) {
-    display = <LoadingProblem type="invalidSafe" />;
-  } else {
-    display = <Outlet />;
+    return <LoadingProblem type="invalidSafe" />;
   }
 
-  return display;
+  return <Outlet />;
 }
