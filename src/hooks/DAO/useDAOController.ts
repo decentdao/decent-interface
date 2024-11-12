@@ -29,11 +29,14 @@ export default function useDAOController() {
     !validDaoQueryString.test(addressWithPrefix) ||
     !isAddress(safeAddressStr);
 
+  if (invalidQuery) {
+    throw new Error('Invalid query');
+  }
+
   const safeAddress = !invalidQuery ? safeAddressStr : undefined;
 
   const { addressPrefix: connectedAddressPrefix } = useNetworkConfig();
   const wrongNetwork = addressPrefix !== connectedAddressPrefix;
-
   const skip = invalidQuery || wrongNetwork;
 
   const {
