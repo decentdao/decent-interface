@@ -14,16 +14,13 @@ import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
 
-export const useFractalNode = (
-  skip: boolean,
-  {
-    addressPrefix,
-    safeAddress,
-  }: {
-    addressPrefix?: string;
-    safeAddress?: Address;
-  },
-) => {
+export const useFractalNode = ({
+  addressPrefix,
+  safeAddress,
+}: {
+  addressPrefix?: string;
+  safeAddress?: Address;
+}) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
@@ -124,7 +121,6 @@ export const useFractalNode = (
 
   useEffect(() => {
     if (
-      skip ||
       addressPrefix === undefined ||
       safeAddress === undefined ||
       `${addressPrefix}${safeAddress}` !== currentValidSafe.current
@@ -132,7 +128,7 @@ export const useFractalNode = (
       reset({ error: false });
       setDAO();
     }
-  }, [addressPrefix, safeAddress, setDAO, reset, skip]);
+  }, [addressPrefix, safeAddress, setDAO, reset]);
 
   return { errorLoading };
 };

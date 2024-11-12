@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useSwitchChain } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { getChainIdFromPrefix, getPrefixFromChainId } from '../../utils/url';
+import { getChainIdFromPrefix } from '../../utils/url';
 
 export const useAutomaticSwitchChain = ({
   addressPrefix,
@@ -26,13 +26,10 @@ export const useAutomaticSwitchChain = ({
   });
 
   useEffect(() => {
-    if (
-      addressPrefix === undefined ||
-      getPrefixFromChainId(networkConfig.chain.id) === addressPrefix
-    ) {
+    if (addressPrefix === undefined || networkConfig.addressPrefix === addressPrefix) {
       return;
     }
 
     switchChain({ chainId: getChainIdFromPrefix(addressPrefix) });
-  }, [switchChain, addressPrefix, networkConfig.chain.id]);
+  }, [switchChain, addressPrefix, networkConfig.addressPrefix]);
 };
