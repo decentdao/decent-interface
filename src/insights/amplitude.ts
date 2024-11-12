@@ -7,5 +7,7 @@ export const initAmplitude = () => {
     return;
   }
 
-  amplitude.init(amplitudeApiKey);
+  amplitude.init(amplitudeApiKey, {
+    defaultTracking: true,
+  });
 };
