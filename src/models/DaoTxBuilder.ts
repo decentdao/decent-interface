@@ -32,7 +32,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private internalTxs: SafeTransaction[] = [];
 
   private readonly keyValuePairs: Address;
-  private readonly fractalRegistry: Address;
   private readonly zodiacModuleProxyFactory: Address;
   private readonly multiSendCallOnly: Address;
   private readonly moduleFractalMasterCopy: Address;
@@ -48,7 +47,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
     txBuilderFactory: TxBuilderFactory,
 
     keyValuePairs: Address,
-    fractalRegistry: Address,
     zodiacModuleProxyFactory: Address,
     multiSendCallOnly: Address,
     moduleFractalMasterCopy: Address,
@@ -69,7 +67,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.txBuilderFactory = txBuilderFactory;
 
     this.keyValuePairs = keyValuePairs;
-    this.fractalRegistry = fractalRegistry;
     this.zodiacModuleProxyFactory = zodiacModuleProxyFactory;
     this.multiSendCallOnly = multiSendCallOnly;
     this.moduleFractalMasterCopy = moduleFractalMasterCopy;
@@ -256,10 +253,10 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private buildUpdateDAONameTx(): SafeTransaction {
     return buildContractCall(
-      abis.FractalRegistry,
-      this.fractalRegistry,
-      'updateDAOName',
-      [this.daoData.daoName],
+      abis.KeyValuePairs,
+      this.keyValuePairs,
+      'updateValues',
+      [['daoName'], [this.daoData.daoName]],
       0,
       false,
     );

@@ -35,7 +35,7 @@ export function SafeGeneralSettingsPage() {
   } = useFractal();
   const {
     addressPrefix,
-    contracts: { keyValuePairs, fractalRegistry },
+    contracts: { keyValuePairs },
   } = useNetworkConfig();
 
   const safeAddress = safe?.address;
@@ -69,21 +69,21 @@ export function SafeGeneralSettingsPage() {
   };
 
   const handleEditDAOName = () => {
-    const encodedUpdateDAOName = encodeFunctionData({
-      abi: abis.FractalRegistry,
-      functionName: 'updateDAOName',
-      args: [name],
-    });
-
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('updatesSafeName', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
-      targets: [fractalRegistry],
+      targets: [keyValuePairs],
       values: [0n],
-      calldatas: [encodedUpdateDAOName],
+      calldatas: [
+        encodeFunctionData({
+          abi: abis.KeyValuePairs,
+          functionName: 'updateValues',
+          args: [['daoName'], [name]],
+        }),
+      ],
     };
 
     submitProposal({
