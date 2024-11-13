@@ -48,12 +48,17 @@ export function OptionsList({
               closeOnSelect={closeOnSelect}
               data-testid={'optionMenu-' + option.optionKey}
             >
-              {showOptionSelected ? (
+              {true ? (
                 <Flex flex="1">
                   <Checkbox
                     isChecked={option.isSelected}
                     onChange={clickListener}
                     marginEnd="0.5rem"
+                    sx={{
+                      '& .chakra-checkbox__control': {
+                        borderRadius: '0.25rem',
+                      },
+                    }}
                   />
                   {t(option.optionKey)}
                 </Flex>
