@@ -2,7 +2,7 @@ sources:
   - name: decent
     handler:
       graphql:
-        endpoint: https://api.studio.thegraph.com/query/{context.subgraphSpace:71032}/{context.subgraphSlug:fractal-mainnet}/{context.subgraphVersion:v0.1.1}
+        endpoint: https://api.studio.thegraph.com/query/{context.subgraphSpace:71032}/{context.subgraphSlug:fractal-mainnet}/{context.subgraphVersion:v0.1.2}
   - name: sablier
     handler:
       graphql:

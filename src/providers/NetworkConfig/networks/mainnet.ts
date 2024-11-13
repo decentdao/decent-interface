@@ -28,7 +28,7 @@ export const mainnetConfig: NetworkConfig = {
   subgraph: {
     space: 71032,
     slug: 'fractal-mainnet',
-    version: 'v0.1.1',
+    version: 'v0.1.2',
   },
   sablierSubgraph: {
     space: 57079,
