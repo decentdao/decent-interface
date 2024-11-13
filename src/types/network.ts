@@ -56,7 +56,6 @@ export type NetworkConfig = {
 
     decentAutonomousAdminV1MasterCopy: Address;
 
-    fractalRegistry: Address;
     keyValuePairs: Address;
 
     decentHatsCreationModule: Address;
