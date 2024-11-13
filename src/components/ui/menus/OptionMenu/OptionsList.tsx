@@ -43,12 +43,12 @@ export function OptionsList({
               cursor="pointer"
               _hover={{ bg: 'neutral-3', textDecoration: 'none' }}
               p="0.5rem"
-              borderRadius="0.25rem"
+              borderRadius="0.5rem"
               gap={2}
               closeOnSelect={closeOnSelect}
               data-testid={'optionMenu-' + option.optionKey}
             >
-              {true ? (
+              {showOptionSelected ? (
                 <Flex flex="1">
                   <Checkbox
                     isChecked={option.isSelected}

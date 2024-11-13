@@ -47,6 +47,7 @@ export function ConnectedWalletMenuItem() {
         onClick={() => copyTextToClipboard(account)}
         whiteSpace="pre-wrap"
         wordBreak="break-all"
+        borderRadius="0.75rem"
         h="3rem"
         textOverflow="ellipsis"
         rightIcon={

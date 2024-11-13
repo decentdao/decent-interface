@@ -40,12 +40,12 @@ export function OptionMenu({
     <MenuList
       borderWidth="1px"
       borderColor="neutral-3"
-      borderRadius="0.58rem"
+      borderRadius="0.78rem"
       mr={menuListMr || ['auto', '1rem']}
       zIndex={1000}
     >
       <Box
-        borderRadius="0.5rem"
+        borderRadius="0.75rem"
         bg={NEUTRAL_2_82_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur="10px"
@@ -82,6 +82,7 @@ export function OptionMenu({
             event.stopPropagation();
           }}
           {...buttonProps}
+          borderRadius="0.75rem"
         >
           {trigger}
         </MenuButton>
