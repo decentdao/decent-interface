@@ -51,7 +51,6 @@ export function SafeHierarchyPage() {
         ]}
       />
       <DaoHierarchyNode
-        parentAddress={null}
         safeAddress={parentAddress || safeAddress}
         depth={0}
       />
