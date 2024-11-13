@@ -266,6 +266,7 @@ const useHatsTree = () => {
               return hat;
             }
             const payments: SablierPayment[] = [];
+            // @todo - update Datepicker to choose more precise dates (Date.now())
             if (hat.isTermed) {
               const recipients = hat.roleTerms.allTerms.map(term => term.nominee);
               const uniqueRecipients = [...new Set(recipients)];
@@ -273,7 +274,10 @@ const useHatsTree = () => {
                 payments.push(...(await getPaymentStreams(recipient)));
               }
             } else {
-              payments.push(...(await getPaymentStreams(hat.wearerAddress)));
+              if (!hat.smartAddress) {
+                throw new Error('Smart account address not found');
+              }
+              payments.push(...(await getPaymentStreams(hat.smartAddress)));
             }
 
             return { ...hat, payments };
