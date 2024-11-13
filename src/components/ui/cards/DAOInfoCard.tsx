@@ -14,23 +14,15 @@ import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
  * Info card used on the DAO homepage.
  */
 export function DAOInfoCard() {
-  const {
-    node,
-    guardContracts,
-    guard,
-    readOnly: { user },
-  } = useFractal();
-
-  const parentAddress = node.nodeHierarchy.parentAddress;
-  const childCount = node.nodeHierarchy.childNodes.length;
+  const { node } = useFractal();
 
   const { addressPrefix } = useNetworkConfig();
-
   // for non Fractal Safes
-  const { displayName } = useGetAccountName(node?.daoAddress);
+  const displayedAddress = node.safe?.address;
+  const { displayName } = useGetAccountName(displayedAddress);
 
   // node hasn't loaded yet
-  if (!node || !node.daoAddress) {
+  if (!node || !displayedAddress) {
     return (
       <Flex
         w="full"
@@ -42,8 +34,6 @@ export function DAOInfoCard() {
       </Flex>
     );
   }
-
-  const displayedAddress = node.daoAddress;
 
   return (
     <Box>
@@ -66,7 +56,7 @@ export function DAOInfoCard() {
             <FavoriteIcon safeAddress={displayedAddress} />
 
             {/* PARENT TAG */}
-            {!!childCount && childCount > 0 && (
+            {node.nodeHierarchy.childNodes.length > 0 && (
               <Link
                 to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
                 as={RouterLink}
@@ -83,13 +73,7 @@ export function DAOInfoCard() {
             )}
           </Flex>
           {/* SETTINGS MENU BUTTON */}
-          {!!user.address && (
-            <ManageDAOMenu
-              parentAddress={parentAddress}
-              freezeGuard={guard}
-              guardContracts={guardContracts}
-            />
-          )}
+          <ManageDAOMenu />
         </Flex>
         {/* DAO NAME AND ACTIONS */}
 

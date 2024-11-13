@@ -1,5 +1,13 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
+import {
+  useContext,
+  useCallback,
+  useEffect,
+  useState,
+  createContext,
+  ReactNode,
+  useRef,
+} from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -23,7 +31,7 @@ interface IVoteContext {
   getHasVoted: () => void;
 }
 
-export const VoteContext = createContext<IVoteContext>({
+const VoteContext = createContext<IVoteContext>({
   canVote: false,
   canVoteLoading: false,
   hasVoted: false,
@@ -140,10 +148,16 @@ export function VoteContextProvider({
       safe?.owners,
     ],
   );
+
+  const initialLoadRef = useRef(false);
   useEffect(() => {
+    // Prevent running this effect multiple times
+    if (initialLoadRef.current) return;
+    initialLoadRef.current = true;
+
     getCanVote();
     getHasVoted();
-  }, [getCanVote, getHasVoted, proposalVotesLength]);
+  }, [getCanVote, getHasVoted]);
 
   useEffect(() => {
     const azoriusProposal = proposal as AzoriusProposal;

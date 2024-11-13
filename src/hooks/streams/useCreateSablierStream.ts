@@ -1,12 +1,12 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import groupBy from 'lodash.groupby';
 import { useCallback } from 'react';
-import { Address, Hex, encodeFunctionData, erc20Abi, zeroAddress, getAddress } from 'viem';
+import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } from 'viem';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
-import { PreparedNewStreamData } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { PreparedNewStreamData } from '../../types/roles';
 import { SENTINEL_MODULE } from '../../utils/address';
 
 export function convertStreamIdToBigInt(streamId: string) {
@@ -21,8 +21,10 @@ export default function useCreateSablierStream() {
     contracts: { sablierV2LockupLinear, sablierV2Batch, decentSablierStreamManagementModule },
   } = useNetworkConfig();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
+
+  const safeAddress = safe?.address;
 
   const prepareStreamTokenCallData = useCallback(
     (amountInTokenDecimals: bigint) => {
@@ -37,11 +39,11 @@ export default function useCreateSablierStream() {
 
   const prepareBasicStreamData = useCallback(
     (recipient: Address, amountInTokenDecimals: bigint) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Can not create sablier stream proposal while DAO is not set.');
       }
       return {
-        sender: daoAddress, // Tokens sender. This address will be able to cancel the stream
+        sender: safeAddress, // Tokens sender. This address will be able to cancel the stream
         cancelable: true, // Cancelable - is it possible to cancel this stream
         transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
         recipient, // Recipient of tokens through stream
@@ -49,7 +51,7 @@ export default function useCreateSablierStream() {
         broker: { account: zeroAddress, fee: 0n }, // Optional broker
       };
     },
-    [daoAddress],
+    [safeAddress],
   );
 
   const prepareLinearStream = useCallback(
@@ -80,7 +82,7 @@ export default function useCreateSablierStream() {
 
   const prepareFlushStreamTxs = useCallback(
     (args: { streamId: string; to: Address; smartAccount: Address }) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Can not flush stream without DAO Address');
       }
 
@@ -106,7 +108,7 @@ export default function useCreateSablierStream() {
 
       return [
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: enableModuleData,
         },
         {
@@ -114,17 +116,17 @@ export default function useCreateSablierStream() {
           calldata: withdrawMaxFromStreamData,
         },
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: disableModuleData,
         },
       ];
     },
-    [daoAddress, decentSablierStreamManagementModule, sablierV2LockupLinear],
+    [safeAddress, decentSablierStreamManagementModule, sablierV2LockupLinear],
   );
 
   const prepareCancelStreamTxs = useCallback(
     (streamId: string) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Can not flush stream without DAO Address');
       }
 
@@ -148,7 +150,7 @@ export default function useCreateSablierStream() {
 
       return [
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: enableModuleData,
         },
         {
@@ -156,12 +158,12 @@ export default function useCreateSablierStream() {
           calldata: cancelStreamData,
         },
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: disableModuleData,
         },
       ];
     },
-    [daoAddress, decentSablierStreamManagementModule, sablierV2LockupLinear],
+    [safeAddress, decentSablierStreamManagementModule, sablierV2LockupLinear],
   );
 
   const prepareBatchLinearStreamCreation = useCallback(

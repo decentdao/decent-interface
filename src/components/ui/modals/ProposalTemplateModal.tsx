@@ -26,7 +26,7 @@ export default function ProposalTemplateModal({
   onClose,
 }: IProposalTemplateModalProps) {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
@@ -92,8 +92,8 @@ export default function ProposalTemplateModal({
   };
 
   const successCallback = () => {
-    if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+    if (safe?.address) {
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
       onClose();
     }
   };

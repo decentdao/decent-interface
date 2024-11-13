@@ -1,6 +1,7 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { GetContractEventsReturnType, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
@@ -62,9 +63,14 @@ const useKeyValuePairs = () => {
     contracts: { keyValuePairs },
   } = useNetworkConfig();
   const { setHatsTreeId } = useRolesStore();
+  const [searchParams] = useSearchParams();
+
+  const safeAddress = node.safe?.address;
 
   useEffect(() => {
-    if (!publicClient || !node.daoAddress) {
+    const safeParam = searchParams.get('dao');
+
+    if (!publicClient || !safeAddress || safeAddress !== safeParam?.split(':')[1]) {
       return;
     }
 
@@ -74,7 +80,7 @@ const useKeyValuePairs = () => {
       client: publicClient,
     });
     keyValuePairsContract.getEvents
-      .ValueUpdated({ theAddress: node.daoAddress }, { fromBlock: 0n })
+      .ValueUpdated({ theAddress: safeAddress }, { fromBlock: 0n })
       .then(safeEvents =>
         setHatsTreeId({
           contextChainId: chain.id,
@@ -88,7 +94,7 @@ const useKeyValuePairs = () => {
 
     const unwatch = keyValuePairsContract.watchEvent.ValueUpdated(
       {
-        theAddress: node.daoAddress,
+        theAddress: safeAddress,
       },
       {
         onLogs: logs => {
@@ -107,7 +113,7 @@ const useKeyValuePairs = () => {
     return () => {
       unwatch();
     };
-  }, [chain.id, keyValuePairs, node.daoAddress, publicClient, setHatsTreeId]);
+  }, [chain.id, keyValuePairs, safeAddress, publicClient, searchParams, setHatsTreeId]);
 };
 
 export { useKeyValuePairs };

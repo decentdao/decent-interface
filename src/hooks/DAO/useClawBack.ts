@@ -31,9 +31,9 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { getTokenBalances } = useBalancesAPI();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo.daoAddress && parentAddress && safeAPI) {
+    if (childSafeInfo.safe?.address && parentAddress && safeAPI) {
       try {
-        const childSafeTokenBalance = await getTokenBalances(childSafeInfo.daoAddress);
+        const childSafeTokenBalance = await getTokenBalances(childSafeInfo.safe.address);
 
         if (childSafeTokenBalance.error || !childSafeTokenBalance.data) {
           toast.error(t('clawBackBalancesError', { duration: Infinity }));

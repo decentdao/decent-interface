@@ -14,14 +14,15 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import {
   CreateProposalMetadata,
-  VotingStrategyType,
   DecodedTransaction,
   FractalProposalState,
+  VotingStrategyType,
 } from '../../../../types';
 import { AzoriusProposal } from '../../../../types/daoProposal';
-import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../../utils';
+import { decodeTransactions, mapProposalCreatedEventToProposal } from '../../../../utils';
 import { CacheExpiry, CacheKeys } from '../../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../../utils/cache/useLocalStorage';
+import { useAddressContractType } from '../../../utils/useAddressContractType';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 type OnProposalLoaded = (proposal: AzoriusProposal) => void;
@@ -33,12 +34,15 @@ export const useAzoriusProposals = () => {
     governanceContracts: {
       moduleAzoriusAddress,
       linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
       linearVotingErc721Address,
+      linearVotingErc721WithHatsWhitelistingAddress,
     },
     action,
   } = useFractal();
   const decode = useSafeDecoder();
   const publicClient = usePublicClient();
+  const { getAddressContractType } = useAddressContractType();
 
   const azoriusContract = useMemo(() => {
     if (!moduleAzoriusAddress || !publicClient) {
@@ -52,57 +56,71 @@ export const useAzoriusProposals = () => {
     });
   }, [moduleAzoriusAddress, publicClient]);
 
-  const strategyType = useMemo(() => {
-    if (linearVotingErc20Address) {
-      return VotingStrategyType.LINEAR_ERC20;
-    } else if (linearVotingErc721Address) {
-      return VotingStrategyType.LINEAR_ERC721;
-    } else {
-      return undefined;
-    }
-  }, [linearVotingErc20Address, linearVotingErc721Address]);
-
-  const erc20StrategyContract = useMemo(() => {
-    if (!linearVotingErc20Address || !publicClient) {
-      return undefined;
-    }
-
-    return getContract({
-      abi: abis.LinearERC20Voting,
-      address: linearVotingErc20Address,
-      client: publicClient,
-    });
-  }, [linearVotingErc20Address, publicClient]);
-
-  const erc721StrategyContract = useMemo(() => {
-    if (!linearVotingErc721Address || !publicClient) {
-      return undefined;
-    }
-
-    return getContract({
-      abi: abis.LinearERC721Voting,
-      address: linearVotingErc721Address,
-      client: publicClient,
-    });
-  }, [linearVotingErc721Address, publicClient]);
-
   const erc20VotedEvents = useMemo(async () => {
-    if (!erc20StrategyContract) {
+    let events: GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'> | undefined;
+    if (
+      (!linearVotingErc20Address && !linearVotingErc20WithHatsWhitelistingAddress) ||
+      !publicClient
+    ) {
       return;
     }
 
-    const events = await erc20StrategyContract.getEvents.Voted({ fromBlock: 0n });
+    if (linearVotingErc20Address) {
+      const erc20StrategyContract = getContract({
+        abi: abis.LinearERC20Voting,
+        address: linearVotingErc20Address,
+        client: publicClient,
+      });
+      events = [...(await erc20StrategyContract.getEvents.Voted({ fromBlock: 0n }))];
+    }
+
+    if (linearVotingErc20WithHatsWhitelistingAddress) {
+      const erc20WithHatsProposalCreationStrategyContract = getContract({
+        abi: abis.LinearERC20VotingWithHatsProposalCreation,
+        address: linearVotingErc20WithHatsWhitelistingAddress,
+        client: publicClient,
+      });
+      events = [
+        ...(await erc20WithHatsProposalCreationStrategyContract.getEvents.Voted({ fromBlock: 0n })),
+      ];
+    }
+
     return events;
-  }, [erc20StrategyContract]);
+  }, [linearVotingErc20Address, linearVotingErc20WithHatsWhitelistingAddress, publicClient]);
 
   const erc721VotedEvents = useMemo(async () => {
-    if (!erc721StrategyContract) {
+    let events: GetContractEventsReturnType<typeof abis.LinearERC721Voting, 'Voted'> | undefined;
+    if (
+      (!linearVotingErc721Address && !linearVotingErc721WithHatsWhitelistingAddress) ||
+      !publicClient
+    ) {
       return;
     }
 
-    const events = await erc721StrategyContract.getEvents.Voted({ fromBlock: 0n });
+    if (linearVotingErc721Address) {
+      const erc721StrategyContract = getContract({
+        abi: abis.LinearERC721Voting,
+        address: linearVotingErc721Address,
+        client: publicClient,
+      });
+      events = [...(await erc721StrategyContract.getEvents.Voted({ fromBlock: 0n }))];
+    }
+
+    if (linearVotingErc721WithHatsWhitelistingAddress) {
+      const erc721WithHatsProposalCreationStrategyContract = getContract({
+        abi: abis.LinearERC721VotingWithHatsProposalCreation,
+        address: linearVotingErc721WithHatsWhitelistingAddress,
+        client: publicClient,
+      });
+      events = [
+        ...(await erc721WithHatsProposalCreationStrategyContract.getEvents.Voted({
+          fromBlock: 0n,
+        })),
+      ];
+    }
+
     return events;
-  }, [erc721StrategyContract]);
+  }, [linearVotingErc721Address, linearVotingErc721WithHatsWhitelistingAddress, publicClient]);
 
   const executedEvents = useMemo(async () => {
     if (!azoriusContract) {
@@ -128,18 +146,19 @@ export const useAzoriusProposals = () => {
   const loadAzoriusProposals = useCallback(
     async (
       _azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient> | undefined,
-      _erc20StrategyContract:
-        | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
-        | undefined,
-      _erc721StrategyContract:
-        | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
-        | undefined,
-      _strategyType: VotingStrategyType | undefined,
       _erc20VotedEvents:
         | GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'>
+        | GetContractEventsReturnType<
+            typeof abis.LinearERC20VotingWithHatsProposalCreation,
+            'Voted'
+          >
         | undefined,
       _erc721VotedEvents:
         | GetContractEventsReturnType<typeof abis.LinearERC721Voting, 'Voted'>
+        | GetContractEventsReturnType<
+            typeof abis.LinearERC721VotingWithHatsProposalCreation,
+            'Voted'
+          >
         | undefined,
       _executedEvents:
         | GetContractEventsReturnType<typeof abis.Azorius, 'ProposalExecuted'>
@@ -152,7 +171,7 @@ export const useAzoriusProposals = () => {
       ) => Promise<DecodedTransaction[]>,
       _proposalLoaded: OnProposalLoaded,
     ) => {
-      if (!_strategyType || !_azoriusContract || !_publicClient) {
+      if (!_azoriusContract || !_publicClient) {
         return;
       }
       const proposalCreatedEvents = (
@@ -254,15 +273,34 @@ export const useAzoriusProposals = () => {
           }
         }
 
-        if (proposalCreatedEvent.args.proposer === undefined) {
+        if (
+          proposalCreatedEvent.args.proposer === undefined ||
+          proposalCreatedEvent.args.strategy === undefined
+        ) {
+          continue;
+        }
+
+        let strategyType: VotingStrategyType | undefined;
+        const strategyAddress = proposalCreatedEvent.args.strategy;
+        const {
+          isLinearVotingErc20,
+          isLinearVotingErc721,
+          isLinearVotingErc20WithHatsProposalCreation,
+          isLinearVotingErc721WithHatsProposalCreation,
+        } = await getAddressContractType(strategyAddress);
+        if (isLinearVotingErc20 || isLinearVotingErc20WithHatsProposalCreation) {
+          strategyType = VotingStrategyType.LINEAR_ERC20;
+        } else if (isLinearVotingErc721 || isLinearVotingErc721WithHatsProposalCreation) {
+          strategyType = VotingStrategyType.LINEAR_ERC721;
+        } else {
+          logError('Unknown voting strategy', 'strategyAddress:', strategyAddress);
           continue;
         }
 
         const proposal = await mapProposalCreatedEventToProposal(
           proposalCreatedEvent.transactionHash,
-          _erc20StrategyContract,
-          _erc721StrategyContract,
-          _strategyType,
+          proposalCreatedEvent.args.strategy,
+          strategyType,
           Number(proposalCreatedEvent.args.proposalId),
           proposalCreatedEvent.args.proposer,
           _azoriusContract,
@@ -306,15 +344,12 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, moduleAzoriusAddress, t],
+    [action, moduleAzoriusAddress, t, getAddressContractType],
   );
 
   return async (proposalLoaded: OnProposalLoaded) =>
     loadAzoriusProposals(
       azoriusContract,
-      erc20StrategyContract,
-      erc721StrategyContract,
-      strategyType,
       await erc20VotedEvents,
       await erc721VotedEvents,
       await executedEvents,

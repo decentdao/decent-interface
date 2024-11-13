@@ -35,20 +35,21 @@ function PageHeader({
     node: { daoName, safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
+  const safeAddress = safe?.address;
 
   const [links, setLinks] = useState([...breadcrumbs]);
 
   useEffect(() => {
-    if (hasDAOLink && safe?.address) {
+    if (hasDAOLink && safeAddress) {
       setLinks([
         {
-          terminus: daoName || (safe.address && createAccountSubstring(safe.address)) || '',
-          path: DAO_ROUTES.dao.relative(addressPrefix, safe.address),
+          terminus: daoName || (safeAddress && createAccountSubstring(safeAddress)) || '',
+          path: DAO_ROUTES.dao.relative(addressPrefix, safeAddress),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, daoName, safe?.address, breadcrumbs, addressPrefix]);
+  }, [hasDAOLink, daoName, safeAddress, breadcrumbs, addressPrefix]);
 
   const showAction = !!buttonProps || !!ButtonIcon || !!children;
 

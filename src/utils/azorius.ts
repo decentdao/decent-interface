@@ -7,6 +7,7 @@ import {
   Hex,
   PublicClient,
   getAddress,
+  getContract,
 } from 'viem';
 import { strategyFractalProposalStates } from '../constants/strategy';
 
@@ -36,22 +37,35 @@ export const getAzoriusProposalState = async (
   return strategyFractalProposalStates[state];
 };
 
-const getQuorum = async (
-  erc20StrategyContract:
+const getQuorum = async ({
+  strategyContract,
+  strategyType,
+  proposalId,
+}: {
+  strategyContract:
     | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
-    | undefined,
-  erc721StrategyContract:
+    | GetContractReturnType<typeof abis.LinearERC20VotingWithHatsProposalCreation, PublicClient>
     | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
-    | undefined,
-  strategyType: VotingStrategyType,
-  proposalId: number,
-) => {
+    | GetContractReturnType<typeof abis.LinearERC721VotingWithHatsProposalCreation, PublicClient>;
+  strategyType: VotingStrategyType;
+  proposalId: number;
+}) => {
   let quorum;
 
-  if (strategyType === VotingStrategyType.LINEAR_ERC20 && erc20StrategyContract) {
-    quorum = await erc20StrategyContract.read.quorumVotes([proposalId]);
-  } else if (strategyType === VotingStrategyType.LINEAR_ERC721 && erc721StrategyContract) {
-    quorum = await erc721StrategyContract.read.quorumThreshold();
+  if (
+    strategyType === VotingStrategyType.LINEAR_ERC20 ||
+    strategyType === VotingStrategyType.LINEAR_ERC20_HATS_WHITELISTING
+  ) {
+    quorum = await (
+      strategyContract as GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
+    ).read.quorumVotes([proposalId]);
+  } else if (
+    strategyType === VotingStrategyType.LINEAR_ERC721 ||
+    strategyType === VotingStrategyType.LINEAR_ERC721_HATS_WHITELISTING
+  ) {
+    quorum = await (
+      strategyContract as GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
+    ).read.quorumThreshold();
   } else {
     quorum = 0n;
   }
@@ -59,47 +73,31 @@ const getQuorum = async (
   return quorum;
 };
 
-export const getProposalVotesSummary = async (
-  erc20Strategy: GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient> | undefined,
-  erc721Strategy: GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient> | undefined,
-  strategyType: VotingStrategyType,
-  proposalId: number,
-): Promise<ProposalVotesSummary> => {
+export const getProposalVotesSummary = async ({
+  strategyContract,
+  strategyType,
+  proposalId,
+}: {
+  strategyContract:
+    | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC20VotingWithHatsProposalCreation, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC721VotingWithHatsProposalCreation, PublicClient>;
+  strategyType: VotingStrategyType;
+  proposalId: number;
+}): Promise<ProposalVotesSummary> => {
   try {
-    if (erc20Strategy !== undefined && erc721Strategy !== undefined) {
-      throw new Error("we don't support multiple strategy contracts");
-    }
-
-    if (erc20Strategy !== undefined) {
-      const [noVotes, yesVotes, abstainVotes] = await erc20Strategy.read.getProposalVotes([
+    const [no, yes, abstain] = await strategyContract.read.getProposalVotes([proposalId]);
+    return {
+      yes,
+      no,
+      abstain,
+      quorum: await getQuorum({
+        strategyContract,
+        strategyType,
         proposalId,
-      ]);
-
-      return {
-        yes: yesVotes,
-        no: noVotes,
-        abstain: abstainVotes,
-        quorum: await getQuorum(erc20Strategy, erc721Strategy, strategyType, proposalId),
-      };
-    } else if (erc721Strategy !== undefined) {
-      const [noVotes, yesVotes, abstainVotes] = await erc721Strategy.read.getProposalVotes([
-        proposalId,
-      ]);
-
-      return {
-        yes: yesVotes,
-        no: noVotes,
-        abstain: abstainVotes,
-        quorum: await getQuorum(erc20Strategy, erc721Strategy, strategyType, proposalId),
-      };
-    } else {
-      return {
-        yes: 0n,
-        no: 0n,
-        abstain: 0n,
-        quorum: 0n,
-      };
-    }
+      }),
+    };
   } catch (e) {
     // Sometimes loading DAO proposals called in the moment when proposal was **just** created
     // Thus, calling `getProposalVotes` for such a proposal reverts with error
@@ -175,30 +173,23 @@ const getProposalVotes = (
 
 export const mapProposalCreatedEventToProposal = async (
   createdEventTransactionHash: Hex,
-  erc20StrategyContract:
-    | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
-    | undefined,
-  erc721StrategyContract:
-    | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
-    | undefined,
+  strategyAddress: Address,
   strategyType: VotingStrategyType,
   proposalId: number,
   proposer: Address,
   azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient>,
   publicClient: PublicClient,
-  erc20VotedEvents: GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'> | undefined,
+  erc20VotedEvents:
+    | GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'>
+    | GetContractEventsReturnType<typeof abis.LinearERC20VotingWithHatsProposalCreation, 'Voted'>
+    | undefined,
   erc721VotedEvents:
     | GetContractEventsReturnType<typeof abis.LinearERC721Voting, 'Voted'>
+    | GetContractEventsReturnType<typeof abis.LinearERC721VotingWithHatsProposalCreation, 'Voted'>
     | undefined,
   executedEvents: GetContractEventsReturnType<typeof abis.Azorius, 'ProposalExecuted'> | undefined,
   data?: ProposalData,
 ) => {
-  if (erc20StrategyContract !== undefined && erc721StrategyContract !== undefined) {
-    throw new Error(
-      'Multiple strategy contracts are passed into Azorius proposal mapping, which is not supported at the moment!',
-    );
-  }
-
   let proposalVotes = {
     startBlock: 0,
     endBlock: 0,
@@ -207,32 +198,23 @@ export const mapProposalCreatedEventToProposal = async (
     abstainVotes: 0n,
   };
 
-  if (erc20StrategyContract !== undefined) {
-    const stratProposalVotes = await erc20StrategyContract.read.getProposalVotes([proposalId]);
-    proposalVotes.noVotes = stratProposalVotes[0];
-    proposalVotes.yesVotes = stratProposalVotes[1];
-    proposalVotes.abstainVotes = stratProposalVotes[2];
-    proposalVotes.startBlock = stratProposalVotes[3];
-    proposalVotes.endBlock = stratProposalVotes[4];
-  } else if (erc721StrategyContract !== undefined) {
-    const stratProposalVotes = await erc721StrategyContract.read.getProposalVotes([proposalId]);
-    proposalVotes.noVotes = stratProposalVotes[0];
-    proposalVotes.yesVotes = stratProposalVotes[1];
-    proposalVotes.abstainVotes = stratProposalVotes[2];
-    proposalVotes.startBlock = stratProposalVotes[3];
-    proposalVotes.endBlock = stratProposalVotes[4];
-  } else {
-    throw new Error(
-      'Proposal votes breakdown is missing from strategy contract. Seems like strategy contract is not supplied',
-    );
-  }
+  const strategyContract = getContract({
+    address: strategyAddress,
+    abi: abis.LinearERC20Voting,
+    client: publicClient,
+  });
+  const stratProposalVotes = await strategyContract.read.getProposalVotes([proposalId]);
+  proposalVotes.noVotes = stratProposalVotes[0];
+  proposalVotes.yesVotes = stratProposalVotes[1];
+  proposalVotes.abstainVotes = stratProposalVotes[2];
+  proposalVotes.startBlock = stratProposalVotes[3];
+  proposalVotes.endBlock = stratProposalVotes[4];
 
-  const quorum = await getQuorum(
-    erc20StrategyContract,
-    erc721StrategyContract,
+  const quorum = await getQuorum({
+    strategyContract,
     strategyType,
     proposalId,
-  );
+  });
 
   const deadlineSeconds = await getTimeStamp(proposalVotes.endBlock, publicClient);
   const block = await publicClient.getBlock({ blockNumber: BigInt(proposalVotes.startBlock) });
@@ -274,6 +256,7 @@ export const mapProposalCreatedEventToProposal = async (
     votes,
     votesSummary,
     data,
+    votingStrategy: strategyContract.address,
   };
 
   return proposal;

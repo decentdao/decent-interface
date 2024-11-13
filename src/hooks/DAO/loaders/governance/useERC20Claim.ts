@@ -8,12 +8,12 @@ import { useAddressContractType } from '../../../utils/useAddressContractType';
 
 export function useERC20Claim() {
   const {
-    node: { daoAddress },
+    node: { safe },
     governanceContracts: { votesTokenAddress },
     action,
   } = useFractal();
   const publicClient = usePublicClient();
-
+  const safeAddress = safe?.address;
   const { getAddressContractType } = useAddressContractType();
 
   const loadTokenClaimContract = useCallback(async () => {
@@ -50,13 +50,13 @@ export function useERC20Claim() {
   const loadKey = useRef<string>();
 
   useEffect(() => {
-    if (daoAddress && votesTokenAddress && daoAddress + votesTokenAddress !== loadKey.current) {
-      loadKey.current = daoAddress + votesTokenAddress;
+    if (safeAddress && votesTokenAddress && safeAddress + votesTokenAddress !== loadKey.current) {
+      loadKey.current = safeAddress + votesTokenAddress;
       loadTokenClaimContract();
     }
-    if (!daoAddress || !votesTokenAddress) {
+    if (!safeAddress || !votesTokenAddress) {
       loadKey.current = undefined;
     }
-  }, [loadTokenClaimContract, daoAddress, votesTokenAddress]);
+  }, [loadTokenClaimContract, safeAddress, votesTokenAddress]);
   return;
 }

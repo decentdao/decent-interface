@@ -10,7 +10,7 @@ import useSubmitProposal from '../../DAO/proposal/useSubmitProposal';
 
 export default function useLidoStaking() {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const {
     staking: { lido },
@@ -18,9 +18,11 @@ export default function useLidoStaking() {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation('proposal');
 
+  const safeAddress = safe?.address;
+
   const handleStake = useCallback(
     async (value: bigint) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !safeAddress) {
         // Means it is not supported on current network
         return;
       }
@@ -49,12 +51,12 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t],
+    [lido, safeAddress, safe, submitProposal, t],
   );
 
   const handleUnstake = useCallback(
     async (value: string) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !safeAddress) {
         // Means it is not supported on current network
         return;
       }
@@ -68,7 +70,7 @@ export default function useLidoStaking() {
       const encodedWithdraw = encodeFunctionData({
         abi: LidoWithdrawalQueueAbi,
         functionName: 'requestWithdrawals',
-        args: [[BigInt(value)], daoAddress],
+        args: [[BigInt(value)], safeAddress],
       });
 
       const proposalData: ProposalExecuteData = {
@@ -90,12 +92,12 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t],
+    [lido, safeAddress, safe, submitProposal, t],
   );
 
   const handleClaimUnstakedETH = useCallback(
     async (nftId: bigint) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !safeAddress) {
         // Means it is not supported on current network
         return;
       }
@@ -124,7 +126,7 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t],
+    [lido, safeAddress, safe, submitProposal, t],
   );
 
   return { handleStake, handleUnstake, handleClaimUnstakedETH };

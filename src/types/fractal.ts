@@ -1,4 +1,4 @@
-import { TransferResponse, TokenInfoResponse } from '@safe-global/api-kit';
+import { TokenInfoResponse, TransferResponse } from '@safe-global/api-kit';
 import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types';
 import { Dispatch } from 'react';
 import { Address } from 'viem';
@@ -10,17 +10,17 @@ import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
-import { ProposalData, MultisigProposal, AzoriusProposal } from './daoProposal';
+import { AzoriusProposal, MultisigProposal, ProposalData } from './daoProposal';
 import { ProposalTemplate } from './proposalBuilder';
 import { SafeInfoResponseWithGuard } from './safeGlobal';
 import { BIFormattedPair } from './votingFungibleToken';
 import {
   DefiBalance,
   NFTBalance,
+  SnapshotProposal,
   TokenBalance,
   TokenEventType,
   TransferType,
-  SnapshotProposal,
 } from '.';
 /**
  * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
@@ -149,12 +149,6 @@ export interface ITokenAccount {
   votingWeightString: string | undefined;
 }
 
-/**
- * @dev This interface represents the store for the Fractal DAO.
- * @param baseContracts - This object contains the base contracts for the Fractal DAO.
- * @param clients - This object contains the clients for the Fractal DAO.
- * @param dispatch - This object contains the dispatch functions for the Fractal DAO.
- */
 export interface FractalStore extends Fractal {
   action: {
     dispatch: Dispatch<FractalActions>;
@@ -185,7 +179,9 @@ export interface Fractal {
 
 export interface FractalGovernanceContracts {
   linearVotingErc20Address?: Address;
+  linearVotingErc20WithHatsWhitelistingAddress?: Address;
   linearVotingErc721Address?: Address;
+  linearVotingErc721WithHatsWhitelistingAddress?: Address;
   moduleAzoriusAddress?: Address;
   votesTokenAddress?: Address;
   lockReleaseAddress?: Address;
@@ -197,7 +193,6 @@ export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address; 
 
 export interface FractalNode {
   daoName: string | null;
-  daoAddress: Address | null;
   safe: SafeWithNextNonce | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
@@ -208,7 +203,9 @@ export interface FractalNode {
 }
 
 export interface Node
-  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
+  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
+  address: Address;
+}
 
 export interface FractalModuleData {
   moduleAddress: Address;
@@ -280,17 +277,22 @@ export interface VotingStrategy<Type = BIFormattedPair> {
   quorumPercentage?: Type;
   quorumThreshold?: Type;
   timeLockPeriod?: Type;
+  proposerThreshold?: Type;
 }
 
 export enum GovernanceType {
   MULTISIG = 'labelMultisigGov',
   AZORIUS_ERC20 = 'labelAzoriusErc20Gov',
+  AZORIUS_ERC20_HATS_WHITELISTING = 'labelAzoriusErc20HatsWhitelistingGov',
   AZORIUS_ERC721 = 'labelAzoriusErc721Gov',
+  AZORIUS_ERC721_HATS_WHITELISTING = 'labelAzoriusErc721HatsWhitelistingGov',
 }
 
 export enum VotingStrategyType {
-  LINEAR_ERC20 = 'labelLinearERC20',
-  LINEAR_ERC721 = 'labelLinearERC721',
+  LINEAR_ERC20 = 'labelLinearErc20',
+  LINEAR_ERC20_HATS_WHITELISTING = 'labelLinearErc20WithWhitelisting',
+  LINEAR_ERC721 = 'labelLinearErc721',
+  LINEAR_ERC721_HATS_WHITELISTING = 'labelLinearErc721WithWhitelisting',
 }
 
 export interface NodeHierarchy {
@@ -336,4 +338,9 @@ export interface TransferDisplayData {
   transactionHash: string;
   tokenId: string;
   tokenInfo?: TokenInfoResponse;
+}
+
+export enum SortBy {
+  Newest = 'newest',
+  Oldest = 'oldest',
 }

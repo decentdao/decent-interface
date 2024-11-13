@@ -1,5 +1,4 @@
 import { addresses } from '@fractal-framework/fractal-contracts';
-
 import {
   getCompatibilityFallbackHandlerDeployment,
   getMultiSendCallOnlyDeployment,
@@ -21,7 +20,6 @@ export const baseConfig: NetworkConfig = {
   order: 10,
   chain,
   rpcEndpoint: `https://base-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
-  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-base.safe.global',
   etherscanBaseURL: 'https://basescan.org/',
   etherscanAPIUrl: `https://api.basescan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_BASE_API_KEY}`,
@@ -62,7 +60,13 @@ export const baseConfig: NetworkConfig = {
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
     linearVotingErc20WrappedMasterCopy: getAddress(a.LinearERC20WrappedVoting),
+    linearVotingErc20HatsWhitelistingMasterCopy: getAddress(
+      a.LinearERC20VotingWithHatsProposalCreation,
+    ),
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
+    linearVotingErc721HatsWhitelistingMasterCopy: getAddress(
+      a.LinearERC721VotingWithHatsProposalCreation,
+    ),
 
     moduleAzoriusMasterCopy: getAddress(a.Azorius),
     moduleFractalMasterCopy: getAddress(a.FractalModule),
@@ -99,6 +103,7 @@ export const baseConfig: NetworkConfig = {
   },
   staking: {},
   moralis: {
+    chainSupported: true,
     deFiSupported: true,
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
