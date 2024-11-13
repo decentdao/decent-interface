@@ -80,7 +80,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
         }
         p="1.5rem"
         width="100%"
-        borderRadius="0.5rem"
+        borderRadius="0.75rem"
         border={isCurrentDAO ? '4px solid' : '1px'}
         borderColor={isCurrentDAO ? 'neutral-4' : 'transparent'}
       >
