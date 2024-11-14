@@ -992,13 +992,16 @@ export default function useCreateRoles() {
       const immutableArgs = [BigInt(hatsTree.topHat.id), BigInt(0)];
       const hatId = BigInt(formHat.id);
       const saltNonce = BigInt(ERC6551_REGISTRY_SALT);
+      const formHatCurrentWearer = getAddress(formHat.wearer);
 
       const [firstTerm] = parseRoleTermsFromFormRoleTerms(formHat.roleTerms);
+      const firstTermNominee = firstTerm.nominatedWearers[0];
+      const firstTermEndDateTs = firstTerm.termEndDateTs;
 
       const { encodedImmutableArgs, encodedMutableArgs } = checkAndEncodeArgs({
         module,
         immutableArgs: immutableArgs,
-        mutableArgs: [firstTerm.termEndDateTs],
+        mutableArgs: [firstTermEndDateTs],
       });
 
       // deploy new instance of election module tx
@@ -1008,7 +1011,7 @@ export default function useCreateRoles() {
           functionName: 'createHatsModule',
           args: [
             hatsElectionsEligibilityMasterCopy,
-            BigInt(formHat.id),
+            hatId,
             encodedImmutableArgs,
             encodedMutableArgs,
             saltNonce,
@@ -1031,7 +1034,7 @@ export default function useCreateRoles() {
         calldata: encodeFunctionData({
           abi: HatsAbi,
           functionName: 'transferHat',
-          args: [BigInt(formHat.id), getAddress(formHat.wearer), safe.address],
+          args: [hatId, formHatCurrentWearer, safe.address],
         }),
         targetAddress: hatsProtocol,
       };
@@ -1048,7 +1051,7 @@ export default function useCreateRoles() {
 
           const flushStreamTxCalldata = prepareFlushStreamTxs({
             streamId: stream.streamId,
-            to: getAddress(formHat.wearer),
+            to: formHatCurrentWearer,
             smartAccount: formHat.smartAddress,
           });
 
@@ -1093,7 +1096,7 @@ export default function useCreateRoles() {
         calldata: encodeFunctionData({
           abi: HatsElectionsEligibilityAbi,
           functionName: 'elect',
-          args: [firstTerm.termEndDateTs, firstTerm.nominatedWearers],
+          args: [firstTermEndDateTs, [firstTermNominee]],
         }),
         targetAddress: hatsProtocol,
       };
@@ -1111,7 +1114,7 @@ export default function useCreateRoles() {
         calldata: encodeFunctionData({
           abi: HatsAbi,
           functionName: 'mintHat',
-          args: [hatId, getAddress(formHat.wearer)],
+          args: [hatId, firstTermNominee],
         }),
         targetAddress: hatsProtocol,
       };
