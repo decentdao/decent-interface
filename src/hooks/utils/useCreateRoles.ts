@@ -1019,7 +1019,7 @@ export default function useCreateRoles() {
 
       const predictedElectionsModuleAddress = await hatsModulesClient.predictHatsModuleAddress({
         // @todo This will need to be updated when/if https://github.com/Hats-Protocol/modules-sdk/pull/27 is merged
-        moduleId: module.id,
+        moduleId: module.implementationAddress,
         hatId,
         immutableArgs,
         saltNonce,
