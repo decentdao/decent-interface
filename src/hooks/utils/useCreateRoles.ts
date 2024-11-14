@@ -1136,7 +1136,6 @@ export default function useCreateRoles() {
       if (formHatCurrentWearer !== firstTermNominee) {
         conversionTxs.push(mintTx);
       }
-      console.log('🚀 ~ conversionTxs:', conversionTxs);
       return conversionTxs;
     },
     [
