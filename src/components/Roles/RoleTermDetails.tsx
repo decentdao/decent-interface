@@ -22,7 +22,7 @@ type RoleTermDetailProp = {
   termNumber: number;
 };
 
-type CurrentTermProp = RoleTermDetailProp & { termStatus: 'active' | 'inactive' };
+type CurrentTermProp = RoleTermDetailProp & { isActive: boolean | undefined };
 
 function RoleTermRenderer({
   roleTerm,
@@ -139,7 +139,7 @@ export default function RoleTermDetails({
 }) {
   const currentTermStatus = useMemo(() => {
     if (!!currentTerm) {
-      if (currentTerm.termStatus === 'inactive') {
+      if (!currentTerm.isActive) {
         return RoleFormTermStatus.ReadyToStart;
       }
       return RoleFormTermStatus.Current;
