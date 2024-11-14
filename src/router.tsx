@@ -214,20 +214,16 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
                   path: DAO_ROUTES.settingsModulesAndGuard.path,
                   element: <SafeModulesSettingsPage />,
                 },
-                ...(import.meta.env.VITE_APP_FLAG_WHITELISTING === 'ON'
-                  ? [
-                      {
-                        path: DAO_ROUTES.settingsPermissions.path,
-                        element: <SafePermissionsSettingsPage />,
-                        children: [
-                          {
-                            path: DAO_ROUTES.settingsPermissionsCreateProposal.path,
-                            element: <SafePermissionsCreateProposal />,
-                          },
-                        ],
-                      },
-                    ]
-                  : []),
+                {
+                  path: DAO_ROUTES.settingsPermissions.path,
+                  element: <SafePermissionsSettingsPage />,
+                  children: [
+                    {
+                      path: DAO_ROUTES.settingsPermissionsCreateProposal.path,
+                      element: <SafePermissionsCreateProposal />,
+                    },
+                  ],
+                },
               ],
             },
             {

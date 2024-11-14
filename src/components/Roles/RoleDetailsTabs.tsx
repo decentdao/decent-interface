@@ -2,7 +2,6 @@ import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
-import { isFeatureEnabled } from '../../constants/common';
 import {
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
@@ -115,11 +114,11 @@ export default function RoleDetailsTabs({
       mt={4}
     >
       <TabList>
-        {isFeatureEnabled('TERMED_ROLES') && isTermed && <Tab>{t('terms')}</Tab>}
+        {isTermed && <Tab>{t('terms')}</Tab>}
         <Tab>{t('payments')}</Tab>
       </TabList>
       <TabPanels mt={4}>
-        {isFeatureEnabled('TERMED_ROLES') && isTermed && (
+        {isTermed && (
           <TabPanel>
             <RoleTermDetails
               hatId={hatId}
