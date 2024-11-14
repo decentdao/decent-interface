@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Address } from 'viem';
-import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
+import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../../providers/App/node/action';
@@ -9,7 +9,6 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetSafeName } from '../../utils/useGetSafeName';
-import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
@@ -31,8 +30,6 @@ export const useFractalNode = ({
 
   const lookupModules = useFractalModules();
 
-  const { chain } = useNetworkConfig();
-
   const { subgraph } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
@@ -41,28 +38,24 @@ export const useFractalNode = ({
       if (!safeAddress) return;
 
       const getNodeInfo = (result: { data?: DAOQueryQuery }) => {
-        const demo = loadDemoData(chain, safeAddress, result);
-        if (!demo.data) {
-          return;
+        const dao = result.data?.daos[0];
+        if (dao === undefined) {
+          return undefined;
         }
-        const { daos } = demo.data;
-        const dao = daos[0];
-        if (dao) {
-          const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
 
-          const currentNode: Node = {
-            nodeHierarchy: {
-              parentAddress,
-              childNodes: mapChildNodes(dao as DAO),
-            },
-            daoName: name as string,
-            address: safeAddress,
-            daoSnapshotENS: snapshotENS as string,
-            proposalTemplatesHash: proposalTemplatesHash as string,
-          };
-          return currentNode;
-        }
-        return;
+        const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
+
+        const currentNode: Node = {
+          nodeHierarchy: {
+            parentAddress,
+            childNodes: mapChildNodes(dao),
+          },
+          daoName: name as string,
+          address: safeAddress,
+          daoSnapshotENS: snapshotENS as string,
+          proposalTemplatesHash: proposalTemplatesHash as string,
+        };
+        return currentNode;
       };
 
       const graphNodeInfo = getNodeInfo({ data });
