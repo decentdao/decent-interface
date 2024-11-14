@@ -1,10 +1,14 @@
 import { useCallback } from 'react';
 import { Address } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { DAOQueryDocument } from '../../../.graphclient';
+import graphQLClient from '../../graphql';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { createAccountSubstring } from './useGetAccountName';
 
 export const useGetSafeName = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });
+  const { subgraph } = useNetworkConfig(chainId);
 
   const getSafeName = useCallback(
     async (address: Address) => {
@@ -25,9 +29,25 @@ export const useGetSafeName = (chainId?: number) => {
         return ensName;
       }
 
+      const subgraphName = (
+        await graphQLClient.query({
+          query: DAOQueryDocument,
+          variables: { safeAddress: address },
+          context: {
+            subgraphSpace: subgraph.space,
+            subgraphSlug: subgraph.slug,
+            subgraphVersion: subgraph.version,
+          },
+        })
+      ).data?.daos[0].name;
+
+      if (subgraphName) {
+        return subgraphName;
+      }
+
       return createAccountSubstring(address);
     },
-    [publicClient],
+    [publicClient, subgraph],
   );
 
   return { getSafeName };
