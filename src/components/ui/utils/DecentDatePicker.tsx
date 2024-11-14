@@ -143,7 +143,10 @@ function DecentDatePickerContainer({
             </DraggableDrawer>
           </Show>
           <Show above="md">
-            <Menu placement="top-start">
+            <Menu
+              placement="top-start"
+              closeOnSelect={false}
+            >
               <MenuButton
                 as={Button}
                 variant="unstyled"
