@@ -997,6 +997,8 @@ export default function useCreateRoles() {
       const firstTermNominee = firstTerm.nominatedWearers[0];
       const firstTermEndDateTs = firstTerm.termEndDateTs;
 
+      const conversionTxs = [];
+
       const { encodedImmutableArgs, encodedMutableArgs } = checkAndEncodeArgs({
         module,
         immutableArgs: immutableArgs,
@@ -1018,18 +1020,9 @@ export default function useCreateRoles() {
         }),
         targetAddress: HATS_MODULES_FACTORY_ADDRESS,
       };
+      conversionTxs.push(createElectionsModuleTx);
 
-      const predictedElectionsModuleAddress = await hatsModulesClient.predictHatsModuleAddress({
-        // @todo This will need to be updated when/if https://github.com/Hats-Protocol/modules-sdk/pull/27 is merged
-        moduleId: module.implementationAddress,
-        hatId,
-        immutableArgs,
-        saltNonce,
-      });
-
-      // flush streams
-      // cancel streams
-      const transferHatTx = {
+      const transferHatToSafeTx = {
         calldata: encodeFunctionData({
           abi: HatsAbi,
           functionName: 'transferHat',
@@ -1070,8 +1063,22 @@ export default function useCreateRoles() {
           cancelStreamTxs.push(...prepareCancelStreamTxs(stream.streamId));
         }
       }
+      const isStreamsClaimableOrCancelable =
+        streamsWithFundsToClaim.length || streamsWithdrawTx.length;
+      if (isStreamsClaimableOrCancelable) {
+        conversionTxs.push(transferHatToSafeTx);
+        conversionTxs.push(...streamsWithdrawTx);
+        conversionTxs.push(...cancelStreamTxs);
+      }
 
       // add election module to eligibility
+      const predictedElectionsModuleAddress = await hatsModulesClient.predictHatsModuleAddress({
+        // @todo This will need to be updated when/if https://github.com/Hats-Protocol/modules-sdk/pull/27 is merged
+        moduleId: module.implementationAddress,
+        hatId,
+        immutableArgs,
+        saltNonce,
+      });
       const addElectionModuleTx = {
         calldata: encodeFunctionData({
           abi: HatsAbi,
@@ -1080,6 +1087,7 @@ export default function useCreateRoles() {
         }),
         targetAddress: hatsProtocol,
       };
+      conversionTxs.push(addElectionModuleTx);
 
       // toggle mutability
       const toggleMutabilityTx = {
@@ -1090,6 +1098,8 @@ export default function useCreateRoles() {
         }),
         targetAddress: hatsProtocol,
       };
+      conversionTxs.push(toggleMutabilityTx);
+
       // elect
       const electTx = {
         calldata: encodeFunctionData({
@@ -1097,17 +1107,22 @@ export default function useCreateRoles() {
           functionName: 'elect',
           args: [firstTermEndDateTs, [firstTermNominee]],
         }),
-        targetAddress: hatsProtocol,
+        targetAddress: predictedElectionsModuleAddress,
       };
-      // burn current wearer's hat
-      const burnHatTx = {
+      conversionTxs.push(electTx);
+
+      // will burn the hat if the current wearer is not the first nominee
+      const currentWearer = isStreamsClaimableOrCancelable ? formHatCurrentWearer : safeAddress;
+      const checkHatWearerStatusTx = {
         calldata: encodeFunctionData({
           abi: HatsAbi,
           functionName: 'checkHatWearerStatus',
-          args: [hatId, safeAddress],
+          args: [hatId, currentWearer],
         }),
         targetAddress: hatsProtocol,
       };
+      conversionTxs.push(checkHatWearerStatusTx);
+
       // mint
       const mintTx = {
         calldata: encodeFunctionData({
@@ -1118,17 +1133,11 @@ export default function useCreateRoles() {
         targetAddress: hatsProtocol,
       };
 
-      return [
-        createElectionsModuleTx,
-        transferHatTx,
-        ...streamsWithdrawTx,
-        ...cancelStreamTxs,
-        addElectionModuleTx,
-        toggleMutabilityTx,
-        electTx,
-        burnHatTx,
-        mintTx,
-      ];
+      if (formHatCurrentWearer !== firstTermNominee) {
+        conversionTxs.push(mintTx);
+      }
+      console.log('🚀 ~ conversionTxs:', conversionTxs);
+      return conversionTxs;
     },
     [
       getActiveStreamsFromFormHat,
