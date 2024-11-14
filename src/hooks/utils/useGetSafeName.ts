@@ -4,7 +4,6 @@ import { usePublicClient } from 'wagmi';
 import { DAOQueryDocument } from '../../../.graphclient';
 import graphQLClient from '../../graphql';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { demoData } from '../DAO/loaders/loadDemoData';
 import { createAccountSubstring } from './useGetAccountName';
 
 export const useGetSafeName = (chainId?: number) => {
@@ -44,13 +43,6 @@ export const useGetSafeName = (chainId?: number) => {
 
       if (subgraphName) {
         return subgraphName;
-      }
-
-      if (publicClient.chain && demoData[publicClient.chain.id]) {
-        const demo = demoData[publicClient.chain.id][address];
-        if (demo && demo.name) {
-          return demo.name;
-        }
       }
 
       return createAccountSubstring(address);
