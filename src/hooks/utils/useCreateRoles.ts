@@ -1088,22 +1088,21 @@ export default function useCreateRoles() {
         }),
         targetAddress: hatsProtocol,
       };
-
-      // burn current wearer's hat
-      const burnHatTx = {
-        calldata: encodeFunctionData({
-          abi: HatsAbi,
-          functionName: 'checkHatWearerStatus',
-          args: [hatId, safe.address],
-        }),
-        targetAddress: hatsProtocol,
-      };
       // elect
       const electTx = {
         calldata: encodeFunctionData({
           abi: HatsElectionsEligibilityAbi,
           functionName: 'elect',
           args: [firstTerm.termEndDateTs, firstTerm.nominatedWearers],
+        }),
+        targetAddress: hatsProtocol,
+      };
+      // burn current wearer's hat
+      const burnHatTx = {
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'checkHatWearerStatus',
+          args: [hatId, safe.address],
         }),
         targetAddress: hatsProtocol,
       };
@@ -1116,6 +1115,7 @@ export default function useCreateRoles() {
         }),
         targetAddress: hatsProtocol,
       };
+
       return [
         createElectionsModuleTx,
         transferHatTx,
@@ -1123,8 +1123,8 @@ export default function useCreateRoles() {
         ...cancelStreamTxs,
         addElectionModuleTx,
         toggleMutabilityTx,
-        burnHatTx,
         electTx,
+        burnHatTx,
         mintTx,
       ];
     },
