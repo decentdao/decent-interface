@@ -139,11 +139,11 @@ export const predictAccountAddress = async (params: {
   return predictedAddress;
 };
 
-export const getCurrentTermStatus = async (
+export const getCurrentTermActiveStatus = async (
   currentTermEndDateTs: bigint,
   eligibility: Address,
   publicClient: PublicClient,
-): Promise<'inactive' | 'active'> => {
+): Promise<boolean> => {
   const electionContract = getContract({
     abi: HatsElectionsEligibilityAbi,
     address: eligibility,
@@ -151,7 +151,7 @@ export const getCurrentTermStatus = async (
   });
 
   const nextTermEndTs = await electionContract.read.nextTermEnd();
-  return nextTermEndTs === currentTermEndDateTs ? 'inactive' : 'active';
+  return nextTermEndTs !== currentTermEndDateTs;
 };
 
 export const isElectionEligibilityModule = async (
@@ -169,6 +169,22 @@ export const isElectionEligibilityModule = async (
   const possibleElectionModule = await hatsModuleClient.getModuleByInstance(eligibility);
   if (possibleElectionModule === undefined) return false;
   return possibleElectionModule.implementationAddress === hatsElectionsImplementation;
+};
+
+export const prepareCurrentTerm = async (
+  term: { nominee: Address; termEndDate: Date; termNumber: number } | undefined,
+  eligibility: Address,
+  publicClient: PublicClient,
+) => {
+  if (term === undefined) return undefined;
+  return {
+    ...term,
+    isActive: await getCurrentTermActiveStatus(
+      BigInt(term.termEndDate.getTime()),
+      eligibility,
+      publicClient,
+    ),
+  };
 };
 
 const getRoleHatTerms = async (
@@ -220,16 +236,7 @@ const getRoleHatTerms = async (
       );
       const roleTerms = {
         allTerms,
-        currentTerm: !!activeTerms[0]
-          ? {
-              ...activeTerms[0],
-              termStatus: await getCurrentTermStatus(
-                BigInt(activeTerms[0].termEndDate.getTime()),
-                rawHat.eligibility,
-                publicClient,
-              ),
-            }
-          : undefined,
+        currentTerm: await prepareCurrentTerm(activeTerms[0], rawHat.eligibility, publicClient),
         nextTerm: activeTerms[1],
         expiredTerms: allTerms
           .filter(term => term.termEndDate <= new Date())
