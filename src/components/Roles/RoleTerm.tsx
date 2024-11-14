@@ -385,7 +385,8 @@ export default function RoleTerm({
           <RoleTermMemberAddress memberAddress={termNominatedWearer} />
           <RoleTermEndDate termEndDate={termEndDate} />
         </Flex>
-        {roleHat?.roleTerms.currentTerm?.termStatus === 'inactive' &&
+        {!!roleHat?.roleTerms.currentTerm &&
+          !roleHat.roleTerms.currentTerm.isActive &&
           termPosition === 'currentTerm' && (
             <Button
               isDisabled={contractCallPending}

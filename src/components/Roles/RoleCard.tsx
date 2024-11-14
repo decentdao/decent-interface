@@ -178,7 +178,7 @@ export function RoleCard({
   isTermed,
   paymentsCount,
   handleRoleClick,
-  currentRoleTermStatus,
+  isCurrentTermActive,
 }: RoleProps) {
   return (
     <Card
@@ -193,9 +193,7 @@ export function RoleCard({
           paymentsCount={paymentsCount}
         />
         {isTermed && (
-          <EditBadge
-            editStatus={currentRoleTermStatus === 'inactive' ? EditBadgeStatus.Inactive : undefined}
-          />
+          <EditBadge editStatus={!isCurrentTermActive ? EditBadgeStatus.Inactive : undefined} />
         )}
       </Flex>
     </Card>
