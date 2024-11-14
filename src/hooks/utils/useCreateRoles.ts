@@ -948,34 +948,33 @@ export default function useCreateRoles() {
 
   const prepareConvertRoleToTermedTxs = useCallback(
     async (formHat: RoleHatFormValueEdited) => {
-      const roleHat = getHat(formHat.id);
+      const roleHatCurrentState = getHat(formHat.id);
 
-      if (!roleHat) {
+      if (!roleHatCurrentState) {
         throw new Error('Cannot find role hat');
       }
-      if (!hatsTree) {
-        throw new Error('Cannot prepare transactions without hats tree');
-      }
-      if (!formHat.roleTerms || formHat.roleTerms.length === 0) {
-        throw new Error('Cannot prepare transactions without role terms');
-      }
-      if (!publicClient) {
-        throw new Error('Cannot prepare transactions without public client');
-      }
-
-      if (roleHat.isTermed) {
+      if (roleHatCurrentState.isTermed) {
         throw new Error('Cannot change role type for a termed role');
       }
-
-      if (!formHat.smartAddress) {
-        throw new Error('Cannot prepare transactions for edited role without smart address');
+      if (!hatsTree || !publicClient || !safeAddress) {
+        throw new Error('App is not ready', {
+          cause: {
+            hatsTree,
+            publicClient,
+            safeAddress,
+          },
+        });
       }
 
-      if (!formHat.wearer) {
-        throw new Error('Cannot prepare transactions for edited role without wearer');
-      }
-      if (!safe?.address) {
-        throw new Error('Cannot prepare transactions for edited role without safe address');
+      if (
+        !formHat.roleTerms ||
+        formHat.roleTerms.length === 0 ||
+        !formHat.smartAddress ||
+        !formHat.wearer
+      ) {
+        throw new Error('formhat is missing required fields', {
+          cause: formHat,
+        });
       }
 
       const hatsModulesClient = new HatsModulesClient({
@@ -1034,7 +1033,7 @@ export default function useCreateRoles() {
         calldata: encodeFunctionData({
           abi: HatsAbi,
           functionName: 'transferHat',
-          args: [hatId, formHatCurrentWearer, safe.address],
+          args: [hatId, formHatCurrentWearer, safeAddress],
         }),
         targetAddress: hatsProtocol,
       };
@@ -1105,7 +1104,7 @@ export default function useCreateRoles() {
         calldata: encodeFunctionData({
           abi: HatsAbi,
           functionName: 'checkHatWearerStatus',
-          args: [hatId, safe.address],
+          args: [hatId, safeAddress],
         }),
         targetAddress: hatsProtocol,
       };
@@ -1142,7 +1141,7 @@ export default function useCreateRoles() {
       prepareCancelStreamTxs,
       prepareFlushStreamTxs,
       publicClient,
-      safe?.address,
+      safeAddress,
     ],
   );
 
