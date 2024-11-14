@@ -29,7 +29,7 @@ export type RoleTerm = {
 
 export type DecentRoleHatTerms = {
   allTerms: RoleTerm[];
-  currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
+  currentTerm: (RoleTerm & { isActive: boolean | undefined }) | undefined;
   nextTerm: RoleTerm | undefined;
   expiredTerms: RoleTerm[];
 };
@@ -81,7 +81,7 @@ export interface RoleProps {
   wearerAddress?: Address;
   paymentsCount?: number;
   isTermed: boolean;
-  currentRoleTermStatus?: 'active' | 'inactive';
+  isCurrentTermActive?: boolean;
 }
 
 export interface RoleEditProps
