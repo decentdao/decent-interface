@@ -981,7 +981,7 @@ export default function useCreateRoles() {
       const hatsModulesClient = new HatsModulesClient({
         publicClient,
       });
-      hatsModulesClient.prepare();
+      await hatsModulesClient.prepare();
       const module = hatsModulesClient.getModuleByImplementation(
         hatsElectionsEligibilityMasterCopy,
       );
