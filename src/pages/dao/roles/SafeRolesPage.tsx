@@ -97,7 +97,11 @@ export function SafeRolesPage() {
                   key={roleHat.id}
                   name={roleHat.name}
                   isTermed={roleHat.isTermed}
-                  wearerAddress={roleHat.wearerAddress}
+                  wearerAddress={
+                    roleHat.roleTerms.currentTerm?.isActive
+                      ? roleHat.wearerAddress
+                      : roleHat.roleTerms.currentTerm?.nominee
+                  }
                   handleRoleClick={() => handleNavigateToRole(roleHat.id)}
                   paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
                   isCurrentTermActive={roleHat.roleTerms.currentTerm?.isActive}
