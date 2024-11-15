@@ -1,15 +1,16 @@
 import { Alert, Box, Button, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
 import { ArrowRight, Info, Trash } from '@phosphor-icons/react';
 import { addDays, addMinutes } from 'date-fns';
-import { FormikErrors, useFormikContext } from 'formik';
+import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, isDevMode } from '../../../constants/common';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
+import { DatePicker } from '../../ui/forms/DatePicker';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
-import { DecentDatePicker } from '../../ui/utils/DecentDatePicker';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
@@ -51,25 +52,41 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
           gap="0.5rem"
           alignItems="center"
         >
-          <DecentDatePicker
-            type="startDate"
-            maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
-            formIndex={formIndex}
-            onChange={date => onDateChange(date, 'startDate')}
-            disabled={disabled}
-          />
+          <Field name={`roleEditing.payments.[${formIndex}].startDate`}>
+            {({ field }: FieldProps<Date, RoleFormValues>) => (
+              <LabelWrapper
+                label={t('date')}
+                labelColor="neutral-7"
+              >
+                <DatePicker
+                  onChange={(date: Date) => onDateChange(date, 'startDate')}
+                  selectedDate={field.value}
+                  maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
+                  disabled={disabled}
+                />
+              </LabelWrapper>
+            )}
+          </Field>
           <Icon
             as={ArrowRight}
             boxSize="1.5rem"
             color="lilac-0"
           />
-          <DecentDatePicker
-            type="endDate"
-            minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
-            formIndex={formIndex}
-            onChange={date => onDateChange(date, 'endDate')}
-            disabled={disabled}
-          />
+          <Field name={`roleEditing.payments.[${formIndex}].endDate`}>
+            {({ field }: FieldProps<Date, RoleFormValues>) => (
+              <LabelWrapper
+                label={t('date')}
+                labelColor="neutral-7"
+              >
+                <DatePicker
+                  onChange={(date: Date) => onDateChange(date, 'endDate')}
+                  selectedDate={field.value}
+                  minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
+                  disabled={disabled}
+                />
+              </LabelWrapper>
+            )}
+          </Field>
         </Flex>
       </FormControl>
       {showCliffDatePicker && (
@@ -83,16 +100,24 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
             title={t('cliff')}
             tooltipContent={t('cliffSubTitle')}
           />
-          <DecentDatePicker
-            type="cliffDate"
-            formIndex={formIndex}
-            minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
-            maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
-            onChange={(date: Date) => {
-              setFieldValue(`roleEditing.payments.${formIndex}.cliffDate`, date);
-            }}
-            disabled={disabled}
-          />
+          <Field name={`roleEditing.payments.[${formIndex}].cliffDate`}>
+            {({ field }: FieldProps<Date, RoleFormValues>) => (
+              <LabelWrapper
+                label={t('date')}
+                labelColor="neutral-7"
+              >
+                <DatePicker
+                  onChange={(date: Date) =>
+                    setFieldValue(`roleEditing.payments.${formIndex}.cliffDate`, date)
+                  }
+                  selectedDate={field.value}
+                  minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
+                  maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
+                  disabled={disabled}
+                />
+              </LabelWrapper>
+            )}
+          </Field>
         </FormControl>
       )}
     </Box>
