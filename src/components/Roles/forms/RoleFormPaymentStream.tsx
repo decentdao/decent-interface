@@ -8,7 +8,6 @@ import { CARD_SHADOW, isDevMode } from '../../../constants/common';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import { DatePicker } from '../../ui/forms/DatePicker';
-import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { AssetSelector } from './RoleFormAssetSelector';
@@ -54,17 +53,12 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
         >
           <Field name={`roleEditing.payments.[${formIndex}].startDate`}>
             {({ field }: FieldProps<Date, RoleFormValues>) => (
-              <LabelWrapper
-                label={t('date')}
-                labelColor="neutral-7"
-              >
-                <DatePicker
-                  onChange={(date: Date) => onDateChange(date, 'startDate')}
-                  selectedDate={field.value}
-                  maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
-                  disabled={disabled}
-                />
-              </LabelWrapper>
+              <DatePicker
+                onChange={(date: Date) => onDateChange(date, 'startDate')}
+                selectedDate={field.value}
+                maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
+                disabled={disabled}
+              />
             )}
           </Field>
           <Icon
@@ -74,17 +68,12 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
           />
           <Field name={`roleEditing.payments.[${formIndex}].endDate`}>
             {({ field }: FieldProps<Date, RoleFormValues>) => (
-              <LabelWrapper
-                label={t('date')}
-                labelColor="neutral-7"
-              >
-                <DatePicker
-                  onChange={(date: Date) => onDateChange(date, 'endDate')}
-                  selectedDate={field.value}
-                  minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
-                  disabled={disabled}
-                />
-              </LabelWrapper>
+              <DatePicker
+                onChange={(date: Date) => onDateChange(date, 'endDate')}
+                selectedDate={field.value}
+                minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
+                disabled={disabled}
+              />
             )}
           </Field>
         </Flex>
@@ -102,20 +91,15 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
           />
           <Field name={`roleEditing.payments.[${formIndex}].cliffDate`}>
             {({ field }: FieldProps<Date, RoleFormValues>) => (
-              <LabelWrapper
-                label={t('date')}
-                labelColor="neutral-7"
-              >
-                <DatePicker
-                  onChange={(date: Date) =>
-                    setFieldValue(`roleEditing.payments.${formIndex}.cliffDate`, date)
-                  }
-                  selectedDate={field.value}
-                  minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
-                  maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
-                  disabled={disabled}
-                />
-              </LabelWrapper>
+              <DatePicker
+                onChange={(date: Date) =>
+                  setFieldValue(`roleEditing.payments.${formIndex}.cliffDate`, date)
+                }
+                selectedDate={field.value}
+                minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
+                maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
+                disabled={disabled}
+              />
             )}
           </Field>
         </FormControl>
