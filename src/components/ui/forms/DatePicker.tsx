@@ -17,6 +17,7 @@ import { format } from 'date-fns';
 import { ReactNode } from 'react';
 import { Calendar } from 'react-calendar';
 import { useTranslation } from 'react-i18next';
+import '../../../assets/css/Calendar.css';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { DatePickerTrigger } from '../../Roles/DatePickerTrigger';
