@@ -29,9 +29,6 @@ export function SafeGeneralSettingsPage() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
     node: { daoName, daoSnapshotENS, safe },
-    readOnly: {
-      user: { votingWeight },
-    },
   } = useFractal();
   const {
     addressPrefix,
@@ -59,8 +56,6 @@ export function SafeGeneralSettingsPage() {
       setSnapshotENSValid(false);
     }
   };
-
-  const userHasVotingWeight = votingWeight > 0n;
 
   const submitProposalSuccessCallback = () => {
     if (safeAddress) {
@@ -157,7 +152,7 @@ export function SafeGeneralSettingsPage() {
             <InputComponent
               isRequired={false}
               onChange={e => setName(e.target.value)}
-              disabled={!userHasVotingWeight}
+              disabled={!canUserCreateProposal}
               value={name}
               placeholder="Amazing DAO"
               testId="daoSettings.name"
@@ -197,7 +192,7 @@ export function SafeGeneralSettingsPage() {
               isRequired={false}
               onChange={handleSnapshotENSChange}
               value={snapshotENS}
-              disabled={!userHasVotingWeight}
+              disabled={!canUserCreateProposal}
               placeholder="example.eth"
               testId="daoSettings.snapshotENS"
               gridContainerProps={{

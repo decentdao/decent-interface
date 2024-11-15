@@ -1,9 +1,9 @@
-import { Text, Box, Button, Flex, Icon } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
@@ -35,9 +35,8 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   } = proposal;
   const {
     governance,
-    governanceContracts,
     readOnly: {
-      user: { votingWeight, address },
+      user: { address },
     },
   } = useFractal();
 
@@ -45,7 +44,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(Number(startBlock));
-  const [proposalsERC20VotingWeight, setProposalsERC20VotingWeight] = useState('0');
+  const [proposalVotingWeight, setProposalVotingWeight] = useState('0');
   const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
 
   const totalERC721VotingWeight = useMemo(
@@ -68,10 +67,10 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
 
   useEffect(() => {
     async function loadProposalVotingWeight() {
-      if (address && publicClient && governanceContracts.linearVotingErc20Address) {
+      if (address && publicClient) {
         const strategyContract = getContract({
           abi: abis.LinearERC20Voting,
-          address: governanceContracts.linearVotingErc20Address,
+          address: proposal.votingStrategy,
           client: publicClient,
         });
 
@@ -80,20 +79,14 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
           Number(proposal.proposalId),
         ]);
 
-        setProposalsERC20VotingWeight(
+        setProposalVotingWeight(
           formatCoin(pastVotingWeight, true, votesToken?.decimals, undefined, false),
         );
       }
     }
 
     loadProposalVotingWeight();
-  }, [
-    address,
-    governanceContracts.linearVotingErc20Address,
-    proposal.proposalId,
-    publicClient,
-    votesToken?.decimals,
-  ]);
+  }, [address, proposal.proposalId, proposal.votingStrategy, publicClient, votesToken?.decimals]);
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;
@@ -148,11 +141,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
       _active={{ color: 'celery--2' }}
       onClick={toggleShowVotingPower}
     >
-      {showVotingPower
-        ? isERC721
-          ? votingWeight.toString()
-          : proposalsERC20VotingWeight
-        : t('show')}
+      {showVotingPower ? proposalVotingWeight : t('show')}
     </Button>
   );
 
