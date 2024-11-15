@@ -151,7 +151,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Fractal
     <Box
       marginTop={4}
       padding="1.5rem"
-      borderRadius={4}
+      borderRadius="0.75rem"
       bg="neutral-2"
       border="1px solid"
       borderColor="neutral-3"

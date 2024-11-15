@@ -22,7 +22,7 @@ export function WalletMenu({ containerRef }: { containerRef: RefObject<HTMLDivEl
   return (
     <MenuList
       minW="15.25rem"
-      rounded="0.5rem"
+      rounded="0.75rem"
       bg={NEUTRAL_2_82_TRANSPARENT}
       backdropFilter="auto"
       backdropBlur="10px"

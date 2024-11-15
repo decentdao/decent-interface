@@ -322,7 +322,7 @@ export function RolePaymentDetails({
         transitionTimingFunction="ease-out"
       >
         <Box
-          borderTopRadius="0.5rem"
+          borderTopRadius="0.75rem"
           py="1rem"
           onClick={onClick}
           cursor={!!onClick ? 'pointer' : 'default'}
@@ -417,7 +417,7 @@ export function RolePaymentDetails({
 
         <Box
           {...activeStreamProps(false)}
-          borderBottomRadius="0.5rem"
+          borderBottomRadius="0.75rem"
           py="1rem"
         >
           <Grid

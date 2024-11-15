@@ -1,5 +1,5 @@
 .sonner-toast:where([data-sonner-toast][data-styled='true']) {
-  border-radius: 0.25rem;
+  border-radius: 0.75rem;
   min-height: 64px;
   max-height: 800px;
   padding: var(--space-2, 8px) var(--space-3, 12px);

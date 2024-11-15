@@ -35,7 +35,7 @@ function DateDisplayBox({ date }: { date: DateOrNull }) {
       width={{ base: '100%', md: '11.125rem' }}
       bg="neutral-1"
       borderWidth="1px"
-      borderRadius="0.25rem"
+      borderRadius="0.5rem"
       borderColor="neutral-3"
     >
       <Icon
@@ -132,10 +132,9 @@ function DecentDatePickerContainer({
               <Flex
                 flexDir="column"
                 justifySelf="center"
-                borderRadius="0.5rem"
+                borderRadius="0.75rem"
                 boxShadow={boxShadow}
                 maxW={maxBoxW}
-                bg="neutral-2"
                 pt="1.5rem"
               >
                 {children}
@@ -164,7 +163,7 @@ function DecentDatePickerContainer({
                 <Flex
                   flexDir="column"
                   justifySelf="center"
-                  borderRadius="0.5rem"
+                  borderRadius="0.75rem"
                   boxShadow={boxShadow}
                   maxW={maxBoxW}
                   bg="neutral-2"

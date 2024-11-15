@@ -1,7 +1,7 @@
 .react-calendar {
   max-width: 100%;
   background: #221d25;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   border: 0;
   font-family: 'DM Sans Variable';
 }
@@ -20,7 +20,7 @@
   border: 0;
   outline: none;
   font-size: 0.875rem;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
 }
 
 .react-calendar button:enabled:hover {
@@ -39,7 +39,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   color: #dcc8f0;
 }
 
@@ -54,7 +54,7 @@
 
 .react-calendar__navigation button:enabled:hover {
   background: #2e2833;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
 }
 
 .react-calendar__month-view__weekdays {
