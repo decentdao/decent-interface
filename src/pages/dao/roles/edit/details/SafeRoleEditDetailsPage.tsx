@@ -67,7 +67,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
     }
 
     setFieldValue('roleEditing', undefined);
-    setFieldValue('addMewTerm', undefined);
+    setFieldValue('newRoleTerm', undefined);
     setTimeout(() => onRemove(), 50);
   };
 
@@ -150,6 +150,7 @@ export function SafeRoleEditDetailsPage() {
 
   const backupRoleEditing = useRef(values.roleEditing);
   const backupTouched = useRef(touched.roleEditing);
+  const backupNewRoleTerm = useRef(values.newRoleTerm);
 
   if (!isHex(hatEditingId)) return null;
   if (!safe?.address) return null;
@@ -158,13 +159,14 @@ export function SafeRoleEditDetailsPage() {
   const goBackToRolesEdit = () => {
     backupRoleEditing.current = values.roleEditing;
     backupTouched.current = touched.roleEditing;
+    backupNewRoleTerm.current = values.newRoleTerm;
 
     setWasRoleActuallyEdited(values.roleEditing !== undefined);
 
     setTimeout(() => {
       setTouched({});
       setFieldValue('roleEditing', undefined);
-      setFieldValue('addMewTerm', undefined);
+      setFieldValue('newRoleTerm', undefined);
       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address), { replace: true });
     }, 50);
   };
@@ -187,6 +189,7 @@ export function SafeRoleEditDetailsPage() {
         values.roleEditing.payments.filter((_, index) => index !== paymentIndex),
       );
     }
+    setFieldValue('newRoleTerm', undefined);
     setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
   };
 
@@ -211,6 +214,7 @@ export function SafeRoleEditDetailsPage() {
                 onDiscard={blocker.proceed}
                 onKeepEditing={() => {
                   setFieldValue('roleEditing', backupRoleEditing.current);
+                  setFieldValue('newRoleTerm', backupNewRoleTerm.current);
                   setTouched({ roleEditing: backupTouched.current });
                   blocker.reset();
                 }}
@@ -226,6 +230,7 @@ export function SafeRoleEditDetailsPage() {
                 onDiscard={blocker.proceed}
                 onKeepEditing={() => {
                   setFieldValue('roleEditing', backupRoleEditing.current);
+                  setFieldValue('newRoleTerm', backupNewRoleTerm.current);
                   setTouched({ roleEditing: backupTouched.current });
                   blocker.reset();
                 }}

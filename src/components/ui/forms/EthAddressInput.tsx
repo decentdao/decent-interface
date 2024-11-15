@@ -15,7 +15,7 @@ export function AddressInput({ value, onChange, ...rest }: InputProps) {
     () =>
       debounce((event: ChangeEvent<HTMLInputElement>) => {
         if (onChange) onChange(event);
-      }, 500),
+      }, 300),
     [onChange],
   );
 
@@ -31,8 +31,8 @@ export function AddressInput({ value, onChange, ...rest }: InputProps) {
 
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      debounceValue(event);
       setLocalValue(event.target.value);
+      debounceValue(event);
     },
     [debounceValue],
   );
