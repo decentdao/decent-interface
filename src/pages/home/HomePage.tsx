@@ -6,7 +6,6 @@ import { BASE_ROUTES } from '../../constants/routes';
 import { MySafes } from './MySafes';
 
 export default function HomePage() {
-
   const { t } = useTranslation('home');
 
   return (
