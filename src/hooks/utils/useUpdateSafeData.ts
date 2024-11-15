@@ -16,7 +16,8 @@ export const useUpdateSafeData = (safeAddress?: Address) => {
       return;
     }
 
-    // Retrieve lastest safe info on page/url change
+    // Retrieve latest safe info on page/url change
+    // @todo - do we need to check if the safeAddress has changed?
     if (prevPathname.current !== location.pathname) {
       (async () => {
         const safeInfo = await safeAPI.getSafeData(safeAddress);
