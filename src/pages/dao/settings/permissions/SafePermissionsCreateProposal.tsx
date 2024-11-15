@@ -113,7 +113,7 @@ export function SafePermissionsCreateProposal() {
             parameters: [
               {
                 signature: 'uint256',
-                value: proposerThreshold.value,
+                value: proposerThreshold.bigintValue.toString(),
               },
             ],
           },
@@ -130,7 +130,7 @@ export function SafePermissionsCreateProposal() {
             parameters: [
               {
                 signature: 'uint256',
-                value: proposerThreshold.value,
+                value: proposerThreshold.bigintValue.toString(),
               },
             ],
           },
