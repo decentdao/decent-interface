@@ -41,7 +41,10 @@ export function NetworkSelector({
         >
           {t('network')}
         </Text>
-        <Box px="0.25rem">
+        <Box
+          px="0.25rem"
+          borderRadius="0.75rem"
+        >
           <OptionMenu
             namespace="menu"
             matchWidth

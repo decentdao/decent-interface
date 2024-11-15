@@ -3,13 +3,13 @@ import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { CreateProposalSteps } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 
 interface StepButtonsProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
-  canUserCreateProposal?: boolean;
   safeNonce?: number;
   mode: ProposalBuilderMode;
 }
@@ -28,10 +28,10 @@ export default function StepButtons(props: StepButtonsProps) {
       nonce: nonceError,
       proposalMetadata: proposalMetadataError,
     },
-    canUserCreateProposal,
     values: { proposalMetadata },
   } = props;
   const { t } = useTranslation(['common', 'proposal']);
+  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   if (!safe?.address) {
     return null;

@@ -76,7 +76,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
             display="flex"
             alignItems="center"
             gap={2}
-            borderRadius="0.25rem"
+            borderRadius="0.5rem"
             justifyContent="space-between"
             w="full"
             onClick={() => {
@@ -250,7 +250,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                       bg="linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.04) 100%), #221D25"
                       pt="1rem"
                       boxShadow={CARD_SHADOW}
-                      borderRadius="0.5rem"
+                      borderRadius="0.75rem"
                       px="0.25rem"
                       pb="0.25rem"
                       w={{ base: '300px', md: '428px' }}

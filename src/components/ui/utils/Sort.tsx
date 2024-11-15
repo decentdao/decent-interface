@@ -19,7 +19,7 @@ function SortMenuItem({
   const { t } = useTranslation();
   return (
     <MenuItem
-      borderRadius="0.5rem"
+      borderRadius="0.75rem"
       p="0.5rem 0.5rem"
       sx={{
         '&:hover': { bg: 'neutral-3' },
@@ -62,7 +62,7 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
       <MenuList
         borderWidth="1px"
         borderColor="neutral-3"
-        borderRadius="0.5rem"
+        borderRadius="0.75rem"
         bg={NEUTRAL_2_82_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur="10px"
