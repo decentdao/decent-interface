@@ -1,7 +1,7 @@
 import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex } from 'viem';
+import { Address, getAddress, Hex } from 'viem';
 import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
@@ -101,8 +101,10 @@ function MemberColumn({
   wearerAddress,
   isCurrentTermActive,
   isTermed,
+  isPending,
 }: {
   isTermed?: boolean;
+  isPending?: boolean;
   wearerAddress?: Address;
   isCurrentTermActive?: boolean;
 }) {
@@ -131,7 +133,9 @@ function MemberColumn({
           color={isTermed && !isCurrentTermActive ? 'neutral-6' : 'white-0'}
           ml="0.5rem"
         >
-          {wearerAddress ? accountDisplayName : t('unassigned')}
+          {wearerAddress
+            ? `${accountDisplayName} ${isPending ? ` ${t('wearerPending')}` : ''}`
+            : t('unassigned')}
         </Text>
       </Flex>
     </Td>
@@ -215,6 +219,7 @@ export function RolesRow({
 export function RolesRowEdit({
   name,
   wearerAddress,
+  isTermed,
   editStatus,
   payments,
   handleRoleClick,
@@ -238,7 +243,11 @@ export function RolesRowEdit({
         roleName={name}
         editStatus={editStatus}
       />
-      <MemberColumn wearerAddress={wearerAddress} />
+      <MemberColumn
+        wearerAddress={wearerAddress}
+        isTermed={isTermed}
+        isPending={isTermed}
+      />
       <PaymentsColumn paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined} />
     </Tr>
   );
@@ -335,7 +344,14 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
             <RolesRowEdit
               key={role.id}
               name={role.name}
-              wearerAddress={role.resolvedWearer}
+              wearerAddress={
+                role.isTermed
+                  ? role.roleTerms?.[0].nominee
+                    ? getAddress(role.roleTerms?.[0].nominee)
+                    : undefined
+                  : role.resolvedWearer
+              }
+              isTermed={!!role.isTermed}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);
