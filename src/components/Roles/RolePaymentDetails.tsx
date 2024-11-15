@@ -149,11 +149,15 @@ export function RolePaymentDetails({
   const navigate = useNavigate();
   const publicClient = usePublicClient();
   const canWithdraw = useMemo(() => {
-    if (connectedAccount && connectedAccount === payment.recipient && !!showWithdraw) {
+    if (
+      connectedAccount &&
+      (connectedAccount === payment.recipient || connectedAccount === roleHatWearerAddress) &&
+      !!showWithdraw
+    ) {
       return true;
     }
     return isDemoMode();
-  }, [connectedAccount, payment.recipient, showWithdraw]);
+  }, [connectedAccount, payment.recipient, showWithdraw, roleHatWearerAddress]);
 
   const assignedTerm = useMemo(() => {
     return roleTerms.find(term => term.termEndDate.getTime() === payment.endDate.getTime());
