@@ -87,7 +87,7 @@ export interface RoleProps {
 export interface RoleEditProps
   extends Omit<
     RoleProps,
-    'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name' | 'currentRoleTermStatus' | 'isTermed'
+    'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name' | 'currentRoleTermStatus'
   > {
   name?: string;
   handleRoleClick: () => void;

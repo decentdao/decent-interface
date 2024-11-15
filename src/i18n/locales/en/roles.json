@@ -6,6 +6,7 @@
   "noRolesNotProposer": "This Safe doesn't have any Roles yet.",
   "description": "Description",
   "unassigned": "Unassigned",
+  "wearerPending": "(Pending)",
   "after": "after",
   "roleInfo": "Role Info",
   "editRoles": "Edit Roles",
