@@ -10,23 +10,29 @@ import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC721LinearStrategy = () => {
   const {
-    governanceContracts: { linearVotingErc721Address, moduleAzoriusAddress },
+    governanceContracts: {
+      linearVotingErc721Address,
+      linearVotingErc721WithHatsWhitelistingAddress,
+      moduleAzoriusAddress,
+    },
     action,
   } = useFractal();
   const { getTimeDuration } = useTimeHelpers();
   const publicClient = usePublicClient();
 
   const erc721LinearVotingContract = useMemo(() => {
-    if (!linearVotingErc721Address || !publicClient) {
+    const votingStrategyAddress =
+      linearVotingErc721Address || linearVotingErc721WithHatsWhitelistingAddress;
+    if (!votingStrategyAddress || !publicClient) {
       return;
     }
 
     return getContract({
       abi: abis.LinearERC721Voting,
-      address: linearVotingErc721Address,
+      address: votingStrategyAddress,
       client: publicClient,
     });
-  }, [linearVotingErc721Address, publicClient]);
+  }, [linearVotingErc721Address, linearVotingErc721WithHatsWhitelistingAddress, publicClient]);
 
   const loadERC721Strategy = useCallback(async () => {
     if (!moduleAzoriusAddress || !erc721LinearVotingContract || !publicClient) {

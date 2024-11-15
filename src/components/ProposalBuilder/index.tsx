@@ -286,6 +286,7 @@ export function ProposalBuilder({
                                 key={index}
                                 action={action}
                                 index={index}
+                                canBeDeleted={actions.length > 1}
                               />
                             );
                           })}

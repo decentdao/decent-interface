@@ -1,4 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
+import { useCallback } from 'react';
 import { Abi, Address } from 'viem';
 import { usePublicClient } from 'wagmi';
 
@@ -228,63 +229,69 @@ const contractTests: ContractFunctionTest[] = [
 export function useAddressContractType() {
   const publicClient = usePublicClient();
 
-  async function getAddressContractType(address: Address): Promise<ContractType> {
-    if (!publicClient) {
-      throw new Error('Public client not found');
-    }
-
-    const result = { ...defaultContractType };
-
-    const allCalls = contractTests.flatMap(test => [
-      ...test.functionNames.map(fn => ({
-        address,
-        abi: test.abi,
-        functionName: fn,
-        args: [],
-      })),
-      ...(test.revertFunctionNames?.map(fn => ({
-        address,
-        abi: test.abi,
-        functionName: fn,
-        args: [],
-      })) ?? []),
-    ]);
-
-    const allResults = await publicClient.multicall({
-      contracts: allCalls,
-    });
-
-    let resultIndex = 0;
-    let passedTestCount = 0;
-
-    for (const test of contractTests) {
-      const successResults = allResults.slice(resultIndex, resultIndex + test.functionNames.length);
-      const successPassed = successResults.every(r => !r.error);
-      resultIndex += test.functionNames.length;
-
-      let revertPassed = true;
-      if (test.revertFunctionNames?.length) {
-        const revertResults = allResults.slice(
-          resultIndex,
-          resultIndex + test.revertFunctionNames.length,
-        );
-        revertPassed = revertResults.every(r => r.error);
-        resultIndex += test.revertFunctionNames.length;
+  const getAddressContractType = useCallback(
+    async (address: Address): Promise<ContractType> => {
+      if (!publicClient) {
+        throw new Error('Public client not found');
       }
 
-      const testPassed = successPassed && revertPassed;
-      result[test.resultKey] = testPassed;
+      const result = { ...defaultContractType };
 
-      if (testPassed) {
-        passedTestCount++;
-        if (passedTestCount > 1) {
-          throw new Error(`Address ${address} matches multiple contract types`);
+      const allCalls = contractTests.flatMap(test => [
+        ...test.functionNames.map(fn => ({
+          address,
+          abi: test.abi,
+          functionName: fn,
+          args: [],
+        })),
+        ...(test.revertFunctionNames?.map(fn => ({
+          address,
+          abi: test.abi,
+          functionName: fn,
+          args: [],
+        })) ?? []),
+      ]);
+
+      const allResults = await publicClient.multicall({
+        contracts: allCalls,
+      });
+
+      let resultIndex = 0;
+      let passedTestCount = 0;
+
+      for (const test of contractTests) {
+        const successResults = allResults.slice(
+          resultIndex,
+          resultIndex + test.functionNames.length,
+        );
+        const successPassed = successResults.every(r => !r.error);
+        resultIndex += test.functionNames.length;
+
+        let revertPassed = true;
+        if (test.revertFunctionNames?.length) {
+          const revertResults = allResults.slice(
+            resultIndex,
+            resultIndex + test.revertFunctionNames.length,
+          );
+          revertPassed = revertResults.every(r => r.error);
+          resultIndex += test.revertFunctionNames.length;
+        }
+
+        const testPassed = successPassed && revertPassed;
+        result[test.resultKey] = testPassed;
+
+        if (testPassed) {
+          passedTestCount++;
+          if (passedTestCount > 1) {
+            throw new Error(`Address ${address} matches multiple contract types`);
+          }
         }
       }
-    }
 
-    return result;
-  }
+      return result;
+    },
+    [publicClient],
+  );
 
   return { getAddressContractType };
 }

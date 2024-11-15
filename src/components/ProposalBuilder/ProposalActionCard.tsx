@@ -60,9 +60,11 @@ export function SendAssetsAction({
 export function ProposalActionCard({
   action,
   index,
+  canBeDeleted,
 }: {
   action: CreateProposalAction;
   index: number;
+  canBeDeleted: boolean;
 }) {
   const { removeAction } = useProposalActionsStore();
   const {
@@ -117,18 +119,23 @@ export function ProposalActionCard({
           gap={2}
           alignItems="center"
         >
-          <Icon as={isAddAction ? CheckSquare : isEditAction ? PencilWithLineIcon : Trash} />
+          <Icon
+            as={isAddAction ? CheckSquare : isEditAction ? PencilWithLineIcon : Trash}
+            color={isEditAction || isAddAction ? 'neutral-7' : 'red-1'}
+          />
           {action.content}
         </Flex>
       </Card>
-      <IconButton
-        aria-label="Remove action"
-        icon={<Trash />}
-        variant="ghost"
-        size="icon-sm"
-        color="red-1"
-        onClick={() => removeAction(index)}
-      />
+      {canBeDeleted && (
+        <IconButton
+          aria-label="Remove action"
+          icon={<Trash />}
+          variant="ghost"
+          size="icon-sm"
+          color="red-1"
+          onClick={() => removeAction(index)}
+        />
+      )}
     </Flex>
   );
 }

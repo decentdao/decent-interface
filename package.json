@@ -13,7 +13,7 @@
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@fontsource/space-mono": "^5.0.19",
-    "@fractal-framework/fractal-contracts": "^1.4.0",
+    "@fractal-framework/fractal-contracts": "^1.4.1",
     "@graphprotocol/client-apollo": "^1.0.16",
     "@hatsprotocol/modules-sdk": "^1.4.0",
     "@hatsprotocol/sdk-v1-core": "^0.9.0",

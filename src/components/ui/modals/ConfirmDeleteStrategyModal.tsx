@@ -1,13 +1,16 @@
-import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
-import { Coins, WarningCircle } from '@phosphor-icons/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
+import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { DAO_ROUTES } from '../../../constants/routes';
+import useVotingStrategiesAddresses from '../../../hooks/utils/useVotingStrategiesAddresses';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useProposalActionsStore } from '../../../store/actions/useProposalActionsStore';
 import { AzoriusGovernance, CreateProposalTransaction, ProposalActionType } from '../../../types';
+import { SENTINEL_MODULE } from '../../../utils/address';
+import { SafePermissionsStrategyAction } from '../../SafeSettings/SafePermissionsStrategyAction';
 
 export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
@@ -21,8 +24,9 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
   const { addAction } = useProposalActionsStore();
 
   const azoriusGovernance = governance as AzoriusGovernance;
+  const { getVotingStrategies } = useVotingStrategiesAddresses();
 
-  const handleDeleteStrategy = () => {
+  const handleDeleteStrategy = async () => {
     if (!safe || !governanceContracts.moduleAzoriusAddress) {
       return;
     }
@@ -38,6 +42,21 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
 
     let transaction: CreateProposalTransaction;
     if (governanceContracts.linearVotingErc20Address) {
+      const strategies = await getVotingStrategies();
+
+      if (!strategies) {
+        throw new Error('No strategies found');
+      }
+
+      // Find the previous strategy for the one you want to disable
+      const strategyToDisable = governanceContracts.linearVotingErc20Address;
+      let prevStrategy = SENTINEL_MODULE;
+      for (let i = 0; i < strategies.length; i++) {
+        if (strategies[i].strategyAddress === strategyToDisable) {
+          break;
+        }
+        prevStrategy = strategies[i].strategyAddress;
+      }
       transaction = {
         targetAddress: governanceContracts.moduleAzoriusAddress,
         ethValue: {
@@ -48,11 +67,30 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
         parameters: [
           {
             signature: 'address',
-            value: governanceContracts.linearVotingErc20Address,
+            value: prevStrategy,
+          },
+          {
+            signature: 'address',
+            value: strategyToDisable,
           },
         ],
       };
     } else if (governanceContracts.linearVotingErc721Address) {
+      const strategies = await getVotingStrategies();
+
+      if (!strategies) {
+        throw new Error('No strategies found');
+      }
+
+      // Find the previous strategy for the one you want to disable
+      const strategyToDisable = governanceContracts.linearVotingErc721Address;
+      let prevStrategy = SENTINEL_MODULE;
+      for (let i = 0; i < strategies.length; i++) {
+        if (strategies[i].strategyAddress === strategyToDisable) {
+          break;
+        }
+        prevStrategy = strategies[i].strategyAddress;
+      }
       transaction = {
         targetAddress: governanceContracts.moduleAzoriusAddress,
         ethValue: {
@@ -63,7 +101,11 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
         parameters: [
           {
             signature: 'address',
-            value: governanceContracts.linearVotingErc721Address,
+            value: prevStrategy,
+          },
+          {
+            signature: 'address',
+            value: strategyToDisable,
           },
         ],
       };
@@ -74,24 +116,13 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
     addAction({
       actionType: ProposalActionType.DELETE,
       content: (
-        <Box width="100%">
-          <Text as="span">{t('deletePermission')} </Text>
-          <Text
-            color="lilac-0"
-            as="span"
-          >
-            {t('createProposals')}
-          </Text>
-          <Text as="span">{t('editPermissionActionDescription')} </Text>
-          <Icon
-            as={Coins}
-            color="lilac-0"
-          />
-          <Text as="span">
-            {`${azoriusGovernance.votingStrategy?.proposerThreshold?.value} ${t('votingWeightThreshold')}`}{' '}
-          </Text>
-          <Text as="span">{t('editPermissionActionDescription2')}</Text>
-        </Box>
+        <SafePermissionsStrategyAction
+          actionType={ProposalActionType.DELETE}
+          proposerThreshold={{
+            value: azoriusGovernance.votingStrategy?.proposerThreshold?.formatted || '0',
+            bigintValue: azoriusGovernance.votingStrategy?.proposerThreshold?.value,
+          }}
+        />
       ),
       transactions: [transaction],
     });

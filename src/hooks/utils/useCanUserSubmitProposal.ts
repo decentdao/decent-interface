@@ -73,26 +73,29 @@ export function useCanUserCreateProposal() {
           type === GovernanceType.AZORIUS_ERC721 ||
           type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING
         ) {
-          let isProposer = false;
-          await Promise.all(
+          const isProposerPerStrategy = await Promise.all(
             [
               linearVotingErc20Address,
               linearVotingErc20WithHatsWhitelistingAddress,
               linearVotingErc721Address,
               linearVotingErc721WithHatsWhitelistingAddress,
             ].map(async votingStrategyAddress => {
-              if (!isProposer && votingStrategyAddress) {
+              if (votingStrategyAddress) {
                 const votingContract = getContract({
                   abi: abis.LinearERC20Voting,
                   address: votingStrategyAddress,
                   client: publicClient,
                 });
                 if (user.address) {
-                  isProposer = await votingContract.read.isProposer([user.address]);
+                  return {
+                    isProposer: await votingContract.read.isProposer([user.address]),
+                    votingStrategyAddress,
+                  };
                 }
               }
             }),
           );
+          const isProposer = isProposerPerStrategy.some(strategy => strategy?.isProposer);
           return isProposer;
         } else {
           return;
