@@ -136,6 +136,8 @@ export default function useCreateRoles() {
 
         const quorumDenominator =
           await linearERC20VotingMasterCopyContract.read.QUORUM_DENOMINATOR();
+
+        console.log(votingStrategy.votingPeriod.value, Number(votingStrategy.votingPeriod.value));
         const encodedStrategyInitParams = encodeAbiParameters(
           parseAbiParameters(
             'address, address, address, uint32, uint256, uint256, address, uint256[]',
