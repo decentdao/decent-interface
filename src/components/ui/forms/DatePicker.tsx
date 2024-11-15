@@ -119,7 +119,12 @@ function DatePickerContainer({
         </DraggableDrawer>
       </Show>
       <Show above="md">
-        <Menu placement="top-start">
+        <Menu
+          placement="top-start"
+          closeOnSelect={false}
+          isOpen={isOpen}
+          onClose={onClose}
+        >
           <MenuButton
             as={Button}
             variant="unstyled"
@@ -127,6 +132,7 @@ function DatePickerContainer({
             w="full"
             isDisabled={disabled}
             cursor={disabled ? 'not-allowed' : 'pointer'}
+            onClick={onOpen}
           >
             <DatePickerTrigger
               selectedDate={selectedDate}
@@ -134,7 +140,7 @@ function DatePickerContainer({
             />
           </MenuButton>
           <MenuList zIndex={2}>
-            <MenuItem onClick={onClose}>
+            <MenuItem>
               <Flex
                 flexDir="column"
                 justifySelf="center"
@@ -185,6 +191,14 @@ export function DatePicker({
     return !!selectedDate ? isToday(selectedDate) : false;
   };
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const handleDateChange = (e: OnDateChangeValue) => {
+    if (e instanceof Date) {
+      onChange?.(new Date(e.setHours(0, 0, 0, 0)));
+      onClose(); // Close the menu after date selection
+    }
+  };
+
   return (
     <DatePickerContainer
       disabled={disabled}
@@ -207,12 +221,7 @@ export function DatePicker({
           tileContent={({ date }) =>
             isToday(date) ? <TodayBox isTodaySelected={isTodaySelected} /> : null
           }
-          onChange={(e: OnDateChangeValue) => {
-            if (e instanceof Date) {
-              onChange?.(new Date(e.setHours(0, 0, 0, 0)));
-              onClose();
-            }
-          }}
+          onChange={handleDateChange}
         />
       )}
     </DatePickerContainer>
