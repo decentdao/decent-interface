@@ -103,11 +103,13 @@ export const useFractalGovernance = () => {
       lockReleaseAddress,
       linearVotingErc721Address,
       linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721WithHatsWhitelistingAddress,
     } = governanceContracts;
 
     if (isLoaded && !type) {
       if (moduleAzoriusAddress) {
-        if (linearVotingErc20Address) {
+        if (linearVotingErc20Address || linearVotingErc20WithHatsWhitelistingAddress) {
           action.dispatch({
             type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
             payload: GovernanceType.AZORIUS_ERC20,
@@ -118,7 +120,7 @@ export const useFractalGovernance = () => {
           if (lockReleaseAddress) {
             loadLockedVotesToken();
           }
-        } else if (linearVotingErc721Address) {
+        } else if (linearVotingErc721Address || linearVotingErc721WithHatsWhitelistingAddress) {
           action.dispatch({
             type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
             payload: GovernanceType.AZORIUS_ERC721,
