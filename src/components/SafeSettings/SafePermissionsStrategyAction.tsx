@@ -26,21 +26,25 @@ export function SafePermissionsStrategyAction({
     <Flex
       width="100%"
       alignItems="center"
+      gap="6px"
     >
       <Text as="span">{title}</Text>
       <Text
         color="lilac-0"
         as="span"
       >
-        {t('createProposals')}{' '}
+        {t('createProposals')}
       </Text>
       <Text as="span">{t('editPermissionActionDescription')}</Text>
       <Icon
         as={Coins}
         color="lilac-0"
       />
-      <Text as="span">
-        {`${proposerThreshold.value} ${azoriusGovernance.votesToken?.symbol || t('votingWeightThreshold')}`}{' '}
+      <Text
+        as="span"
+        color="lilac-0"
+      >
+        {`${proposerThreshold.value} ${azoriusGovernance.votesToken?.symbol || t('votingWeightThreshold')}`}
       </Text>
       <Text as="span">{t('editPermissionActionDescription2')}</Text>
     </Flex>
