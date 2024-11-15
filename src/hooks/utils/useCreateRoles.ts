@@ -1008,13 +1008,11 @@ export default function useCreateRoles() {
       const immutableArgs = [BigInt(hatsTree.topHat.id), BigInt(0)];
       const hatId = BigInt(formHat.id);
       const saltNonce = BigInt(ERC6551_REGISTRY_SALT);
-      const formHatCurrentWearer = getAddress(formHat.wearer);
+      const currentExistingHatWearer = roleHatCurrentState.wearerAddress;
 
       const [firstTerm] = parseRoleTermsFromFormRoleTerms(formHat.roleTerms);
       const firstTermNominee = firstTerm.nominatedWearers[0];
       const firstTermEndDateTs = firstTerm.termEndDateTs;
-
-      const conversionTxs = [];
 
       const { encodedImmutableArgs, encodedMutableArgs } = checkAndEncodeArgs({
         module,
@@ -1022,7 +1020,6 @@ export default function useCreateRoles() {
         mutableArgs: [firstTermEndDateTs],
       });
 
-      // deploy new instance of election module tx
       const createElectionsModuleTx = {
         calldata: encodeFunctionData({
           abi: HATS_MODULES_FACTORY_ABI,
@@ -1037,13 +1034,20 @@ export default function useCreateRoles() {
         }),
         targetAddress: HATS_MODULES_FACTORY_ADDRESS,
       };
-      conversionTxs.push(createElectionsModuleTx);
 
       const transferHatToSafeTx = {
         calldata: encodeFunctionData({
           abi: HatsAbi,
           functionName: 'transferHat',
-          args: [hatId, formHatCurrentWearer, safeAddress],
+          args: [hatId, currentExistingHatWearer, safeAddress],
+        }),
+        targetAddress: hatsProtocol,
+      };
+      const transferHatToBackToWearer = {
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'transferHat',
+          args: [hatId, safeAddress, currentExistingHatWearer],
         }),
         targetAddress: hatsProtocol,
       };
@@ -1060,7 +1064,7 @@ export default function useCreateRoles() {
 
           const flushStreamTxCalldata = prepareFlushStreamTxs({
             streamId: stream.streamId,
-            to: formHatCurrentWearer,
+            to: currentExistingHatWearer,
             smartAccount: formHat.smartAddress,
           });
 
@@ -1080,15 +1084,7 @@ export default function useCreateRoles() {
           cancelStreamTxs.push(...prepareCancelStreamTxs(stream.streamId));
         }
       }
-      const isStreamsClaimableOrCancelable =
-        streamsWithFundsToClaim.length || streamsWithdrawTx.length;
-      if (isStreamsClaimableOrCancelable) {
-        conversionTxs.push(transferHatToSafeTx);
-        conversionTxs.push(...streamsWithdrawTx);
-        conversionTxs.push(...cancelStreamTxs);
-      }
 
-      // add election module to eligibility
       const predictedElectionsModuleAddress = await hatsModulesClient.predictHatsModuleAddress({
         // @todo This will need to be updated when/if https://github.com/Hats-Protocol/modules-sdk/pull/27 is merged
         moduleId: module.implementationAddress,
@@ -1104,9 +1100,7 @@ export default function useCreateRoles() {
         }),
         targetAddress: hatsProtocol,
       };
-      conversionTxs.push(addElectionModuleTx);
 
-      // toggle mutability
       const toggleMutabilityTx = {
         calldata: encodeFunctionData({
           abi: HatsAbi,
@@ -1115,9 +1109,7 @@ export default function useCreateRoles() {
         }),
         targetAddress: hatsProtocol,
       };
-      conversionTxs.push(toggleMutabilityTx);
 
-      // elect
       const electTx = {
         calldata: encodeFunctionData({
           abi: HatsElectionsEligibilityAbi,
@@ -1126,21 +1118,19 @@ export default function useCreateRoles() {
         }),
         targetAddress: predictedElectionsModuleAddress,
       };
-      conversionTxs.push(electTx);
 
-      // will burn the hat if the current wearer is not the first nominee
-      const currentWearer = isStreamsClaimableOrCancelable ? formHatCurrentWearer : safeAddress;
+      const isStreamsClaimableOrCancelable =
+        streamsWithFundsToClaim.length || streamsWithdrawTx.length;
+
       const checkHatWearerStatusTx = {
         calldata: encodeFunctionData({
           abi: HatsAbi,
           functionName: 'checkHatWearerStatus',
-          args: [hatId, currentWearer],
+          args: [hatId, currentExistingHatWearer],
         }),
         targetAddress: hatsProtocol,
       };
-      conversionTxs.push(checkHatWearerStatusTx);
 
-      // mint
       const mintTx = {
         calldata: encodeFunctionData({
           abi: HatsAbi,
@@ -1150,7 +1140,31 @@ export default function useCreateRoles() {
         targetAddress: hatsProtocol,
       };
 
-      if (formHatCurrentWearer !== firstTermNominee) {
+      const conversionTxs = [];
+      // create the election module with the first term end date (open election)
+      conversionTxs.push(createElectionsModuleTx);
+
+      // if there are streams with funds to claim or cancel, we need to transfer the hat to the safe and flush/cancel the streams
+      if (isStreamsClaimableOrCancelable) {
+        conversionTxs.push(transferHatToSafeTx);
+        conversionTxs.push(...streamsWithdrawTx);
+        conversionTxs.push(...cancelStreamTxs);
+        conversionTxs.push(transferHatToBackToWearer);
+      }
+
+      // add election module to eligibility of hat
+      conversionTxs.push(addElectionModuleTx);
+      // make hat immutable
+      conversionTxs.push(toggleMutabilityTx);
+
+      // elect har nominee (closes election)
+      conversionTxs.push(electTx);
+
+      // check eligibility of currently wearer and burn if ineligible
+      conversionTxs.push(checkHatWearerStatusTx);
+
+      // mint hat to first nominee if current wearer is not the first nominee
+      if (currentExistingHatWearer !== firstTermNominee) {
         conversionTxs.push(mintTx);
       }
       return conversionTxs;
