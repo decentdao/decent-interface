@@ -28,8 +28,8 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
     }
 
     if (
-      !governanceContracts.linearVotingErc20Address ||
-      !governanceContracts.linearVotingErc721Address
+      !governanceContracts.linearVotingErc20WithHatsWhitelistingAddress &&
+      !governanceContracts.linearVotingErc721WithHatsWhitelistingAddress
     ) {
       toast.error(t('cannotDeleteStrategy'));
       onClose();

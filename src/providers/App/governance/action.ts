@@ -25,10 +25,6 @@ export enum FractalGovernanceAction {
   UPDATE_NEW_AZORIUS_ERC20_VOTE = 'UPDATE_NEW_AZORIUS_ERC20_VOTE',
   UPDATE_NEW_AZORIUS_ERC721_VOTE = 'UPDATE_NEW_AZORIUS_ERC721_VOTE',
   UPDATE_PROPOSAL_STATE = 'UPDATE_PROPOSAL_STATE',
-  UPDATE_VOTING_PERIOD = 'UPDATE_VOTING_PERIOD',
-  UPDATE_VOTING_QUORUM = 'UPDATE_VOTING_QUORUM',
-  UPDATE_VOTING_QUORUM_THRESHOLD = 'UPDATE_VOTING_QUORUM_THRESHOLD',
-  UPDATE_TIMELOCK_PERIOD = 'UPDATE_TIMELOCK_PERIOD',
   SET_ERC721_TOKENS_DATA = 'SET_ERC721_TOKENS_DATA',
   SET_TOKEN_DATA = 'SET_TOKEN_DATA',
   SET_TOKEN_ACCOUNT_DATA = 'SET_TOKEN_ACCOUNT_DATA',
@@ -86,22 +82,6 @@ export type FractalGovernanceActions =
   | {
       type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
       payload: { state: FractalProposalState; proposalId: string };
-    }
-  | {
-      type: FractalGovernanceAction.UPDATE_VOTING_PERIOD;
-      payload: bigint;
-    }
-  | {
-      type: FractalGovernanceAction.UPDATE_VOTING_QUORUM;
-      payload: bigint;
-    }
-  | {
-      type: FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD;
-      payload: bigint;
-    }
-  | {
-      type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD;
-      payload: bigint;
     }
   | { type: FractalGovernanceAction.SET_ERC721_TOKENS_DATA; payload: ERC721TokenData[] }
   | {

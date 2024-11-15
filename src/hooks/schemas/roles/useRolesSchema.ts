@@ -158,7 +158,7 @@ export const useRolesSchema = () => {
                     test: (termEndDate, cxt) => {
                       if (!termEndDate || !cxt.from) return true;
                       const [, { value: roleForm }] = cxt.from;
-                      const { roleTerms } = roleForm.roleEditing;
+                      const roleTerms = roleForm.roleEditing?.roleTerms;
                       // remove the last element from terms and create a new array with the rest of the elements
                       if (!roleTerms || roleTerms.length === 0) return termEndDate > new Date();
                       const previousTerms = roleTerms.slice(0, -1);

@@ -84,7 +84,9 @@ export default function useCreateRoles() {
     node: { safe, daoName },
     governance,
     governanceContracts: {
+      linearVotingErc20Address,
       linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721Address,
       linearVotingErc721WithHatsWhitelistingAddress,
       moduleAzoriusAddress,
     },
@@ -128,7 +130,7 @@ export default function useCreateRoles() {
       const azoriusGovernance = governance as AzoriusGovernance;
       const { votingStrategy, votesToken, erc721Tokens } = azoriusGovernance;
       if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
-        if (!votesToken || !votingStrategy?.votingPeriod || !votingStrategy.quorumPercentage) {
+        if (!votesToken || !votingStrategy?.quorumPercentage || !linearVotingErc20Address) {
           return;
         }
 
@@ -141,6 +143,13 @@ export default function useCreateRoles() {
 
         const quorumDenominator =
           await linearERC20VotingMasterCopyContract.read.QUORUM_DENOMINATOR();
+
+        const votingStrategyContract = getContract({
+          abi: abis.LinearERC20Voting,
+          address: linearVotingErc20Address,
+          client: publicClient,
+        });
+        const existingVotingPeriod = await votingStrategyContract.read.votingPeriod();
         const encodedStrategyInitParams = encodeAbiParameters(
           parseAbiParameters(
             'address, address, address, uint32, uint256, uint256, address, uint256[]',
@@ -149,7 +158,7 @@ export default function useCreateRoles() {
             safeAddress, // owner
             votesToken.address, // governance token
             moduleAzoriusAddress, // Azorius module
-            Number(votingStrategy.votingPeriod.value),
+            existingVotingPeriod,
             (votingStrategy.quorumPercentage.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
             500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
             hatsProtocol,
@@ -204,7 +213,7 @@ export default function useCreateRoles() {
 
         return [deployWhitelistingVotingStrategyTx, enableDeployedVotingStrategyTx];
       } else if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC721) {
-        if (!erc721Tokens || !votingStrategy?.votingPeriod || !votingStrategy.quorumThreshold) {
+        if (!erc721Tokens || !votingStrategy?.quorumThreshold || !linearVotingErc721Address) {
           return;
         }
 
@@ -214,6 +223,12 @@ export default function useCreateRoles() {
           address: linearVotingErc721HatsWhitelistingMasterCopy,
           client: publicClient,
         });
+        const votingStrategyContract = getContract({
+          abi: abis.LinearERC20Voting,
+          address: linearVotingErc721Address,
+          client: publicClient,
+        });
+        const existingVotingPeriod = await votingStrategyContract.read.votingPeriod();
 
         const quorumDenominator =
           await linearERC721VotingMasterCopyContract.read.QUORUM_DENOMINATOR();
@@ -226,7 +241,7 @@ export default function useCreateRoles() {
             erc721Tokens.map(token => token.address), // governance tokens addresses
             erc721Tokens.map(token => token.votingWeight), // governance tokens weights
             moduleAzoriusAddress, // Azorius module
-            Number(votingStrategy.votingPeriod.value),
+            existingVotingPeriod,
             (votingStrategy.quorumThreshold.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
             500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
             hatsProtocol,
@@ -295,6 +310,8 @@ export default function useCreateRoles() {
       moduleAzoriusAddress,
       publicClient,
       zodiacModuleProxyFactory,
+      linearVotingErc20Address,
+      linearVotingErc721Address,
     ],
   );
 

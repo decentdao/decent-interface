@@ -19,6 +19,7 @@ export function MenuItemButton({
     <Box mx="0.25rem">
       <MenuItem
         as={Button}
+        borderRadius="0.75rem"
         variant="tertiary"
         cursor="pointer"
         data-testid={testId}

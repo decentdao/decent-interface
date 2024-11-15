@@ -105,7 +105,11 @@ export const polygonConfig: NetworkConfig = {
     chainSupported: true,
     deFiSupported: true,
   },
-  createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
+  createOptions: [
+    GovernanceType.MULTISIG,
+    GovernanceType.AZORIUS_ERC20,
+    GovernanceType.AZORIUS_ERC721,
+  ],
 };
 
 export default polygonConfig;

@@ -413,6 +413,11 @@ function StreamBuilder({
         <Box>
           <Flex gap="0.5rem">
             <Checkbox
+              sx={{
+                '& .chakra-checkbox__control': {
+                  borderRadius: '0.25rem',
+                },
+              }}
               isChecked={stream.cancelable}
               onChange={() => handleUpdateStream(index, { cancelable: !stream.cancelable })}
             />
@@ -423,6 +428,11 @@ function StreamBuilder({
         <Box>
           <Flex gap="0.5rem">
             <Checkbox
+              sx={{
+                '& .chakra-checkbox__control': {
+                  borderRadius: '0.25rem',
+                },
+              }}
               checked={stream.transferable}
               onChange={() => handleUpdateStream(index, { transferable: !stream.transferable })}
             />

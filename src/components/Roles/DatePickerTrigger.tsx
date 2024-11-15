@@ -15,7 +15,7 @@ export function DatePickerTrigger({ selectedDate, disabled }: DatePickerTriggerP
 
   return (
     <Flex
-      borderRadius="0.25rem"
+      borderRadius="0.5rem"
       bg={disabled ? DISABLED_INPUT : 'neutral-1'}
       borderWidth="1px"
       borderColor={disabled ? 'white-alpha-16' : 'neutral-3'}

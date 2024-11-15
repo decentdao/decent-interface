@@ -4,8 +4,8 @@ import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
-import { SafeController } from './pages/SafeController';
 import { SafeCreatePage } from './pages/create/SafeCreatePage';
+import { SafeController } from './pages/dao/SafeController';
 import { SafeDashboardPage } from './pages/dao/SafeDashboardPage';
 import { SafeEditGovernancePage } from './pages/dao/edit/governance/SafeEditGovernancePage';
 import { SafeHierarchyPage } from './pages/dao/hierarchy/SafeHierarchyPage';
@@ -214,20 +214,16 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
                   path: DAO_ROUTES.settingsModulesAndGuard.path,
                   element: <SafeModulesSettingsPage />,
                 },
-                ...(import.meta.env.VITE_APP_FLAG_WHITELISTING === 'ON'
-                  ? [
-                      {
-                        path: DAO_ROUTES.settingsPermissions.path,
-                        element: <SafePermissionsSettingsPage />,
-                        children: [
-                          {
-                            path: DAO_ROUTES.settingsPermissionsCreateProposal.path,
-                            element: <SafePermissionsCreateProposal />,
-                          },
-                        ],
-                      },
-                    ]
-                  : []),
+                {
+                  path: DAO_ROUTES.settingsPermissions.path,
+                  element: <SafePermissionsSettingsPage />,
+                  children: [
+                    {
+                      path: DAO_ROUTES.settingsPermissionsCreateProposal.path,
+                      element: <SafePermissionsCreateProposal />,
+                    },
+                  ],
+                },
               ],
             },
             {

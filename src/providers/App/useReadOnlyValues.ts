@@ -1,15 +1,15 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import * as Sentry from '@sentry/react';
 import isEqual from 'lodash.isequal';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Address, erc721Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import {
-  ReadOnlyState,
-  Fractal,
   AzoriusGovernance,
-  GovernanceType,
   DecentGovernance,
+  Fractal,
+  GovernanceType,
+  ReadOnlyState,
 } from '../../types';
 
 const INITIAL_READ_ONLY_VALUES: ReadOnlyState = {
@@ -82,7 +82,9 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: Addr
         : {
             isAzorius:
               governance.type === GovernanceType.AZORIUS_ERC20 ||
-              governance.type === GovernanceType.AZORIUS_ERC721,
+              governance.type === GovernanceType.AZORIUS_ERC721 ||
+              governance.type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING ||
+              governance.type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING,
           },
     };
     if (!isEqual(newReadOnlyValues, readOnlyValues)) {
