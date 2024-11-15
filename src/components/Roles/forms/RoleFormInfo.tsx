@@ -103,39 +103,36 @@ export default function RoleFormInfo() {
         </FormControl>
       </Box>
       {/* @dev - deploying whitelisting voting strategy is feasible from UI/UX standpoint only when Safe has Azorius module AND hatsTree been created already */}
-      {type !== GovernanceType.MULTISIG &&
-        !!hatsTree &&
-        !!hatsTreeId &&
-        import.meta.env.VITE_APP_FLAG_WHITELISTING === 'ON' && (
-          <FormControl>
-            <Field name="roleEditing.canCreateProposals">
-              {() => (
-                <Flex
-                  justifyContent="space-between"
-                  alignItems="center"
-                  padding={4}
-                  borderRadius={8}
-                  border="1px solid"
-                  borderColor="neutral-3"
-                >
-                  <Text>{t('canCreateProposals')}</Text>
-                  <Switch
-                    size="md"
-                    variant="secondary"
-                    onChange={() =>
-                      setFieldValue(
-                        'roleEditing.canCreateProposals',
-                        !values.roleEditing?.canCreateProposals,
-                      )
-                    }
-                    isChecked={values.roleEditing?.canCreateProposals}
-                    isDisabled={!values.roleEditing}
-                  />
-                </Flex>
-              )}
-            </Field>
-          </FormControl>
-        )}
+      {type !== GovernanceType.MULTISIG && !!hatsTree && !!hatsTreeId && (
+        <FormControl>
+          <Field name="roleEditing.canCreateProposals">
+            {() => (
+              <Flex
+                justifyContent="space-between"
+                alignItems="center"
+                padding={4}
+                borderRadius={8}
+                border="1px solid"
+                borderColor="neutral-3"
+              >
+                <Text>{t('canCreateProposals')}</Text>
+                <Switch
+                  size="md"
+                  variant="secondary"
+                  onChange={() =>
+                    setFieldValue(
+                      'roleEditing.canCreateProposals',
+                      !values.roleEditing?.canCreateProposals,
+                    )
+                  }
+                  isChecked={values.roleEditing?.canCreateProposals}
+                  isDisabled={!values.roleEditing}
+                />
+              </Flex>
+            )}
+          </Field>
+        </FormControl>
+      )}
     </>
   );
 }

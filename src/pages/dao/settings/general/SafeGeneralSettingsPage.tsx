@@ -29,13 +29,10 @@ export function SafeGeneralSettingsPage() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
     node: { daoName, daoSnapshotENS, safe },
-    readOnly: {
-      user: { votingWeight },
-    },
   } = useFractal();
   const {
     addressPrefix,
-    contracts: { keyValuePairs, fractalRegistry },
+    contracts: { keyValuePairs },
   } = useNetworkConfig();
 
   const safeAddress = safe?.address;
@@ -60,8 +57,6 @@ export function SafeGeneralSettingsPage() {
     }
   };
 
-  const userHasVotingWeight = votingWeight > 0n;
-
   const submitProposalSuccessCallback = () => {
     if (safeAddress) {
       navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
@@ -69,21 +64,21 @@ export function SafeGeneralSettingsPage() {
   };
 
   const handleEditDAOName = () => {
-    const encodedUpdateDAOName = encodeFunctionData({
-      abi: abis.FractalRegistry,
-      functionName: 'updateDAOName',
-      args: [name],
-    });
-
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('updatesSafeName', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
-      targets: [fractalRegistry],
+      targets: [keyValuePairs],
       values: [0n],
-      calldatas: [encodedUpdateDAOName],
+      calldatas: [
+        encodeFunctionData({
+          abi: abis.KeyValuePairs,
+          functionName: 'updateValues',
+          args: [['daoName'], [name]],
+        }),
+      ],
     };
 
     submitProposal({
@@ -157,7 +152,7 @@ export function SafeGeneralSettingsPage() {
             <InputComponent
               isRequired={false}
               onChange={e => setName(e.target.value)}
-              disabled={!userHasVotingWeight}
+              disabled={!canUserCreateProposal}
               value={name}
               placeholder="Amazing DAO"
               testId="daoSettings.name"
@@ -197,7 +192,7 @@ export function SafeGeneralSettingsPage() {
               isRequired={false}
               onChange={handleSnapshotENSChange}
               value={snapshotENS}
-              disabled={!userHasVotingWeight}
+              disabled={!canUserCreateProposal}
               placeholder="example.eth"
               testId="daoSettings.snapshotENS"
               gridContainerProps={{

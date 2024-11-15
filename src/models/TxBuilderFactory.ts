@@ -28,7 +28,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private votesErc20WrapperMasterCopy: Address;
   private votesErc20MasterCopy: Address;
   private keyValuePairs: Address;
-  private fractalRegistry: Address;
   private gnosisSafeProxyFactory: Address;
   private gnosisSafeProxy: Address;
   private zodiacModuleProxyFactory: Address;
@@ -52,7 +51,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
     votesErc20WrapperMasterCopy: Address,
     votesErc20MasterCopy: Address,
     keyValuePairs: Address,
-    fractalRegistry: Address,
     gnosisSafeProxyFactory: Address,
     gnosisSafeProxy: Address,
     zodiacModuleProxyFactory: Address,
@@ -77,7 +75,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.votesErc20WrapperMasterCopy = votesErc20WrapperMasterCopy;
     this.votesErc20MasterCopy = votesErc20MasterCopy;
     this.keyValuePairs = keyValuePairs;
-    this.fractalRegistry = fractalRegistry;
     this.gnosisSafeProxyFactory = gnosisSafeProxyFactory;
     this.gnosisSafeProxy = gnosisSafeProxy;
     this.zodiacModuleProxyFactory = zodiacModuleProxyFactory;
@@ -143,7 +140,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.safeContractAddress!,
       this,
       this.keyValuePairs,
-      this.fractalRegistry,
       this.zodiacModuleProxyFactory,
       this.multiSendCallOnly,
       this.moduleFractalMasterCopy,

@@ -4,7 +4,7 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { FractalGuardContracts, FractalNode, FreezeGuard } from '../../../types';
+import { FractalNode } from '../../../types';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
@@ -15,8 +15,6 @@ export const NODE_MARGIN_TOP_REM = 1.25;
 
 export interface InfoProps extends FlexProps {
   node?: FractalNode;
-  freezeGuard?: FreezeGuard;
-  guardContracts?: FractalGuardContracts;
 }
 
 /**
@@ -29,7 +27,7 @@ export interface InfoProps extends FlexProps {
  * Simply using the useFractal() hook to get info will end up with the current DAO's
  * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
  */
-export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: InfoProps) {
+export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
   const {
     node: { safe: currentSafe }, // used ONLY to determine if we're on the current DAO
   } = useFractal();

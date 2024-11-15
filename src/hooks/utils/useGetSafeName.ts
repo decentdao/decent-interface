@@ -1,16 +1,14 @@
-import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
-import { Address, getContract } from 'viem';
+import { Address } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { DAOQueryDocument } from '../../../.graphclient';
+import graphQLClient from '../../graphql';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { demoData } from '../DAO/loaders/loadDemoData';
 import { createAccountSubstring } from './useGetAccountName';
 
 export const useGetSafeName = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });
-  const {
-    contracts: { fractalRegistry },
-  } = useNetworkConfig(chainId);
+  const { subgraph } = useNetworkConfig(chainId);
 
   const getSafeName = useCallback(
     async (address: Address) => {
@@ -31,31 +29,25 @@ export const useGetSafeName = (chainId?: number) => {
         return ensName;
       }
 
-      const fractalRegistryContract = getContract({
-        abi: abis.FractalRegistry,
-        address: fractalRegistry,
-        client: publicClient,
-      });
+      const subgraphName = (
+        await graphQLClient.query({
+          query: DAOQueryDocument,
+          variables: { safeAddress: address },
+          context: {
+            subgraphSpace: subgraph.space,
+            subgraphSlug: subgraph.slug,
+            subgraphVersion: subgraph.version,
+          },
+        })
+      ).data?.daos[0].name;
 
-      const events = await fractalRegistryContract.getEvents.FractalNameUpdated(
-        { daoAddress: address },
-        { fromBlock: 0n },
-      );
-
-      const latestEvent = events.pop();
-
-      if (latestEvent?.args.daoName) {
-        return latestEvent.args.daoName;
-      } else if (publicClient.chain && demoData[publicClient.chain.id]) {
-        const demo = demoData[publicClient.chain.id][address];
-        if (demo && demo.name) {
-          return demo.name;
-        }
+      if (subgraphName) {
+        return subgraphName;
       }
 
       return createAccountSubstring(address);
     },
-    [fractalRegistry, publicClient],
+    [publicClient, subgraph],
   );
 
   return { getSafeName };

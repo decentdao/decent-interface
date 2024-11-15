@@ -3,7 +3,6 @@ import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { Address } from 'viem';
 import { useLoadDAONode } from '../../hooks/DAO/loaders/useLoadDAONode';
-import { useLoadDAOData } from '../../hooks/DAO/useDAOData';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalNode, WithError } from '../../types';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../ui/cards/DAONodeInfoCard';
@@ -18,11 +17,9 @@ import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../ui/cards/DAONodeInfoCard';
  * and display another DaoNode for each child, and so on for their children.
  */
 export function DaoHierarchyNode({
-  parentAddress,
   safeAddress,
   depth,
 }: {
-  parentAddress: Address | null;
   safeAddress: Address | null;
   depth: number;
 }) {
@@ -31,7 +28,6 @@ export function DaoHierarchyNode({
   } = useFractal();
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
-  const { daoData } = useLoadDAOData(parentAddress, fractalNode);
 
   useEffect(() => {
     if (safeAddress) {
@@ -63,11 +59,7 @@ export function DaoHierarchyNode({
       gap="1.25rem"
       width="100%"
     >
-      <DAONodeInfoCard
-        node={fractalNode}
-        freezeGuard={daoData?.freezeGuard}
-        guardContracts={daoData?.freezeGuardContracts}
-      />
+      <DAONodeInfoCard node={fractalNode} />
 
       {/* CHILD NODES */}
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
@@ -85,7 +77,6 @@ export function DaoHierarchyNode({
           />
 
           <DaoHierarchyNode
-            parentAddress={safeAddress}
             safeAddress={childNode.address}
             depth={depth + 1}
           />

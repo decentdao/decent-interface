@@ -28,7 +28,7 @@ export const baseConfig: NetworkConfig = {
   subgraph: {
     space: 71032,
     slug: 'fractal-base',
-    version: 'v0.1.1',
+    version: 'v0.1.2',
   },
   sablierSubgraph: {
     space: 57079,
@@ -85,7 +85,6 @@ export const baseConfig: NetworkConfig = {
 
     decentAutonomousAdminV1MasterCopy: getAddress(a.DecentAutonomousAdminV1),
 
-    fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
 
     decentHatsCreationModule: getAddress(a.DecentHatsCreationModule),
@@ -106,7 +105,11 @@ export const baseConfig: NetworkConfig = {
     chainSupported: true,
     deFiSupported: true,
   },
-  createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
+  createOptions: [
+    GovernanceType.MULTISIG,
+    GovernanceType.AZORIUS_ERC20,
+    GovernanceType.AZORIUS_ERC721,
+  ],
 };
 
 export default baseConfig;
