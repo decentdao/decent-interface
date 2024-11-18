@@ -4,8 +4,8 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import PageHeader from '../ui/page/Header/PageHeader';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
 
@@ -26,9 +26,7 @@ export function StepWrapper({
   mode,
   shouldWrapChildren = true,
 }: IStepWrapper) {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['daoCreate']);
   const navigate = useNavigate();

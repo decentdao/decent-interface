@@ -10,6 +10,7 @@ import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLin
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { SablierPayment } from '../../../types/roles';
@@ -24,12 +25,12 @@ const useHatsTree = () => {
   const { t } = useTranslation('roles');
   const { safeAddress } = useParseSafeAddress();
   const {
-    node: { safe },
     governanceContracts: {
       linearVotingErc20WithHatsWhitelistingAddress,
       linearVotingErc721WithHatsWhitelistingAddress,
     },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const {
     hatsTreeId,
     contextChainId,

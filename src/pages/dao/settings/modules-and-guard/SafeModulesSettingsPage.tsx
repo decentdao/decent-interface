@@ -10,15 +10,16 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType } from '../../../../types';
 
 export function SafeModulesSettingsPage() {
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
   const {
-    node: { fractalModules, isModulesLoaded, safe },
     guardContracts: { freezeGuardContractAddress, freezeVotingContractAddress },
   } = useFractal();
+  const { fractalModules, isModulesLoaded, safe } = useDaoInfoStore();
 
   return (
     <>

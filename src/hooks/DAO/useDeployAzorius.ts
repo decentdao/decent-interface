@@ -3,20 +3,20 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Address, encodeFunctionData, isHex, getContract } from 'viem';
+import { Address, encodeFunctionData, getContract, isHex } from 'viem';
 import { usePublicClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   FractalModuleType,
-  FractalNode,
+  DaoInfo,
   ProposalExecuteData,
   SubDAO,
   VotingStrategyType,
@@ -54,11 +54,9 @@ const useDeployAzorius = () => {
     addressPrefix,
   } = useNetworkConfig();
   const {
-    node: {
-      safe,
-      nodeHierarchy: { parentAddress },
-    },
-  } = useFractal();
+    safe,
+    nodeHierarchy: { parentAddress },
+  } = useDaoInfoStore();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
   const { submitProposal } = useSubmitProposal();
@@ -86,7 +84,7 @@ const useDeployAzorius = () => {
       let parentStrategyAddress: Address | undefined;
       let parentStrategyType: VotingStrategyType | undefined;
       let attachFractalModule = false;
-      let parentNode: FractalNode | undefined;
+      let parentNode: DaoInfo | undefined;
 
       if (parentAddress) {
         const loadedParentNode = await loadDao(parentAddress);
@@ -95,7 +93,7 @@ const useDeployAzorius = () => {
           toast.error(t(loadingParentNodeError));
           return;
         } else {
-          parentNode = loadedParentNode as FractalNode;
+          parentNode = loadedParentNode as DaoInfo;
           const parentAzoriusModule = parentNode.fractalModules.find(
             fractalModule => fractalModule.moduleType === FractalModuleType.AZORIUS,
           );

@@ -13,8 +13,8 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { ProposalExecuteData } from '../../../../types';
 import { validateENSName } from '../../../../utils/url';
 
@@ -27,9 +27,7 @@ export function SafeGeneralSettingsPage() {
 
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const {
-    node: { daoName, daoSnapshotENS, safe },
-  } = useFractal();
+  const { daoName, daoSnapshotENS, safe } = useDaoInfoStore();
   const {
     addressPrefix,
     contracts: { keyValuePairs },

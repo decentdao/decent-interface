@@ -31,8 +31,8 @@ import {
 } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
-import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
 import {
   EditBadgeStatus,
@@ -131,9 +131,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
 export function SafeRoleEditDetailsPage() {
   const headerHeight = useHeaderHeight();
   const { t } = useTranslation(['roles']);
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { getPayment } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();

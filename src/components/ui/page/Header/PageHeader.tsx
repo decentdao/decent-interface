@@ -4,11 +4,12 @@ import { ReactNode, useEffect, useState } from 'react';
 import { CONTENT_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import AddressCopier from '../../links/AddressCopier';
 import Divider from '../../utils/Divider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
+
 interface PageHeaderProps {
   title?: string;
   showSafeAddress?: boolean;
@@ -31,9 +32,8 @@ function PageHeader({
   children,
   showSafeAddress,
 }: PageHeaderProps) {
-  const {
-    node: { daoName, safe },
-  } = useFractal();
+  const { safe, daoName } = useDaoInfoStore();
+
   const { addressPrefix } = useNetworkConfig();
   const safeAddress = safe?.address;
 

@@ -5,6 +5,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ProposalTemplate } from '../../../types';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
@@ -18,12 +19,12 @@ export const useFractalGovernance = () => {
   const loadKey = useRef<string>();
 
   const {
-    node: { safe },
     governanceContracts,
     action,
     governance: { type },
     guardContracts: { isGuardLoaded },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
 
   const safeAddress = safe?.address;
 

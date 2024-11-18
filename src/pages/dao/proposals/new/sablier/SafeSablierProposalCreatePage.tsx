@@ -72,6 +72,7 @@ import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserS
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair, CreateProposalSteps } from '../../../../../types';
 import { scrollToBottom } from '../../../../../utils/ui';
 
@@ -86,9 +87,7 @@ function StepButtons({
   pendingTransaction: boolean;
   isSubmitDisabled: boolean;
 }) {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const navigate = useNavigate();
   const location = useLocation();
@@ -307,9 +306,7 @@ function StreamBuilder({
   const [rawTokenBalance, setRawTokenBalnace] = useState(0n);
   const [tokenBalanceFormatted, setTokenBalanceFormatted] = useState('');
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { t } = useTranslation(['common']);
 
   const safeAddress = safe?.address;
@@ -759,9 +756,9 @@ export function SafeSablierProposalCreatePage() {
   }, []);
 
   const {
-    node: { safe },
     governance: { type },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {

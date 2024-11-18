@@ -5,6 +5,7 @@ import { getAddress } from 'viem';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { TokenEventType, TransferDisplayData, TransferType } from '../../../types';
 import { DecentTooltip } from '../../ui/DecentTooltip';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
@@ -166,9 +167,10 @@ export function PaginationButton({ onClick }: { onClick: () => void }) {
 export function PaginationCount({ shownTransactions }: { shownTransactions: number }) {
   const { t } = useTranslation('treasury');
   const {
-    node: { safe },
     treasury: { transfers },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
+
   const totalTransfers = transfers?.length;
   if (!totalTransfers || !safe?.address) {
     return null;

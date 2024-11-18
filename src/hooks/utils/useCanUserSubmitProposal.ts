@@ -5,12 +5,12 @@ import { usePublicClient } from 'wagmi';
 import { isDemoMode } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType } from '../../types';
 import useVotingStrategiesAddresses from './useVotingStrategiesAddresses';
 
 export function useCanUserCreateProposal() {
   const {
-    node: { safe },
     governance: { type },
     governanceContracts: {
       linearVotingErc20Address,
@@ -20,6 +20,7 @@ export function useCanUserCreateProposal() {
     },
     readOnly: { user },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
   const [canUserCreateProposal, setCanUserCreateProposal] = useState<boolean>();
   const publicClient = usePublicClient();

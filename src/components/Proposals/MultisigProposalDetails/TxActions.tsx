@@ -15,6 +15,7 @@ import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { MultisigProposal, FractalProposalState } from '../../../types';
 import { DecentTooltip } from '../../ui/DecentTooltip';
 import ContentBox from '../../ui/containers/ContentBox';
@@ -22,11 +23,11 @@ import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const {
-    node: { safe },
     guardContracts: { freezeGuardContractAddress },
     readOnly: { user },
   } = useFractal();
   const safeAPI = useSafeAPI();
+  const { safe } = useDaoInfoStore();
 
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 

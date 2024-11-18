@@ -1,11 +1,8 @@
 import { useEffect } from 'react';
-import { useFractal } from '../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 
 export const usePageTitle = () => {
-  const {
-    node: { daoName },
-  } = useFractal();
-
+  const { daoName } = useDaoInfoStore();
   useEffect(() => {
     if (daoName) {
       document.title = `${import.meta.env.VITE_APP_NAME} | ${daoName}`;

@@ -36,6 +36,7 @@ import { generateContractByteCodeLinear } from '../../models/helpers/utils';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import {
   AzoriusGovernance,
@@ -81,7 +82,6 @@ async function uploadHatDescription(
 
 export default function useCreateRoles() {
   const {
-    node: { safe, daoName },
     governance,
     governanceContracts: {
       linearVotingErc20Address,
@@ -91,6 +91,7 @@ export default function useCreateRoles() {
       moduleAzoriusAddress,
     },
   } = useFractal();
+  const { safe, daoName } = useDaoInfoStore();
   const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
     addressPrefix,

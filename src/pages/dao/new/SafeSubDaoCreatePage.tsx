@@ -6,8 +6,8 @@ import { DAOCreateMode } from '../../../components/DaoCreator/formComponents/Est
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useCreateSubDAOProposal } from '../../../hooks/DAO/useCreateSubDAOProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
-import { useFractal } from '../../../providers/App/AppProvider';
-import { SafeMultisigDAO, AzoriusGovernanceDAO, SubDAO } from '../../../types';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
+import { AzoriusGovernanceDAO, SafeMultisigDAO, SubDAO } from '../../../types';
 
 export function SafeSubDaoCreatePage() {
   useEffect(() => {
@@ -16,9 +16,7 @@ export function SafeSubDaoCreatePage() {
 
   const navigate = useNavigate();
   const [redirectPending, setRedirectPending] = useState(false);
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
 
   const successCallback = async (addressPrefix: string, safeAddress: string) => {
     setRedirectPending(true);

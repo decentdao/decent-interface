@@ -8,6 +8,7 @@ import { useHeaderHeight } from '../../../../constants/common';
 import { usePrepareProposal } from '../../../../hooks/DAO/proposal/usePrepareProposal';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { ProposalBuilderMode } from '../../../../types';
 
 export function SafeProposalCreatePage() {
@@ -15,9 +16,9 @@ export function SafeProposalCreatePage() {
     amplitude.track(analyticsEvents.CreateProposalPageOpened);
   }, []);
   const {
-    node: { safe },
     governance: { type },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { prepareProposal } = usePrepareProposal();
 
   const HEADER_HEIGHT = useHeaderHeight();

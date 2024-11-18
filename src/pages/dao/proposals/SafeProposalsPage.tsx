@@ -14,6 +14,7 @@ import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitP
 import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../../types';
 
 export function SafeProposalsPage() {
@@ -21,10 +22,8 @@ export function SafeProposalsPage() {
     amplitude.track(analyticsEvents.ProposalsPageOpened);
   }, []);
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
-  const {
-    governance,
-    node: { safe },
-  } = useFractal();
+  const { governance } = useFractal();
+  const { safe } = useDaoInfoStore();
 
   const { addressPrefix } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;

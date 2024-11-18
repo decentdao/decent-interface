@@ -15,7 +15,7 @@ import { useAutomaticSwitchChain } from '../../hooks/utils/useAutomaticSwitchCha
 import { usePageTitle } from '../../hooks/utils/usePageTitle';
 import { useTemporaryProposals } from '../../hooks/utils/useTemporaryProposals';
 import { useUpdateSafeData } from '../../hooks/utils/useUpdateSafeData';
-import { useFractal } from '../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import LoadingProblem from '../LoadingProblem';
 
 export function SafeController() {
@@ -27,10 +27,8 @@ export function SafeController() {
   useAutomaticSwitchChain({ addressPrefix });
 
   const {
-    node: {
-      nodeHierarchy: { parentAddress },
-    },
-  } = useFractal();
+    nodeHierarchy: { parentAddress },
+  } = useDaoInfoStore();
 
   const { errorLoading } = useFractalNode({
     addressPrefix,

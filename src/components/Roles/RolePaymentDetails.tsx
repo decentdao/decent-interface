@@ -10,6 +10,7 @@ import { DETAILS_BOX_SHADOW, isDemoMode } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { BigIntValuePair } from '../../types';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../utils';
@@ -140,9 +141,9 @@ export function RolePaymentDetails({
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
-    node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { address: connectedAccount } = useAccount();
   const { addressPrefix } = useNetworkConfig();
   const { refreshWithdrawableAmount } = useRolesStore();

@@ -2,9 +2,9 @@ import { Center, Flex, FlexProps, Link, Text, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { FractalNode } from '../../../types';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
+import { DaoInfo } from '../../../types';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
@@ -14,7 +14,7 @@ export const NODE_HEIGHT_REM = 6.75;
 export const NODE_MARGIN_TOP_REM = 1.25;
 
 export interface InfoProps extends FlexProps {
-  node?: FractalNode;
+  node?: DaoInfo;
 }
 
 /**
@@ -28,9 +28,7 @@ export interface InfoProps extends FlexProps {
  * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
  */
 export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
-  const {
-    node: { safe: currentSafe }, // used ONLY to determine if we're on the current DAO
-  } = useFractal();
+  const { safe: currentSafe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
   const displayedAddress = node?.safe?.address;

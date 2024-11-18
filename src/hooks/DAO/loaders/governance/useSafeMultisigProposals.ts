@@ -3,13 +3,12 @@ import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useSafeAPI } from '../../../../providers/App/hooks/useSafeAPI';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useSafeTransactions } from '../../../utils/useSafeTransactions';
 
 export const useSafeMultisigProposals = () => {
-  const {
-    node: { safe },
-    action,
-  } = useFractal();
+  const { action } = useFractal();
+  const { safe } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
   const safeAddress = safe?.address;
 

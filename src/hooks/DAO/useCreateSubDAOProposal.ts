@@ -5,6 +5,7 @@ import { encodeFunctionData, isHex } from 'viem';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
@@ -23,10 +24,8 @@ export const useCreateSubDAOProposal = () => {
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const [build] = useBuildDAOTx();
-  const {
-    node: { safe },
-    governance,
-  } = useFractal();
+  const { governance } = useFractal();
+  const { safe } = useDaoInfoStore();
   const {
     contracts: { multiSendCallOnly, keyValuePairs },
   } = useNetworkConfig();

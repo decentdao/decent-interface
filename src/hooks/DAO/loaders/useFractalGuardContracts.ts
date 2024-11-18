@@ -5,6 +5,7 @@ import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FreezeGuardType, FreezeVotingType, SafeInfoResponseWithGuard } from '../../../types';
 import { useAddressContractType } from '../../utils/useAddressContractType';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
@@ -12,10 +13,9 @@ import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
-  const {
-    node: { safe, fractalModules, isHierarchyLoaded },
-    action,
-  } = useFractal();
+  const { action } = useFractal();
+
+  const { fractalModules, safe, isHierarchyLoaded } = useDaoInfoStore();
 
   const safeAddress = safe?.address;
 

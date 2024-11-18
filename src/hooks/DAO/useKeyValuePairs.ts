@@ -5,8 +5,8 @@ import { useSearchParams } from 'react-router-dom';
 import { GetContractEventsReturnType, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 
 const getHatsTreeId = (
@@ -57,7 +57,7 @@ const getHatsTreeId = (
 
 const useKeyValuePairs = () => {
   const publicClient = usePublicClient();
-  const { node } = useFractal();
+  const node = useDaoInfoStore();
   const {
     chain,
     contracts: { keyValuePairs },

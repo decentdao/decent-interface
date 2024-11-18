@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { getAddress, Hex, zeroAddress } from 'viem';
 import { CARD_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import {
   EditedRole,
   RoleDetailsDrawerEditingRoleHatProp,
@@ -112,9 +112,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     values.hats,
   ]);
 
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
 
