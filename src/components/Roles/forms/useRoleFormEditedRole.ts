@@ -56,9 +56,10 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
   const isRoleTermUpdated = useMemo(() => {
     return (
       !!existingRoleHat &&
+      !isRoleTypeUpdated &&
       values.roleEditing?.roleTerms?.length !== existingRoleHat.roleTerms.allTerms.length
     );
-  }, [existingRoleHat, values.roleEditing]);
+  }, [existingRoleHat, isRoleTypeUpdated, values.roleEditing]);
 
   const isCanCreateProposalsUpdated =
     !!existingRoleHat &&
