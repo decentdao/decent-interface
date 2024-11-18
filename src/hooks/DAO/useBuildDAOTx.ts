@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Address } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -39,10 +39,11 @@ const useBuildDAOTx = () => {
   } = useNetworkConfig();
 
   const {
-    readOnly: { user, dao },
+    readOnly: { dao },
     governance,
     governanceContracts: { linearVotingErc721Address },
   } = useFractal();
+  const user = useAccount();
   const publicClient = usePublicClient();
 
   const buildDao = useCallback(
