@@ -53,7 +53,7 @@ export function ProposalBuilder({
     mode === ProposalBuilderMode.PROPOSAL || mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS;
 
   const {
-    readOnly: { dao },
+    governance: { isAzorius },
   } = useFractal();
   const { safe } = useDaoInfoStore();
   const safeAddress = safe?.address;
@@ -222,7 +222,7 @@ export function ProposalBuilder({
                                 mode={mode}
                                 {...formikProps}
                               />
-                              {!dao?.isAzorius && (
+                              {!isAzorius && (
                                 <Flex
                                   alignItems="center"
                                   justifyContent="space-between"

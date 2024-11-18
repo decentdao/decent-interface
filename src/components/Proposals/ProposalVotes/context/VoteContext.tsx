@@ -61,8 +61,8 @@ export function VoteContextProvider({
   const [hasVotedLoading, setHasVotedLoading] = useState(false);
   const [proposalVotesLength, setProposalVotesLength] = useState(0);
   const {
-    readOnly: { user, dao },
-    governance: { type },
+    readOnly: { user },
+    governance: { type, isAzorius },
   } = useFractal();
   const userAccount = useAccount();
   const { safe } = useDaoInfoStore();
@@ -82,7 +82,7 @@ export function VoteContextProvider({
         !!extendedSnapshotProposal &&
           !!extendedSnapshotProposal.votes.find(vote => vote.voter === userAccount.address),
       );
-    } else if (dao?.isAzorius) {
+    } else if (isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
       if (azoriusProposal?.votes) {
         setHasVoted(!!azoriusProposal?.votes.find(vote => vote.voter === userAccount.address));
@@ -96,7 +96,7 @@ export function VoteContextProvider({
       );
     }
     setHasVotedLoading(false);
-  }, [dao, snapshotProposal, proposal, userAccount.address, extendedSnapshotProposal]);
+  }, [isAzorius, snapshotProposal, proposal, userAccount.address, extendedSnapshotProposal]);
 
   const getCanVote = useCallback(
     async (refetchUserTokens?: boolean) => {

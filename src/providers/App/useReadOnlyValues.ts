@@ -17,7 +17,6 @@ const INITIAL_READ_ONLY_VALUES: ReadOnlyState = {
   user: {
     votingWeight: 0n,
   },
-  dao: null,
 };
 /**
  * Sets "read only" values which are passed on to the FractalProvider.
@@ -84,13 +83,6 @@ export const useReadOnlyValues = ({
       user: {
         votingWeight: await getVotingWeight(),
       },
-      dao: !node.safe?.address
-        ? null // if there is no DAO connected, we return null for this
-        : {
-            isAzorius:
-              governance.type === GovernanceType.AZORIUS_ERC20 ||
-              governance.type === GovernanceType.AZORIUS_ERC721,
-          },
     };
     if (!isEqual(newReadOnlyValues, readOnlyValues)) {
       setReadOnlyValues(newReadOnlyValues);

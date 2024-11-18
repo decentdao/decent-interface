@@ -6,6 +6,7 @@ import {
   AzoriusGovernance,
   DecentGovernance,
   getVoteChoice,
+  GovernanceType,
 } from '../../../types';
 import {
   FractalGovernanceAction,
@@ -14,6 +15,7 @@ import {
 } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
+  isAzorius: false,
   loadingProposals: true,
   allProposalsLoaded: false,
   proposals: null,
@@ -49,7 +51,13 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL:
       return { ...state, loadingProposals: action.payload };
     case FractalGovernanceAction.SET_GOVERNANCE_TYPE:
-      return { ...state, type: action.payload };
+      return {
+        ...state,
+        type: action.payload,
+        isAzorius:
+          action.payload === GovernanceType.AZORIUS_ERC20 ||
+          action.payload === GovernanceType.AZORIUS_ERC721,
+      };
     case FractalGovernanceAction.SET_PROPOSALS: {
       return {
         ...state,

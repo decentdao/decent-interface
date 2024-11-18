@@ -28,7 +28,7 @@ export function AzoriusOrSnapshotProposalAction({
   expandedView?: boolean;
 }) {
   const {
-    readOnly: { dao },
+    governance: { isAzorius },
   } = useFractal();
   const { t } = useTranslation();
   const { snapshotProposal } = useSnapshotProposal(proposal);
@@ -55,10 +55,10 @@ export function AzoriusOrSnapshotProposalAction({
       if (!canVote) {
         return t('details');
       }
-      return t(dao?.isAzorius ? 'vote' : 'sign');
+      return t(isAzorius ? 'vote' : 'sign');
     }
     return t('details');
-  }, [snapshotProposal, t, canVote, dao, isActiveProposal]);
+  }, [snapshotProposal, t, canVote, isAzorius, isActiveProposal]);
 
   if (!showActionButton) {
     if (!expandedView) {
