@@ -70,9 +70,7 @@ export function useCanUserCreateProposal() {
           return checkIsMultisigOwner(owners);
         } else if (
           type === GovernanceType.AZORIUS_ERC20 ||
-          type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING ||
-          type === GovernanceType.AZORIUS_ERC721 ||
-          type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING
+          type === GovernanceType.AZORIUS_ERC721
         ) {
           const isProposerPerStrategy = await Promise.all(
             [

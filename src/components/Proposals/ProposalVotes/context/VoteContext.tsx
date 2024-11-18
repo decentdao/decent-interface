@@ -106,10 +106,7 @@ export function VoteContextProvider({
         if (snapshotProposal) {
           const votingWeightData = await loadVotingWeight();
           newCanVote = votingWeightData.votingWeight >= 1;
-        } else if (
-          type === GovernanceType.AZORIUS_ERC20 ||
-          type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING
-        ) {
+        } else if (type === GovernanceType.AZORIUS_ERC20) {
           const azoriusProposal = proposal as AzoriusProposal;
           const ozLinearVotingContract = getContract({
             abi: abis.LinearERC20Voting,
@@ -121,10 +118,7 @@ export function VoteContextProvider({
               userAccount.address,
               Number(proposal.proposalId),
             ])) > 0n && !hasVoted;
-        } else if (
-          type === GovernanceType.AZORIUS_ERC721 ||
-          type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING
-        ) {
+        } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
             await getUserERC721VotingTokens(null, null);
           }

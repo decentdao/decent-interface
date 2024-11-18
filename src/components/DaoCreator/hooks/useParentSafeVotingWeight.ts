@@ -21,9 +21,7 @@ export const useParentSafeVotingWeight = () => {
 
     switch (governance.type) {
       case GovernanceType.AZORIUS_ERC20:
-      case GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING:
       case GovernanceType.AZORIUS_ERC721:
-      case GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING:
         const governanceAzorius = governance as AzoriusGovernance;
 
         if (dao?.isAzorius === false || !governanceAzorius.votingStrategy) {
