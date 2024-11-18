@@ -11,13 +11,15 @@ import {
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, Hex } from 'viem';
+import { Address, Hex } from 'viem';
+import { createRoleTermViewProps } from '../../services/roles/roleTerms';
+import { useRolesStore } from '../../store/roles/useRolesStore';
 import { RoleFormTermStatus } from '../../types/roles';
 import NoDataCard from '../ui/containers/NoDataCard';
 import { RoleTerm } from './RoleTerm';
 
 type RoleTermDetailProp = {
-  nominee: string;
+  nominee: Address;
   termEndDate: Date;
   termNumber: number;
 };
@@ -35,19 +37,33 @@ function RoleTermRenderer({
   termStatus: RoleFormTermStatus;
   displayLightContainer: boolean;
 }) {
-  if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
+  const { getHat, hatsTree } = useRolesStore();
+
+  if (!hatId || !hatsTree) {
     return null;
   }
-  return (
-    <RoleTerm
-      hatId={hatId}
-      termNominatedWearer={getAddress(roleTerm.nominee)}
-      termEndDate={roleTerm.termEndDate}
-      termStatus={termStatus}
-      termNumber={roleTerm.termNumber}
-      displayLightContainer={displayLightContainer}
-    />
+
+  const roleHat = getHat(hatId);
+
+  if (!roleTerm?.nominee || !roleTerm?.termEndDate || !roleHat) {
+    return null;
+  }
+
+  const termProps = createRoleTermViewProps(
+    roleTerm,
+    termStatus,
+    {
+      adminHatWearer: hatsTree.adminHat.wearer!,
+      roleHatId: hatId,
+      roleHatWearer: roleHat.wearerAddress,
+      roleTermActive: roleHat.roleTerms.currentTerm?.isActive ?? false,
+      roleEligibilityAddress: roleHat.eligibility!,
+      currentTermNominee: roleHat.roleTerms.currentTerm?.nominee!,
+      previousTermNominee: roleHat.roleTerms.previousTerm?.nominee!,
+    },
+    displayLightContainer,
   );
+  return <RoleTerm {...termProps} />;
 }
 
 function RoleTermExpiredTerms({

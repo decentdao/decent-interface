@@ -31,6 +31,7 @@ export type DecentRoleHatTerms = {
   allTerms: RoleTerm[];
   currentTerm: (RoleTerm & { isActive: boolean | undefined }) | undefined;
   nextTerm: RoleTerm | undefined;
+  previousTerm: RoleTerm | undefined;
   expiredTerms: RoleTerm[];
 };
 

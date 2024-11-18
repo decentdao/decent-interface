@@ -25,6 +25,7 @@ import { DatePicker } from '../../ui/forms/DatePicker';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RoleTerm } from '../RoleTerm';
+import { createRoleTermViewProps } from '../../../services/roles/roleTerms';
 
 function RoleTermEndDateInput({ previousTermEndDate }: { previousTermEndDate: Date | undefined }) {
   const { t } = useTranslation('roles');
@@ -191,19 +192,33 @@ function RoleTermRenderer({
   hatId: Hex | undefined;
   displayLightContainer: boolean;
 }) {
-  if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
+  const { getHat, hatsTree } = useRolesStore();
+
+  if (!hatId || !hatsTree) {
     return null;
   }
-  return (
-    <RoleTerm
-      hatId={hatId}
-      termNominatedWearer={getAddress(roleTerm.nominee)}
-      termEndDate={roleTerm.termEndDate}
-      termStatus={termStatus}
-      termNumber={roleTerm.termNumber}
-      displayLightContainer={displayLightContainer}
-    />
+
+  const roleHat = getHat(hatId);
+
+  if (!roleTerm?.nominee || !roleTerm?.termEndDate || !roleHat) {
+    return null;
+  }
+
+  const termProps = createRoleTermViewProps(
+    roleTerm,
+    termStatus,
+    {
+      adminHatWearer: hatsTree.adminHat.wearer!,
+      roleHatId: hatId,
+      roleHatWearer: roleHat.wearerAddress,
+      roleTermActive: roleHat.roleTerms.currentTerm?.isActive ?? false,
+      roleEligibilityAddress: roleHat.eligibility!,
+      currentTermNominee: roleHat.roleTerms.currentTerm?.nominee!,
+      previousTermNominee: roleHat.roleTerms.previousTerm?.nominee!,
+    },
+    displayLightContainer,
   );
+  return <RoleTerm {...termProps} />;
 }
 
 function RoleTermExpiredTerms({

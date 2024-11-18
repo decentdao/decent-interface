@@ -4,7 +4,7 @@ import { ArrowRight, Calendar, ClockCountdown, Copy } from '@phosphor-icons/reac
 import { format } from 'date-fns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getContract, Hex } from 'viem';
+import { Account, Chain, Address, getContract, Transport, WalletClient, Hex } from 'viem';
 import { useWalletClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { useDateTimeDisplay } from '../../helpers/dateTime';
@@ -269,106 +269,80 @@ function RoleTermEndDate(props: RoleTermEndDateViewProps) {
 }
 
 type RoleTermViewProps = {
-  hatId: Hex | undefined;
+  termHeaderTitleProps: RoleTermHeaderTitleViewProps;
+  termHeaderStatusProps: RoleTermHeaderStatusViewProps;
+  adminHatWearer: Address;
+  roleHatId: Hex;
+  roleHatWearer: Address;
+  roleTermActive: boolean;
   termNominatedWearer: Address;
-  termEndDate: Date;
-  termNumber: number;
-  termStatus: RoleFormTermStatus;
   displayLightContainer: boolean;
 };
 export function RoleTerm(props: RoleTermViewProps) {
-  const { hatId, termNominatedWearer, termEndDate, termStatus, termNumber, displayLightContainer } =
-    props;
+  const {
+    termHeaderTitleProps,
+    termHeaderStatusProps,
+    adminHatWearer,
+    roleHatId,
+    roleHatWearer,
+    roleTermActive,
+    termNominatedWearer,
+    displayLightContainer,
+  } = props;
+  const { termPosition } = termHeaderTitleProps;
+  const { termEndDate } = termHeaderStatusProps;
+
   const [contractCall, contractCallPending] = useTransaction();
-  const { hatsTree, getHat, updateCurrentTermStatus } = useRolesStore();
+  const { updateCurrentTermStatus } = useRolesStore();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles']);
   const {
     contracts: { hatsProtocol },
   } = useNetworkConfig();
 
-  const roleHat = useMemo(() => {
-    if (!hatId) return undefined;
-    return getHat(hatId);
-  }, [getHat, hatId]);
-
-  const termPosition = useMemo(() => {
-    if (!roleHat) return undefined;
-    const currentTermEndDate = roleHat.roleTerms.currentTerm?.termEndDate;
-    const nextTermEndDate = roleHat.roleTerms.nextTerm?.termEndDate;
-    if (currentTermEndDate && termEndDate.getTime() === currentTermEndDate.getTime())
-      return 'currentTerm';
-    if (nextTermEndDate && termEndDate.getTime() === nextTermEndDate.getTime()) return 'nextTerm';
-  }, [roleHat, termEndDate]);
-
-  const wearerAddress = roleHat?.wearerAddress;
-
-  const handleTriggerStartTerm = useCallback(async () => {
-    const adminHatWearer = hatsTree?.adminHat.wearer;
-
-    if (!wearerAddress) {
-      throw new Error('Current hat must be worn by a member');
-    }
-    if (adminHatWearer === undefined) {
-      throw new Error('Admin hat must be worn by Decent Autonomous Admin');
-    }
-    if (!walletClient) {
-      throw new Error('Public client not found');
-    }
-    if (!roleHat) {
-      throw new Error('roleHat not found');
-    }
-    const eligibilityAddress = roleHat.eligibility;
-    if (!eligibilityAddress) {
-      throw new Error('Election eligibility contract not found');
-    }
-
-    contractCall({
-      contractFn: () => {
-        const decentAutonomousAdminContract = getContract({
-          abi: abis.DecentAutonomousAdminV1,
-          address: adminHatWearer,
-          client: walletClient,
-        });
-        return decentAutonomousAdminContract.write.triggerStartNextTerm([
-          {
-            currentWearer: wearerAddress,
-            hatsProtocol,
-            hatId: BigInt(roleHat.id),
-            nominatedWearer: termNominatedWearer,
-          },
-        ]);
-      },
-      pendingMessage: t('startTermPendingToastMessage'),
-      failedMessage: t('startTermFailureToastMessage'),
-      successMessage: t('startTermSuccessToastMessage'),
-      successCallback: () => {
-        updateCurrentTermStatus(roleHat.id, 'active');
-      },
-    });
-  }, [
-    contractCall,
-    hatsProtocol,
-    hatsTree?.adminHat.wearer,
-    roleHat,
-    t,
-    termNominatedWearer,
-    updateCurrentTermStatus,
-    walletClient,
-    wearerAddress,
-  ]);
+  const handleTriggerStartTerm = useCallback(
+    async (client: WalletClient<Transport, Chain, Account>) => {
+      contractCall({
+        contractFn: () => {
+          const decentAutonomousAdminContract = getContract({
+            abi: abis.DecentAutonomousAdminV1,
+            address: adminHatWearer,
+            client,
+          });
+          return decentAutonomousAdminContract.write.triggerStartNextTerm([
+            {
+              currentWearer: roleHatWearer,
+              hatsProtocol,
+              hatId: BigInt(roleHatId),
+              nominatedWearer: termNominatedWearer,
+            },
+          ]);
+        },
+        pendingMessage: t('startTermPendingToastMessage'),
+        failedMessage: t('startTermFailureToastMessage'),
+        successMessage: t('startTermSuccessToastMessage'),
+        successCallback: () => {
+          updateCurrentTermStatus(roleHatId, 'active');
+        },
+      });
+    },
+    [
+      adminHatWearer,
+      contractCall,
+      hatsProtocol,
+      roleHatId,
+      roleHatWearer,
+      t,
+      termNominatedWearer,
+      updateCurrentTermStatus,
+    ],
+  );
 
   return (
     <Box>
       <RoleTermHeader
-        termHeaderTitleProps={{
-          termNumber,
-          termPosition,
-        }}
-        termHeaderStatusProps={{
-          termEndDate,
-          termStatus,
-        }}
+        termHeaderTitleProps={termHeaderTitleProps}
+        termHeaderStatusProps={termHeaderStatusProps}
         displayLightContainer={displayLightContainer}
       />
       <Container
@@ -379,22 +353,20 @@ export function RoleTerm(props: RoleTermViewProps) {
           <RoleTermMemberAddress memberAddress={termNominatedWearer} />
           <RoleTermEndDate termEndDate={termEndDate} />
         </Flex>
-        {!!roleHat?.roleTerms.currentTerm &&
-          !roleHat.roleTerms.currentTerm.isActive &&
-          termPosition === 'currentTerm' && (
-            <Button
-              isDisabled={contractCallPending}
-              leftIcon={
-                <Icon
-                  as={ArrowRight}
-                  size="1.25rem"
-                />
-              }
-              onClick={handleTriggerStartTerm}
-            >
-              {t('startTerm')}
-            </Button>
-          )}
+        {walletClient && !roleTermActive && termPosition === 'currentTerm' && (
+          <Button
+            isDisabled={contractCallPending}
+            leftIcon={
+              <Icon
+                as={ArrowRight}
+                size="1.25rem"
+              />
+            }
+            onClick={() => handleTriggerStartTerm(walletClient)}
+          >
+            {t('startTerm')}
+          </Button>
+        )}
       </Container>
     </Box>
   );
