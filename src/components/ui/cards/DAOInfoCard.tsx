@@ -2,8 +2,8 @@ import { Box, Center, Flex, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
@@ -14,8 +14,7 @@ import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
  * Info card used on the DAO homepage.
  */
 export function DAOInfoCard() {
-  const { node } = useFractal();
-
+  const node = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
   const displayedAddress = node.safe?.address;

@@ -6,14 +6,15 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import useLidoStaking from '../../../hooks/stake/lido/useLidoStaking';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair, TokenBalance } from '../../../types';
 import { BigIntInput } from '../forms/BigIntInput';
 
 export default function StakeModal({ close }: { close: () => void }) {
   const {
-    node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
   const { t } = useTranslation('stake');

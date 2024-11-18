@@ -7,7 +7,7 @@ import { BarLoader } from '../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import { useHeaderHeight } from '../../../constants/common';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
-import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 
 export function SafeHierarchyPage() {
   useEffect(() => {
@@ -15,13 +15,12 @@ export function SafeHierarchyPage() {
   }, []);
 
   const {
-    node: {
-      safe,
-      daoName,
-      nodeHierarchy: { parentAddress },
-      isHierarchyLoaded,
-    },
-  } = useFractal();
+    safe,
+    daoName,
+    nodeHierarchy: { parentAddress },
+    isHierarchyLoaded,
+  } = useDaoInfoStore();
+
   const { t } = useTranslation('breadcrumbs');
 
   const HEADER_HEIGHT = useHeaderHeight();

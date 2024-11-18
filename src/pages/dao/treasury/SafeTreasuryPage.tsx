@@ -16,6 +16,7 @@ import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { prepareSendAssetsProposalData } from '../../../utils/dao/prepareSendAssetsProposalData';
 
 export function SafeTreasuryPage() {
@@ -23,9 +24,9 @@ export function SafeTreasuryPage() {
     amplitude.track(analyticsEvents.TreasuryPageOpened);
   }, []);
   const {
-    node: { daoName },
     treasury: { assetsFungible, transfers },
   } = useFractal();
+  const { daoName } = useDaoInfoStore();
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation(['treasury', 'modals']);
   const { canUserCreateProposal } = useCanUserCreateProposal();

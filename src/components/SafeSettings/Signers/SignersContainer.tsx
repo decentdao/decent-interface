@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { StyledBox } from '../../ui/containers/StyledBox';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
 import { ModalType } from '../../ui/modals/ModalProvider';
@@ -73,9 +73,7 @@ function Signer({
 }
 
 export function SignersContainer() {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const [signers, setSigners] = useState<Address[]>();
   const [userIsSigner, setUserIsSigner] = useState<boolean>();
 

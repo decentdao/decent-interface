@@ -4,8 +4,8 @@ import { Address } from 'viem';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
-import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetSafeName } from '../../utils/useGetSafeName';
@@ -31,6 +31,8 @@ export const useFractalNode = ({
   const lookupModules = useFractalModules();
 
   const { subgraph } = useNetworkConfig();
+
+  const { setDaoInfo, setFractalModules, setSafeInfo } = useDaoInfoStore();
 
   useQuery(DAOQueryDocument, {
     variables: { safeAddress },
@@ -61,10 +63,11 @@ export const useFractalNode = ({
       const graphNodeInfo = getNodeInfo({ data });
       const daoName = graphNodeInfo?.daoName ?? (await getSafeName(safeAddress));
 
-      action.dispatch({
-        type: NodeAction.SET_DAO_INFO,
-        payload: Object.assign(graphNodeInfo || {}, { daoName }),
-      });
+      if (graphNodeInfo) {
+        setDaoInfo({ ...graphNodeInfo, daoName });
+      } else {
+        setDaoInfo({ daoName });
+      }
     },
     context: {
       subgraphSpace: subgraph.space,
@@ -101,18 +104,10 @@ export const useFractalNode = ({
       }
 
       // if here, we have a valid Safe!
-
-      action.dispatch({
-        type: NodeAction.SET_FRACTAL_MODULES,
-        payload: await lookupModules(safeInfo.modules),
-      });
-
-      action.dispatch({
-        type: NodeAction.SET_SAFE_INFO,
-        payload: safeInfo,
-      });
+      setFractalModules(await lookupModules(safeInfo.modules));
+      setSafeInfo(safeInfo);
     }
-  }, [action, lookupModules, reset, safeAPI, addressPrefix, safeAddress]);
+  }, [addressPrefix, safeAddress, setFractalModules, lookupModules, setSafeInfo, safeAPI, reset]);
 
   useEffect(() => {
     if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current) {

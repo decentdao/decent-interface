@@ -8,6 +8,7 @@ import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair, TokenBalance } from '../../../types';
 import { formatCoinFromAsset, formatCoinUnits } from '../../../utils/numberFormats';
 import { validateENSName } from '../../../utils/url';
@@ -42,9 +43,10 @@ export function SendAssetsModal({
   sendAssetsData: (sendAssetData: SendAssetsData) => void;
 }) {
   const {
-    node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
+
   const publicClient = usePublicClient();
   const { t } = useTranslation(['modals', 'common']);
 

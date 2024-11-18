@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 /**
@@ -11,9 +11,7 @@ import { useValidationAddress } from '../common/useValidationAddress';
 const useCreateProposalSchema = () => {
   const { t } = useTranslation('proposal');
   const { addressValidationTest } = useValidationAddress();
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
 
   const labelOrValueValidationTest: Yup.TestFunction<string | undefined, Yup.AnyObject> = (
     _,

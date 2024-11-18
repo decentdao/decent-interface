@@ -8,8 +8,8 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
 import { validateAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { InputComponent } from '../forms/InputComponent';
 import Divider from '../utils/Divider';
@@ -33,9 +33,7 @@ export default function ForkProposalTemplateModal({
   const navigate = useNavigate();
   const publicClient = usePublicClient();
   const { chain, addressPrefix } = useNetworkConfig();
-  const {
-    node: { proposalTemplatesHash },
-  } = useFractal();
+  const { proposalTemplatesHash } = useDaoInfoStore();
 
   const { isSafe, isSafeLoading } = useIsSafe(targetDAOAddress);
   const { getCanUserCreateProposal } = useCanUserCreateProposal();

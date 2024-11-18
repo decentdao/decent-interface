@@ -1,15 +1,15 @@
 import { useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Address } from 'viem';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { NodeAction } from '../../providers/App/node/action';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 
 export const useUpdateSafeData = (safeAddress?: Address) => {
-  const { action } = useFractal();
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
+
+  const { setSafeInfo } = useDaoInfoStore();
 
   useEffect(() => {
     if (!safeAPI || !safeAddress) {
@@ -22,12 +22,9 @@ export const useUpdateSafeData = (safeAddress?: Address) => {
       (async () => {
         const safeInfo = await safeAPI.getSafeData(safeAddress);
 
-        action.dispatch({
-          type: NodeAction.SET_SAFE_INFO,
-          payload: safeInfo,
-        });
+        setSafeInfo(safeInfo);
       })();
       prevPathname.current = location.pathname;
     }
-  }, [action, safeAddress, safeAPI, location]);
+  }, [safeAddress, safeAPI, location, setSafeInfo]);
 };

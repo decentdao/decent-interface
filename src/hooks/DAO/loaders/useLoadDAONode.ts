@@ -5,7 +5,7 @@ import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { FractalNode, Node, WithError } from '../../../types';
+import { DaoInfo, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetSafeName } from '../../utils/useGetSafeName';
 import { useFractalModules } from './useFractalModules';
@@ -43,7 +43,7 @@ export const useLoadDAONode = () => {
   }, []);
 
   const loadDao = useCallback(
-    async (safeAddress: Address): Promise<FractalNode | WithError> => {
+    async (safeAddress: Address): Promise<DaoInfo | WithError> => {
       if (safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
@@ -57,7 +57,7 @@ export const useLoadDAONode = () => {
 
           const safeInfoWithGuard = await safeAPI.getSafeData(safeAddress);
 
-          const node: FractalNode = Object.assign(graphNodeInfo, {
+          const node: DaoInfo = Object.assign(graphNodeInfo, {
             daoName: graphNodeInfo.daoName ?? (await getSafeName(safeAddress)),
             safe: safeInfoWithGuard,
             fractalModules: await lookupModules(safeInfoWithGuard.modules),

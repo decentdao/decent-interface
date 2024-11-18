@@ -8,16 +8,14 @@ import RoleFormCreateProposal from '../../../../../components/Roles/forms/RoleFo
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { SIDEBAR_WIDTH, useHeaderHeight } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
-import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { RoleFormValues } from '../../../../../types/roles';
 
 export function SafeRolesEditProposalSummaryPage() {
   const headerHeight = useHeaderHeight();
   const navigate = useNavigate();
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { t } = useTranslation(['roles', 'breadcrumbs']);
   const { addressPrefix } = useNetworkConfig();
   const { values } = useFormikContext<RoleFormValues>();

@@ -19,7 +19,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useAddress from '../../hooks/utils/useAddress';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
@@ -82,9 +82,7 @@ export default function RolesDetailsDrawer({
   isOpen = true,
   onEdit,
 }: RoleDetailsDrawerProps) {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const permissionsContainerRef = useRef<HTMLDivElement>(null);
 
   const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;

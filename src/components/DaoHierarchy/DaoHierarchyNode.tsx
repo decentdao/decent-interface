@@ -3,8 +3,8 @@ import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { Address } from 'viem';
 import { useLoadDAONode } from '../../hooks/DAO/loaders/useLoadDAONode';
-import { useFractal } from '../../providers/App/AppProvider';
-import { FractalNode, WithError } from '../../types';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { DaoInfo, WithError } from '../../types';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../ui/cards/DAONodeInfoCard';
 
 /**
@@ -23,10 +23,8 @@ export function DaoHierarchyNode({
   safeAddress: Address | null;
   depth: number;
 }) {
-  const {
-    node: { safe: currentSafe },
-  } = useFractal();
-  const [fractalNode, setNode] = useState<FractalNode>();
+  const { safe: currentSafe } = useDaoInfoStore();
+  const [fractalNode, setNode] = useState<DaoInfo>();
   const { loadDao } = useLoadDAONode();
 
   useEffect(() => {
@@ -34,7 +32,7 @@ export function DaoHierarchyNode({
       loadDao(safeAddress).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
-          const fnode = _node as FractalNode;
+          const fnode = _node as DaoInfo;
           setNode(fnode);
         } else if (errorNode.error === 'errorFailedSearch') {
           setNode({

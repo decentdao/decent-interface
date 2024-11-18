@@ -12,8 +12,8 @@ import {
 import { WarpcastIcon } from '../../../../assets/theme/custom/icons/WarpcastIcon';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_CHAT, URL_DOCS, URL_FAQ } from '../../../../constants/url';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import Divider from '../../utils/Divider';
 import { NavigationLink } from './NavigationLink';
 
@@ -61,9 +61,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
 }
 
 function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
 
   const safeAddress = safe?.address;

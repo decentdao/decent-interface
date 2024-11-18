@@ -13,6 +13,7 @@ import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -25,10 +26,8 @@ import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
   const loadKey = useRef<string | null>();
-  const {
-    node: { safe },
-    action,
-  } = useFractal();
+  const { action } = useFractal();
+  const { safe } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
   const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 

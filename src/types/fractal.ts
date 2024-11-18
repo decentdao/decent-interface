@@ -7,7 +7,6 @@ import { GovernanceContractActions } from '../providers/App/governanceContracts/
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
-import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { AzoriusProposal, MultisigProposal, ProposalData } from './daoProposal';
@@ -161,14 +160,12 @@ export enum StoreAction {
 }
 export type FractalActions =
   | { type: StoreAction.RESET }
-  | NodeActions
   | FractalGuardActions
   | FractalGovernanceActions
   | TreasuryActions
   | GovernanceContractActions
   | GuardContractActions;
 export interface Fractal {
-  node: FractalNode;
   guard: FreezeGuard;
   governance: FractalGovernance;
   treasury: DecentTreasury;
@@ -191,7 +188,7 @@ export interface FractalGovernanceContracts {
 
 export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address; nextNonce: number };
 
-export interface FractalNode {
+export interface DaoInfo {
   daoName: string | null;
   safe: SafeWithNextNonce | null;
   fractalModules: FractalModuleData[];
@@ -203,7 +200,7 @@ export interface FractalNode {
 }
 
 export interface Node
-  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
+  extends Omit<DaoInfo, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
   address: Address;
 }
 

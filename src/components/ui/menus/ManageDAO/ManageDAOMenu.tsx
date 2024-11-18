@@ -16,6 +16,7 @@ import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, FreezeVotingType, GovernanceType } from '../../../../types';
 import { ModalType } from '../../modals/ModalProvider';
 import { useDecentModal } from '../../modals/useDecentModal';
@@ -23,11 +24,11 @@ import { OptionMenu } from '../OptionMenu';
 
 export function ManageDAOMenu() {
   const {
-    node,
     governance: { type },
     guard,
     guardContracts,
   } = useFractal();
+  const node = useDaoInfoStore();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
   const safeAddress = node.safe?.address;

@@ -13,6 +13,7 @@ import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProp
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalSteps, ProposalExecuteData } from '../../types';
 import {
   CreateProposalForm,
@@ -52,9 +53,9 @@ export function ProposalBuilder({
     mode === ProposalBuilderMode.PROPOSAL || mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS;
 
   const {
-    node: { safe },
     readOnly: { dao },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const safeAddress = safe?.address;
 
   const { addressPrefix } = useNetworkConfig();

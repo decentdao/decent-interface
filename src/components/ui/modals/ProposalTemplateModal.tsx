@@ -7,8 +7,8 @@ import { logError } from '../../../helpers/errorLogging';
 import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair } from '../../../types';
 import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
@@ -25,9 +25,7 @@ export default function ProposalTemplateModal({
   proposalTemplate: { title, description, transactions },
   onClose,
 }: IProposalTemplateModalProps) {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);

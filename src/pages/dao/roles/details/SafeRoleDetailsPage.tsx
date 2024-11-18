@@ -3,14 +3,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import RolesDetailsDrawer from '../../../../components/Roles/RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../../../../components/Roles/RolesDetailsDrawerMobile';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 
 export function SafeRoleDetailsPage() {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
 

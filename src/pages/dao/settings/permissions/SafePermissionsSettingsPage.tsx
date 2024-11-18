@@ -16,6 +16,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusGovernance } from '../../../../types';
 
 export function SafePermissionsSettingsPage() {
@@ -23,10 +24,10 @@ export function SafePermissionsSettingsPage() {
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
   const {
-    node: { safe },
     governance,
     governanceContracts: { isLoaded, linearVotingErc20Address },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
 
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const azoriusGovernance = governance as AzoriusGovernance;

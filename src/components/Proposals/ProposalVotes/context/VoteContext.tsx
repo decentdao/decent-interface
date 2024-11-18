@@ -13,6 +13,7 @@ import { usePublicClient } from 'wagmi';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusProposal,
   ExtendedSnapshotProposal,
@@ -61,10 +62,9 @@ export function VoteContextProvider({
   const [proposalVotesLength, setProposalVotesLength] = useState(0);
   const {
     readOnly: { user, dao },
-    node: { safe },
     governance: { type },
   } = useFractal();
-
+  const { safe } = useDaoInfoStore();
   const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
   const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
     null,

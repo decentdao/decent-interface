@@ -6,6 +6,7 @@ import { Link, useLocation, useMatch } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { AzoriusGovernance } from '../../types';
 import { BarLoader } from '../ui/loaders/BarLoader';
 import Divider from '../ui/utils/Divider';
@@ -86,10 +87,8 @@ function SettingsLink({
 export default function SettingsNavigation() {
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
-  const {
-    governance,
-    node: { fractalModules, safe },
-  } = useFractal();
+  const { governance } = useFractal();
+  const { safe, fractalModules } = useDaoInfoStore();
   const azoriusGovernance = governance as AzoriusGovernance;
 
   return (

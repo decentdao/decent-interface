@@ -8,6 +8,7 @@ import useVotingStrategiesAddresses from '../../../hooks/utils/useVotingStrategi
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useProposalActionsStore } from '../../../store/actions/useProposalActionsStore';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusGovernance, CreateProposalTransaction, ProposalActionType } from '../../../types';
 import { SENTINEL_MODULE } from '../../../utils/address';
 import { SafePermissionsStrategyAction } from '../../SafeSettings/SafePermissionsStrategyAction';
@@ -16,11 +17,8 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
   const navigate = useNavigate();
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
-  const {
-    governance,
-    governanceContracts,
-    node: { safe },
-  } = useFractal();
+  const { governance, governanceContracts } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addAction } = useProposalActionsStore();
 
   const azoriusGovernance = governance as AzoriusGovernance;

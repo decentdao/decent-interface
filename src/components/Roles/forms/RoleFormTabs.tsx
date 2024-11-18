@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Blocker, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import RoleFormInfo from './RoleFormInfo';
@@ -26,9 +26,7 @@ export function RoleFormTabs({
   blocker: Blocker;
 }) {
   const { hatsTree } = useRolesStore();
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
   const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
