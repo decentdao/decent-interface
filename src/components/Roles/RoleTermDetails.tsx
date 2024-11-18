@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
 import { RoleFormTermStatus } from '../../types/roles';
 import NoDataCard from '../ui/containers/NoDataCard';
-import RoleTerm from './RoleTerm';
+import { RoleTerm } from './RoleTerm';
 
 type RoleTermDetailProp = {
   nominee: string;
@@ -33,7 +33,7 @@ function RoleTermRenderer({
   hatId: Hex | undefined;
   roleTerm?: RoleTermDetailProp;
   termStatus: RoleFormTermStatus;
-  displayLightContainer?: boolean;
+  displayLightContainer: boolean;
 }) {
   if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
     return null;
@@ -112,7 +112,7 @@ function RoleTermExpiredTerms({
                         hatId={hatId}
                         roleTerm={term}
                         termStatus={RoleFormTermStatus.Expired}
-                        displayLightContainer
+                        displayLightContainer={true}
                       />
                     </AccordionPanel>
                   );
@@ -164,12 +164,14 @@ export default function RoleTermDetails({
         hatId={hatId}
         roleTerm={nextTerm}
         termStatus={nextTerm ? RoleFormTermStatus.Queued : RoleFormTermStatus.Pending}
+        displayLightContainer={false}
       />
       {/* Current Term */}
       <RoleTermRenderer
         hatId={hatId}
         roleTerm={currentTerm}
         termStatus={currentTermStatus}
+        displayLightContainer={false}
       />
       <RoleTermExpiredTerms
         roleTerms={expiredTerms}

@@ -19,12 +19,12 @@ import { DEFAULT_DATE_TIME_FORMAT_NO_TZ } from '../../utils';
 import Avatar from '../ui/page/Header/Avatar';
 
 function Container({
+  isTop,
+  displayLightContainer,
   children,
-  isTop = false,
-  displayLightContainer = false,
 }: {
-  isTop?: boolean;
-  displayLightContainer?: boolean;
+  isTop: boolean;
+  displayLightContainer: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -45,13 +45,12 @@ function Container({
   );
 }
 
-function RoleTermHeaderTitle({
-  termNumber,
-  termPosition,
-}: {
+type RoleTermHeaderTitleViewProps = {
   termNumber: number;
-  termPosition?: 'currentTerm' | 'nextTerm';
-}) {
+  termPosition: 'currentTerm' | 'nextTerm' | undefined;
+};
+function RoleTermHeaderTitle(props: RoleTermHeaderTitleViewProps) {
+  const { termNumber, termPosition } = props;
   const { t } = useTranslation(['roles']);
 
   return (
@@ -60,23 +59,24 @@ function RoleTermHeaderTitle({
       alignItems="center"
     >
       <Text textStyle="display-lg">{t('termNumber', { number: termNumber })}</Text>
-      <Text
-        textStyle="label-small"
-        color="neutral-5"
-      >
-        {!!termPosition && t(termPosition)}
-      </Text>
+      {!!termPosition && (
+        <Text
+          textStyle="label-small"
+          color="neutral-5"
+        >
+          {t(termPosition)}
+        </Text>
+      )}
     </Flex>
   );
 }
 
-function RoleTermHeaderStatus({
-  termEndDate,
-  termStatus,
-}: {
+type RoleTermHeaderStatusViewProps = {
   termEndDate: Date;
   termStatus: RoleFormTermStatus;
-}) {
+};
+function RoleTermHeaderStatus(props: RoleTermHeaderStatusViewProps) {
+  const { termEndDate, termStatus } = props;
   const { t } = useTranslation(['roles']);
   const dateDisplay = useDateTimeDisplay(termEndDate);
 
@@ -154,19 +154,16 @@ function RoleTermHeaderStatus({
   );
 }
 
-function RoleTermHeader({
-  termNumber,
-  termEndDate,
-  termStatus,
-  termPosition,
-  displayLightContainer,
-}: {
-  termNumber: number;
-  termEndDate: Date;
-  termStatus: RoleFormTermStatus;
-  termPosition?: 'currentTerm' | 'nextTerm';
-  displayLightContainer?: boolean;
-}) {
+type RoleTermHeaderViewProps = {
+  termHeaderStatusProps: RoleTermHeaderStatusViewProps;
+  termHeaderTitleProps: RoleTermHeaderTitleViewProps;
+  displayLightContainer: boolean;
+};
+function RoleTermHeader(props: RoleTermHeaderViewProps) {
+  const { termHeaderStatusProps, termHeaderTitleProps, displayLightContainer } = props;
+  const { termEndDate, termStatus } = termHeaderStatusProps;
+  const { termNumber, termPosition } = termHeaderTitleProps;
+
   return (
     <Container
       isTop
@@ -186,7 +183,11 @@ function RoleTermHeader({
   );
 }
 
-function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
+type RoleTermMemberAddressViewProps = {
+  memberAddress: Address;
+};
+function RoleTermMemberAddress(props: RoleTermMemberAddressViewProps) {
+  const { memberAddress } = props;
   const { t } = useTranslation(['roles', 'common']);
   const { displayName: accountDisplayName } = useGetAccountName(memberAddress);
   const avatarURL = useAvatar(memberAddress);
@@ -234,7 +235,11 @@ function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
   );
 }
 
-function RoleTermEndDate({ termEndDate }: { termEndDate: Date }) {
+type RoleTermEndDateViewProps = {
+  termEndDate: Date;
+};
+function RoleTermEndDate(props: RoleTermEndDateViewProps) {
+  const { termEndDate } = props;
   const { t } = useTranslation(['roles']);
   return (
     <Flex flexDir="column">
@@ -263,21 +268,17 @@ function RoleTermEndDate({ termEndDate }: { termEndDate: Date }) {
   );
 }
 
-export default function RoleTerm({
-  hatId,
-  termNominatedWearer,
-  termEndDate,
-  termStatus,
-  termNumber,
-  displayLightContainer,
-}: {
+type RoleTermViewProps = {
   hatId: Hex | undefined;
   termNominatedWearer: Address;
   termEndDate: Date;
   termNumber: number;
   termStatus: RoleFormTermStatus;
-  displayLightContainer?: boolean;
-}) {
+  displayLightContainer: boolean;
+};
+export function RoleTerm(props: RoleTermViewProps) {
+  const { hatId, termNominatedWearer, termEndDate, termStatus, termNumber, displayLightContainer } =
+    props;
   const [contractCall, contractCallPending] = useTransaction();
   const { hatsTree, getHat, updateCurrentTermStatus } = useRolesStore();
   const { data: walletClient } = useWalletClient();
@@ -360,13 +361,20 @@ export default function RoleTerm({
   return (
     <Box>
       <RoleTermHeader
-        termNumber={termNumber}
-        termEndDate={termEndDate}
-        termStatus={termStatus}
-        termPosition={termPosition}
+        termHeaderTitleProps={{
+          termNumber,
+          termPosition,
+        }}
+        termHeaderStatusProps={{
+          termEndDate,
+          termStatus,
+        }}
         displayLightContainer={displayLightContainer}
       />
-      <Container displayLightContainer={displayLightContainer}>
+      <Container
+        displayLightContainer={displayLightContainer}
+        isTop={false}
+      >
         <Flex justifyContent="space-between">
           <RoleTermMemberAddress memberAddress={termNominatedWearer} />
           <RoleTermEndDate termEndDate={termEndDate} />

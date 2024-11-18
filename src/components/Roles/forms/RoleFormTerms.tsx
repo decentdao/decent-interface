@@ -24,7 +24,7 @@ import { RoleFormTermStatus, RoleFormValues } from '../../../types/roles';
 import { DatePicker } from '../../ui/forms/DatePicker';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
-import RoleTerm from '../RoleTerm';
+import { RoleTerm } from '../RoleTerm';
 
 function RoleTermEndDateInput({ previousTermEndDate }: { previousTermEndDate: Date | undefined }) {
   const { t } = useTranslation('roles');
@@ -189,7 +189,7 @@ function RoleTermRenderer({
   };
   termStatus: RoleFormTermStatus;
   hatId: Hex | undefined;
-  displayLightContainer?: boolean;
+  displayLightContainer: boolean;
 }) {
   if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
     return null;
@@ -272,7 +272,7 @@ function RoleTermExpiredTerms({
                         hatId={hatId}
                         roleTerm={term}
                         termStatus={RoleFormTermStatus.Expired}
-                        displayLightContainer
+                        displayLightContainer={true}
                       />
                     </AccordionPanel>
                   );
@@ -367,6 +367,7 @@ export default function RoleFormTerms() {
           termStatus={
             roleHatTerms?.nextTerm ? RoleFormTermStatus.Queued : RoleFormTermStatus.Pending
           }
+          displayLightContainer={false}
         />
         <RoleTermRenderer
           hatId={roleFormHatId}
@@ -375,6 +376,7 @@ export default function RoleFormTerms() {
           termStatus={
             roleHatTerms?.currentTerm ? RoleFormTermStatus.Current : RoleFormTermStatus.Pending
           }
+          displayLightContainer={false}
         />
         <RoleTermExpiredTerms
           hatId={roleFormHatId}
