@@ -89,9 +89,7 @@ export const useReadOnlyValues = ({
         : {
             isAzorius:
               governance.type === GovernanceType.AZORIUS_ERC20 ||
-              governance.type === GovernanceType.AZORIUS_ERC721 ||
-              governance.type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING ||
-              governance.type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING,
+              governance.type === GovernanceType.AZORIUS_ERC721,
           },
     };
     if (!isEqual(newReadOnlyValues, readOnlyValues)) {

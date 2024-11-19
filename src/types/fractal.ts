@@ -280,9 +280,7 @@ export interface VotingStrategy<Type = BIFormattedPair> {
 export enum GovernanceType {
   MULTISIG = 'labelMultisigGov',
   AZORIUS_ERC20 = 'labelAzoriusErc20Gov',
-  AZORIUS_ERC20_HATS_WHITELISTING = 'labelAzoriusErc20HatsWhitelistingGov',
   AZORIUS_ERC721 = 'labelAzoriusErc721Gov',
-  AZORIUS_ERC721_HATS_WHITELISTING = 'labelAzoriusErc721HatsWhitelistingGov',
 }
 
 export enum VotingStrategyType {
