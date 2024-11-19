@@ -2,12 +2,13 @@ import { gql } from '@apollo/client';
 import { useCallback, useMemo, useState } from 'react';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
+  DecentSnapshotVote,
   ExtendedSnapshotProposal,
   FractalProposal,
   FractalProposalState,
   SnapshotProposal,
-  DecentSnapshotVote,
   SnapshotWeightedVotingChoice,
 } from '../../../../types';
 import { createSnapshotGraphQlClient } from './';
@@ -16,11 +17,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   const [extendedSnapshotProposal, setExtendedSnapshotProposal] =
     useState<ExtendedSnapshotProposal | null>(null);
   const {
-    node: { daoSnapshotENS },
     readOnly: {
       user: { address },
     },
   } = useFractal();
+
+  const { daoSnapshotENS } = useDaoInfoStore();
   const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
 
   const snapshotProposal = useMemo(() => {

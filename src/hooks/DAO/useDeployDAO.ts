@@ -24,7 +24,7 @@ const useDeployDAO = () => {
   const deployDao = useCallback(
     (
       daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
-      successCallback: (addressPrefix: string, daoAddress: Address) => void,
+      successCallback: (addressPrefix: string, safeAddress: Address) => void,
     ) => {
       const deploy = async () => {
         if (!walletClient) {

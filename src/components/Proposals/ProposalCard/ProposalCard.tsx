@@ -3,8 +3,8 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusProposal, FractalProposal, SnapshotProposal } from '../../../types';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { ActivityDescription } from '../../Activity/ActivityDescription';
@@ -14,21 +14,19 @@ import { SnapshotIcon } from '../../ui/badges/Snapshot';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 function ProposalCard({ proposal }: { proposal: FractalProposal }) {
-  const {
-    node: { daoAddress },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('common');
+
+  if (!safe?.address) {
+    return null;
+  }
 
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
   const isAzoriusProposal = !!(proposal as AzoriusProposal).votesSummary;
 
-  if (!daoAddress) {
-    return null;
-  }
-
   return (
-    <Link to={DAO_ROUTES.proposal.relative(addressPrefix, daoAddress, proposal.proposalId)}>
+    <Link to={DAO_ROUTES.proposal.relative(addressPrefix, safe.address, proposal.proposalId)}>
       <Box
         minHeight="6.25rem"
         bg="neutral-2"
@@ -36,7 +34,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
         _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
         transition="all ease-out 300ms"
         p="1.5rem"
-        borderRadius="0.5rem"
+        borderRadius="0.75rem"
       >
         {/* Top Row */}
         <Flex

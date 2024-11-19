@@ -1,10 +1,11 @@
-import { Box, Flex, Button, Icon } from '@chakra-ui/react';
-import { Funnel, CaretDown } from '@phosphor-icons/react';
+import { Box, Button, Flex, Icon } from '@chakra-ui/react';
+import { CaretDown, Funnel } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SortBy, GovernanceType, FractalProposalState } from '../../types';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { FractalProposalState, GovernanceType, SortBy } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
@@ -42,10 +43,10 @@ const FILTERS_SNAPSHOT = [FractalProposalState.CLOSED, FractalProposalState.PEND
 
 export default function Proposals() {
   const {
-    node: { daoSnapshotENS },
     governance: { type },
     guardContracts,
   } = useFractal();
+  const { daoSnapshotENS } = useDaoInfoStore();
 
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const [filters, setFilters] = useState<FractalProposalState[]>([]);

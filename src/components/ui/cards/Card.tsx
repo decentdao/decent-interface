@@ -8,7 +8,7 @@ export function Card({ children, ...rest }: BoxProps) {
       _active={{ backgroundColor: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
       p="1rem"
-      borderRadius="0.5rem"
+      borderRadius="0.75rem"
       border="1px solid"
       borderColor="neutral-3"
       cursor={rest.onClick ? 'pointer' : 'default'}

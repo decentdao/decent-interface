@@ -62,6 +62,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
         display="flex"
         alignItems="center"
         justifyContent="flex-start"
+        rounded="0.75rem"
         gap={2}
       >
         <Avatar

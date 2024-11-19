@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { BigIntValuePair } from './common';
 
 export enum CreateProposalSteps {
@@ -23,6 +24,10 @@ export type CreateProposalMetadata = {
 };
 
 export enum ProposalBuilderMode {
+  // @dev - this is temporary mode.
+  // Probably will be removed in the future and actions are will be there by default.
+  // UI / UX for this globally is in flux.
+  PROPOSAL_WITH_ACTIONS = 'PROPOSAL_WITH_ACTIONS',
   PROPOSAL = 'PROPOSAL',
   TEMPLATE = 'TEMPLATE',
 }
@@ -35,3 +40,27 @@ export type CreateProposalForm = {
 export type ProposalTemplate = {
   transactions: CreateProposalTransaction[];
 } & CreateProposalMetadata;
+
+export enum ProposalActionType {
+  ADD = 'add',
+  EDIT = 'edit',
+  DELETE = 'delete',
+  TRANSFER = 'transfer',
+}
+
+export interface ProposalActionsStoreData {
+  actions: CreateProposalAction[];
+}
+
+export interface ProposalActionsStore extends ProposalActionsStoreData {
+  addAction: (action: CreateProposalAction) => void;
+  removeAction: (actionIndex: number) => void;
+  resetActions: () => void;
+  getTransactions: () => CreateProposalTransaction[];
+}
+
+export type CreateProposalAction<T = BigIntValuePair> = {
+  actionType: ProposalActionType;
+  content: ReactNode;
+  transactions: CreateProposalTransaction<T>[];
+};

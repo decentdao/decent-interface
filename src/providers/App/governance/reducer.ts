@@ -170,22 +170,6 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       });
       return { ...state, proposals: updatedProposals };
     }
-    case FractalGovernanceAction.UPDATE_VOTING_PERIOD: {
-      const { votingStrategy } = state as AzoriusGovernance;
-      return { ...state, votingStrategy: { ...votingStrategy, votingPeriod: action.payload } };
-    }
-    case FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD: {
-      const { votingStrategy } = state as AzoriusGovernance;
-      return { ...state, votingStrategy: { ...votingStrategy, quorumThreshold: action.payload } };
-    }
-    case FractalGovernanceAction.UPDATE_VOTING_QUORUM: {
-      const { votingStrategy } = state as AzoriusGovernance;
-      return { ...state, votingStrategy: { ...votingStrategy, votingQuorum: action.payload } };
-    }
-    case FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD: {
-      const { votingStrategy } = state as AzoriusGovernance;
-      return { ...state, votingStrategy: { ...votingStrategy, timelockPeriod: action.payload } };
-    }
     case FractalGovernanceAction.SET_TOKEN_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };

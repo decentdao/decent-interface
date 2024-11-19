@@ -3,20 +3,20 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Address, encodeFunctionData, isHex, getContract } from 'viem';
+import { Address, encodeFunctionData, getContract, isHex } from 'viem';
 import { usePublicClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   FractalModuleType,
-  FractalNode,
+  DaoInfo,
   ProposalExecuteData,
   SubDAO,
   VotingStrategyType,
@@ -36,7 +36,6 @@ const useDeployAzorius = () => {
       votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
-      fractalRegistry,
       gnosisSafeProxyFactory,
       gnosisSafeL2Singleton,
       zodiacModuleProxyFactory,
@@ -55,18 +54,17 @@ const useDeployAzorius = () => {
     addressPrefix,
   } = useNetworkConfig();
   const {
-    node: {
-      daoAddress,
-      safe,
-      nodeHierarchy: { parentAddress },
-    },
-  } = useFractal();
+    safe,
+    nodeHierarchy: { parentAddress },
+  } = useDaoInfoStore();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
+
   const publicClient = usePublicClient();
   const { loadDao } = useLoadDAONode();
+  const safeAddress = safe?.address;
 
   const deployAzorius = useCallback(
     async (
@@ -78,7 +76,7 @@ const useDeployAzorius = () => {
       },
     ) => {
       const { shouldSetName, shouldSetSnapshot } = opts;
-      if (!daoAddress || !canUserCreateProposal || !safe || !publicClient) {
+      if (!safeAddress || !canUserCreateProposal || !safe || !publicClient) {
         return;
       }
 
@@ -86,7 +84,7 @@ const useDeployAzorius = () => {
       let parentStrategyAddress: Address | undefined;
       let parentStrategyType: VotingStrategyType | undefined;
       let attachFractalModule = false;
-      let parentNode: FractalNode | undefined;
+      let parentNode: DaoInfo | undefined;
 
       if (parentAddress) {
         const loadedParentNode = await loadDao(parentAddress);
@@ -95,7 +93,7 @@ const useDeployAzorius = () => {
           toast.error(t(loadingParentNodeError));
           return;
         } else {
-          parentNode = loadedParentNode as FractalNode;
+          parentNode = loadedParentNode as DaoInfo;
           const parentAzoriusModule = parentNode.fractalModules.find(
             fractalModule => fractalModule.moduleType === FractalModuleType.AZORIUS,
           );
@@ -142,7 +140,6 @@ const useDeployAzorius = () => {
         votesErc20WrapperMasterCopy,
         votesErc20MasterCopy,
         keyValuePairs,
-        fractalRegistry,
         gnosisSafeProxyFactory,
         gnosisSafeL2Singleton,
         zodiacModuleProxyFactory,
@@ -161,7 +158,7 @@ const useDeployAzorius = () => {
         parentTokenAddress,
       );
 
-      txBuilderFactory.setSafeContract(daoAddress);
+      txBuilderFactory.setSafeContract(safeAddress);
 
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder({
         attachFractalModule,
@@ -195,7 +192,7 @@ const useDeployAzorius = () => {
       // Otherwise - we need to provide some UI / UX that will inform user about the impact of modifying governance without ability to swap Guard contracts.
 
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress, multiSendCallOnly],
+        targets: [safeAddress, multiSendCallOnly],
         values: [0n, 0n],
         calldatas: [encodedAddOwnerWithThreshold, encodedMultisend],
         metaData: {
@@ -211,19 +208,19 @@ const useDeployAzorius = () => {
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)),
+        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)),
       });
     },
     [
-      daoAddress,
+      safeAddress,
       canUserCreateProposal,
       safe,
       publicClient,
+      parentAddress,
       compatibilityFallbackHandler,
       votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
-      fractalRegistry,
       gnosisSafeProxyFactory,
       gnosisSafeL2Singleton,
       zodiacModuleProxyFactory,
@@ -240,11 +237,10 @@ const useDeployAzorius = () => {
       moduleAzoriusMasterCopy,
       submitProposal,
       t,
+      loadDao,
       navigate,
       addressPrefix,
-      loadDao,
       getAddressContractType,
-      parentAddress,
     ],
   );
 

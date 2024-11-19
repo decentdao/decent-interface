@@ -3,24 +3,24 @@ import { useTranslation } from 'react-i18next';
 import { encodeFunctionData } from 'viem';
 import LidoStEthAbi from '../../../assets/abi/LidoStEthAbi';
 import LidoWithdrawalQueueAbi from '../../../assets/abi/LidoWithdrawalQueueAbi';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { ProposalExecuteData } from '../../../types';
 import useSubmitProposal from '../../DAO/proposal/useSubmitProposal';
 
 export default function useLidoStaking() {
-  const {
-    node: { daoAddress, safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const {
     staking: { lido },
   } = useNetworkConfig();
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation('proposal');
 
+  const safeAddress = safe?.address;
+
   const handleStake = useCallback(
     async (value: bigint) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !safeAddress) {
         // Means it is not supported on current network
         return;
       }
@@ -49,12 +49,12 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t],
+    [lido, safeAddress, safe, submitProposal, t],
   );
 
   const handleUnstake = useCallback(
     async (value: string) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !safeAddress) {
         // Means it is not supported on current network
         return;
       }
@@ -68,7 +68,7 @@ export default function useLidoStaking() {
       const encodedWithdraw = encodeFunctionData({
         abi: LidoWithdrawalQueueAbi,
         functionName: 'requestWithdrawals',
-        args: [[BigInt(value)], daoAddress],
+        args: [[BigInt(value)], safeAddress],
       });
 
       const proposalData: ProposalExecuteData = {
@@ -90,12 +90,12 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t],
+    [lido, safeAddress, safe, submitProposal, t],
   );
 
   const handleClaimUnstakedETH = useCallback(
     async (nftId: bigint) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !safeAddress) {
         // Means it is not supported on current network
         return;
       }
@@ -124,7 +124,7 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t],
+    [lido, safeAddress, safe, submitProposal, t],
   );
 
   return { handleStake, handleUnstake, handleClaimUnstakedETH };

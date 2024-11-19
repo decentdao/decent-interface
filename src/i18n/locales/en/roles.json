@@ -6,6 +6,7 @@
   "noRolesNotProposer": "This Safe doesn't have any Roles yet.",
   "description": "Description",
   "unassigned": "Unassigned",
+  "wearerPending": "(Pending)",
   "after": "after",
   "roleInfo": "Role Info",
   "editRoles": "Edit Roles",
@@ -16,6 +17,10 @@
   "removed": "Removed",
   "save": "Save",
   "roleDescription": "Role Description",
+  "canCreateProposals": "Can Create Proposals",
+  "permissions": "Permissions",
+  "permissionsProposals": "Proposals",
+  "permissionsProposalsTooltip": "Can create proposals.",
   "amount": "Amount",
   "starting": "Starting",
   "ending": "Ending",
@@ -128,5 +133,6 @@
   "termSavedSuccessfully": "Term saved successfully",
   "startTermPendingToastMessage": "Starting term",
   "startTermSuccessToastMessage": "Term started successfully",
-  "startTermFailureToastMessage": "Failed to start term"
+  "startTermFailureToastMessage": "Failed to start term",
+  "invalidHatsTreeIdMessage": "Hats Tree ID is not valid"
 }

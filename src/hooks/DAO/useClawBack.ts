@@ -13,13 +13,13 @@ import {
 import { logError } from '../../helpers/errorLogging';
 import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { FractalModuleType, FractalNode } from '../../types';
+import { FractalModuleType, DaoInfo } from '../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../utils/address';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
-  childSafeInfo: FractalNode;
+  childSafeInfo: DaoInfo;
   parentAddress: Address | null;
 }
 
@@ -31,9 +31,9 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { getTokenBalances } = useBalancesAPI();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo.daoAddress && parentAddress && safeAPI) {
+    if (childSafeInfo.safe?.address && parentAddress && safeAPI) {
       try {
-        const childSafeTokenBalance = await getTokenBalances(childSafeInfo.daoAddress);
+        const childSafeTokenBalance = await getTokenBalances(childSafeInfo.safe.address);
 
         if (childSafeTokenBalance.error || !childSafeTokenBalance.data) {
           toast.error(t('clawBackBalancesError', { duration: Infinity }));

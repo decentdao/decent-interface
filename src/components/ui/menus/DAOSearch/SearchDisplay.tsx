@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { SafeDisplayRow } from '../../../../pages/home/SafeDisplayRow';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { MySafesErrorFallback } from '../../utils/MySafesErrorFallback';
 
@@ -25,11 +25,11 @@ export function SearchDisplay({
   onClickView,
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
-  const { node } = useFractal();
+  const node = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
 
   const isCurrentSafe = useMemo(
-    () => !!node && !!node.daoAddress && node.daoAddress === address,
+    () => !!node && !!node?.safe?.address && node.safe.address === address,
     [node, address],
   );
 

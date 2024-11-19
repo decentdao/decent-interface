@@ -1,10 +1,18 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { HatsModulesClient } from '@hatsprotocol/modules-sdk';
-import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
+import { Hat, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
-import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
+import {
+  DecentAdminHat,
+  DecentHat,
+  DecentRoleHat,
+  DecentRoleHatTerms,
+  DecentTree,
+  RolesStoreData,
+} from '../../types/roles';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -15,75 +23,6 @@ export class DecentHatsError extends Error {
       Error.captureStackTrace(this, DecentHatsError);
     }
   }
-}
-
-interface DecentHat {
-  id: Hex;
-  prettyId: string;
-  name: string;
-  description: string;
-  smartAddress: Address;
-  eligibility?: Address;
-  payments?: SablierPayment[];
-}
-
-interface DecentTopHat extends DecentHat {}
-
-interface DecentAdminHat extends DecentHat {
-  wearer?: Address;
-}
-
-interface RolesStoreData {
-  hatsTreeId: undefined | null | number;
-  decentHatsAddress: Address | null | undefined;
-  hatsTree: undefined | null | DecentTree;
-  streamsFetched: boolean;
-  contextChainId: number | null;
-}
-
-export type RoleTerm = {
-  nominee: Address;
-  termEndDate: Date;
-  termNumber: number;
-};
-
-type DecentRoleHatTerms = {
-  allTerms: RoleTerm[];
-  currentTerm: (RoleTerm & { termStatus: 'active' | 'inactive' }) | undefined;
-  nextTerm: RoleTerm | undefined;
-  expiredTerms: RoleTerm[];
-};
-export interface DecentRoleHat extends Omit<DecentHat, 'smartAddress'> {
-  wearerAddress: Address;
-  eligibility?: Address;
-  smartAddress?: Address;
-  roleTerms: DecentRoleHatTerms;
-  isTermed: boolean;
-}
-
-export interface DecentTree {
-  topHat: DecentTopHat;
-  adminHat: DecentAdminHat;
-  roleHats: DecentRoleHat[];
-}
-
-export interface RolesStore extends RolesStoreData {
-  getHat: (hatId: Hex) => DecentRoleHat | null;
-  getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
-  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
-  setHatsTree: (params: {
-    hatsTree: Tree | null | undefined;
-    chainId: bigint;
-    hatsProtocol: Address;
-    erc6551Registry: Address;
-    hatsAccountImplementation: Address;
-    hatsElectionsImplementation: Address;
-    publicClient: PublicClient;
-  }) => Promise<void>;
-  refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
-  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
-  updateCurrentTermStatus: (hatId: Hex, termStatus: 'active' | 'inactive') => void;
-  resetHatsStore: () => void;
 }
 
 const appearsExactlyNumberOfTimes = (
@@ -159,6 +98,19 @@ export const initialHatsStore: RolesStoreData = {
   contextChainId: null,
 };
 
+export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {
+  // 1 byte = 8 bits = 2 string characters
+  const adminLevelBinary = adminHatId.slice(0, 14); // Top Admin ID 1 byte 0x + 4 bytes (tree ID) + next **16 bits** (admin level ID)
+
+  // Each next level is next **16 bits**
+  // Since we're operating only with direct child of top level admin - we don't care about nested levels
+  // @dev At least for now?
+  const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
+
+  // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
+  return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
+};
+
 export const predictAccountAddress = async (params: {
   implementation: Address;
   chainId: bigint;
@@ -187,11 +139,11 @@ export const predictAccountAddress = async (params: {
   return predictedAddress;
 };
 
-export const getCurrentTermStatus = async (
+export const getCurrentTermActiveStatus = async (
   currentTermEndDateTs: bigint,
   eligibility: Address,
   publicClient: PublicClient,
-): Promise<'inactive' | 'active'> => {
+): Promise<boolean> => {
   const electionContract = getContract({
     abi: HatsElectionsEligibilityAbi,
     address: eligibility,
@@ -199,7 +151,7 @@ export const getCurrentTermStatus = async (
   });
 
   const nextTermEndTs = await electionContract.read.nextTermEnd();
-  return nextTermEndTs === currentTermEndDateTs ? 'inactive' : 'active';
+  return nextTermEndTs !== currentTermEndDateTs;
 };
 
 export const isElectionEligibilityModule = async (
@@ -217,6 +169,22 @@ export const isElectionEligibilityModule = async (
   const possibleElectionModule = await hatsModuleClient.getModuleByInstance(eligibility);
   if (possibleElectionModule === undefined) return false;
   return possibleElectionModule.implementationAddress === hatsElectionsImplementation;
+};
+
+export const prepareCurrentTerm = async (
+  term: { nominee: Address; termEndDate: Date; termNumber: number } | undefined,
+  eligibility: Address,
+  publicClient: PublicClient,
+) => {
+  if (term === undefined) return undefined;
+  return {
+    ...term,
+    isActive: await getCurrentTermActiveStatus(
+      BigInt(term.termEndDate.getTime()),
+      eligibility,
+      publicClient,
+    ),
+  };
 };
 
 const getRoleHatTerms = async (
@@ -268,16 +236,7 @@ const getRoleHatTerms = async (
       );
       const roleTerms = {
         allTerms,
-        currentTerm: !!activeTerms[0]
-          ? {
-              ...activeTerms[0],
-              termStatus: await getCurrentTermStatus(
-                BigInt(activeTerms[0].termEndDate.getTime()),
-                rawHat.eligibility,
-                publicClient,
-              ),
-            }
-          : undefined,
+        currentTerm: await prepareCurrentTerm(activeTerms[0], rawHat.eligibility, publicClient),
         nextTerm: activeTerms[1],
         expiredTerms: allTerms
           .filter(term => term.termEndDate <= new Date())
@@ -307,6 +266,7 @@ export const sanitize = async (
   hats: Address,
   chainId: bigint,
   publicClient: PublicClient,
+  whitelistingVotingStrategy?: Address,
 ): Promise<undefined | null | DecentTree> => {
   if (hatsTree === undefined || hatsTree === null) {
     return hatsTree;
@@ -328,12 +288,25 @@ export const sanitize = async (
     publicClient,
   });
 
+  const whitelistingVotingContract = whitelistingVotingStrategy
+    ? getContract({
+        abi: abis.LinearERC20VotingWithHatsProposalCreation,
+        address: whitelistingVotingStrategy,
+        client: publicClient,
+      })
+    : undefined;
+  let whitelistedHatsIds: bigint[] = [];
+  if (whitelistingVotingContract) {
+    whitelistedHatsIds = [...(await whitelistingVotingContract.read.getWhitelistedHatIds())];
+  }
+
   const topHat: DecentHat = {
     id: rawTopHat.id,
     prettyId: rawTopHat.prettyId ?? '',
     name: topHatMetadata.name,
     description: topHatMetadata.description,
     smartAddress: topHatSmartAddress,
+    canCreateProposals: false, // @dev - we don't care about it since topHat is not displayed
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
@@ -354,6 +327,7 @@ export const sanitize = async (
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
+    canCreateProposals: false, // @dev - we don't care about it since adminHat is not displayed
     wearer: rawAdminHat.wearers?.length ? rawAdminHat.wearers[0].id : undefined,
   };
 
@@ -373,6 +347,7 @@ export const sanitize = async (
       continue;
     }
 
+    const tokenId = BigInt(rawHat.id);
     const hatMetadata = getHatMetadata(rawHat);
     const { roleTerms, isTermed } = await getRoleHatTerms(
       rawHat,
@@ -390,6 +365,12 @@ export const sanitize = async (
         publicClient,
       });
     }
+
+    let canCreateProposals = false;
+    if (whitelistingVotingContract) {
+      canCreateProposals = whitelistedHatsIds.includes(tokenId);
+    }
+
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
@@ -400,6 +381,7 @@ export const sanitize = async (
       eligibility: rawHat.eligibility,
       roleTerms,
       isTermed,
+      canCreateProposals,
     });
   }
 

@@ -9,11 +9,11 @@ import {
   SquaresFour,
   UsersThree,
 } from '@phosphor-icons/react';
+import { WarpcastIcon } from '../../../../assets/theme/custom/icons/WarpcastIcon';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_CHAT, URL_DOCS, URL_FAQ } from '../../../../constants/url';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { WarpcastIcon } from '../../icons/Icons';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import Divider from '../../utils/Divider';
 import { NavigationLink } from './NavigationLink';
 
@@ -61,12 +61,12 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
 }
 
 function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
-  const {
-    node: { daoAddress },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
 
-  if (!daoAddress) {
+  const safeAddress = safe?.address;
+
+  if (!safeAddress) {
     return null;
   }
 
@@ -90,7 +90,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         boxShadow={{ md: '0px 1px 0px 0px #161219' }}
       >
         <NavigationLink
-          href={DAO_ROUTES.dao.relative(addressPrefix, daoAddress)}
+          href={DAO_ROUTES.dao.relative(addressPrefix, safeAddress)}
           labelKey="dashboard"
           testId="navigation-dashboardLink"
           NavigationIcon={House}
@@ -98,7 +98,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.roles.relative(addressPrefix, daoAddress)}
+          href={DAO_ROUTES.roles.relative(addressPrefix, safeAddress)}
           labelKey="roles"
           testId="navigation-rolesLink"
           NavigationIcon={UsersThree}
@@ -106,7 +106,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.hierarchy.relative(addressPrefix, daoAddress)}
+          href={DAO_ROUTES.hierarchy.relative(addressPrefix, safeAddress)}
           labelKey="nodes"
           testId="navigation-hierarchyLink"
           NavigationIcon={GitFork}
@@ -114,7 +114,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)}
+          href={DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)}
           labelKey="proposals"
           testId="navigation-proposalsLink"
           NavigationIcon={Scroll}
@@ -122,7 +122,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.treasury.relative(addressPrefix, daoAddress)}
+          href={DAO_ROUTES.treasury.relative(addressPrefix, safeAddress)}
           labelKey="treasury"
           testId="navigation-treasuryLink"
           NavigationIcon={Coins}
@@ -130,7 +130,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, daoAddress)}
+          href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress)}
           labelKey="proposalTemplates"
           testId="navigation-proposalTemplatesLink"
           NavigationIcon={SquaresFour}

@@ -15,29 +15,27 @@ export function SafesList() {
   return (
     <MenuList>
       <ErrorBoundary fallback={MySafesErrorFallback}>
-        <Box>
+        <Box
+          backdropFilter="auto"
+          backdropBlur="10px"
+          bg={NEUTRAL_2_82_TRANSPARENT}
+          border="1px solid"
+          borderColor="neutral-3"
+          className="scroll-dark"
+          maxHeight="20rem"
+          overflowY="auto"
+          rounded="0.75rem"
+          py="0.25rem"
+        >
           {favoritesList.length === 0 ? (
             <Box p="1rem 1rem">{t('emptyFavorites')}</Box>
           ) : (
-            <Box
-              backdropFilter="auto"
-              backdropBlur="10px"
-              bg={NEUTRAL_2_82_TRANSPARENT}
-              border="1px solid"
-              borderColor="neutral-3"
-              className="scroll-dark"
-              maxHeight="20rem"
-              overflowY="auto"
-              rounded="0.5rem"
-              py="0.25rem"
-            >
-              {favoritesList.map((favorite, i) => (
-                <Box key={favorite}>
-                  <SafeMenuItem {...decodePrefixedAddress(favorite)} />
-                  {favoritesList.length - 1 !== i && <Divider my="0.25rem" />}
-                </Box>
-              ))}
-            </Box>
+            favoritesList.map((favorite, i) => (
+              <Box key={favorite}>
+                <SafeMenuItem {...decodePrefixedAddress(favorite)} />
+                {favoritesList.length - 1 !== i && <Divider my="0.25rem" />}
+              </Box>
+            ))
           )}
         </Box>
       </ErrorBoundary>

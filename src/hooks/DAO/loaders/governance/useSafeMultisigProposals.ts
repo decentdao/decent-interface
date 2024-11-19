@@ -3,23 +3,23 @@ import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useSafeAPI } from '../../../../providers/App/hooks/useSafeAPI';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useSafeTransactions } from '../../../utils/useSafeTransactions';
 
 export const useSafeMultisigProposals = () => {
-  const {
-    node: { daoAddress },
-    action,
-  } = useFractal();
+  const { action } = useFractal();
+  const { safe } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
+  const safeAddress = safe?.address;
 
   const { parseTransactions } = useSafeTransactions();
 
   const loadSafeMultisigProposals = useCallback(async () => {
-    if (!daoAddress || !safeAPI) {
+    if (!safeAddress || !safeAPI) {
       return;
     }
     try {
-      const multisigTransactions = await safeAPI.getMultisigTransactions(daoAddress);
+      const multisigTransactions = await safeAPI.getMultisigTransactions(safeAddress);
       const activities = await parseTransactions(multisigTransactions);
 
       action.dispatch({
@@ -38,7 +38,7 @@ export const useSafeMultisigProposals = () => {
     } catch (e) {
       logError(e);
     }
-  }, [daoAddress, safeAPI, parseTransactions, action]);
+  }, [safeAddress, safeAPI, parseTransactions, action]);
 
   return { loadSafeMultisigProposals };
 };

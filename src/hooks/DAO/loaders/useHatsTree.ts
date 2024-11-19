@@ -1,23 +1,36 @@
 import { useApolloClient } from '@apollo/client';
 import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Address, formatUnits, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
-import { SablierPayment } from '../../../components/pages/Roles/types';
+import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
+import { SablierPayment } from '../../../types/roles';
 import { convertStreamIdToBigInt } from '../../streams/useCreateSablierStream';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
+import { useParseSafeAddress } from '../useParseSafeAddress';
 
 const hatsSubgraphClient = new HatsSubgraphClient({});
 
 const useHatsTree = () => {
+  const { t } = useTranslation('roles');
+  const { safeAddress } = useParseSafeAddress();
+  const {
+    governanceContracts: {
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721WithHatsWhitelistingAddress,
+    },
+  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const {
     hatsTreeId,
     contextChainId,
@@ -25,6 +38,7 @@ const useHatsTree = () => {
     streamsFetched,
     setHatsTree,
     updateRolesWithStreams,
+    resetHatsStore,
   } = useRolesStore();
 
   const ipfsClient = useIPFSClient();
@@ -107,11 +121,14 @@ const useHatsTree = () => {
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
             chainId: BigInt(contextChainId),
-            hatsProtocol: hatsProtocol,
+            hatsProtocol,
             erc6551Registry,
             hatsAccountImplementation,
             hatsElectionsImplementation,
             publicClient,
+            whitelistingVotingStrategy:
+              linearVotingErc20WithHatsWhitelistingAddress ||
+              linearVotingErc721WithHatsWhitelistingAddress,
           });
         } catch (e) {
           if (e instanceof DecentHatsError) {
@@ -122,13 +139,13 @@ const useHatsTree = () => {
         setHatsTree({
           hatsTree: null,
           chainId: BigInt(contextChainId),
-          hatsProtocol: hatsProtocol,
+          hatsProtocol,
           erc6551Registry,
           hatsAccountImplementation,
           hatsElectionsImplementation,
           publicClient,
         });
-        const message = 'Hats Tree ID is not valid';
+        const message = t('invalidHatsTreeIdMessage');
         toast.error(message);
         console.error(e, {
           message,
@@ -151,6 +168,9 @@ const useHatsTree = () => {
     ipfsClient,
     publicClient,
     setHatsTree,
+    t,
+    linearVotingErc20WithHatsWhitelistingAddress,
+    linearVotingErc721WithHatsWhitelistingAddress,
   ]);
 
   const getPaymentStreams = useCallback(
@@ -251,6 +271,7 @@ const useHatsTree = () => {
               return hat;
             }
             const payments: SablierPayment[] = [];
+            // @todo - update Datepicker to choose more precise dates (Date.now())
             if (hat.isTermed) {
               const recipients = hat.roleTerms.allTerms.map(term => term.nominee);
               const uniqueRecipients = [...new Set(recipients)];
@@ -258,7 +279,10 @@ const useHatsTree = () => {
                 payments.push(...(await getPaymentStreams(recipient)));
               }
             } else {
-              payments.push(...(await getPaymentStreams(hat.wearerAddress)));
+              if (!hat.smartAddress) {
+                throw new Error('Smart account address not found');
+              }
+              payments.push(...(await getPaymentStreams(hat.smartAddress)));
             }
 
             return { ...hat, payments };
@@ -271,6 +295,12 @@ const useHatsTree = () => {
 
     getHatsStreams();
   }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched]);
+
+  useEffect(() => {
+    if (safeAddress && safe?.address && safeAddress !== safe.address && hatsTree) {
+      resetHatsStore();
+    }
+  }, [resetHatsStore, safeAddress, safe?.address, hatsTree]);
 };
 
 export { useHatsTree };

@@ -5,6 +5,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ProposalTemplate } from '../../../types';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
@@ -18,12 +19,14 @@ export const useFractalGovernance = () => {
   const loadKey = useRef<string>();
 
   const {
-    node: { daoAddress },
     governanceContracts,
     action,
     governance: { type },
     guardContracts: { isGuardLoaded },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
+
+  const safeAddress = safe?.address;
 
   const loadDAOProposals = useLoadDAOProposals();
   const loadERC20Strategy = useERC20LinearStrategy();
@@ -38,9 +41,9 @@ export const useFractalGovernance = () => {
   const { subgraph } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
-    variables: { daoAddress },
+    variables: { safeAddress },
     onCompleted: async data => {
-      if (!daoAddress) return;
+      if (!safeAddress) return;
       const { daos } = data;
       const dao = daos[0];
 
@@ -91,7 +94,7 @@ export const useFractalGovernance = () => {
       subgraphVersion: subgraph.version,
     },
     pollInterval: ONE_MINUTE,
-    skip: !daoAddress || !type,
+    skip: !safeAddress || !type,
   });
 
   useEffect(() => {
@@ -101,11 +104,13 @@ export const useFractalGovernance = () => {
       lockReleaseAddress,
       linearVotingErc721Address,
       linearVotingErc20Address,
+      linearVotingErc20WithHatsWhitelistingAddress,
+      linearVotingErc721WithHatsWhitelistingAddress,
     } = governanceContracts;
 
     if (isLoaded && !type) {
       if (moduleAzoriusAddress) {
-        if (linearVotingErc20Address) {
+        if (linearVotingErc20Address || linearVotingErc20WithHatsWhitelistingAddress) {
           action.dispatch({
             type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
             payload: GovernanceType.AZORIUS_ERC20,
@@ -116,7 +121,7 @@ export const useFractalGovernance = () => {
           if (lockReleaseAddress) {
             loadLockedVotesToken();
           }
-        } else if (linearVotingErc721Address) {
+        } else if (linearVotingErc721Address || linearVotingErc721WithHatsWhitelistingAddress) {
           action.dispatch({
             type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
             payload: GovernanceType.AZORIUS_ERC721,
@@ -144,13 +149,13 @@ export const useFractalGovernance = () => {
   ]);
 
   useEffect(() => {
-    const newLoadKey = daoAddress || '0x';
-    if (type && daoAddress && daoAddress !== loadKey.current && isGuardLoaded) {
+    const newLoadKey = safeAddress || '0x';
+    if (type && safeAddress && safeAddress !== loadKey.current && isGuardLoaded) {
       loadKey.current = newLoadKey;
       loadDAOProposals();
     }
-    if (!type || !daoAddress) {
+    if (!type || !safeAddress) {
       loadKey.current = undefined;
     }
-  }, [type, loadDAOProposals, isGuardLoaded, daoAddress]);
+  }, [type, loadDAOProposals, isGuardLoaded, safeAddress]);
 };

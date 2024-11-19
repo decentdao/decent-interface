@@ -2,9 +2,9 @@ import { Center, Flex, FlexProps, Link, Text, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { FractalGuardContracts, FractalNode, FreezeGuard } from '../../../types';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
+import { DaoInfo } from '../../../types';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
@@ -14,9 +14,7 @@ export const NODE_HEIGHT_REM = 6.75;
 export const NODE_MARGIN_TOP_REM = 1.25;
 
 export interface InfoProps extends FlexProps {
-  node?: FractalNode;
-  freezeGuard?: FreezeGuard;
-  guardContracts?: FractalGuardContracts;
+  node?: DaoInfo;
 }
 
 /**
@@ -29,16 +27,15 @@ export interface InfoProps extends FlexProps {
  * Simply using the useFractal() hook to get info will end up with the current DAO's
  * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
  */
-export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: InfoProps) {
-  const {
-    node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
-  } = useFractal();
+export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
+  const { safe: currentSafe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
-  const { displayName } = useGetAccountName(node?.daoAddress);
+  const displayedAddress = node?.safe?.address;
+  const { displayName } = useGetAccountName(displayedAddress);
 
   // node hasn't loaded yet
-  if (!node || !node.daoAddress) {
+  if (!node || !displayedAddress) {
     return (
       <Flex
         w="full"
@@ -52,8 +49,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
     );
   }
 
-  const displayedAddress = node.daoAddress;
-  const isCurrentDAO = displayedAddress === currentDAOAddress;
+  const isCurrentDAO = displayedAddress === currentSafe?.address;
 
   return (
     <Link
@@ -80,7 +76,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
         }
         p="1.5rem"
         width="100%"
-        borderRadius="0.5rem"
+        borderRadius="0.75rem"
         border={isCurrentDAO ? '4px solid' : '1px'}
         borderColor={isCurrentDAO ? 'neutral-4' : 'transparent'}
       >

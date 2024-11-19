@@ -5,24 +5,20 @@ import { Link } from 'react-router-dom';
 import { DecentSignature } from '../../assets/theme/custom/icons/DecentSignature';
 import { BASE_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useRolesStore } from '../../store/roles/useRolesStore';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { MySafes } from './MySafes';
 
 export default function HomePage() {
-  const {
-    node: { daoAddress },
-    action,
-  } = useFractal();
-
+  const { safe } = useDaoInfoStore();
+  const { action } = useFractal();
   const { t } = useTranslation('home');
-  const { resetHatsStore } = useRolesStore();
 
   useEffect(() => {
-    if (daoAddress) {
+    // @todo @dev Let's revisit this logic in future when state has been updated
+    if (safe?.address) {
       action.resetSafeState();
-      resetHatsStore();
     }
-  }, [daoAddress, action, resetHatsStore]);
+  }, [safe?.address, action]);
 
   return (
     <Flex

@@ -20,7 +20,6 @@ export const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain,
   rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
-  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',
   etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
@@ -29,7 +28,7 @@ export const sepoliaConfig: NetworkConfig = {
   subgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
-    version: 'v0.1.1',
+    version: 'v0.1.2',
   },
   sablierSubgraph: {
     space: 57079,
@@ -61,7 +60,13 @@ export const sepoliaConfig: NetworkConfig = {
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
     linearVotingErc20WrappedMasterCopy: getAddress(a.LinearERC20WrappedVoting),
+    linearVotingErc20HatsWhitelistingMasterCopy: getAddress(
+      a.LinearERC20VotingWithHatsProposalCreation,
+    ),
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
+    linearVotingErc721HatsWhitelistingMasterCopy: getAddress(
+      a.LinearERC721VotingWithHatsProposalCreation,
+    ),
 
     moduleAzoriusMasterCopy: getAddress(a.Azorius),
     moduleFractalMasterCopy: getAddress(a.FractalModule),
@@ -80,7 +85,6 @@ export const sepoliaConfig: NetworkConfig = {
 
     decentAutonomousAdminV1MasterCopy: getAddress(a.DecentAutonomousAdminV1),
 
-    fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
 
     decentHatsCreationModule: getAddress(a.DecentHatsCreationModule),
@@ -98,6 +102,7 @@ export const sepoliaConfig: NetworkConfig = {
   },
   staking: {},
   moralis: {
+    chainSupported: true,
     deFiSupported: false,
   },
   createOptions: [

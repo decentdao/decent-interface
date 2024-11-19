@@ -1,32 +1,30 @@
 import { useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Address } from 'viem';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { NodeAction } from '../../providers/App/node/action';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 
-export const useUpdateSafeData = (daoAddress?: Address) => {
-  const { action } = useFractal();
+export const useUpdateSafeData = (safeAddress?: Address) => {
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
 
+  const { setSafeInfo } = useDaoInfoStore();
+
   useEffect(() => {
-    if (!safeAPI || !daoAddress) {
+    if (!safeAPI || !safeAddress) {
       return;
     }
 
-    // Retrieve lastest safe info on page/url change
+    // Retrieve latest safe info on page/url change
+    // @todo - do we need to check if the safeAddress has changed?
     if (prevPathname.current !== location.pathname) {
       (async () => {
-        const safeInfo = await safeAPI.getSafeData(daoAddress);
+        const safeInfo = await safeAPI.getSafeData(safeAddress);
 
-        action.dispatch({
-          type: NodeAction.SET_SAFE_INFO,
-          payload: safeInfo,
-        });
+        setSafeInfo(safeInfo);
       })();
       prevPathname.current = location.pathname;
     }
-  }, [action, daoAddress, safeAPI, location]);
+  }, [safeAddress, safeAPI, location, setSafeInfo]);
 };

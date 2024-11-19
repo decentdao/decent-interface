@@ -20,7 +20,6 @@ export const mainnetConfig: NetworkConfig = {
   order: 0,
   chain,
   rpcEndpoint: `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
-  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
   etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_MAINNET_API_KEY}`,
@@ -29,7 +28,7 @@ export const mainnetConfig: NetworkConfig = {
   subgraph: {
     space: 71032,
     slug: 'fractal-mainnet',
-    version: 'v0.1.1',
+    version: 'v0.1.2',
   },
   sablierSubgraph: {
     space: 57079,
@@ -61,7 +60,13 @@ export const mainnetConfig: NetworkConfig = {
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
     linearVotingErc20WrappedMasterCopy: getAddress(a.LinearERC20WrappedVoting),
+    linearVotingErc20HatsWhitelistingMasterCopy: getAddress(
+      a.LinearERC20VotingWithHatsProposalCreation,
+    ),
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
+    linearVotingErc721HatsWhitelistingMasterCopy: getAddress(
+      a.LinearERC721VotingWithHatsProposalCreation,
+    ),
 
     moduleAzoriusMasterCopy: getAddress(a.Azorius),
     moduleFractalMasterCopy: getAddress(a.FractalModule),
@@ -80,7 +85,6 @@ export const mainnetConfig: NetworkConfig = {
 
     decentAutonomousAdminV1MasterCopy: getAddress(a.DecentAutonomousAdminV1),
 
-    fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
 
     decentHatsCreationModule: getAddress(a.DecentHatsCreationModule),
@@ -104,9 +108,14 @@ export const mainnetConfig: NetworkConfig = {
     },
   },
   moralis: {
+    chainSupported: true,
     deFiSupported: true,
   },
-  createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
+  createOptions: [
+    GovernanceType.MULTISIG,
+    GovernanceType.AZORIUS_ERC20,
+    GovernanceType.AZORIUS_ERC721,
+  ],
 };
 
 export default mainnetConfig;

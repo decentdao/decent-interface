@@ -13,6 +13,7 @@ import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -25,14 +26,13 @@ import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
   const loadKey = useRef<string | null>();
-  const {
-    node: { daoAddress },
-    action,
-  } = useFractal();
+  const { action } = useFractal();
+  const { safe } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
   const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
   const { chain, nativeTokenIcon } = useNetworkConfig();
+  const safeAddress = safe?.address;
 
   const publicClient = usePublicClient();
 
@@ -42,7 +42,7 @@ export const useDecentTreasury = () => {
       const decimals = transfer.tokenInfo.decimals;
 
       const formattedTransfer: TransferDisplayData = {
-        eventType: daoAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
+        eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
         transferType: transfer.type as TransferType,
         executionDate: transfer.executionDate,
         image: transfer.tokenInfo.logoUri ?? '/images/coin-icon-default.svg',
@@ -54,7 +54,7 @@ export const useDecentTreasury = () => {
           transfer.type === TransferType.ERC721_TRANSFER
             ? undefined
             : formatCoin(transfer.value, false, decimals, symbol),
-        transferAddress: daoAddress === transfer.from ? transfer.to : transfer.from,
+        transferAddress: safeAddress === transfer.from ? transfer.to : transfer.from,
         transactionHash: transfer.transactionHash,
         tokenId: transfer.tokenId,
         tokenInfo: transfer.tokenInfo,
@@ -62,11 +62,11 @@ export const useDecentTreasury = () => {
       };
       return formattedTransfer;
     },
-    [daoAddress],
+    [safeAddress],
   );
 
   const loadTreasury = useCallback(async () => {
-    if (!daoAddress || !safeAPI) {
+    if (!safeAddress || !safeAPI) {
       return;
     }
 
@@ -76,10 +76,10 @@ export const useDecentTreasury = () => {
       { data: nftBalances, error: nftBalancesError },
       { data: defiBalances, error: defiBalancesError },
     ] = await Promise.all([
-      safeAPI.getAllTransactions(daoAddress),
-      getTokenBalances(daoAddress),
-      getNFTBalances(daoAddress),
-      getDeFiBalances(daoAddress),
+      safeAPI.getAllTransactions(safeAddress),
+      getTokenBalances(safeAddress),
+      getNFTBalances(safeAddress),
+      getDeFiBalances(safeAddress),
     ]);
 
     const groupedTransactions = allTransactions.results.reduce(
@@ -250,7 +250,7 @@ export const useDecentTreasury = () => {
     chain.nativeCurrency.decimals,
     chain.nativeCurrency.name,
     chain.nativeCurrency.symbol,
-    daoAddress,
+    safeAddress,
     formatTransfer,
     getDeFiBalances,
     getNFTBalances,
@@ -261,17 +261,17 @@ export const useDecentTreasury = () => {
   ]);
 
   useEffect(() => {
-    if (!daoAddress) {
+    if (!safeAddress) {
       loadKey.current = null;
       return;
     }
 
-    const newLoadKey = `${chain.id}${daoAddress}`;
+    const newLoadKey = `${chain.id}${safeAddress}`;
     if (newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
       loadTreasury();
     }
-  }, [action, chain.id, daoAddress, loadTreasury]);
+  }, [action, chain.id, safeAddress, loadTreasury]);
 
   return;
 };

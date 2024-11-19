@@ -1,29 +1,25 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Address } from 'viem';
-import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
+import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
-import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetSafeName } from '../../utils/useGetSafeName';
-import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
 
-export const useFractalNode = (
-  skip: boolean,
-  {
-    addressPrefix,
-    daoAddress,
-  }: {
-    addressPrefix?: string;
-    daoAddress?: Address;
-  },
-) => {
+export const useFractalNode = ({
+  addressPrefix,
+  safeAddress,
+}: {
+  addressPrefix?: string;
+  safeAddress?: Address;
+}) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
@@ -34,49 +30,44 @@ export const useFractalNode = (
 
   const lookupModules = useFractalModules();
 
-  const { chain } = useNetworkConfig();
+  const { subgraph } = useNetworkConfig();
 
-  const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, _daoAddress: Address) => {
-      const demo = loadDemoData(chain, _daoAddress, result);
-      if (!demo.data) {
-        return;
-      }
-      const { daos } = demo.data;
-      const dao = daos[0];
-      if (dao) {
+  const { setDaoInfo, setFractalModules, setSafeInfo } = useDaoInfoStore();
+
+  useQuery(DAOQueryDocument, {
+    variables: { safeAddress },
+    onCompleted: async data => {
+      if (!safeAddress) return;
+
+      const getNodeInfo = (result: { data?: DAOQueryQuery }) => {
+        const dao = result.data?.daos[0];
+        if (dao === undefined) {
+          return undefined;
+        }
+
         const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
 
         const currentNode: Node = {
           nodeHierarchy: {
             parentAddress,
-            childNodes: mapChildNodes(dao as DAO),
+            childNodes: mapChildNodes(dao),
           },
           daoName: name as string,
-          daoAddress: _daoAddress,
+          address: safeAddress,
           daoSnapshotENS: snapshotENS as string,
           proposalTemplatesHash: proposalTemplatesHash as string,
         };
         return currentNode;
+      };
+
+      const graphNodeInfo = getNodeInfo({ data });
+      const daoName = graphNodeInfo?.daoName ?? (await getSafeName(safeAddress));
+
+      if (graphNodeInfo) {
+        setDaoInfo({ ...graphNodeInfo, daoName });
+      } else {
+        setDaoInfo({ daoName });
       }
-      return;
-    },
-    [chain],
-  );
-
-  const { subgraph } = useNetworkConfig();
-
-  useQuery(DAOQueryDocument, {
-    variables: { daoAddress },
-    onCompleted: async data => {
-      if (!daoAddress) return;
-      const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
-      const daoName = graphNodeInfo?.daoName ?? (await getSafeName(daoAddress));
-
-      action.dispatch({
-        type: NodeAction.SET_DAO_INFO,
-        payload: Object.assign(graphNodeInfo || {}, { daoName }),
-      });
     },
     context: {
       subgraphSpace: subgraph.space,
@@ -95,51 +86,35 @@ export const useFractalNode = (
     [action],
   );
 
-  const setDAO = useCallback(
-    async (_addressPrefix: string, _daoAddress: Address) => {
-      currentValidSafe.current = _addressPrefix + _daoAddress;
+  const setDAO = useCallback(async () => {
+    if (addressPrefix && safeAddress) {
+      currentValidSafe.current = `${addressPrefix}${safeAddress}`;
       setErrorLoading(false);
 
       let safeInfo;
 
       try {
         if (!safeAPI) throw new Error('SafeAPI not set');
-        const address = _daoAddress;
-        safeInfo = await safeAPI.getSafeData(address);
+        safeInfo = await safeAPI.getSafeData(safeAddress);
       } catch (e) {
+        // TODO: this is the thing causing an error when
+        // trying to load a DAO with a valid address which is not a Safe
         reset({ error: true });
         return;
       }
 
       // if here, we have a valid Safe!
-
-      action.dispatch({
-        type: NodeAction.SET_FRACTAL_MODULES,
-        payload: await lookupModules(safeInfo.modules),
-      });
-
-      action.dispatch({
-        type: NodeAction.SET_SAFE_INFO,
-        payload: safeInfo,
-      });
-    },
-    [action, lookupModules, reset, safeAPI],
-  );
+      setFractalModules(await lookupModules(safeInfo.modules));
+      setSafeInfo(safeInfo);
+    }
+  }, [addressPrefix, safeAddress, setFractalModules, lookupModules, setSafeInfo, safeAPI, reset]);
 
   useEffect(() => {
-    if (
-      skip ||
-      addressPrefix === undefined ||
-      daoAddress === undefined ||
-      `${addressPrefix}${daoAddress}` !== currentValidSafe.current
-    ) {
+    if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current) {
       reset({ error: false });
-
-      if (addressPrefix && daoAddress) {
-        setDAO(addressPrefix, daoAddress);
-      }
+      setDAO();
     }
-  }, [addressPrefix, daoAddress, setDAO, reset, skip]);
+  }, [addressPrefix, safeAddress, setDAO, reset]);
 
   return { errorLoading };
 };

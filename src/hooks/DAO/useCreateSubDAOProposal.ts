@@ -5,6 +5,7 @@ import { encodeFunctionData, isHex } from 'viem';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
@@ -23,26 +24,31 @@ export const useCreateSubDAOProposal = () => {
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const [build] = useBuildDAOTx();
+  const { governance } = useFractal();
+  const { safe } = useDaoInfoStore();
   const {
-    node: { daoAddress },
-    governance,
-  } = useFractal();
-  const {
-    contracts: { fractalRegistry, multiSendCallOnly },
+    contracts: { multiSendCallOnly, keyValuePairs },
   } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
+
+  const safeAddress = safe?.address;
+
   const proposeDao = useCallback(
     (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO | SubDAO,
       nonce: number | undefined,
-      successCallback: (addressPrefix: string, daoAddress: string) => void,
+      successCallback: (addressPrefix: string, safeAddress: string) => void,
     ) => {
       const propose = async () => {
-        if (!daoAddress) {
+        if (!safeAddress) {
           return;
         }
 
-        const builtSafeTx = await build(daoData, daoAddress, azoriusGovernance.votesToken?.address);
+        const builtSafeTx = await build(
+          daoData,
+          safeAddress,
+          azoriusGovernance.votesToken?.address,
+        );
         if (!builtSafeTx) {
           return;
         }
@@ -64,13 +70,13 @@ export const useCreateSubDAOProposal = () => {
         }
 
         const encodedDeclareSubDAO = encodeFunctionData({
-          abi: abis.FractalRegistry,
-          functionName: 'declareSubDAO',
-          args: [predictedSafeAddress],
+          abi: abis.KeyValuePairs,
+          functionName: 'updateValues',
+          args: [['childDao'], [predictedSafeAddress]],
         });
 
         const proposalData: ProposalExecuteData = {
-          targets: [multiSendCallOnly, fractalRegistry],
+          targets: [multiSendCallOnly, keyValuePairs],
           values: [0n, 0n],
           calldatas: [encodedMultisend, encodedDeclareSubDAO],
           metaData: {
@@ -93,8 +99,8 @@ export const useCreateSubDAOProposal = () => {
     [
       azoriusGovernance.votesToken?.address,
       build,
-      daoAddress,
-      fractalRegistry,
+      safeAddress,
+      keyValuePairs,
       multiSendCallOnly,
       submitProposal,
       t,

@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
@@ -23,24 +23,24 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors, mode } = props;
 
-  const {
-    node: { daoName, daoSnapshotENS, daoAddress },
-  } = useFractal();
+  const { daoName, daoSnapshotENS, safe } = useDaoInfoStore();
 
   const isEdit = mode === DAOCreateMode.EDIT;
+
+  const safeAddress = safe?.address;
 
   useEffect(() => {
     if (isEdit) {
       setFieldValue('essentials.daoName', daoName, false);
-      if (createAccountSubstring(daoAddress!) !== daoName) {
+      if (safeAddress && createAccountSubstring(safeAddress) !== daoName) {
         // Pre-fill the snapshot URL form field when editing
         setFieldValue('essentials.snapshotENS', daoSnapshotENS || '', false);
       }
     }
-  }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, daoAddress]);
+  }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, safeAddress]);
 
   const daoNameDisabled =
-    isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
+    isEdit && !!daoName && !!safeAddress && createAccountSubstring(safeAddress) !== daoName;
 
   // If in governance edit mode and snapshot URL is already set, disable the field
   const snapshotENSDisabled = isEdit && !!daoSnapshotENS;

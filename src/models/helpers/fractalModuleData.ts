@@ -1,12 +1,12 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import {
-  encodeAbiParameters,
-  parseAbiParameters,
   Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  encodePacked,
   getCreate2Address,
   keccak256,
-  encodePacked,
-  encodeFunctionData,
+  parseAbiParameters,
 } from 'viem';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import { ZodiacModuleProxyFactoryAbi } from '../../assets/abi/ZodiacModuleProxyFactoryAbi';

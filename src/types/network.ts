@@ -4,7 +4,6 @@ import { GovernanceType } from './fractal';
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown
   chain: Chain;
-  moralisSupported: boolean;
   rpcEndpoint: string;
   safeBaseURL: string;
   etherscanBaseURL: string;
@@ -22,6 +21,7 @@ export type NetworkConfig = {
     slug: string;
   };
   moralis: {
+    chainSupported: boolean;
     deFiSupported: boolean;
   };
   contracts: {
@@ -34,8 +34,10 @@ export type NetworkConfig = {
     zodiacModuleProxyFactory: Address;
 
     linearVotingErc20MasterCopy: Address;
+    linearVotingErc20HatsWhitelistingMasterCopy: Address;
     linearVotingErc20WrappedMasterCopy: Address;
     linearVotingErc721MasterCopy: Address;
+    linearVotingErc721HatsWhitelistingMasterCopy: Address;
 
     moduleAzoriusMasterCopy: Address;
     moduleFractalMasterCopy: Address;
@@ -54,7 +56,6 @@ export type NetworkConfig = {
 
     decentAutonomousAdminV1MasterCopy: Address;
 
-    fractalRegistry: Address;
     keyValuePairs: Address;
 
     decentHatsCreationModule: Address;

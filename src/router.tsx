@@ -4,25 +4,31 @@ import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
-import DAOController from './pages/DAOController';
-import DaoCreatePage from './pages/create';
-import DaoDashboardPage from './pages/daos/[daoAddress]/DaoDashboardPage';
-import { SettingsPage } from './pages/daos/[daoAddress]/SettingsPage';
-import ModifyGovernancePage from './pages/daos/[daoAddress]/edit/governance';
-import HierarchyPage from './pages/daos/[daoAddress]/hierarchy';
-import SubDaoCreate from './pages/daos/[daoAddress]/new';
-import ProposalTemplatesPage from './pages/daos/[daoAddress]/proposal-templates';
-import CreateProposalTemplatePage from './pages/daos/[daoAddress]/proposal-templates/new';
-import ProposalsPage from './pages/daos/[daoAddress]/proposals';
-import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId]';
-import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
-import SablierProposalCreatePage from './pages/daos/[daoAddress]/proposals/new/sablier';
-import Roles from './pages/daos/[daoAddress]/roles';
-import { RoleDetails } from './pages/daos/[daoAddress]/roles/details';
-import RolesEdit from './pages/daos/[daoAddress]/roles/edit';
-import { RoleEditDetails } from './pages/daos/[daoAddress]/roles/edit/details';
-import EditProposalSummary from './pages/daos/[daoAddress]/roles/edit/summary';
-import Treasury from './pages/daos/[daoAddress]/treasury';
+import { SafeCreatePage } from './pages/create/SafeCreatePage';
+import { SafeController } from './pages/dao/SafeController';
+import { SafeDashboardPage } from './pages/dao/SafeDashboardPage';
+import { SafeEditGovernancePage } from './pages/dao/edit/governance/SafeEditGovernancePage';
+import { SafeHierarchyPage } from './pages/dao/hierarchy/SafeHierarchyPage';
+import { SafeSubDaoCreatePage } from './pages/dao/new/SafeSubDaoCreatePage';
+import { SafeProposalTemplatesPage } from './pages/dao/proposal-templates/SafeProposalTemplatesPage';
+import { SafeCreateProposalTemplatePage } from './pages/dao/proposal-templates/new/SafeCreateProposalTemplatePage';
+import { SafeProposalsPage } from './pages/dao/proposals/SafeProposalsPage';
+import { SafeProposalDetailsPage } from './pages/dao/proposals/[proposalId]';
+import { SafeProposalWithActionsCreatePage } from './pages/dao/proposals/actions/new/SafeProposalWithActionsCreatePage';
+import { SafeProposalCreatePage } from './pages/dao/proposals/new/SafeProposalCreatePage';
+import { SafeSablierProposalCreatePage } from './pages/dao/proposals/new/sablier/SafeSablierProposalCreatePage';
+import { SafeRolesPage } from './pages/dao/roles/SafeRolesPage';
+import { SafeRoleDetailsPage } from './pages/dao/roles/details/SafeRoleDetailsPage';
+import { SafeRolesEditPage } from './pages/dao/roles/edit/SafeRolesEditPage';
+import { SafeRoleEditDetailsPage } from './pages/dao/roles/edit/details/SafeRoleEditDetailsPage';
+import { SafeRolesEditProposalSummaryPage } from './pages/dao/roles/edit/summary/SafeRolesEditProposalSummaryPage';
+import { SafeSettingsPage } from './pages/dao/settings/SafeSettingsPage';
+import { SafeGeneralSettingsPage } from './pages/dao/settings/general/SafeGeneralSettingsPage';
+import { SafeGovernanceSettingsPage } from './pages/dao/settings/governance/SafeGovernanceSettingsPage';
+import { SafeModulesSettingsPage } from './pages/dao/settings/modules-and-guard/SafeModulesSettingsPage';
+import { SafePermissionsCreateProposal } from './pages/dao/settings/permissions/SafePermissionsCreateProposal';
+import { SafePermissionsSettingsPage } from './pages/dao/settings/permissions/SafePermissionsSettingsPage';
+import { SafeTreasuryPage } from './pages/dao/treasury/SafeTreasuryPage';
 import HomePage from './pages/home/HomePage';
 
 export const router = (addressPrefix: string, daoAddress: string | undefined) =>
@@ -44,7 +50,7 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
         },
         {
           path: 'create/*',
-          element: <DaoCreatePage />,
+          element: <SafeCreatePage />,
         },
         {
           path: 'create',
@@ -52,15 +58,15 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
         },
         {
           path: '/',
-          element: <DAOController />,
+          element: <SafeController />,
           children: [
             {
               path: DAO_ROUTES.dao.path,
-              element: <DaoDashboardPage />,
+              element: <SafeDashboardPage />,
             },
             {
               path: 'edit/governance/*',
-              element: <ModifyGovernancePage />,
+              element: <SafeEditGovernancePage />,
             },
             {
               path: 'edit/governance',
@@ -73,35 +79,35 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.hierarchy.path,
-              element: <HierarchyPage />,
+              element: <SafeHierarchyPage />,
             },
             {
               path: DAO_ROUTES.roles.path,
-              element: <Roles />,
+              element: <SafeRolesPage />,
               children: [
                 {
                   path: 'details',
-                  element: <RoleDetails />,
+                  element: <SafeRoleDetailsPage />,
                 },
               ],
             },
             {
               path: DAO_ROUTES.rolesEdit.path,
-              element: <RolesEdit />,
+              element: <SafeRolesEditPage />,
               children: [
                 {
                   path: 'details',
-                  element: <RoleEditDetails />,
+                  element: <SafeRoleEditDetailsPage />,
                 },
                 {
                   path: 'summary',
-                  element: <EditProposalSummary />,
+                  element: <SafeRolesEditProposalSummaryPage />,
                 },
               ],
             },
             {
               path: 'new/*',
-              element: <SubDaoCreate />,
+              element: <SafeSubDaoCreatePage />,
             },
             {
               path: 'new',
@@ -117,11 +123,11 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
               children: [
                 {
                   index: true,
-                  element: <ProposalTemplatesPage />,
+                  element: <SafeProposalTemplatesPage />,
                 },
                 {
                   path: 'new/*',
-                  element: <CreateProposalTemplatePage />,
+                  element: <SafeCreateProposalTemplatePage />,
                 },
                 {
                   path: 'new',
@@ -139,15 +145,28 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
               children: [
                 {
                   index: true,
-                  element: <ProposalsPage />,
+                  element: <SafeProposalsPage />,
                 },
                 {
                   path: ':proposalId',
-                  element: <ProposalDetailsPage />,
+                  element: <SafeProposalDetailsPage />,
                 },
                 {
                   path: 'new/*',
-                  element: <ProposalCreatePage />,
+                  element: <SafeProposalCreatePage />,
+                },
+                {
+                  path: 'actions/new/*',
+                  element: <SafeProposalWithActionsCreatePage />,
+                },
+                {
+                  path: 'actions/new',
+                  loader: () =>
+                    redirect(
+                      daoAddress
+                        ? DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, daoAddress)
+                        : BASE_ROUTES.landing,
+                    ),
                 },
                 {
                   path: 'new',
@@ -160,7 +179,7 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
                 },
                 {
                   path: 'new/sablier/*',
-                  element: <SablierProposalCreatePage />,
+                  element: <SafeSablierProposalCreatePage />,
                 },
                 {
                   path: 'new/sablier',
@@ -177,11 +196,39 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.settings.path,
-              element: <SettingsPage />,
+              element: <SafeSettingsPage />,
+              children: [
+                {
+                  index: true,
+                  element: <SafeGeneralSettingsPage />,
+                },
+                {
+                  path: DAO_ROUTES.settingsGeneral.path,
+                  element: <SafeGeneralSettingsPage />,
+                },
+                {
+                  path: DAO_ROUTES.settingsGovernance.path,
+                  element: <SafeGovernanceSettingsPage />,
+                },
+                {
+                  path: DAO_ROUTES.settingsModulesAndGuard.path,
+                  element: <SafeModulesSettingsPage />,
+                },
+                {
+                  path: DAO_ROUTES.settingsPermissions.path,
+                  element: <SafePermissionsSettingsPage />,
+                  children: [
+                    {
+                      path: DAO_ROUTES.settingsPermissionsCreateProposal.path,
+                      element: <SafePermissionsCreateProposal />,
+                    },
+                  ],
+                },
+              ],
             },
             {
               path: DAO_ROUTES.treasury.path,
-              element: <Treasury />,
+              element: <SafeTreasuryPage />,
             },
           ],
         },

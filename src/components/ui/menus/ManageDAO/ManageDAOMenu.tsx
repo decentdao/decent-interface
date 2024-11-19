@@ -1,9 +1,9 @@
 import { Icon, IconButton } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { GearFine } from '@phosphor-icons/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Address, getContract } from 'viem';
+import { getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
@@ -12,90 +12,33 @@ import {
 } from '../../../../helpers/freezePeriodHelpers';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
-import { useAddressContractType } from '../../../../hooks/utils/useAddressContractType';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
-import useVotingStrategyAddress from '../../../../hooks/utils/useVotingStrategyAddress';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  FractalGuardContracts,
-  FractalModuleType,
-  FreezeGuard,
-  FreezeVotingType,
-  GovernanceType,
-} from '../../../../types';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
+import { FractalModuleType, FreezeVotingType, GovernanceType } from '../../../../types';
 import { ModalType } from '../../modals/ModalProvider';
 import { useDecentModal } from '../../modals/useDecentModal';
 import { OptionMenu } from '../OptionMenu';
 
-interface IManageDAOMenu {
-  parentAddress: Address | null;
-  freezeGuard: FreezeGuard;
-  guardContracts: FractalGuardContracts;
-}
-
-/**
- * The dropdown for managing a DAO.
- *
- * It is important to note that you cannot rely on the useFractal()
- * hook to supply information to this menu, as it is used within the
- * DAO hierarchy, for multiple DAO contexts.
- *
- * All info for this menu should be supplied in the constructor.
- */
-export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IManageDAOMenu) {
-  const [governanceType, setGovernanceType] = useState(GovernanceType.MULTISIG);
+export function ManageDAOMenu() {
   const {
-    node,
     governance: { type },
+    guard,
+    guardContracts,
   } = useFractal();
+  const node = useDaoInfoStore();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = node.daoAddress;
-  const { getAddressContractType } = useAddressContractType();
+  const safeAddress = node.safe?.address;
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, null, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress ?? null, null, false);
   const { handleClawBack } = useClawBack({
-    parentAddress,
+    parentAddress: node.nodeHierarchy.parentAddress,
     childSafeInfo: node,
   });
-  const { getVotingStrategyAddress } = useVotingStrategyAddress();
 
-  useEffect(() => {
-    const loadGovernanceType = async () => {
-      if (node.safe && node.safe.address && node.safe.address === safeAddress && type) {
-        // Since safe.address (global scope DAO address) and safeAddress(Node provided to this component via props)
-        // are the same - we can simply grab governance type from global scope and avoid double-fetching
-        setGovernanceType(type);
-      } else {
-        if (node?.fractalModules) {
-          let result = GovernanceType.MULTISIG;
-          const votingContractAddress = await getVotingStrategyAddress();
-          if (votingContractAddress) {
-            const masterCopyData = await getAddressContractType(votingContractAddress);
-
-            if (masterCopyData.isLinearVotingErc20) {
-              result = GovernanceType.AZORIUS_ERC20;
-            } else if (masterCopyData.isLinearVotingErc721) {
-              result = GovernanceType.AZORIUS_ERC721;
-            }
-          }
-
-          setGovernanceType(result);
-        }
-      }
-    };
-
-    loadGovernanceType();
-  }, [
-    getVotingStrategyAddress,
-    getAddressContractType,
-    node?.fractalModules,
-    node.safe,
-    safeAddress,
-    type,
-  ]);
   const { addressPrefix } = useNetworkConfig();
 
   const handleNavigateToSettings = useCallback(() => {
@@ -112,7 +55,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     () => ({
       optionKey: 'optionInitiateFreeze',
       onClick: () => {
-        const freezeVotingType = guardContracts!.freezeVotingType;
+        const freezeVotingType = guardContracts.freezeVotingType;
 
         if (freezeVotingType === FreezeVotingType.MULTISIG) {
           if (!guardContracts.freezeVotingContractAddress) {
@@ -142,7 +85,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
           });
           return contract.write.castFreezeVote();
         } else if (freezeVotingType === FreezeVotingType.ERC721) {
-          getUserERC721VotingTokens(parentAddress, null).then(tokensInfo => {
+          getUserERC721VotingTokens(node.nodeHierarchy.parentAddress, null).then(tokensInfo => {
             if (!guardContracts.freezeVotingContractAddress) {
               throw new Error('freeze voting contract address not set');
             }
@@ -162,7 +105,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
         }
       },
     }),
-    [getUserERC721VotingTokens, guardContracts, parentAddress, walletClient],
+    [getUserERC721VotingTokens, guardContracts, node.nodeHierarchy.parentAddress, walletClient],
   );
 
   const options = useMemo(() => {
@@ -191,36 +134,28 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     };
 
     if (
-      freezeGuard.freezeProposalCreatedTime !== null &&
-      freezeGuard.freezeProposalPeriod !== null &&
-      freezeGuard.freezePeriod !== null &&
+      guard.freezeProposalCreatedTime !== null &&
+      guard.freezeProposalPeriod !== null &&
+      guard.freezePeriod !== null &&
       !isWithinFreezeProposalPeriod(
-        freezeGuard.freezeProposalCreatedTime,
-        freezeGuard.freezeProposalPeriod,
+        guard.freezeProposalCreatedTime,
+        guard.freezeProposalPeriod,
         currentTime,
       ) &&
-      !isWithinFreezePeriod(
-        freezeGuard.freezeProposalCreatedTime,
-        freezeGuard.freezePeriod,
-        currentTime,
-      ) &&
-      freezeGuard.userHasVotes
+      !isWithinFreezePeriod(guard.freezeProposalCreatedTime, guard.freezePeriod, currentTime) &&
+      guard.userHasVotes
     ) {
-      if (governanceType === GovernanceType.MULTISIG) {
+      if (type === GovernanceType.MULTISIG) {
         return [createSubDAOOption, freezeOption, modifyGovernanceOption, settingsOption];
       } else {
         return [createSubDAOOption, freezeOption, settingsOption];
       }
     } else if (
-      freezeGuard.freezeProposalCreatedTime !== null &&
-      freezeGuard.freezePeriod !== null &&
-      isWithinFreezePeriod(
-        freezeGuard.freezeProposalCreatedTime,
-        freezeGuard.freezePeriod,
-        currentTime,
-      ) &&
-      freezeGuard.isFrozen &&
-      freezeGuard.userHasVotes
+      guard.freezeProposalCreatedTime !== null &&
+      guard.freezePeriod !== null &&
+      isWithinFreezePeriod(guard.freezeProposalCreatedTime, guard.freezePeriod, currentTime) &&
+      guard.isFrozen &&
+      guard.userHasVotes
     ) {
       const fractalModule = node.fractalModules.find(
         module => module.moduleType === FractalModuleType.FRACTAL,
@@ -234,7 +169,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
       const optionsArr = [];
       if (canUserCreateProposal) {
         optionsArr.push(createSubDAOOption);
-        if (governanceType === GovernanceType.MULTISIG) {
+        if (type === GovernanceType.MULTISIG) {
           optionsArr.push(modifyGovernanceOption);
         }
       }
@@ -242,11 +177,11 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
       return optionsArr;
     }
   }, [
-    freezeGuard,
+    guard,
     currentTime,
     navigate,
     safeAddress,
-    governanceType,
+    type,
     handleClawBack,
     canUserCreateProposal,
     handleModifyGovernance,

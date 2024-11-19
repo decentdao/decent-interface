@@ -43,7 +43,7 @@ export function OptionsList({
               cursor="pointer"
               _hover={{ bg: 'neutral-3', textDecoration: 'none' }}
               p="0.5rem"
-              borderRadius="0.25rem"
+              borderRadius="0.5rem"
               gap={2}
               closeOnSelect={closeOnSelect}
               data-testid={'optionMenu-' + option.optionKey}
@@ -54,6 +54,11 @@ export function OptionsList({
                     isChecked={option.isSelected}
                     onChange={clickListener}
                     marginEnd="0.5rem"
+                    sx={{
+                      '& .chakra-checkbox__control': {
+                        borderRadius: '0.25rem',
+                      },
+                    }}
                   />
                   {t(option.optionKey)}
                 </Flex>

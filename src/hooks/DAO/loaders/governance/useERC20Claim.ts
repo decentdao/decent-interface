@@ -1,19 +1,20 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useAddressContractType } from '../../../utils/useAddressContractType';
 
 export function useERC20Claim() {
   const {
-    node: { daoAddress },
     governanceContracts: { votesTokenAddress },
     action,
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const publicClient = usePublicClient();
-
+  const safeAddress = safe?.address;
   const { getAddressContractType } = useAddressContractType();
 
   const loadTokenClaimContract = useCallback(async () => {
@@ -50,13 +51,13 @@ export function useERC20Claim() {
   const loadKey = useRef<string>();
 
   useEffect(() => {
-    if (daoAddress && votesTokenAddress && daoAddress + votesTokenAddress !== loadKey.current) {
-      loadKey.current = daoAddress + votesTokenAddress;
+    if (safeAddress && votesTokenAddress && safeAddress + votesTokenAddress !== loadKey.current) {
+      loadKey.current = safeAddress + votesTokenAddress;
       loadTokenClaimContract();
     }
-    if (!daoAddress || !votesTokenAddress) {
+    if (!safeAddress || !votesTokenAddress) {
       loadKey.current = undefined;
     }
-  }, [loadTokenClaimContract, daoAddress, votesTokenAddress]);
+  }, [loadTokenClaimContract, safeAddress, votesTokenAddress]);
   return;
 }

@@ -1,4 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
+import { useCallback } from 'react';
 import { Abi, Address } from 'viem';
 import { usePublicClient } from 'wagmi';
 
@@ -12,7 +13,9 @@ type ContractType = {
   isFreezeVotingErc721: boolean;
   isFreezeVotingMultisig: boolean;
   isLinearVotingErc20: boolean;
+  isLinearVotingErc20WithHatsProposalCreation: boolean;
   isLinearVotingErc721: boolean;
+  isLinearVotingErc721WithHatsProposalCreation: boolean;
   isModuleAzorius: boolean;
   isModuleFractal: boolean;
   isVotesErc20: boolean;
@@ -32,6 +35,8 @@ const defaultContractType: ContractType = {
   isModuleFractal: false,
   isVotesErc20: false,
   isVotesErc20Wrapper: false,
+  isLinearVotingErc20WithHatsProposalCreation: false,
+  isLinearVotingErc721WithHatsProposalCreation: false,
 };
 
 type ContractFunctionTest = {
@@ -119,7 +124,8 @@ const contractTests: ContractFunctionTest[] = [
     resultKey: 'isFreezeVotingMultisig',
   },
   {
-    abi: abis.LinearERC20Voting,
+    abi: combineAbis(abis.LinearERC20Voting, abis.LinearERC20VotingWithHatsProposalCreation),
+    revertFunctionNames: ['getWhitelistedHatIds'],
     functionNames: [
       'BASIS_DENOMINATOR',
       'QUORUM_DENOMINATOR',
@@ -134,7 +140,24 @@ const contractTests: ContractFunctionTest[] = [
     resultKey: 'isLinearVotingErc20',
   },
   {
-    abi: abis.LinearERC721Voting,
+    abi: abis.LinearERC20VotingWithHatsProposalCreation,
+    functionNames: [
+      'BASIS_DENOMINATOR',
+      'QUORUM_DENOMINATOR',
+      'azoriusModule',
+      'basisNumerator',
+      'governanceToken',
+      'owner',
+      'quorumNumerator',
+      'votingPeriod',
+      'requiredProposerWeight',
+      'getWhitelistedHatIds',
+    ],
+    resultKey: 'isLinearVotingErc20WithHatsProposalCreation',
+  },
+  {
+    abi: combineAbis(abis.LinearERC721Voting, abis.LinearERC721VotingWithHatsProposalCreation),
+    revertFunctionNames: ['getWhitelistedHatIds'],
     functionNames: [
       'BASIS_DENOMINATOR',
       'azoriusModule',
@@ -146,6 +169,21 @@ const contractTests: ContractFunctionTest[] = [
       'votingPeriod',
     ],
     resultKey: 'isLinearVotingErc721',
+  },
+  {
+    abi: abis.LinearERC721VotingWithHatsProposalCreation,
+    functionNames: [
+      'BASIS_DENOMINATOR',
+      'azoriusModule',
+      'basisNumerator',
+      'getAllTokenAddresses',
+      'owner',
+      'proposerThreshold',
+      'quorumThreshold',
+      'votingPeriod',
+      'getWhitelistedHatIds',
+    ],
+    resultKey: 'isLinearVotingErc721WithHatsProposalCreation',
   },
   {
     abi: abis.Azorius,
@@ -191,63 +229,69 @@ const contractTests: ContractFunctionTest[] = [
 export function useAddressContractType() {
   const publicClient = usePublicClient();
 
-  async function getAddressContractType(address: Address): Promise<ContractType> {
-    if (!publicClient) {
-      throw new Error('Public client not found');
-    }
-
-    const result = { ...defaultContractType };
-
-    const allCalls = contractTests.flatMap(test => [
-      ...test.functionNames.map(fn => ({
-        address,
-        abi: test.abi,
-        functionName: fn,
-        args: [],
-      })),
-      ...(test.revertFunctionNames?.map(fn => ({
-        address,
-        abi: test.abi,
-        functionName: fn,
-        args: [],
-      })) ?? []),
-    ]);
-
-    const allResults = await publicClient.multicall({
-      contracts: allCalls,
-    });
-
-    let resultIndex = 0;
-    let passedTestCount = 0;
-
-    for (const test of contractTests) {
-      const successResults = allResults.slice(resultIndex, resultIndex + test.functionNames.length);
-      const successPassed = successResults.every(r => !r.error);
-      resultIndex += test.functionNames.length;
-
-      let revertPassed = true;
-      if (test.revertFunctionNames?.length) {
-        const revertResults = allResults.slice(
-          resultIndex,
-          resultIndex + test.revertFunctionNames.length,
-        );
-        revertPassed = revertResults.every(r => r.error);
-        resultIndex += test.revertFunctionNames.length;
+  const getAddressContractType = useCallback(
+    async (address: Address): Promise<ContractType> => {
+      if (!publicClient) {
+        throw new Error('Public client not found');
       }
 
-      const testPassed = successPassed && revertPassed;
-      result[test.resultKey] = testPassed;
+      const result = { ...defaultContractType };
 
-      if (testPassed) {
-        passedTestCount++;
-        if (passedTestCount > 1) {
-          throw new Error(`Address ${address} matches multiple contract types`);
+      const allCalls = contractTests.flatMap(test => [
+        ...test.functionNames.map(fn => ({
+          address,
+          abi: test.abi,
+          functionName: fn,
+          args: [],
+        })),
+        ...(test.revertFunctionNames?.map(fn => ({
+          address,
+          abi: test.abi,
+          functionName: fn,
+          args: [],
+        })) ?? []),
+      ]);
+
+      const allResults = await publicClient.multicall({
+        contracts: allCalls,
+      });
+
+      let resultIndex = 0;
+      let passedTestCount = 0;
+
+      for (const test of contractTests) {
+        const successResults = allResults.slice(
+          resultIndex,
+          resultIndex + test.functionNames.length,
+        );
+        const successPassed = successResults.every(r => !r.error);
+        resultIndex += test.functionNames.length;
+
+        let revertPassed = true;
+        if (test.revertFunctionNames?.length) {
+          const revertResults = allResults.slice(
+            resultIndex,
+            resultIndex + test.revertFunctionNames.length,
+          );
+          revertPassed = revertResults.every(r => r.error);
+          resultIndex += test.revertFunctionNames.length;
+        }
+
+        const testPassed = successPassed && revertPassed;
+        result[test.resultKey] = testPassed;
+
+        if (testPassed) {
+          passedTestCount++;
+          if (passedTestCount > 1) {
+            throw new Error(`Address ${address} matches multiple contract types`);
+          }
         }
       }
-    }
 
-    return result;
-  }
+      return result;
+    },
+    [publicClient],
+  );
 
   return { getAddressContractType };
 }

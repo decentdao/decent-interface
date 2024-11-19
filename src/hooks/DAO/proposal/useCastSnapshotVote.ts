@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useWalletClient } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
-import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { ExtendedSnapshotProposal } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
 import { submitSnapshotVote } from '../../../utils/snapshotVote';
@@ -12,9 +12,7 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
   const [selectedChoice, setSelectedChoice] = useState<number>();
   const [snapshotWeightedChoice, setSnapshotWeightedChoice] = useState<number[]>([]);
 
-  const {
-    node: { daoSnapshotENS },
-  } = useFractal();
+  const { daoSnapshotENS } = useDaoInfoStore();
 
   const { data: walletClient } = useWalletClient();
 

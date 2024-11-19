@@ -14,6 +14,7 @@
   "reject": "Reject",
   "view": "View",
   "details": "Details",
+  "delete": "Delete",
   "vote": "Vote",
   "sign": "Sign",
   "snapshot": "Snapshot",
@@ -111,11 +112,10 @@
   "showLess": "Show Less",
   "show": "Show",
   "hide": "Hide",
-  "poweredBy": "Powered by",
   "goTo": "Go to",
   "none": "None",
   "ipfsLoadingErrorMessage": "Error fetching data from IPFS, please try again later.",
   "ipfsSavingErrorMessage": "Error saving data to IPFS, please try again later.",
   "confirm": "Confirm",
-  "automaticChainSwitchingErrorMessage": "We couldn't automatically switch network to the Safe's netowrk. Please, try to switch network in your wallet application."
+  "automaticChainSwitchingErrorMessage": "We couldn't automatically switch network to the Safe's network. Please, try to switch network in your wallet application."
 }

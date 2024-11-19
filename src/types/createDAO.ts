@@ -3,7 +3,6 @@ import { Address } from 'viem';
 import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
 import { BigIntValuePair } from './common';
 import { GovernanceType, VotingStrategyType } from './fractal';
-import { EthAddress } from './utils';
 
 export enum CreatorSteps {
   ESSENTIALS = 'essentials',
@@ -151,13 +150,14 @@ export type AddressValidation = {
 
 export type TokenAllocation<T = bigint> = {
   amount: T;
-} & EthAddress;
+  address: Address;
+};
 
 export type CreateDAOFunc = (
   daoData: SafeMultisigDAO,
   successCallback: DeployDAOSuccessCallback,
 ) => void;
-export type DeployDAOSuccessCallback = (daoAddress: string) => void;
+export type DeployDAOSuccessCallback = (address: string) => void;
 export type DAODetails = {
   daoName: string;
   governance: GovernanceType;

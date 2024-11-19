@@ -125,7 +125,7 @@ export function Badge({ labelKey, children, size }: IBadge) {
       <Flex
         alignItems="center"
         gap="0.5rem"
-        borderRadius="0.25rem"
+        borderRadius="0.75rem"
         justifyContent="center"
         h="1.5rem"
         w="fit-content"
