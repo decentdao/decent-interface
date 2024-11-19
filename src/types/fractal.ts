@@ -188,20 +188,20 @@ export interface FractalGovernanceContracts {
 
 export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address; nextNonce: number };
 
-export interface DaoInfo {
+// @dev Information retreived from subgraph
+interface SubgraphDAOInfo {
   daoName: string | null;
-  safe: SafeWithNextNonce | null;
-  fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
-  isModulesLoaded?: boolean;
   isHierarchyLoaded?: boolean;
   daoSnapshotENS?: string;
   proposalTemplatesHash?: string;
 }
 
-export interface Node
-  extends Omit<DaoInfo, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
-  address: Address;
+// @dev Information retreived from Safe
+export interface DaoInfo extends SubgraphDAOInfo {
+  safe: SafeWithNextNonce | null;
+  fractalModules: FractalModuleData[];
+  isModulesLoaded?: boolean;
 }
 
 export interface FractalModuleData {
@@ -293,7 +293,7 @@ export enum VotingStrategyType {
 
 export interface NodeHierarchy {
   parentAddress: Address | null;
-  childNodes: Node[];
+  childNodes: Omit<DaoInfo, 'isHierarchyLoaded' | 'isModulesLoaded' | 'fractalModules'>[];
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
