@@ -22,7 +22,6 @@ export const initialState = {
   readOnly: {
     dao: null,
     user: {
-      address: undefined,
       votingWeight: 0n,
     },
   },

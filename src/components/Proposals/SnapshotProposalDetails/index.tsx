@@ -1,7 +1,7 @@
 import { GridItem } from '@chakra-ui/react';
 import { useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { SnapshotProposal } from '../../../types';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { useProposalCountdown } from '../../ui/proposal/useProposalCountdown';
@@ -16,9 +16,7 @@ interface ISnapshotProposalDetails {
 }
 
 export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalDetails) {
-  const {
-    readOnly: { user },
-  } = useFractal();
+  const user = useAccount();
   useProposalCountdown(proposal);
 
   const { loadSnapshotProposal, extendedSnapshotProposal } = useSnapshotProposal(proposal);

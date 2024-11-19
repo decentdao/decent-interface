@@ -4,6 +4,7 @@ import { X } from '@phosphor-icons/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 import DaoCreator from '../../../../components/DaoCreator';
 import { DAOCreateMode } from '../../../../components/DaoCreator/formComponents/EstablishEssentials';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
@@ -29,8 +30,8 @@ export function SafeEditGovernancePage() {
 
   const {
     governance: { type },
-    readOnly: { user },
   } = useFractal();
+  const user = useAccount();
   const { safe, daoName, daoSnapshotENS } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['daoEdit', 'common', 'breadcrumbs']);
