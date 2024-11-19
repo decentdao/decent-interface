@@ -8,13 +8,14 @@ import {
   useRef,
   useState,
 } from 'react';
-import { getContract } from 'viem';
+import { erc721Abi, getContract } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
+  AzoriusGovernance,
   AzoriusProposal,
   ExtendedSnapshotProposal,
   FractalProposal,
@@ -60,10 +61,7 @@ export function VoteContextProvider({
   const [hasVoted, setHasVoted] = useState(false);
   const [hasVotedLoading, setHasVotedLoading] = useState(false);
   const [proposalVotesLength, setProposalVotesLength] = useState(0);
-  const {
-    readOnly: { user },
-    governance: { type, isAzorius },
-  } = useFractal();
+  const { governance } = useFractal();
   const userAccount = useAccount();
   const { safe } = useDaoInfoStore();
   const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
@@ -78,7 +76,7 @@ export function VoteContextProvider({
         !!extendedSnapshotProposal &&
           !!extendedSnapshotProposal.votes.find(vote => vote.voter === userAccount.address),
       );
-    } else if (isAzorius) {
+    } else if (governance.isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
       if (azoriusProposal?.votes) {
         setHasVoted(!!azoriusProposal?.votes.find(vote => vote.voter === userAccount.address));
@@ -92,7 +90,35 @@ export function VoteContextProvider({
       );
     }
     setHasVotedLoading(false);
-  }, [isAzorius, snapshotProposal, proposal, userAccount.address, extendedSnapshotProposal]);
+  }, [
+    governance.isAzorius,
+    snapshotProposal,
+    proposal,
+    userAccount.address,
+    extendedSnapshotProposal,
+  ]);
+
+  const erc721VotingWeight = useCallback(async () => {
+    const account = userAccount.address;
+    const azoriusGovernance = governance as AzoriusGovernance;
+    if (!account || !azoriusGovernance.erc721Tokens || !publicClient) {
+      return 0n;
+    }
+    const userVotingWeight = (
+      await Promise.all(
+        azoriusGovernance.erc721Tokens.map(async ({ address, votingWeight }) => {
+          const tokenContract = getContract({
+            abi: erc721Abi,
+            address: address,
+            client: publicClient,
+          });
+          const userBalance = await tokenContract.read.balanceOf([account]);
+          return userBalance * votingWeight;
+        }),
+      )
+    ).reduce((prev, curr) => prev + curr, 0n);
+    return userVotingWeight;
+  }, [governance, publicClient, userAccount.address]);
 
   const getCanVote = useCallback(async () => {
     setCanVoteLoading(true);
@@ -101,7 +127,7 @@ export function VoteContextProvider({
       if (snapshotProposal) {
         const votingWeightData = await loadVotingWeight();
         newCanVote = votingWeightData.votingWeight >= 1;
-      } else if (type === GovernanceType.AZORIUS_ERC20) {
+      } else if (governance.type === GovernanceType.AZORIUS_ERC20) {
         const azoriusProposal = proposal as AzoriusProposal;
         const ozLinearVotingContract = getContract({
           abi: abis.LinearERC20Voting,
@@ -113,9 +139,10 @@ export function VoteContextProvider({
             userAccount.address,
             Number(proposal.proposalId),
           ])) > 0n && !hasVoted;
-      } else if (type === GovernanceType.AZORIUS_ERC721) {
-        newCanVote = user.votingWeight > 0 && remainingTokenIds.length > 0;
-      } else if (type === GovernanceType.MULTISIG) {
+      } else if (governance.type === GovernanceType.AZORIUS_ERC721) {
+        const votingWeight = await erc721VotingWeight();
+        newCanVote = votingWeight > 0n && remainingTokenIds.length > 0;
+      } else if (governance.type === GovernanceType.MULTISIG) {
         newCanVote = !!safe?.owners.includes(userAccount.address);
       } else {
         newCanVote = false;
@@ -128,16 +155,16 @@ export function VoteContextProvider({
     setCanVoteLoading(false);
   }, [
     userAccount.address,
-    user.votingWeight,
     publicClient,
     canVote,
     snapshotProposal,
-    type,
+    governance.type,
     loadVotingWeight,
     hasVoted,
     remainingTokenIds.length,
     safe?.owners,
     proposal,
+    erc721VotingWeight,
   ]);
 
   const initialLoadRef = useRef(false);
