@@ -6,7 +6,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { TOOLTIP_MAXW } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -33,12 +33,8 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     proposer,
     transactionHash,
   } = proposal;
-  const {
-    governance,
-    readOnly: {
-      user: { address },
-    },
-  } = useFractal();
+  const { governance } = useFractal();
+  const { address } = useAccount();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;

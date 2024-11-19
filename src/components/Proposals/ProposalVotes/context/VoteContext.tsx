@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 import { getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -61,9 +61,10 @@ export function VoteContextProvider({
   const [hasVotedLoading, setHasVotedLoading] = useState(false);
   const [proposalVotesLength, setProposalVotesLength] = useState(0);
   const {
-    readOnly: { user, dao },
-    governance: { type },
+    readOnly: { user },
+    governance: { type, isAzorius },
   } = useFractal();
+  const userAccount = useAccount();
   const { safe } = useDaoInfoStore();
   const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
   const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
@@ -79,34 +80,33 @@ export function VoteContextProvider({
     if (snapshotProposal) {
       setHasVoted(
         !!extendedSnapshotProposal &&
-          !!extendedSnapshotProposal.votes.find(vote => vote.voter === user.address),
+          !!extendedSnapshotProposal.votes.find(vote => vote.voter === userAccount.address),
       );
-    } else if (dao?.isAzorius) {
+    } else if (isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
       if (azoriusProposal?.votes) {
-        setHasVoted(!!azoriusProposal?.votes.find(vote => vote.voter === user.address));
+        setHasVoted(!!azoriusProposal?.votes.find(vote => vote.voter === userAccount.address));
       }
     } else {
       const safeProposal = proposal as MultisigProposal;
       setHasVoted(
-        !!safeProposal.confirmations?.find(confirmation => confirmation.owner === user.address),
+        !!safeProposal.confirmations?.find(
+          confirmation => confirmation.owner === userAccount.address,
+        ),
       );
     }
     setHasVotedLoading(false);
-  }, [dao, snapshotProposal, proposal, user.address, extendedSnapshotProposal]);
+  }, [isAzorius, snapshotProposal, proposal, userAccount.address, extendedSnapshotProposal]);
 
   const getCanVote = useCallback(
     async (refetchUserTokens?: boolean) => {
       setCanVoteLoading(true);
       let newCanVote = false;
-      if (user.address && publicClient) {
+      if (userAccount.address && publicClient) {
         if (snapshotProposal) {
           const votingWeightData = await loadVotingWeight();
           newCanVote = votingWeightData.votingWeight >= 1;
-        } else if (
-          type === GovernanceType.AZORIUS_ERC20 ||
-          type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING
-        ) {
+        } else if (type === GovernanceType.AZORIUS_ERC20) {
           const azoriusProposal = proposal as AzoriusProposal;
           const ozLinearVotingContract = getContract({
             abi: abis.LinearERC20Voting,
@@ -115,19 +115,16 @@ export function VoteContextProvider({
           });
           newCanVote =
             (await ozLinearVotingContract.read.getVotingWeight([
-              user.address,
+              userAccount.address,
               Number(proposal.proposalId),
             ])) > 0n && !hasVoted;
-        } else if (
-          type === GovernanceType.AZORIUS_ERC721 ||
-          type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING
-        ) {
+        } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
             await getUserERC721VotingTokens(null, null);
           }
           newCanVote = user.votingWeight > 0 && remainingTokenIds.length > 0;
         } else if (type === GovernanceType.MULTISIG) {
-          newCanVote = !!safe?.owners.includes(user.address);
+          newCanVote = !!safe?.owners.includes(userAccount.address);
         } else {
           newCanVote = false;
         }
@@ -139,7 +136,7 @@ export function VoteContextProvider({
       setCanVoteLoading(false);
     },
     [
-      user.address,
+      userAccount.address,
       user.votingWeight,
       publicClient,
       canVote,

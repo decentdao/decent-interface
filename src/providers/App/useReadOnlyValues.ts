@@ -2,8 +2,8 @@ import * as amplitude from '@amplitude/analytics-browser';
 import * as Sentry from '@sentry/react';
 import isEqual from 'lodash.isequal';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, erc721Abi, getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { erc721Abi, getContract } from 'viem';
+import { useAccount, usePublicClient } from 'wagmi';
 import {
   AzoriusGovernance,
   DecentGovernance,
@@ -15,10 +15,8 @@ import {
 
 const INITIAL_READ_ONLY_VALUES: ReadOnlyState = {
   user: {
-    address: undefined,
     votingWeight: 0n,
   },
-  dao: null,
 };
 /**
  * Sets "read only" values which are passed on to the FractalProvider.
@@ -26,26 +24,31 @@ const INITIAL_READ_ONLY_VALUES: ReadOnlyState = {
  * These are useful dao or user specific values calculated from other stateful
  * values.
  */
-export const useReadOnlyValues = (
-  { node, governance }: { node: DaoInfo; governance: Governance },
-  _account?: Address,
-) => {
+export const useReadOnlyValues = ({
+  node,
+  governance,
+}: {
+  node: DaoInfo;
+  governance: Governance;
+}) => {
   const [readOnlyValues, setReadOnlyValues] = useState<ReadOnlyState>(INITIAL_READ_ONLY_VALUES);
   const publicClient = usePublicClient();
+  const user = useAccount();
+  const account = user.address;
 
   const loadReadOnlyValues = useCallback(async () => {
     const getVotingWeight = async () => {
       const azoriusGovernance = governance as AzoriusGovernance;
       switch (governance.type) {
         case GovernanceType.MULTISIG:
-          const isSigner = _account && node.safe?.owners.includes(_account);
+          const isSigner = account && node.safe?.owners.includes(account);
           return isSigner ? 1n : 0n;
         case GovernanceType.AZORIUS_ERC20:
           const lockedTokenWeight = (governance as DecentGovernance).lockedVotesToken?.votingWeight;
           const tokenWeight = azoriusGovernance.votesToken?.votingWeight || 0n;
           return lockedTokenWeight || tokenWeight;
         case GovernanceType.AZORIUS_ERC721:
-          if (!_account || !azoriusGovernance.erc721Tokens || !publicClient) {
+          if (!account || !azoriusGovernance.erc721Tokens || !publicClient) {
             return 0n;
           }
           const userVotingWeight = (
@@ -56,7 +59,7 @@ export const useReadOnlyValues = (
                   address: address,
                   client: publicClient,
                 });
-                const userBalance = await tokenContract.read.balanceOf([_account]);
+                const userBalance = await tokenContract.read.balanceOf([account]);
                 return userBalance * votingWeight;
               }),
             )
@@ -67,7 +70,7 @@ export const useReadOnlyValues = (
       }
     };
 
-    const address = _account;
+    const address = account;
     Sentry.setUser(address ? { id: address } : null);
 
     if (address) {
@@ -78,23 +81,13 @@ export const useReadOnlyValues = (
 
     const newReadOnlyValues = {
       user: {
-        address,
         votingWeight: await getVotingWeight(),
       },
-      dao: !node.safe?.address
-        ? null // if there is no DAO connected, we return null for this
-        : {
-            isAzorius:
-              governance.type === GovernanceType.AZORIUS_ERC20 ||
-              governance.type === GovernanceType.AZORIUS_ERC721 ||
-              governance.type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING ||
-              governance.type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING,
-          },
     };
     if (!isEqual(newReadOnlyValues, readOnlyValues)) {
       setReadOnlyValues(newReadOnlyValues);
     }
-  }, [node, governance, _account, publicClient, readOnlyValues]);
+  }, [node, governance, account, publicClient, readOnlyValues]);
   useEffect(() => {
     loadReadOnlyValues();
   }, [loadReadOnlyValues]);

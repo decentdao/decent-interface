@@ -26,8 +26,7 @@ export function SafeProposalDetailsPage() {
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
   const {
-    governance: { proposals, loadingProposals, allProposalsLoaded },
-    readOnly: { dao },
+    governance: { proposals, loadingProposals, allProposalsLoaded, isAzorius },
   } = useFractal();
   const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
@@ -93,7 +92,7 @@ export function SafeProposalDetailsPage() {
         />
       ) : snapshotProposal !== null ? (
         <SnapshotProposalDetails proposal={snapshotProposal} />
-      ) : dao?.isAzorius ? (
+      ) : isAzorius ? (
         <AzoriusProposalDetails proposal={contextProposal as AzoriusProposal} />
       ) : (
         <MultisigProposalDetails proposal={contextProposal} />

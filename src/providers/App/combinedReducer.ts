@@ -20,9 +20,7 @@ export const initialState = {
   guardContracts: initialGuardContractsState,
   guard: initialGuardState,
   readOnly: {
-    dao: null,
     user: {
-      address: undefined,
       votingWeight: 0n,
     },
   },

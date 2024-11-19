@@ -21,7 +21,7 @@ export function CustomNonceInput({
   renderTrimmed?: boolean;
 }) {
   const {
-    readOnly: { dao },
+    governance: { isAzorius },
   } = useFractal();
   const { safe } = useDaoInfoStore();
   const { t } = useTranslation(['proposal', 'common']);
@@ -29,7 +29,7 @@ export function CustomNonceInput({
     nonce !== undefined && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
 
   const tooltipContainer = useRef<HTMLDivElement>(null);
-  if (dao?.isAzorius) return null;
+  if (isAzorius) return null;
 
   return (
     <VStack alignItems={align}>
