@@ -263,6 +263,7 @@ export interface Governance {
   pendingProposals: string[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContractAddress?: Address;
+  isAzorius: boolean;
 }
 
 export interface VotingStrategyAzorius extends VotingStrategy {
@@ -303,8 +304,6 @@ export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotPropo
  * the app.
  */
 export interface ReadOnlyState {
-  /** The currently connected DAO or null if there isn't one. */
-  dao: ReadOnlyDAO | null;
   /** The "user", meaning the app user, wallet connected or not. */
   user: ReadOnlyUser;
 }
@@ -312,11 +311,6 @@ export interface ReadOnlyState {
 export interface ReadOnlyUser {
   /** The number of delegated tokens for the connected Azorius DAO, 1 for a Multisig DAO signer */
   votingWeight: bigint;
-}
-
-export interface ReadOnlyDAO {
-  /** Whether the connected DAO is an Azorius DAO.  */
-  isAzorius: boolean;
 }
 
 export interface TransferDisplayData {

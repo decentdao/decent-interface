@@ -5,10 +5,7 @@ import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusGovernance, GovernanceType } from '../../../types/fractal';
 
 export const useParentSafeVotingWeight = () => {
-  const {
-    governance,
-    readOnly: { dao },
-  } = useFractal();
+  const { governance } = useFractal();
   const { safe } = useDaoInfoStore();
 
   const [parentVotingQuorum, setParentVotingQuorum] = useState<bigint>();
@@ -24,7 +21,7 @@ export const useParentSafeVotingWeight = () => {
       case GovernanceType.AZORIUS_ERC721:
         const governanceAzorius = governance as AzoriusGovernance;
 
-        if (dao?.isAzorius === false || !governanceAzorius.votingStrategy) {
+        if (governance.isAzorius === false || !governanceAzorius.votingStrategy) {
           return;
         }
 
@@ -68,7 +65,7 @@ export const useParentSafeVotingWeight = () => {
         setTotalParentVotingWeight(BigInt(safe.owners.length));
         setParentVotingQuorum(BigInt(safe.threshold));
     }
-  }, [safe, governance, dao]);
+  }, [safe, governance]);
 
   return {
     totalParentVotingWeight,

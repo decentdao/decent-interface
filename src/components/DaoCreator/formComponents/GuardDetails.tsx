@@ -28,10 +28,7 @@ import useStepRedirect from '../hooks/useStepRedirect';
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode, errors } = props;
 
-  const {
-    governance,
-    readOnly: { dao },
-  } = useFractal();
+  const { governance } = useFractal();
   const { safe } = useDaoInfoStore();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
@@ -47,11 +44,11 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    if (showCustomNonce === undefined && !dao?.isAzorius && isSubDAO && safe) {
+    if (showCustomNonce === undefined && !governance.isAzorius && isSubDAO && safe) {
       setFieldValue('multisig.customNonce', safe.nextNonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, type, setFieldValue, safe, dao, showCustomNonce]);
+  }, [isSubDAO, type, setFieldValue, safe, governance.isAzorius, showCustomNonce]);
 
   const { totalParentVotingWeight, parentVotingQuorum } = useParentSafeVotingWeight();
 
