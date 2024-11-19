@@ -60,26 +60,31 @@ export function DaoHierarchyNode({
       <DAONodeInfoCard node={fractalNode} />
 
       {/* CHILD NODES */}
-      {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
-        <Flex
-          minH={`${NODE_HEIGHT_REM}rem`}
-          key={childNode.address}
-          gap="1.25rem"
-        >
-          <Icon
-            as={ArrowElbowDownRight}
-            my={`${NODE_HEIGHT_REM / 2.5}rem`}
-            ml="0.5rem"
-            boxSize="32px"
-            color={currentSafe?.address === childNode.address ? 'celery-0' : 'neutral-6'}
-          />
+      {fractalNode?.nodeHierarchy.childNodes.map(childNode => {
+        if (!childNode.safe) {
+          return null;
+        }
+        return (
+          <Flex
+            minH={`${NODE_HEIGHT_REM}rem`}
+            key={childNode.safe.address}
+            gap="1.25rem"
+          >
+            <Icon
+              as={ArrowElbowDownRight}
+              my={`${NODE_HEIGHT_REM / 2.5}rem`}
+              ml="0.5rem"
+              boxSize="32px"
+              color={currentSafe?.address === childNode.safe.address ? 'celery-0' : 'neutral-6'}
+            />
 
-          <DaoHierarchyNode
-            safeAddress={childNode.address}
-            depth={depth + 1}
-          />
-        </Flex>
-      ))}
+            <DaoHierarchyNode
+              safeAddress={childNode.safe.address}
+              depth={depth + 1}
+            />
+          </Flex>
+        );
+      })}
     </Flex>
   );
 }
