@@ -15,7 +15,7 @@ import { Footer } from '../Footer';
 import Header from '../Header';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
-export default function Layout() {
+export function Layout() {
   const headerContainerRef = useRef<HTMLDivElement>(null);
 
   const HEADER_HEIGHT = useHeaderHeight();

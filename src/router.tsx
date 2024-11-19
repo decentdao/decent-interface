@@ -1,7 +1,7 @@
 import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
-import Layout from './components/ui/page/Layout';
+import { Global } from './components/ui/page/Global';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
 import { SafeCreatePage } from './pages/create/SafeCreatePage';
@@ -40,7 +40,7 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
         // within underlying modals. Otherwise - trying to invoke routing-related hooks would lead to crash.
         // Not the best place to have this provider here but also more reasonalbe than putting that into <Layout />
         <ModalProvider>
-          <Layout />
+          <Global />
         </ModalProvider>
       ),
       children: [

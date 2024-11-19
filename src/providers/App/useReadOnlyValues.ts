@@ -1,5 +1,3 @@
-import * as amplitude from '@amplitude/analytics-browser';
-import * as Sentry from '@sentry/react';
 import isEqual from 'lodash.isequal';
 import { useCallback, useEffect, useState } from 'react';
 import { erc721Abi, getContract } from 'viem';
@@ -70,15 +68,6 @@ export const useReadOnlyValues = ({
       }
     };
 
-    const address = account;
-    Sentry.setUser(address ? { id: address } : null);
-
-    if (address) {
-      amplitude.setUserId(address);
-    } else {
-      amplitude.reset();
-    }
-
     const newReadOnlyValues = {
       user: {
         votingWeight: await getVotingWeight(),
@@ -88,6 +77,7 @@ export const useReadOnlyValues = ({
       setReadOnlyValues(newReadOnlyValues);
     }
   }, [node, governance, account, publicClient, readOnlyValues]);
+
   useEffect(() => {
     loadReadOnlyValues();
   }, [loadReadOnlyValues]);
