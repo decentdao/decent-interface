@@ -3,7 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import useAddress from '../../hooks/utils/useAddress';
-import { useFractal } from '../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
@@ -23,9 +23,7 @@ export default function RolesDetailsDrawerMobile({
   isOpen = true,
   onEdit,
 }: RoleDetailsDrawerProps) {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { t } = useTranslation('roles');
   const { hatsTree } = useRolesStore();
   const permissionsContainerRef = useRef<HTMLDivElement>(null);

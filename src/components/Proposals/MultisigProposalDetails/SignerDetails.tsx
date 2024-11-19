@@ -2,7 +2,8 @@ import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
-import { useFractal } from '../../../providers/App/AppProvider';
+import { useAccount } from 'wagmi';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import { ActivityAddress } from '../../Activity/ActivityAddress';
@@ -49,10 +50,8 @@ function OwnerInfoRow({
 }
 
 export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
-  const {
-    readOnly: { user },
-    node: { safe },
-  } = useFractal();
+  const user = useAccount();
+  const { safe } = useDaoInfoStore();
   const { t } = useTranslation('proposal');
   if (!safe?.owners) {
     return null;

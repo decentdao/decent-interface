@@ -22,6 +22,7 @@ import { FractalGovernanceAction } from '../../../providers/App/governance/actio
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalMetadata, MetaTransaction, ProposalExecuteData } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useVotingStrategiesAddresses from '../../utils/useVotingStrategiesAddresses';
@@ -67,7 +68,6 @@ export default function useSubmitProposal() {
   const { address: userAddress } = useAccount();
 
   const {
-    node: { safe, fractalModules },
     guardContracts: { freezeVotingContractAddress },
     governanceContracts: {
       linearVotingErc20Address,
@@ -77,6 +77,7 @@ export default function useSubmitProposal() {
     },
     action,
   } = useFractal();
+  const { safe, fractalModules } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
 
   const globalAzoriusContract = useMemo(() => {

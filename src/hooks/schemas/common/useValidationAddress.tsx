@@ -1,11 +1,11 @@
-import { useMemo, useRef, useCallback, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, PublicClient, getAddress, isAddress } from 'viem';
 import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
 import { validateENSName } from '../../../utils/url';
 
@@ -72,9 +72,7 @@ export const useValidationAddress = () => {
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
 
   const { t } = useTranslation(['daoCreate', 'common', 'modals']);
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { chain } = useNetworkConfig();
 
   const publicClient = usePublicClient();

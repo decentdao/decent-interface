@@ -13,6 +13,7 @@ import { Field, FieldAttributes, FieldProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair, GovernanceType, ICreationStepProps } from '../../../types';
 import { formatBigIntToHumanReadableString } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
@@ -27,11 +28,8 @@ import useStepRedirect from '../hooks/useStepRedirect';
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode, errors } = props;
 
-  const {
-    node: { safe },
-    governance,
-    readOnly: { dao },
-  } = useFractal();
+  const { governance } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
@@ -46,11 +44,11 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    if (showCustomNonce === undefined && !dao?.isAzorius && isSubDAO && safe) {
+    if (showCustomNonce === undefined && !governance.isAzorius && isSubDAO && safe) {
       setFieldValue('multisig.customNonce', safe.nextNonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, type, setFieldValue, safe, dao, showCustomNonce]);
+  }, [isSubDAO, type, setFieldValue, safe, governance.isAzorius, showCustomNonce]);
 
   const { totalParentVotingWeight, parentVotingQuorum } = useParentSafeVotingWeight();
 

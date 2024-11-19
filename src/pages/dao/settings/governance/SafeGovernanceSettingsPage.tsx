@@ -11,22 +11,19 @@ import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHe
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType } from '../../../../types';
 
 export function SafeGovernanceSettingsPage() {
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
   const {
-    node: { safe },
     governance: { type },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
 
-  const isERC20Governance =
-    type === GovernanceType.AZORIUS_ERC20 ||
-    type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING;
-  const isERC721Governance =
-    type === GovernanceType.AZORIUS_ERC721 ||
-    type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING;
+  const isERC20Governance = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721Governance = type === GovernanceType.AZORIUS_ERC721;
   const isMultisigGovernance = type === GovernanceType.MULTISIG;
 
   return (

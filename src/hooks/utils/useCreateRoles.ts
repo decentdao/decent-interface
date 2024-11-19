@@ -1,5 +1,10 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { HATS_MODULES_FACTORY_ADDRESS } from '@hatsprotocol/modules-sdk';
+import {
+  checkAndEncodeArgs,
+  HATS_MODULES_FACTORY_ABI,
+  HATS_MODULES_FACTORY_ADDRESS,
+  HatsModulesClient,
+} from '@hatsprotocol/modules-sdk';
 import { FormikHelpers } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +36,7 @@ import { generateContractByteCodeLinear } from '../../models/helpers/utils';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import {
   AzoriusGovernance,
@@ -76,7 +82,6 @@ async function uploadHatDescription(
 
 export default function useCreateRoles() {
   const {
-    node: { safe, daoName },
     governance,
     governanceContracts: {
       linearVotingErc20Address,
@@ -86,6 +91,7 @@ export default function useCreateRoles() {
       moduleAzoriusAddress,
     },
   } = useFractal();
+  const { safe, daoName } = useDaoInfoStore();
   const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
     addressPrefix,
@@ -958,6 +964,227 @@ export default function useCreateRoles() {
     ],
   );
 
+  const prepareConvertRoleToTermedTxs = useCallback(
+    async (formHat: RoleHatFormValueEdited) => {
+      const roleHatCurrentState = getHat(formHat.id);
+
+      if (!roleHatCurrentState) {
+        throw new Error('Cannot find role hat');
+      }
+      if (roleHatCurrentState.isTermed) {
+        throw new Error('Cannot change role type for a termed role');
+      }
+      if (!hatsTree || !publicClient || !safeAddress) {
+        throw new Error('App is not ready', {
+          cause: {
+            hatsTree,
+            publicClient,
+            safeAddress,
+          },
+        });
+      }
+
+      if (
+        !formHat.roleTerms ||
+        formHat.roleTerms.length === 0 ||
+        !formHat.smartAddress ||
+        !formHat.wearer
+      ) {
+        throw new Error('formhat is missing required fields', {
+          cause: formHat,
+        });
+      }
+
+      const hatsModulesClient = new HatsModulesClient({
+        publicClient,
+      });
+      await hatsModulesClient.prepare();
+      const module = hatsModulesClient.getModuleByImplementation(
+        hatsElectionsEligibilityMasterCopy,
+      );
+      if (!module) {
+        throw new Error('Cannot find module');
+      }
+
+      const immutableArgs = [BigInt(hatsTree.topHat.id), BigInt(0)];
+      const hatId = BigInt(formHat.id);
+      const saltNonce = BigInt(ERC6551_REGISTRY_SALT);
+      const currentExistingHatWearer = roleHatCurrentState.wearerAddress;
+
+      const [firstTerm] = parseRoleTermsFromFormRoleTerms(formHat.roleTerms);
+      const firstTermNominee = firstTerm.nominatedWearers[0];
+      const firstTermEndDateTs = firstTerm.termEndDateTs;
+
+      const { encodedImmutableArgs, encodedMutableArgs } = checkAndEncodeArgs({
+        module,
+        immutableArgs: immutableArgs,
+        mutableArgs: [firstTermEndDateTs],
+      });
+
+      const createElectionsModuleTx = {
+        calldata: encodeFunctionData({
+          abi: HATS_MODULES_FACTORY_ABI,
+          functionName: 'createHatsModule',
+          args: [
+            hatsElectionsEligibilityMasterCopy,
+            hatId,
+            encodedImmutableArgs,
+            encodedMutableArgs,
+            saltNonce,
+          ],
+        }),
+        targetAddress: HATS_MODULES_FACTORY_ADDRESS,
+      };
+
+      const transferHatToSafeTx = {
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'transferHat',
+          args: [hatId, currentExistingHatWearer, safeAddress],
+        }),
+        targetAddress: hatsProtocol,
+      };
+      const transferHatToBackToWearer = {
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'transferHat',
+          args: [hatId, safeAddress, currentExistingHatWearer],
+        }),
+        targetAddress: hatsProtocol,
+      };
+
+      const streamsWithFundsToClaim = getRoleRemovedStreamsWithFundsToClaim(formHat);
+      const streamsWithdrawTx = [];
+      if (streamsWithFundsToClaim.length) {
+        for (const stream of streamsWithFundsToClaim) {
+          if (!stream.streamId || !stream.contractAddress) {
+            throw new Error(
+              'Stream ID and Stream ContractAddress is required for flush stream transaction',
+            );
+          }
+
+          const flushStreamTxCalldata = prepareFlushStreamTxs({
+            streamId: stream.streamId,
+            to: currentExistingHatWearer,
+            smartAccount: formHat.smartAddress,
+          });
+
+          streamsWithdrawTx.push(...flushStreamTxCalldata);
+        }
+      }
+
+      const activeStreams = getActiveStreamsFromFormHat(formHat);
+      const cancelStreamTxs = [];
+      if (activeStreams.length) {
+        for (const stream of activeStreams) {
+          if (!stream.streamId || !stream.contractAddress) {
+            throw new Error(
+              'Stream ID and Stream ContractAddress is required for cancel stream transaction',
+            );
+          }
+          cancelStreamTxs.push(...prepareCancelStreamTxs(stream.streamId));
+        }
+      }
+
+      const predictedElectionsModuleAddress = await hatsModulesClient.predictHatsModuleAddress({
+        // @todo This will need to be updated when/if https://github.com/Hats-Protocol/modules-sdk/pull/27 is merged
+        moduleId: module.implementationAddress,
+        hatId,
+        immutableArgs,
+        saltNonce,
+      });
+      const addElectionModuleTx = {
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'changeHatEligibility',
+          args: [hatId, predictedElectionsModuleAddress],
+        }),
+        targetAddress: hatsProtocol,
+      };
+
+      const toggleMutabilityTx = {
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'makeHatImmutable',
+          args: [hatId],
+        }),
+        targetAddress: hatsProtocol,
+      };
+
+      const electTx = {
+        calldata: encodeFunctionData({
+          abi: HatsElectionsEligibilityAbi,
+          functionName: 'elect',
+          args: [firstTermEndDateTs, [firstTermNominee]],
+        }),
+        targetAddress: predictedElectionsModuleAddress,
+      };
+
+      const isStreamsClaimableOrCancelable =
+        streamsWithFundsToClaim.length || streamsWithdrawTx.length;
+
+      const checkHatWearerStatusTx = {
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'checkHatWearerStatus',
+          args: [hatId, currentExistingHatWearer],
+        }),
+        targetAddress: hatsProtocol,
+      };
+
+      const mintTx = {
+        calldata: encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'mintHat',
+          args: [hatId, firstTermNominee],
+        }),
+        targetAddress: hatsProtocol,
+      };
+
+      const conversionTxs = [];
+      // create the election module with the first term end date (open election)
+      conversionTxs.push(createElectionsModuleTx);
+
+      // if there are streams with funds to claim or cancel, we need to transfer the hat to the safe and flush/cancel the streams
+      if (isStreamsClaimableOrCancelable) {
+        conversionTxs.push(transferHatToSafeTx);
+        conversionTxs.push(...streamsWithdrawTx);
+        conversionTxs.push(...cancelStreamTxs);
+        conversionTxs.push(transferHatToBackToWearer);
+      }
+
+      // add election module to eligibility of hat
+      conversionTxs.push(addElectionModuleTx);
+      // make hat immutable
+      conversionTxs.push(toggleMutabilityTx);
+
+      // elect har nominee (closes election)
+      conversionTxs.push(electTx);
+
+      // check eligibility of currently wearer and burn if ineligible
+      conversionTxs.push(checkHatWearerStatusTx);
+
+      // mint hat to first nominee if current wearer is not the first nominee
+      if (currentExistingHatWearer !== firstTermNominee) {
+        conversionTxs.push(mintTx);
+      }
+      return conversionTxs;
+    },
+    [
+      getActiveStreamsFromFormHat,
+      getHat,
+      getRoleRemovedStreamsWithFundsToClaim,
+      hatsElectionsEligibilityMasterCopy,
+      hatsProtocol,
+      hatsTree,
+      parseRoleTermsFromFormRoleTerms,
+      prepareCancelStreamTxs,
+      prepareFlushStreamTxs,
+      publicClient,
+      safeAddress,
+    ],
+  );
+
   const prepareCreateRolesModificationsProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
       if (!hatsTree || !safeAddress) {
@@ -1326,16 +1553,7 @@ export default function useCreateRoles() {
             }
           }
           if (formHat.editedRole.fieldNames.includes('roleType')) {
-            // deploy new instance of election module
-            // add election module to eligibility
-            // toggle mutability
-            // ? Decent Sablier Mod
-            // flush streams
-            // cancel streams
-            // burn current hat wearer
-            // setNextTerm
-            // elect
-            // mint hat
+            allTxs.push(...(await prepareConvertRoleToTermedTxs(formHat)));
           }
         } else {
           throw new Error('Invalid Edited Status');
@@ -1419,6 +1637,7 @@ export default function useCreateRoles() {
       hatsElectionsEligibilityMasterCopy,
       parseRoleTermsFromFormRoleTerms,
       buildDeployWhitelistingStrategy,
+      prepareConvertRoleToTermedTxs,
     ],
   );
 

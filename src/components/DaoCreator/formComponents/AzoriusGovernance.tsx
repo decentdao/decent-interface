@@ -2,16 +2,16 @@ import {
   Alert,
   Box,
   Flex,
+  FormControl,
   InputGroup,
   InputRightElement,
-  Text,
-  FormControl,
   Switch,
+  Text,
 } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
@@ -24,13 +24,12 @@ import { DAOCreateMode } from './EstablishEssentials';
 
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
+
   const {
-    node: {
-      safe,
-      nodeHierarchy: { parentAddress },
-      fractalModules,
-    },
-  } = useFractal();
+    safe,
+    nodeHierarchy: { parentAddress },
+    fractalModules,
+  } = useDaoInfoStore();
 
   const fractalModule = useMemo(
     () => fractalModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL),

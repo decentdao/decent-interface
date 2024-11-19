@@ -1,5 +1,5 @@
-import { ReactNode, useReducer, useMemo, Context, createContext, useContext } from 'react';
-import { useAccount } from 'wagmi';
+import { Context, createContext, ReactNode, useContext, useMemo, useReducer } from 'react';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { FractalStore, StoreAction } from '../../types';
 import { combinedReducer, initialState } from './combinedReducer';
 import { useReadOnlyValues } from './useReadOnlyValues';
@@ -7,14 +7,19 @@ export const FractalContext = createContext<FractalStore | null>(null);
 
 export const useFractal = (): FractalStore => useContext(FractalContext as Context<FractalStore>);
 export function AppProvider({ children }: { children: ReactNode }) {
-  const { address: account } = useAccount();
   // Replace individual useReducer calls with a single combined reducer
   const [state, dispatch] = useReducer(combinedReducer, initialState);
   // memoize fractal store
-  const { readOnlyValues, loadReadOnlyValues } = useReadOnlyValues(state, account);
-  const fractalStore: FractalStore = useMemo(() => {
+  const nodeStore = useDaoInfoStore();
+
+  const { readOnlyValues, loadReadOnlyValues } = useReadOnlyValues({
+    node: nodeStore,
+    governance: state.governance,
+  });
+
+  const fractalStore = useMemo(() => {
     return {
-      node: state.node,
+      node: nodeStore,
       guard: state.guard,
       governance: state.governance,
       treasury: state.treasury,
@@ -25,11 +30,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
         dispatch,
         loadReadOnlyValues,
         resetSafeState: async () => {
+          nodeStore.resetDaoInfoStore();
           await Promise.resolve(dispatch({ type: StoreAction.RESET }));
         },
       },
     };
-  }, [state, loadReadOnlyValues, readOnlyValues]);
+  }, [
+    nodeStore,
+    state.guard,
+    state.governance,
+    state.treasury,
+    state.governanceContracts,
+    state.guardContracts,
+    readOnlyValues,
+    loadReadOnlyValues,
+  ]);
 
   return <FractalContext.Provider value={fractalStore}>{children}</FractalContext.Provider>;
 }

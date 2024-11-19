@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { formatUnits } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusGovernance, GovernanceType } from '../../../types/fractal';
 
 export const useParentSafeVotingWeight = () => {
-  const {
-    node: { safe },
-    governance,
-    readOnly: { dao },
-  } = useFractal();
+  const { governance } = useFractal();
+  const { safe } = useDaoInfoStore();
 
   const [parentVotingQuorum, setParentVotingQuorum] = useState<bigint>();
   const [totalParentVotingWeight, setTotalParentVotingWeight] = useState<bigint>();
@@ -20,12 +18,10 @@ export const useParentSafeVotingWeight = () => {
 
     switch (governance.type) {
       case GovernanceType.AZORIUS_ERC20:
-      case GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING:
       case GovernanceType.AZORIUS_ERC721:
-      case GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING:
         const governanceAzorius = governance as AzoriusGovernance;
 
-        if (dao?.isAzorius === false || !governanceAzorius.votingStrategy) {
+        if (governance.isAzorius === false || !governanceAzorius.votingStrategy) {
           return;
         }
 
@@ -69,7 +65,7 @@ export const useParentSafeVotingWeight = () => {
         setTotalParentVotingWeight(BigInt(safe.owners.length));
         setParentVotingQuorum(BigInt(safe.threshold));
     }
-  }, [safe, governance, dao]);
+  }, [safe, governance]);
 
   return {
     totalParentVotingWeight,

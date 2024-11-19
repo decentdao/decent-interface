@@ -3,16 +3,13 @@ import { ArrowBendLeftUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 /**
  * Displays a link to the current DAO's parent, if it has one.
  */
 export function ParentLink() {
-  const {
-    node: { nodeHierarchy },
-  } = useFractal();
+  const { nodeHierarchy } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('breadcrumbs');
 

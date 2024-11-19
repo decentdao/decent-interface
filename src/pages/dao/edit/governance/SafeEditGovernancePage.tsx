@@ -4,6 +4,7 @@ import { X } from '@phosphor-icons/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 import DaoCreator from '../../../../components/DaoCreator';
 import { DAOCreateMode } from '../../../../components/DaoCreator/formComponents/EstablishEssentials';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
@@ -13,6 +14,7 @@ import useDeployAzorius from '../../../../hooks/DAO/useDeployAzorius';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
@@ -27,10 +29,10 @@ export function SafeEditGovernancePage() {
   }, []);
 
   const {
-    node: { safe, daoName, daoSnapshotENS },
     governance: { type },
-    readOnly: { user },
   } = useFractal();
+  const user = useAccount();
+  const { safe, daoName, daoSnapshotENS } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['daoEdit', 'common', 'breadcrumbs']);
   const navigate = useNavigate();

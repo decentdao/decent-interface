@@ -1,10 +1,11 @@
-import { Flex, Button, Icon } from '@chakra-ui/react';
-import { CaretRight, CaretLeft } from '@phosphor-icons/react';
+import { Button, Flex, Icon } from '@chakra-ui/react';
+import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useFractal } from '../../providers/App/AppProvider';
-import { ICreationStepProps, CreatorSteps } from '../../types';
+import { useAccount } from 'wagmi';
+import { CreatorSteps, ICreationStepProps } from '../../types';
+
 interface IStepButtons extends ICreationStepProps {
   isNextDisabled?: boolean;
   isEdit?: boolean;
@@ -21,9 +22,7 @@ export function StepButtons({
 }: IStepButtons) {
   const navigate = useNavigate();
   const { t } = useTranslation(['daoCreate', 'common']);
-  const {
-    readOnly: { user },
-  } = useFractal();
+  const user = useAccount();
   const location = useLocation();
   const paths = location.pathname.split('/');
   // @dev paths[paths.length - 1] will be empty string if we have trailing slash, so then we're falling back to the item before that

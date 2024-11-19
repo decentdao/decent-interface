@@ -7,7 +7,7 @@ import { Address, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../hooks/schemas/common/useValidationAddress';
-import { useFractal } from '../../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { validateENSName } from '../../../../utils/url';
 import SupportTooltip from '../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
@@ -25,9 +25,7 @@ function AddSignerModal({
   signers: Address[];
   currentThreshold: number;
 }) {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   if (!safe) {
     throw new Error('Safe not found');
   }

@@ -20,8 +20,8 @@ import { useRolesSchema } from '../../../../hooks/schemas/roles/useRolesSchema';
 import useCreateRoles from '../../../../hooks/utils/useCreateRoles';
 import { useNavigationBlocker } from '../../../../hooks/utils/useNavigationBlocker';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues } from '../../../../types/roles';
 
@@ -31,9 +31,7 @@ export function SafeRolesEditPage() {
   }, []);
 
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();

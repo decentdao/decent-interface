@@ -3,15 +3,15 @@ import { useCallback } from 'react';
 import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { SENTINEL_ADDRESS } from '../../constants/common';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleData } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
 import { useFractalModules } from '../DAO/loaders/useFractalModules';
 import { useAddressContractType } from './useAddressContractType';
 
 const useVotingStrategiesAddresses = () => {
-  const { node } = useFractal();
+  const node = useDaoInfoStore();
   const publicClient = usePublicClient();
   const safeAPI = useSafeAPI();
   const { getAddressContractType } = useAddressContractType();

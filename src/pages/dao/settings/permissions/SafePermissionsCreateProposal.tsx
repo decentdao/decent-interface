@@ -29,6 +29,7 @@ import { generateContractByteCodeLinear } from '../../../../models/helpers/utils
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useProposalActionsStore } from '../../../../store/actions/useProposalActionsStore';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusGovernance,
   BigIntValuePair,
@@ -51,7 +52,6 @@ export function SafePermissionsCreateProposal() {
   const votingStrategyAddress = searchParams.get('votingStrategy');
   const navigate = useNavigate();
   const {
-    node: { safe },
     governance,
     governanceContracts: {
       linearVotingErc20Address,
@@ -61,6 +61,7 @@ export function SafePermissionsCreateProposal() {
       moduleAzoriusAddress,
     },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const azoriusGovernance = governance as AzoriusGovernance;
   const openSelectAddPermissionModal = useDecentModal(ModalType.ADD_PERMISSION);
   const openConfirmDeleteStrategyModal = useDecentModal(ModalType.CONFIRM_DELETE_STRATEGY);

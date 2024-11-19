@@ -9,6 +9,7 @@ import { usePrepareProposal } from '../../../../../hooks/DAO/proposal/usePrepare
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useProposalActionsStore } from '../../../../../store/actions/useProposalActionsStore';
+import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { ProposalBuilderMode } from '../../../../../types';
 
 export function SafeProposalWithActionsCreatePage() {
@@ -16,9 +17,9 @@ export function SafeProposalWithActionsCreatePage() {
     amplitude.track(analyticsEvents.SafeProposalWithActionsCreatePageOpened);
   }, []);
   const {
-    node: { safe },
     governance: { type },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
 
   const { prepareProposal } = usePrepareProposal();
   const { getTransactions } = useProposalActionsStore();

@@ -23,7 +23,6 @@ export function useProposalCountdown(proposal: FractalProposal) {
     guardContracts: { freezeGuardContractAddress, freezeGuardType },
     governanceContracts,
     action,
-    readOnly: { dao },
   } = useFractal();
   const publicClient = usePublicClient();
 
@@ -60,7 +59,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (dao?.isAzorius) {
+            if (governance.isAzorius) {
               await updateProposalState(Number(proposal.proposalId));
             } else {
               await loadDAOProposals();
@@ -82,7 +81,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         clearInterval(updateStateInterval.current);
       }
     };
-  }, [secondsLeft, loadDAOProposals, proposal, updateProposalState, governance.type, dao]);
+  }, [secondsLeft, loadDAOProposals, proposal, updateProposalState, governance.isAzorius]);
 
   const startCountdown = useCallback((initialTimeMs: number) => {
     countdownInterval.current = setInterval(() => {

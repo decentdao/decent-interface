@@ -13,6 +13,7 @@ import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitP
 import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 
 export function SafeProposalTemplatesPage() {
   useEffect(() => {
@@ -21,9 +22,9 @@ export function SafeProposalTemplatesPage() {
 
   const { t } = useTranslation();
   const {
-    node: { safe },
     governance: { proposalTemplates },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { addressPrefix } = useNetworkConfig();
 

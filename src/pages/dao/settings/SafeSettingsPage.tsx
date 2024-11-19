@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation } from 'react-router-dom';
 import SettingsNavigation from '../../../components/SafeSettings/SettingsNavigation';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
-import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 
 export function SafeSettingsPage() {
   const { t } = useTranslation(['settings']);
-  const { node } = useFractal();
+  const { daoName } = useDaoInfoStore();
   const location = useLocation();
   const paths = location.pathname.split('/');
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -23,7 +23,7 @@ export function SafeSettingsPage() {
               path: '',
             },
           ]}
-          title={t('settingsPageTitle', { daoName: node?.daoName })}
+          title={t('settingsPageTitle', { daoName })}
         />
       )}
       <Flex flexDirection={{ base: 'column', md: 'row' }}>

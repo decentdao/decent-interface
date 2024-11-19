@@ -1,9 +1,9 @@
 import { GridItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { ProposalVote } from '../../../types';
-import { formatPercentage, formatCoin } from '../../../utils';
+import { formatCoin, formatPercentage } from '../../../utils';
 import StatusBox from '../../ui/badges/StatusBox';
 
 export default function ProposalERC20VoteItem({
@@ -19,9 +19,7 @@ export default function ProposalERC20VoteItem({
 }) {
   const { t } = useTranslation();
   const { displayName } = useGetAccountName(vote.voter);
-  const {
-    readOnly: { user },
-  } = useFractal();
+  const user = useAccount();
   return (
     <>
       <GridItem>

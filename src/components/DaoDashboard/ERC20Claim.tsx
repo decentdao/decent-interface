@@ -3,7 +3,7 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
-import { usePublicClient, useWalletClient } from 'wagmi';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import { Alert as AlertIcon } from '../../assets/theme/custom/icons/Alert';
 import { useTransaction } from '../../hooks/utils/useTransaction';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -12,10 +12,8 @@ import { formatCoin } from '../../utils';
 
 export function ERCO20Claim() {
   const [userClaimable, setUserClaimable] = useState(0n);
-  const {
-    governance,
-    readOnly: { user },
-  } = useFractal();
+  const { governance } = useFractal();
+  const user = useAccount();
   const account = user.address;
   const { tokenClaimContractAddress, type } = governance;
   const { t } = useTranslation(['dashboard', 'transaction']);

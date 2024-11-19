@@ -4,7 +4,7 @@ import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
-import { useFractal } from '../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalSteps } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 
@@ -15,11 +15,9 @@ interface StepButtonsProps extends FormikProps<CreateProposalForm> {
 }
 
 export default function StepButtons(props: StepButtonsProps) {
-  const {
-    node: { safe },
-  } = useFractal();
   const navigate = useNavigate();
   const location = useLocation();
+  const { safe } = useDaoInfoStore();
   const {
     mode,
     pendingTransaction,

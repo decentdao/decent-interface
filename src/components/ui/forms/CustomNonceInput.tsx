@@ -2,6 +2,7 @@ import { Text, HStack, VStack, Flex } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import SupportTooltip from '../badges/SupportTooltip';
 import ExampleLabel from './ExampleLabel';
 import { InputComponent } from './InputComponent';
@@ -20,15 +21,15 @@ export function CustomNonceInput({
   renderTrimmed?: boolean;
 }) {
   const {
-    node: { safe },
-    readOnly: { dao },
+    governance: { isAzorius },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { t } = useTranslation(['proposal', 'common']);
   const errorMessage =
     nonce !== undefined && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
 
   const tooltipContainer = useRef<HTMLDivElement>(null);
-  if (dao?.isAzorius) return null;
+  if (isAzorius) return null;
 
   return (
     <VStack alignItems={align}>

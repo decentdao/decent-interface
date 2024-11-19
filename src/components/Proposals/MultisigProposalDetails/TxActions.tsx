@@ -3,7 +3,7 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress, getContract, isHex } from 'viem';
-import { useWalletClient } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { Check } from '../../../assets/theme/custom/icons/Check';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
@@ -15,6 +15,7 @@ import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { MultisigProposal, FractalProposalState } from '../../../types';
 import { DecentTooltip } from '../../ui/DecentTooltip';
 import ContentBox from '../../ui/containers/ContentBox';
@@ -22,11 +23,12 @@ import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const {
-    node: { safe },
     guardContracts: { freezeGuardContractAddress },
     readOnly: { user },
   } = useFractal();
+  const userAccount = useAccount();
   const safeAPI = useSafeAPI();
+  const { safe } = useDaoInfoStore();
 
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
@@ -239,8 +241,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     }
   };
 
-  const hasSigned = !!proposal.confirmations?.find(confirm => confirm.owner === user.address);
-  const isOwner = safe?.owners?.includes(user.address || '');
+  const hasSigned = !!proposal.confirmations?.find(
+    confirm => confirm.owner === userAccount.address,
+  );
+  const isOwner = safe?.owners?.includes(userAccount.address || '');
   const isPending = asyncRequestPending || contractCallPending;
   if (
     (proposal.state === FractalProposalState.ACTIVE && (hasSigned || !isOwner)) ||

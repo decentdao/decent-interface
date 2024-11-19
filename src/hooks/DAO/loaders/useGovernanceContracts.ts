@@ -5,6 +5,7 @@ import { usePublicClient } from 'wagmi';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { getAzoriusModuleFromModules } from '../../../utils';
 import { useAddressContractType } from '../../utils/useAddressContractType';
 import useVotingStrategyAddress from '../../utils/useVotingStrategiesAddresses';
@@ -12,7 +13,8 @@ import useVotingStrategyAddress from '../../utils/useVotingStrategiesAddresses';
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
-  const { node, action } = useFractal();
+  const { action } = useFractal();
+  const node = useDaoInfoStore();
   const publicClient = usePublicClient();
   const { getAddressContractType } = useAddressContractType();
 

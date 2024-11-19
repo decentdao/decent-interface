@@ -1,16 +1,16 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { isDemoMode } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType } from '../../types';
 import useVotingStrategiesAddresses from './useVotingStrategiesAddresses';
 
 export function useCanUserCreateProposal() {
   const {
-    node: { safe },
     governance: { type },
     governanceContracts: {
       linearVotingErc20Address,
@@ -18,8 +18,9 @@ export function useCanUserCreateProposal() {
       linearVotingErc721Address,
       linearVotingErc721WithHatsWhitelistingAddress,
     },
-    readOnly: { user },
   } = useFractal();
+  const user = useAccount();
+  const { safe } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
   const [canUserCreateProposal, setCanUserCreateProposal] = useState<boolean>();
   const publicClient = usePublicClient();
@@ -69,9 +70,7 @@ export function useCanUserCreateProposal() {
           return checkIsMultisigOwner(owners);
         } else if (
           type === GovernanceType.AZORIUS_ERC20 ||
-          type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING ||
-          type === GovernanceType.AZORIUS_ERC721 ||
-          type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING
+          type === GovernanceType.AZORIUS_ERC721
         ) {
           const isProposerPerStrategy = await Promise.all(
             [

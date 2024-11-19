@@ -13,8 +13,8 @@ import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 
 export function SafeRolesPage() {
@@ -25,9 +25,7 @@ export function SafeRolesPage() {
   const { hatsTree } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
-  const {
-    node: { safe },
-  } = useFractal();
+  const { safe } = useDaoInfoStore();
   const navigate = useNavigate();
 
   const { canUserCreateProposal } = useCanUserCreateProposal();

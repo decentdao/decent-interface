@@ -15,6 +15,7 @@ import { useGetMetadata } from '../../../../hooks/DAO/proposal/useGetMetadata';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusProposal, SnapshotProposal } from '../../../../types';
 
 export function SafeProposalDetailsPage() {
@@ -25,10 +26,9 @@ export function SafeProposalDetailsPage() {
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
   const {
-    node: { safe },
-    governance: { proposals, loadingProposals, allProposalsLoaded },
-    readOnly: { dao },
+    governance: { proposals, loadingProposals, allProposalsLoaded, isAzorius },
   } = useFractal();
+  const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const { proposalId } = useParams();
 
@@ -92,7 +92,7 @@ export function SafeProposalDetailsPage() {
         />
       ) : snapshotProposal !== null ? (
         <SnapshotProposalDetails proposal={snapshotProposal} />
-      ) : dao?.isAzorius ? (
+      ) : isAzorius ? (
         <AzoriusProposalDetails proposal={contextProposal as AzoriusProposal} />
       ) : (
         <MultisigProposalDetails proposal={contextProposal} />
