@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { Trash } from '@phosphor-icons/react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -58,7 +58,7 @@ export function StepWrapper({
               path: '',
             },
           ]}
-          ButtonIcon={Trash}
+          ButtonIcon={ArrowLeft}
           buttonProps={{
             variant: 'secondary',
             isDisabled: isFormSubmitting,
