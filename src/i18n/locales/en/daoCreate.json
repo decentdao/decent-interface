@@ -12,7 +12,7 @@
   "titleSignerAddresses": "Signer Addresses",
   "subTitleSignerAddresses": "These users are able to submit and approve proposals",
   "titleEssentials": "Establish Essentials",
-  "titleAzoriusConfig": "Configure Voting Token",
+  "titleAzoriusConfig": "Configure Token",
   "titleNFTConfig": "Configure NFT Voting",
   "titleSafeConfig": "Configure Safe",
   "titleSignerConfig": "Signer Parameters",
