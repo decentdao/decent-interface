@@ -112,13 +112,6 @@ function GuardDetails(props: ICreationStepProps) {
                   />
                   <InputRightElement mr="4">{minutes}</InputRightElement>
                 </InputGroup>
-                <Text
-                  textStyle="helper-text-base"
-                  color="neutral-7"
-                  mt="0.5rem"
-                >
-                  {t('exampleTimelockPeriod')}
-                </Text>
               </LabelComponent>
               <LabelComponent
                 label={t('labelExecutionPeriod')}

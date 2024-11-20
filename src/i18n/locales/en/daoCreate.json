@@ -44,7 +44,6 @@
   "exampleExecutionPeriod": "2,880 minutes = 2 days",
   "labelTimelockPeriod": "Timelock Period",
   "helperTimelockPeriod": "The length of time required between passing a proposal and it being executable onchain.",
-  "exampleTimelockPeriod": "1,440 minutes = 1 day",
   "labelFreezeVotesThreshold": "Freeze Votes Threshold",
   "helperFreezeVotesThreshold": "Total votes required by the parent (out of {{totalVotes}}) to freeze this child Safe entirely",
   "labelFreezeProposalPeriod": "Freeze Proposal Period",
