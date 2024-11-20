@@ -97,7 +97,6 @@ function GuardDetails(props: ICreationStepProps) {
         >
           {governanceFormType === GovernanceType.MULTISIG && (
             <>
-              <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
               <LabelComponent
                 label={t('labelTimelockPeriod')}
                 helper={t('helperTimelockPeriod')}

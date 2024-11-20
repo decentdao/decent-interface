@@ -81,7 +81,6 @@
   "labelDAOName": "Organization Name",
   "daoNamePlaceholder": "Name",
   "helperDAOName": "What is your organization called?",
-  "titleProposalSettings": "Proposal Settings",
   "labelDeploySubDAO": "Create a child Safe proposal",
   "labelDeployAzorius": "Create Azorius deployment proposal",
   "titleAllocations": "Initial Token Allocations",
