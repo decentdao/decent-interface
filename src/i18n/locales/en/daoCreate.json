@@ -84,7 +84,7 @@
   "titleProposalSettings": "Proposal Settings",
   "labelDeploySubDAO": "Create a child Safe proposal",
   "labelDeployAzorius": "Create Azorius deployment proposal",
-  "titleAllocations": "Initial Allocation",
+  "titleAllocations": "Allocations",
   "titleProposers": "Whitelisted Proposers",
   "titleTokenParams": "Metadata",
   "titleTokenContract": "Contract",
