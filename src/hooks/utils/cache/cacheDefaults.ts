@@ -84,8 +84,14 @@ export type CacheValue = {
   e: number;
 };
 
+export type FavoritesCacheValue = {
+  networkPrefix: string;
+  address: Address;
+  name: string;
+};
+
 type CacheKeyToValueMap = {
-  [CacheKeys.FAVORITES]: string[];
+  [CacheKeys.FAVORITES]: FavoritesCacheValue[];
   [CacheKeys.MASTER_COPY]: Address;
   [CacheKeys.PROPOSAL_CACHE]: AzoriusProposal;
   [CacheKeys.AVERAGE_BLOCK_TIME]: number;
@@ -104,7 +110,7 @@ interface IndexedObject {
 }
 
 export const CACHE_VERSIONS: { [key: string]: number } = Object.freeze({
-  [CacheKeys.FAVORITES]: 1,
+  [CacheKeys.FAVORITES]: 2,
   [CacheKeys.MASTER_COPY]: 1,
   [CacheKeys.PROPOSAL_CACHE]: 1,
   [CacheKeys.AVERAGE_BLOCK_TIME]: 1,

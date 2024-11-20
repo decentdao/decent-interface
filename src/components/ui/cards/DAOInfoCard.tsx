@@ -54,7 +54,10 @@ export function DAOInfoCard() {
             columnGap="0.5rem"
           >
             {/* FAVORITE ICON */}
-            <FavoriteIcon safeAddress={displayedAddress} />
+            <FavoriteIcon
+              safeAddress={displayedAddress}
+              daoName={daoName}
+            />
 
             {/* PARENT TAG */}
             {node.nodeHierarchy.childNodes.length > 0 && (

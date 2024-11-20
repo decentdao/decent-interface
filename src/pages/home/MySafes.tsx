@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from '../../components/ui/utils/ErrorBoundary';
 import { MySafesErrorFallback } from '../../components/ui/utils/MySafesErrorFallback';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
-import { decodePrefixedAddress } from '../../utils/address';
 import { AllSafesDrawer } from './AllSafesDrawer';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
@@ -53,8 +52,10 @@ export function MySafes() {
             <Box>
               {favoritesToShow.map(favorite => (
                 <SafeDisplayRow
-                  key={favorite}
-                  {...decodePrefixedAddress(favorite)}
+                  key={`${favorite.networkPrefix}:${favorite.address}`}
+                  network={favorite.networkPrefix}
+                  address={favorite.address}
+                  name={favorite.name}
                 />
               ))}
             </Box>

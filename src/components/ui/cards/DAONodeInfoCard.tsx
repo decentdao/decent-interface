@@ -97,6 +97,7 @@ export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
             {/* FAVORITE ICON */}
             <FavoriteIcon
               safeAddress={displayedAddress}
+              daoName={daoName}
               data-testid="DAOInfo-favorite"
             />
 

@@ -9,13 +9,20 @@ import { DecentTooltip } from '../DecentTooltip';
 
 interface Props extends BoxProps {
   safeAddress: Address;
+  daoName: string;
 }
 
-export function FavoriteIcon({ safeAddress, ...rest }: Props) {
+export function FavoriteIcon({ safeAddress, daoName, ...rest }: Props) {
   const { favoritesList, toggleFavorite } = useAccountFavorites();
   const { addressPrefix } = useNetworkConfig();
   const isFavorite = useMemo(
-    () => (!!safeAddress ? favoritesList.includes(`${addressPrefix}:${safeAddress}`) : false),
+    () =>
+      !!safeAddress
+        ? favoritesList.some(
+            favorite =>
+              favorite.address === safeAddress && favorite.networkPrefix === addressPrefix,
+          )
+        : false,
     [favoritesList, safeAddress, addressPrefix],
   );
   const { t } = useTranslation();
@@ -36,7 +43,7 @@ export function FavoriteIcon({ safeAddress, ...rest }: Props) {
           onClick={e => {
             e.stopPropagation();
             e.preventDefault();
-            toggleFavorite(safeAddress);
+            toggleFavorite(safeAddress, daoName);
           }}
           aria-label={t('favoriteTooltip')}
         />
