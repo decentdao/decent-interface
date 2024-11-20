@@ -63,7 +63,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const debounceENSInput = useMemo(
     () =>
       debounce((input: string) => {
-        console.log('debouncedInput', input);
         setFieldValue('essentials.snapshotENS', input, true);
       }, 500),
     [setFieldValue],
