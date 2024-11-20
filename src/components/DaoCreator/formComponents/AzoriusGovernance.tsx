@@ -3,13 +3,19 @@ import {
   Box,
   Flex,
   FormControl,
+  HStack,
   InputGroup,
   InputRightElement,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
   Switch,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
@@ -37,7 +43,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const { t } = useTranslation(['daoCreate', 'common']);
-  const minutes = t('minutes', { ns: 'common' });
+  const minutesHint = t('minutes', { ns: 'common' });
 
   const handleNonceChange = useCallback(
     (nonce?: string) => {
@@ -54,6 +60,53 @@ export function AzoriusGovernance(props: ICreationStepProps) {
   }, [setFieldValue, safe, showCustomNonce, mode]);
 
   useStepRedirect({ values });
+
+  // days, hours, minutes, seconds
+  const [votingPeriodDays, setVotingPeriodDays] = useState(0);
+  const [votingPeriodHours, setVotingPeriodHours] = useState(0);
+  const [votingPeriodMinutes, setVotingPeriodMinutes] = useState(0);
+  const [votingPeriodSeconds, setVotingPeriodSeconds] = useState(0);
+
+  useEffect(() => {
+    console.log(values.azorius.votingPeriod);
+  }, [values.azorius.votingPeriod]);
+
+  useEffect(() => {
+    // convert days, hours, minutes, seconds to minutes
+    const minutes =
+      votingPeriodDays * 24 * 60 +
+      votingPeriodHours * 60 +
+      votingPeriodMinutes +
+      votingPeriodSeconds / 60;
+
+    setFieldValue('azorius.votingPeriod', { bigintValue: minutes });
+  }, [
+    setFieldValue,
+    votingPeriodDays,
+    votingPeriodHours,
+    votingPeriodMinutes,
+    votingPeriodSeconds,
+  ]);
+
+  const MemoizedNumberInput = memo(
+    ({ value, onChange }: { value?: string | number; onChange: (val: string) => void }) => (
+      <NumberInput
+        value={value}
+        onChange={onChange}
+        min={0}
+        focusInputOnChange={true}
+      >
+        <HStack>
+          <NumberInputField min={0} />
+          <VStack>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </VStack>
+        </HStack>
+      </NumberInput>
+    ),
+  );
+  MemoizedNumberInput.displayName = 'MemoizedNumberInput';
 
   return (
     <>
@@ -108,14 +161,37 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             isRequired
           >
             <InputGroup>
-              <BigIntInput
+              {/* DAYS */}
+              <MemoizedNumberInput
+                value={votingPeriodDays}
+                onChange={val => {
+                  setVotingPeriodDays(Number(val));
+                }}
+              />
+
+              {/* HOURS */}
+              <MemoizedNumberInput
+                value={votingPeriodHours}
+                onChange={val => {
+                  setVotingPeriodHours(Number(val));
+                }}
+              />
+
+              {/* MINUTE */}
+              <MemoizedNumberInput
+                value={votingPeriodMinutes}
+                onChange={val => {
+                  setVotingPeriodMinutes(Number(val));
+                }}
+              />
+
+              {/* <BigIntInput
                 value={values.azorius.votingPeriod.bigintValue}
                 onChange={valuePair => setFieldValue('azorius.votingPeriod', valuePair)}
                 decimalPlaces={0}
                 min="1"
                 data-testid="govConfig-votingPeriod"
-              />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
+              /> */}
             </InputGroup>
           </LabelComponent>
 
@@ -132,7 +208,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
                 decimalPlaces={0}
                 data-testid="govConfig-timelock"
               />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
+              <InputRightElement mr="4">{minutesHint}</InputRightElement>
             </InputGroup>
           </LabelComponent>
 
@@ -150,7 +226,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
                 min="1"
                 data-testid="govModule-executionDetails"
               />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
+              <InputRightElement mr="4">{minutesHint}</InputRightElement>
             </InputGroup>
           </LabelComponent>
 
