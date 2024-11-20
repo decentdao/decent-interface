@@ -117,13 +117,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               />
               <InputRightElement mr="4">{minutes}</InputRightElement>
             </InputGroup>
-            <Text
-              textStyle="helper-text-base"
-              color="neutral-7"
-              mt="0.5rem"
-            >
-              {t('exampleVotingPeriod')}
-            </Text>
           </LabelComponent>
 
           {/* TIMELOCK PERIOD */}
