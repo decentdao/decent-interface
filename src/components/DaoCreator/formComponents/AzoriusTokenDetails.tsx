@@ -8,7 +8,6 @@ import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { ICreationStepProps, TokenCreationType } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
@@ -124,82 +123,81 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           flexDirection="column"
           gap={4}
         >
-          <ContentBoxTitle>{t('titleTokenSupply')}</ContentBoxTitle>
-          <LabelComponent
-            label={t('labelSelectToken')}
-            helper={t('helperSelectToken')}
-            isRequired
+          <ContentBoxTitle>{t('titleTokenContract')}</ContentBoxTitle>
+          <RadioGroup
+            display="flex"
+            flexDirection="row"
+            name="erc20Token.tokenCreationType"
+            gap={8}
+            ml="0.25rem"
+            id="erc20Token.tokenCreationType"
+            value={values.erc20Token.tokenCreationType}
+            onChange={value => {
+              setFieldValue('erc20Token.tokenCreationType', value);
+            }}
           >
-            <RadioGroup
-              display="flex"
-              flexDirection="column"
-              name="erc20Token.tokenCreationType"
-              gap={4}
-              mt="-0.5rem" // RadioGroup renders empty paragraph with margin, seems like this is only feasible way to align this group
-              id="erc20Token.tokenCreationType"
-              value={values.erc20Token.tokenCreationType}
-              onChange={value => {
-                setFieldValue('erc20Token.tokenCreationType', value);
+            <RadioWithText
+              label={t('radioLabelNewToken')}
+              description={t('helperNewToken')}
+              testId="choose-newToken"
+              value={TokenCreationType.NEW}
+              onClick={() => {
+                setFieldValue('erc20Token.tokenImportAddress', '');
+                setFieldValue('erc20Token.tokenName', '');
+                setFieldValue('erc20Token.tokenSymbol', '');
+                setFieldValue('erc20Token.tokenSupply', '');
               }}
-            >
-              <RadioWithText
-                label={t('radioLabelNewToken')}
-                description={t('helperNewToken')}
-                testId="choose-newToken"
-                value={TokenCreationType.NEW}
-                onClick={() => {
-                  setFieldValue('erc20Token.tokenImportAddress', '');
-                  setFieldValue('erc20Token.tokenName', '');
-                  setFieldValue('erc20Token.tokenSymbol', '');
-                  setFieldValue('erc20Token.tokenSupply', '');
-                }}
-              />
-              <RadioWithText
-                label={t('radioLabelExistingToken')}
-                description={t('helperExistingToken')}
-                testId="choose-existingToken"
-                value={TokenCreationType.IMPORTED}
-                onClick={() => {
-                  setFieldValue('erc20Token.tokenName', '');
-                  setFieldValue('erc20Token.tokenSymbol', '');
-                  setFieldValue('erc20Token.tokenSupply', '');
-                }}
-              />
-              {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
-                <>
-                  <LabelWrapper errorMessage={tokenImportAddressErrorMessage}>
-                    <Input
-                      name="erc20Token.tokenImportAddress"
-                      onChange={handleChange}
-                      value={values.erc20Token.tokenImportAddress}
-                      placeholder={createAccountSubstring(zeroAddress)}
-                      isInvalid={!!tokenImportAddressErrorMessage}
-                      isRequired
-                    />
-                  </LabelWrapper>
-                  {isImportedVotesToken === false && !errors.erc20Token?.tokenImportAddress && (
-                    <Flex
-                      gap={4}
-                      alignItems="center"
-                    >
-                      <SupportTooltip
-                        IconComponent={Info}
-                        label={t('warningExistingTokenTooltip')}
-                        color="neutral-7"
-                      />
-                      <Text
-                        color="neutral-7"
-                        textStyle="helper-text-base"
-                        whiteSpace="pre-wrap"
-                      >
-                        {t('warningExistingToken')}
-                      </Text>
-                    </Flex>
-                  )}
-                </>
+            />
+            <RadioWithText
+              label={t('radioLabelExistingToken')}
+              description={t('helperExistingToken')}
+              testId="choose-existingToken"
+              value={TokenCreationType.IMPORTED}
+              onClick={() => {
+                setFieldValue('erc20Token.tokenName', '');
+                setFieldValue('erc20Token.tokenSymbol', '');
+                setFieldValue('erc20Token.tokenSupply', '');
+              }}
+            />
+          </RadioGroup>
+          {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
+            <>
+              <LabelWrapper
+                label="Token Address"
+                isRequired
+                labelColor="neutral-7"
+                errorMessage={tokenImportAddressErrorMessage}
+              >
+                <Input
+                  name="erc20Token.tokenImportAddress"
+                  onChange={handleChange}
+                  value={values.erc20Token.tokenImportAddress}
+                  placeholder={createAccountSubstring(zeroAddress)}
+                  isInvalid={!!tokenImportAddressErrorMessage}
+                  isRequired
+                />
+              </LabelWrapper>
+              {isImportedVotesToken === false && !errors.erc20Token?.tokenImportAddress && (
+                <Flex
+                  gap={4}
+                  alignItems="center"
+                >
+                  <SupportTooltip
+                    IconComponent={Info}
+                    label={t('warningExistingTokenTooltip')}
+                    color="neutral-7"
+                  />
+                  <Text
+                    color="neutral-7"
+                    textStyle="helper-text-base"
+                    whiteSpace="pre-wrap"
+                  >
+                    {t('warningExistingToken')}
+                  </Text>
+                </Flex>
               )}
-            </RadioGroup>
-          </LabelComponent>
+            </>
+          )}
         </Flex>
       </StepWrapper>
       <Box
