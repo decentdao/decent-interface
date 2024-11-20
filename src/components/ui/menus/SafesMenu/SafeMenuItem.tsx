@@ -71,7 +71,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
         />
         <Flex flexDir="column">
           <Text
-            color="white-0"
+            color={safeName ? 'white-0' : 'neutral-6'}
             textStyle="button-base"
           >
             {safeName ?? t('loadingFavorite')}
