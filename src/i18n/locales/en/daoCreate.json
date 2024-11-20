@@ -40,7 +40,7 @@
   "titleGuardConfig": "Configure Parent Controls",
   "titleFreezeParams": "Freeze Parameters",
   "labelExecutionPeriod": "Execution Period",
-  "helperExecutionPeriod": "The length of time (in minutes) in which a successful proposal may be executed.",
+  "helperExecutionPeriod": "The length of time in which a passed, unlocked proposal is executable onchain.",
   "exampleExecutionPeriod": "2,880 minutes = 2 days",
   "labelTimelockPeriod": "Timelock Period",
   "helperTimelockPeriod": "The length of time required between passing a proposal and it being executable onchain.",
