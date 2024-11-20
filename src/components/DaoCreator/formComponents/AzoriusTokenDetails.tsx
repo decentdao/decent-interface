@@ -137,6 +137,17 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
             }}
           >
             <RadioWithText
+              label={t('radioLabelExistingToken')}
+              description={t('helperExistingToken')}
+              testId="choose-existingToken"
+              value={TokenCreationType.IMPORTED}
+              onClick={() => {
+                setFieldValue('erc20Token.tokenName', '');
+                setFieldValue('erc20Token.tokenSymbol', '');
+                setFieldValue('erc20Token.tokenSupply', '');
+              }}
+            />
+            <RadioWithText
               label={t('radioLabelNewToken')}
               description={t('helperNewToken')}
               testId="choose-newToken"
@@ -148,26 +159,10 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 setFieldValue('erc20Token.tokenSupply', '');
               }}
             />
-            <RadioWithText
-              label={t('radioLabelExistingToken')}
-              description={t('helperExistingToken')}
-              testId="choose-existingToken"
-              value={TokenCreationType.IMPORTED}
-              onClick={() => {
-                setFieldValue('erc20Token.tokenName', '');
-                setFieldValue('erc20Token.tokenSymbol', '');
-                setFieldValue('erc20Token.tokenSupply', '');
-              }}
-            />
           </RadioGroup>
           {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
             <>
-              <LabelWrapper
-                label="Token Address"
-                isRequired
-                labelColor="neutral-7"
-                errorMessage={tokenImportAddressErrorMessage}
-              >
+              <LabelWrapper errorMessage={tokenImportAddressErrorMessage}>
                 <Input
                   name="erc20Token.tokenImportAddress"
                   onChange={handleChange}

@@ -96,7 +96,7 @@
   "helperAllocations": "Unallocated tokens will be placed in your Safe treasury.",
   "helperProposers": "Only these whitelisted Roles members would be able to create proposals.",
   "radioLabelNewToken": "New Token",
-  "radioLabelExistingToken": "Existing Token",
+  "radioLabelExistingToken": "Token Contract Address",
   "helperNewToken": "Create a new ERC-20 token to vote with",
   "helperExistingToken": "Use an existing ERC-20 for voting",
   "warningExistingToken": "This token must be wrapped in order to be used as a voting token",
