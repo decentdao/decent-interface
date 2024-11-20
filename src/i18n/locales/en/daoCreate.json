@@ -2,7 +2,7 @@
   "buttonCreate": "Create a Decent Safe",
   "addNFTButton": "Import another token",
   "labelCreateSubDAOProposal": "Create a child Safe",
-  "errorMinSigners": "Number of signers must be greater than 0",
+  "errorMinSigners": "Number of owners must be greater than 0",
   "errorLowSignerThreshold": "Threshold must be greater than 0",
   "errorHighSignerThreshold": "Threshold is too high",
   "labelSigners": "Total signers",
