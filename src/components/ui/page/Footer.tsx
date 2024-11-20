@@ -1,4 +1,4 @@
-import { Flex, Link, Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { URL_DECENT } from '../../../constants/url';
 import ExternalLink from '../links/ExternalLink';
@@ -21,19 +21,14 @@ export function Footer() {
           v{import.meta.env.PACKAGE_VERSION}
         </ExternalLink>
       </Flex>
-      <Link
-        mx={{ base: '0.75rem', md: '0rem' }}
-        target="_blank"
-        rel="noreferrer"
+
+      <ExternalLink
         href={URL_DECENT}
+        styleVariant="grey"
+        fontSize="1.2rem"
       >
-        <Text
-          fontSize="1.2rem"
-          color="neutral-6"
-        >
-          {t('madeWithLove')}
-        </Text>
-      </Link>
+        {t('madeWithLove')}
+      </ExternalLink>
     </Flex>
   );
 }
