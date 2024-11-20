@@ -1,11 +1,11 @@
 {
-  "titleFavorites": "My Safes",
+  "titleFavorites": "My DAOs",
   "emptyFavorites": "You haven't added any Safes yet.",
   "emptyFavoritesSubtext": "Create or find a Safe above.",
   "loadingFavorite": "Loading Safe Name",
   "errorInvalidSearch": "Oops! This Ethereum address is invalid.",
   "errorFailedSearch": "Sorry, this address is not a Safe on {{chain}}.",
-  "searchDAOPlaceholder": "Enter Safe Address or ENS Name",
+  "searchDAOPlaceholder": "Enter Address or ENS Name",
   "titleGovernance": "Governance",
   "titleType": "Type",
   "titleVotingPeriod": "Voting Period",
