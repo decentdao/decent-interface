@@ -41,7 +41,6 @@
   "titleFreezeParams": "Freeze Parameters",
   "labelExecutionPeriod": "Execution Period",
   "helperExecutionPeriod": "The length of time in which a passed, unlocked proposal is executable onchain.",
-  "exampleExecutionPeriod": "2,880 minutes = 2 days",
   "labelTimelockPeriod": "Timelock Period",
   "helperTimelockPeriod": "The length of time required between passing a proposal and it being executable onchain.",
   "labelFreezeVotesThreshold": "Freeze Votes Threshold",
