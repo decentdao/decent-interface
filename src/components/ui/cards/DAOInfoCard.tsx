@@ -34,6 +34,8 @@ export function DAOInfoCard() {
     );
   }
 
+  const daoName = node.daoName || displayName;
+
   return (
     <Box>
       <Flex
@@ -85,7 +87,7 @@ export function DAOInfoCard() {
             textStyle="display-4xl"
             data-testid="DAOInfo-name"
           >
-            {node.daoName || displayName}
+            {daoName}
           </Text>
         </Flex>
 

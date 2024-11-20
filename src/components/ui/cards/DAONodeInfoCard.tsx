@@ -50,6 +50,7 @@ export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
   }
 
   const isCurrentDAO = displayedAddress === currentSafe?.address;
+  const daoName = node.daoName || displayName;
 
   return (
     <Link
@@ -91,7 +92,7 @@ export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
           >
             {/* DAO NAME */}
 
-            <Text textStyle="display-xl">{node.daoName || displayName}</Text>
+            <Text textStyle="display-xl">{daoName}</Text>
 
             {/* FAVORITE ICON */}
             <FavoriteIcon
