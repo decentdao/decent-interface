@@ -6,7 +6,7 @@
   "errorLowSignerThreshold": "Threshold must be greater than 0",
   "errorHighSignerThreshold": "Threshold is too high",
   "labelSigners": "Total signers",
-  "helperSigners": "The addresses of owners to initialize the multisig with.",
+  "helperSigners": "The addresses of owners to initialize the multisig with. Up to 99 owners can be added.",
   "labelSigThreshold": "Threshold",
   "helperSigThreshold": "The number of signers needed to approve a proposal",
   "titleSignerAddresses": "Owners",
