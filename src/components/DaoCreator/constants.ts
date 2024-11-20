@@ -16,7 +16,7 @@ export const initialState: CreatorFormState = {
     snapshotENS: '',
   },
   erc20Token: {
-    tokenCreationType: TokenCreationType.NEW,
+    tokenCreationType: TokenCreationType.IMPORTED,
     tokenName: '',
     tokenSupply: {
       value: '',
