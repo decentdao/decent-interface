@@ -91,7 +91,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       >
         <NavigationLink
           href={DAO_ROUTES.dao.relative(addressPrefix, safeAddress)}
-          labelKey="home"
+          labelKey="dashboard"
           testId="navigation-dashboardLink"
           NavigationIcon={House}
           scope="internal"
