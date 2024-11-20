@@ -1,4 +1,4 @@
-import { Flex, Link, Image } from '@chakra-ui/react';
+import { Flex, Link, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { URL_DECENT } from '../../../constants/url';
 import ExternalLink from '../links/ExternalLink';
@@ -27,10 +27,12 @@ export function Footer() {
         rel="noreferrer"
         href={URL_DECENT}
       >
-        <Image
-          src="/images/footer-logo.svg"
-          alt="Made with love by Decent DAO"
-        />
+        <Text
+          fontSize="1.2rem"
+          color="neutral-6"
+        >
+          {t('madeWithLove')}
+        </Text>
       </Link>
     </Flex>
   );
