@@ -67,29 +67,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           flexDirection="column"
           gap={8}
         >
-          <LabelComponent
-            label={t('labelVotingPeriod')}
-            helper={t('helperVotingPeriod')}
-            isRequired
-          >
-            <InputGroup>
-              <BigIntInput
-                value={values.azorius.votingPeriod.bigintValue}
-                onChange={valuePair => setFieldValue('azorius.votingPeriod', valuePair)}
-                decimalPlaces={0}
-                min="1"
-                data-testid="govConfig-votingPeriod"
-              />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
-            </InputGroup>
-            <Text
-              textStyle="helper-text-base"
-              color="neutral-7"
-              mt="0.5rem"
-            >
-              {t('exampleVotingPeriod')}
-            </Text>
-          </LabelComponent>
+          {/* QUORUM */}
           {values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20 ? (
             <LabelComponent
               label={t('quorum', { ns: 'common' })}
@@ -122,6 +100,33 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               />
             </LabelComponent>
           )}
+
+          {/* VOTING PERIOD */}
+          <LabelComponent
+            label={t('labelVotingPeriod')}
+            helper={t('helperVotingPeriod')}
+            isRequired
+          >
+            <InputGroup>
+              <BigIntInput
+                value={values.azorius.votingPeriod.bigintValue}
+                onChange={valuePair => setFieldValue('azorius.votingPeriod', valuePair)}
+                decimalPlaces={0}
+                min="1"
+                data-testid="govConfig-votingPeriod"
+              />
+              <InputRightElement mr="4">{minutes}</InputRightElement>
+            </InputGroup>
+            <Text
+              textStyle="helper-text-base"
+              color="neutral-7"
+              mt="0.5rem"
+            >
+              {t('exampleVotingPeriod')}
+            </Text>
+          </LabelComponent>
+
+          {/* TIMELOCK PERIOD */}
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -144,6 +149,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               {t('exampleTimelockPeriod')}
             </Text>
           </LabelComponent>
+
+          {/* EXECUTION PERIOD */}
           <LabelComponent
             label={t('labelExecutionPeriod')}
             helper={t('helperExecutionPeriod')}
@@ -167,6 +174,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               {t('exampleExecutionPeriod')}
             </Text>
           </LabelComponent>
+
           <Alert
             status="info"
             gap={4}
