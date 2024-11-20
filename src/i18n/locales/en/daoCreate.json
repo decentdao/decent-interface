@@ -95,7 +95,6 @@
   "createSubDAOFailureToastMessage": "Deployment failed",
   "helperAllocations": "Unallocated tokens will be placed in your Safe treasury.",
   "helperProposers": "Only these whitelisted Roles members would be able to create proposals.",
-  "helperSelectToken": "Create a new token or use an existing ERC-20 token.",
   "radioLabelNewToken": "New Token",
   "radioLabelExistingToken": "Existing Token",
   "helperNewToken": "Create a new ERC-20 token to vote with",
