@@ -7,7 +7,11 @@ export default function ExternalLink({
   isTextLink,
   styleVariant = 'green',
   ...rest
-}: LinkProps & { styleVariant?: 'grey' | 'green'; isTextLink?: boolean; internalRef?: Ref<any> }) {
+}: LinkProps & {
+  styleVariant?: 'grey' | 'green' | 'black';
+  isTextLink?: boolean;
+  internalRef?: Ref<any>;
+}) {
   const textLinkStyles = {
     green: {
       hover: {
@@ -23,6 +27,14 @@ export default function ExternalLink({
       },
       active: {
         color: 'neutral-6',
+      },
+    },
+    black: {
+      hover: {
+        textDecoration: 'underline',
+      },
+      active: {
+        color: 'black',
       },
     },
   };
@@ -49,11 +61,23 @@ export default function ExternalLink({
         borderWidth: '1px',
       },
     },
+    black: {
+      hover: {
+        bg: 'black',
+        borderColor: 'black',
+      },
+      active: {
+        bg: 'black',
+        borderColor: 'black',
+        borderWidth: '1px',
+      },
+    },
   };
 
   const linkColor = {
     green: 'celery-0',
     grey: 'neutral-6',
+    black: 'black',
   };
 
   return (

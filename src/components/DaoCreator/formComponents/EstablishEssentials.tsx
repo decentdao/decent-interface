@@ -108,7 +108,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
                       ns="daoCreate"
                     >
                       placeholder
-                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                      <ExternalLink
+                        isTextLink
+                        styleVariant="black"
+                        href={URL_DOCS_GOV_TYPES}
+                      >
+                        link
+                      </ExternalLink>
                     </Trans>
                   }
                 />
@@ -125,7 +131,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
                       ns="daoCreate"
                     >
                       placeholder
-                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                      <ExternalLink
+                        isTextLink
+                        styleVariant="black"
+                        href={URL_DOCS_GOV_TYPES}
+                      >
+                        link
+                      </ExternalLink>
                     </Trans>
                   }
                 />
@@ -142,7 +154,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
                       ns="daoCreate"
                     >
                       placeholder
-                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                      <ExternalLink
+                        isTextLink
+                        styleVariant="black"
+                        href={URL_DOCS_GOV_TYPES}
+                      >
+                        link
+                      </ExternalLink>
                     </Trans>
                   }
                 />
