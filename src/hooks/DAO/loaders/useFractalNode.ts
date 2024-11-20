@@ -43,11 +43,11 @@ export const useFractalNode = ({
       } catch (e) {
         // TODO: this is the thing causing an error when
         // trying to load a DAO with a valid address which is not a Safe
-        reset({ error: true });
+        // reset({ error: true });
         return;
       }
     }
-  }, [addressPrefix, safeAddress, loadDao, setDaoInfo, reset]);
+  }, [addressPrefix, safeAddress, loadDao, setDaoInfo]);
 
   useEffect(() => {
     if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current) {
