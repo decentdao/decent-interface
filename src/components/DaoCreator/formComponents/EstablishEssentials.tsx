@@ -96,23 +96,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
               value={values.essentials.governance}
               onChange={handleGovernanceChange}
             >
-              {createOptions.includes(GovernanceType.MULTISIG) && (
-                <RadioWithText
-                  label={t('labelMultisigGov')}
-                  description={t('descMultisigGov')}
-                  testId="choose-multisig"
-                  value={GovernanceType.MULTISIG}
-                  tooltip={
-                    <Trans
-                      i18nKey="tooltipMultisig"
-                      ns="daoCreate"
-                    >
-                      placeholder
-                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
-                    </Trans>
-                  }
-                />
-              )}
               {createOptions.includes(GovernanceType.AZORIUS_ERC20) && (
                 <RadioWithText
                   label={t('labelAzoriusErc20Gov')}
@@ -139,6 +122,23 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   tooltip={
                     <Trans
                       i18nKey="tooltipNftVoting"
+                      ns="daoCreate"
+                    >
+                      placeholder
+                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                    </Trans>
+                  }
+                />
+              )}
+              {createOptions.includes(GovernanceType.MULTISIG) && (
+                <RadioWithText
+                  label={t('labelMultisigGov')}
+                  description={t('descMultisigGov')}
+                  testId="choose-multisig"
+                  value={GovernanceType.MULTISIG}
+                  tooltip={
+                    <Trans
+                      i18nKey="tooltipMultisig"
                       ns="daoCreate"
                     >
                       placeholder
