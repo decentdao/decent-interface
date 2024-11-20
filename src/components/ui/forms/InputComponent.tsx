@@ -77,6 +77,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
           <HStack
             pb={1}
             textStyle="body-base"
+            spacing={0}
           >
             <Text color={disabled ? 'white-0' : 'neutral-7'}>{label}</Text>
             {isRequired && <Text color="lilac-0">*</Text>}
