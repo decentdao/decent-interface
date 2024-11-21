@@ -1,8 +1,8 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { Address } from 'viem';
 import { useSwitchChain } from 'wagmi';
-import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
@@ -10,13 +10,21 @@ import { createAccountSubstring } from '../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
+interface SafeDisplayRowProps {
+  network: string;
+  address: Address;
+  name: string | undefined;
+  showAddress?: boolean;
+  onClick?: () => void;
+}
+
 export function SafeDisplayRow({
   address,
   network,
   onClick,
   showAddress,
   name,
-}: SafeMenuItemProps) {
+}: SafeDisplayRowProps) {
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
 

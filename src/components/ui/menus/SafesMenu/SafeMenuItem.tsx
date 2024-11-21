@@ -12,7 +12,7 @@ import Avatar from '../../page/Header/Avatar';
 export interface SafeMenuItemProps {
   network: string;
   address: Address;
-  name: string | undefined;
+  name: string;
   showAddress?: boolean;
   onClick?: () => void;
 }
@@ -30,7 +30,7 @@ export function SafeMenuItem({ address, network, name }: SafeMenuItemProps) {
   });
 
   // if by chance the safe name is an ENS name, let's attempt to get the avatar for that
-  const avatarURL = useAvatar(name ?? '');
+  const avatarURL = useAvatar(name);
 
   const { t } = useTranslation('dashboard');
 
