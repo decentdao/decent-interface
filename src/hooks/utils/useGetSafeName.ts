@@ -7,14 +7,10 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import { createAccountSubstring } from './useGetAccountName';
 
 export const getSafeName = async (
-  publicClient: PublicClient | undefined,
+  publicClient: PublicClient,
   subgraph: { space: number; slug: string; version: string },
   address: Address,
 ) => {
-  if (!publicClient) {
-    throw new Error('Public client not available');
-  }
-
   const ensName = await publicClient.getEnsName({ address }).catch((error: Error) => {
     if (error.name === 'ChainDoesNotSupportContract') {
       // Sliently fail, this is fine.
@@ -53,7 +49,12 @@ export const useGetSafeName = (chainId?: number) => {
 
   return {
     getSafeName: useCallback(
-      (address: Address) => getSafeName(publicClient, subgraph, address),
+      (address: Address) => {
+        if (!publicClient) {
+          throw new Error('Public client not available');
+        }
+        return getSafeName(publicClient, subgraph, address);
+      },
       [publicClient, subgraph],
     ),
   };
