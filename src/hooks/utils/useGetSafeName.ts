@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Address, PublicClient } from 'viem';
+import { Address, ChainDoesNotSupportContract, PublicClient } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { DAOQueryDocument } from '../../../.graphclient';
 import graphQLClient from '../../graphql';
@@ -12,7 +12,7 @@ export const getSafeName = async (
   address: Address,
 ) => {
   const ensName = await publicClient.getEnsName({ address }).catch((error: Error) => {
-    if (error.name === 'ChainDoesNotSupportContract') {
+    if (error.name === ChainDoesNotSupportContract.name) {
       // Sliently fail, this is fine.
       // https://github.com/wevm/viem/discussions/781
     } else {
