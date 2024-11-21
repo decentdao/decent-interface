@@ -30,5 +30,11 @@ export const useAccountFavorites = () => {
     setFavoritesList(updatedFavorites);
   };
 
-  return { favoritesList, toggleFavorite };
+  const isFavorite = (address: Address) => {
+    return favoritesList.some(
+      favorite => favorite.address === address && favorite.networkPrefix === addressPrefix,
+    );
+  };
+
+  return { favoritesList, toggleFavorite, isFavorite };
 };

@@ -1,30 +1,14 @@
 import { Box, BoxProps, Button, Icon, IconButton } from '@chakra-ui/react';
 import { Star } from '@phosphor-icons/react';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address } from 'viem';
-import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentTooltip } from '../DecentTooltip';
 
 interface Props extends BoxProps {
-  safeAddress: Address;
-  daoName: string;
+  isFavorite: boolean;
+  toggleFavoriteCallback: () => void;
 }
 
-export function FavoriteIcon({ safeAddress, daoName, ...rest }: Props) {
-  const { favoritesList, toggleFavorite } = useAccountFavorites();
-  const { addressPrefix } = useNetworkConfig();
-  const isFavorite = useMemo(
-    () =>
-      !!safeAddress
-        ? favoritesList.some(
-            favorite =>
-              favorite.address === safeAddress && favorite.networkPrefix === addressPrefix,
-          )
-        : false,
-    [favoritesList, safeAddress, addressPrefix],
-  );
+export function FavoriteIcon({ isFavorite, toggleFavoriteCallback, ...rest }: Props) {
   const { t } = useTranslation();
   return (
     <Box {...rest}>
@@ -43,7 +27,7 @@ export function FavoriteIcon({ safeAddress, daoName, ...rest }: Props) {
           onClick={e => {
             e.stopPropagation();
             e.preventDefault();
-            toggleFavorite(safeAddress, daoName);
+            toggleFavoriteCallback();
           }}
           aria-label={t('favoriteTooltip')}
         />
