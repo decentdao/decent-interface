@@ -12,7 +12,7 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
-    governance: GovernanceType.MULTISIG,
+    governance: GovernanceType.AZORIUS_ERC20,
     snapshotENS: '',
   },
   erc20Token: {
