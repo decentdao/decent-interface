@@ -39,6 +39,7 @@ const useHatsTree = () => {
     setHatsTree,
     updateRolesWithStreams,
     resetHatsStore,
+    hatIdsToStreamIds,
   } = useRolesStore();
 
   const ipfsClient = useIPFSClient();
@@ -271,12 +272,20 @@ const useHatsTree = () => {
               return hat;
             }
             const payments: SablierPayment[] = [];
-            // @todo - update Datepicker to choose more precise dates (Date.now())
             if (hat.isTermed) {
+              const foundStreamIDs = hatIdsToStreamIds
+                .filter(item => item.hatId === BigInt(hat.id))
+                .map(({ streamId }) => {
+                  return streamId;
+                });
               const recipients = hat.roleTerms.allTerms.map(term => term.nominee);
               const uniqueRecipients = [...new Set(recipients)];
               for (const recipient of uniqueRecipients) {
-                payments.push(...(await getPaymentStreams(recipient)));
+                payments.push(
+                  ...(await getPaymentStreams(recipient)).filter(stream =>
+                    foundStreamIDs.includes(stream.streamId),
+                  ),
+                );
               }
             } else {
               if (!hat.smartAddress) {
@@ -294,7 +303,7 @@ const useHatsTree = () => {
     }
 
     getHatsStreams();
-  }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched]);
+  }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched, hatIdsToStreamIds]);
 
   useEffect(() => {
     if (safeAddress && safe?.address && safeAddress !== safe.address && hatsTree) {
