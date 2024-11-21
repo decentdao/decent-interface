@@ -96,6 +96,7 @@ export const initialHatsStore: RolesStoreData = {
   decentHatsAddress: undefined,
   streamsFetched: false,
   contextChainId: null,
+  hatIdsToStreamIds: [],
 };
 
 export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {

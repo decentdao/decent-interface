@@ -129,6 +129,9 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       },
     }));
   },
+  setHatIdsToStreamIds: hatIdsToStreamIds => {
+    set(() => ({ hatIdsToStreamIds }));
+  },
   resetHatsStore: () => set(() => initialHatsStore),
 }));
 
