@@ -1,18 +1,30 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { Address } from 'viem';
 import { useSwitchChain } from 'wagmi';
-import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { createAccountSubstring } from '../../hooks/utils/useGetAccountName';
-import { useGetSafeName } from '../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
-export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
+interface SafeDisplayRowProps {
+  network: string;
+  address: Address;
+  name: string | undefined;
+  showAddress?: boolean;
+  onClick?: () => void;
+}
+
+export function SafeDisplayRow({
+  address,
+  network,
+  onClick,
+  showAddress,
+  name,
+}: SafeDisplayRowProps) {
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
 
@@ -24,17 +36,10 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
     },
   });
 
-  const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
-  const [safeName, setSafeName] = useState<string>();
-
-  useEffect(() => {
-    getSafeName(address).then(setSafeName);
-  }, [address, getSafeName]);
-
   const { t } = useTranslation('dashboard');
 
   // if the safe name is an ENS name, let's attempt to get the avatar for that
-  const avatarURL = useAvatar(safeName ?? '');
+  const avatarURL = useAvatar(name ?? '');
 
   const onClickNav = () => {
     if (onClick) onClick();
@@ -75,10 +80,10 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
       />
       <Flex flexDir="column">
         <Text
-          color={safeName ? nameColor : 'neutral-6'}
+          color={name ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'label-base' : 'button-base'}
         >
-          {safeName ?? t('loadingFavorite')}
+          {name || t('loadingFavorite')}
         </Text>
         {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
       </Flex>
