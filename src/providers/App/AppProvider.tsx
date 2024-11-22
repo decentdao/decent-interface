@@ -2,7 +2,6 @@ import { Context, createContext, ReactNode, useContext, useMemo, useReducer } fr
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { FractalStore, StoreAction } from '../../types';
 import { combinedReducer, initialState } from './combinedReducer';
-import { useReadOnlyValues } from './useReadOnlyValues';
 export const FractalContext = createContext<FractalStore | null>(null);
 
 export const useFractal = (): FractalStore => useContext(FractalContext as Context<FractalStore>);
@@ -12,11 +11,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // memoize fractal store
   const nodeStore = useDaoInfoStore();
 
-  const { readOnlyValues, loadReadOnlyValues } = useReadOnlyValues({
-    node: nodeStore,
-    governance: state.governance,
-  });
-
   const fractalStore = useMemo(() => {
     return {
       node: nodeStore,
@@ -25,10 +19,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       treasury: state.treasury,
       governanceContracts: state.governanceContracts,
       guardContracts: state.guardContracts,
-      readOnly: readOnlyValues,
       action: {
         dispatch,
-        loadReadOnlyValues,
         resetSafeState: async () => {
           nodeStore.resetDaoInfoStore();
           await Promise.resolve(dispatch({ type: StoreAction.RESET }));
@@ -42,8 +34,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     state.treasury,
     state.governanceContracts,
     state.guardContracts,
-    readOnlyValues,
-    loadReadOnlyValues,
   ]);
 
   return <FractalContext.Provider value={fractalStore}>{children}</FractalContext.Provider>;
