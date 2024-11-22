@@ -206,7 +206,12 @@ export interface DaoInfo extends SubgraphDAOInfo {
 
 export interface DaoHierarchyInfo {
   daoName: string | null;
-  nodeHierarchy: NodeHierarchy;
+  nodeHierarchy: {
+    parentAddress: Address | null;
+    childNodes: {
+      safeAddress: Address;
+    }[];
+  };
   safeAddress: Address;
   daoSnapshotENS?: string;
 }

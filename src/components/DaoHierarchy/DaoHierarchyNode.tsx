@@ -13,6 +13,25 @@ import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { DaoHierarchyInfo, DaoInfo, WithError } from '../../types';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../ui/cards/DAONodeInfoCard';
 import { BarLoader } from '../ui/loaders/BarLoader';
+
+function transformNode(node: DaoInfo, safeAddress: Address): DaoHierarchyInfo {
+  return {
+    daoName: node.daoName,
+    safeAddress: safeAddress,
+    nodeHierarchy: {
+      parentAddress: node.nodeHierarchy.parentAddress,
+      childNodes: node.nodeHierarchy.childNodes.map(child => {
+        if (!child.safe) {
+          throw new Error('Child node does not have a safe');
+        }
+        return {
+          safeAddress: child.safe.address,
+        };
+      }),
+    },
+  };
+}
+
 /**
  * A recursive component that displays a "hierarchy" of DAOInfoCards.
  *
@@ -50,15 +69,7 @@ export function DaoHierarchyNode({
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           const fnode = _node as DaoInfo;
-          const theNode = {
-            daoName: fnode.daoName,
-            safeAddress: safeAddress,
-            fractalModules: fnode.fractalModules,
-            nodeHierarchy: {
-              parentAddress: fnode.nodeHierarchy.parentAddress,
-              childNodes: fnode.nodeHierarchy.childNodes,
-            },
-          };
+          const theNode = transformNode(fnode, safeAddress);
           setValue(
             {
               cacheName: CacheKeys.HIERARCHY_DAO_INFO,
@@ -120,13 +131,10 @@ export function DaoHierarchyNode({
 
       {/* CHILD NODES */}
       {hierarchyNode?.nodeHierarchy.childNodes.map(childNode => {
-        if (!childNode.safe) {
-          return null;
-        }
         return (
           <Flex
             minH={`${NODE_HEIGHT_REM}rem`}
-            key={childNode.safe.address}
+            key={childNode.safeAddress}
             gap="1.25rem"
           >
             <Icon
@@ -134,11 +142,11 @@ export function DaoHierarchyNode({
               my={`${NODE_HEIGHT_REM / 2.5}rem`}
               ml="0.5rem"
               boxSize="32px"
-              color={currentSafe?.address === childNode.safe.address ? 'celery-0' : 'neutral-6'}
+              color={currentSafe?.address === childNode.safeAddress ? 'celery-0' : 'neutral-6'}
             />
 
             <DaoHierarchyNode
-              safeAddress={childNode.safe.address}
+              safeAddress={childNode.safeAddress}
               depth={depth + 1}
             />
           </Flex>
