@@ -204,6 +204,13 @@ export interface DaoInfo extends SubgraphDAOInfo {
   isModulesLoaded?: boolean;
 }
 
+export interface DaoHierarchyInfo {
+  daoName: string | null;
+  nodeHierarchy: NodeHierarchy;
+  safeAddress: Address;
+  daoSnapshotENS?: string;
+}
+
 export interface FractalModuleData {
   moduleAddress: Address;
   moduleType: FractalModuleType;

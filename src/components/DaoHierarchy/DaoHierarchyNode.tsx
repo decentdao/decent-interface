@@ -2,7 +2,7 @@ import { Center, Flex, Icon, Link } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Address, getAddress } from 'viem';
+import { Address } from 'viem';
 import { useChainId } from 'wagmi';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useLoadDAONode } from '../../hooks/DAO/loaders/useLoadDAONode';
@@ -10,7 +10,7 @@ import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { setValue, getValue } from '../../hooks/utils/cache/useLocalStorage';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { DaoInfo, WithError } from '../../types';
+import { DaoHierarchyInfo, DaoInfo, WithError } from '../../types';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../ui/cards/DAONodeInfoCard';
 import { BarLoader } from '../ui/loaders/BarLoader';
 /**
@@ -30,7 +30,7 @@ export function DaoHierarchyNode({
   depth: number;
 }) {
   const { safe: currentSafe } = useDaoInfoStore();
-  const [hierarchyNode, setHierarchyNode] = useState<DaoInfo>();
+  const [hierarchyNode, setHierarchyNode] = useState<DaoHierarchyInfo>();
   const { addressPrefix } = useNetworkConfig();
   const chainId = useChainId();
   const { loadDao } = useLoadDAONode();
@@ -50,25 +50,26 @@ export function DaoHierarchyNode({
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           const fnode = _node as DaoInfo;
+          const theNode = {
+            daoName: fnode.daoName,
+            safeAddress: safeAddress,
+            fractalModules: fnode.fractalModules,
+            nodeHierarchy: {
+              parentAddress: fnode.nodeHierarchy.parentAddress,
+              childNodes: fnode.nodeHierarchy.childNodes,
+            },
+          };
           setValue(
             {
               cacheName: CacheKeys.HIERARCHY_DAO_INFO,
               chainId,
               daoAddress: safeAddress,
             },
-            fnode,
+            theNode,
           );
-          setHierarchyNode(fnode);
+          setHierarchyNode(theNode);
         } else if (errorNode.error === 'errorFailedSearch') {
-          setHierarchyNode({
-            daoName: null,
-            safe: null,
-            fractalModules: [],
-            nodeHierarchy: {
-              parentAddress: null,
-              childNodes: [],
-            },
-          });
+          setHierarchyNode(undefined);
         }
       });
     }
@@ -88,12 +89,8 @@ export function DaoHierarchyNode({
     );
   }
 
-  const hierarchyNodeDAOAddress = hierarchyNode?.safe?.address;
-  if (!hierarchyNodeDAOAddress) {
-    throw new Error('Hierarchy node DAO address is missing');
-  }
   const isCurrentViewingDAO =
-    currentSafe?.address.toLowerCase() === hierarchyNodeDAOAddress.toLocaleLowerCase();
+    currentSafe?.address.toLowerCase() === hierarchyNode.safeAddress.toLocaleLowerCase();
   return (
     <Flex
       flexDirection="column"
@@ -103,7 +100,7 @@ export function DaoHierarchyNode({
     >
       <Link
         as={RouterLink}
-        to={DAO_ROUTES.dao.relative(addressPrefix, hierarchyNodeDAOAddress)}
+        to={DAO_ROUTES.dao.relative(addressPrefix, hierarchyNode.safeAddress)}
         _hover={{ textDecoration: 'none', cursor: isCurrentViewingDAO ? 'default' : 'pointer' }}
         onClick={event => {
           if (isCurrentViewingDAO) {
@@ -113,8 +110,8 @@ export function DaoHierarchyNode({
       >
         <DAONodeInfoCard
           node={{
-            daoAddress: hierarchyNodeDAOAddress,
-            daoName: hierarchyNode?.daoName ?? getAddress(hierarchyNodeDAOAddress),
+            daoAddress: hierarchyNode.safeAddress,
+            daoName: hierarchyNode?.daoName ?? hierarchyNode.safeAddress,
             daoSnapshotENS: hierarchyNode?.daoSnapshotENS,
           }}
           isCurrentViewingDAO={isCurrentViewingDAO}
