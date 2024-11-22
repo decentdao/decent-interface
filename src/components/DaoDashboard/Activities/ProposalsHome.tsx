@@ -1,4 +1,5 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Icon } from '@chakra-ui/react';
+import { CaretDown, Funnel } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -22,6 +23,8 @@ import { ActivityFreeze } from './ActivityFreeze';
 import useProposalsSortedAndFiltered from '../../../hooks/DAO/proposal/useProposals';
 import { useTranslation } from 'react-i18next';
 import { ProposalsList } from '../../Proposals/ProposalsList';
+import Button from '../../../assets/theme/components/button';
+import { OptionMenu } from '../../ui/menus/OptionMenu';
 
 export function ProposalsHome() {
   const {
@@ -62,7 +65,6 @@ export function ProposalsHome() {
     FractalProposalState.TIMELOCKED,
     FractalProposalState.EXECUTABLE,
     FractalProposalState.EXECUTED,
-
     FractalProposalState.FAILED,
     FractalProposalState.EXPIRED,
   ];
@@ -130,7 +132,7 @@ export function ProposalsHome() {
     });
   };
 
-  const options = allOptions.map(state => ({
+  const filterOptions = allOptions.map(state => ({
     optionKey: state,
     count: getProposalsTotal(state),
     onClick: () => toggleFilter(state),
@@ -148,19 +150,6 @@ export function ProposalsHome() {
 
   return (
     <Box>
-      {/* SORT AND FILTER BUTTONS */}
-      <Flex
-        justifyContent="flex-start"
-        alignItems="center"
-        mx="0.5rem"
-        my="1rem"
-      >
-        <Sort
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-        />
-      </Flex>
-
       <Flex
         flexDirection="column"
         gap="1rem"
@@ -170,7 +159,78 @@ export function ProposalsHome() {
           guard.freezeProposalVoteCount !== null &&
           guard.freezeProposalVoteCount > 0n && <ActivityFreeze />}
 
-        {/* PROPOSAL LIST */}
+        {/* PROPOSALS LIST */}
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          mx="0.5rem"
+          my="1rem"
+        >
+          {/* SORT AND FILTER BUTTONS */}
+          <Flex
+            gap={3}
+            mb="1.5rem"
+          >
+            <OptionMenu
+              trigger={
+                <Flex
+                  alignItems="center"
+                  justifyContent="space-between"
+                  gap="0.25rem"
+                >
+                  <Icon as={Funnel} /> {filterTitle} <Icon as={CaretDown} />
+                </Flex>
+              }
+              options={filterOptions}
+              namespace="proposal"
+              titleKey="filter"
+              buttonAs={Button}
+              buttonProps={{
+                variant: 'tertiary',
+                paddingLeft: '0.5rem',
+                paddingRight: '0.5rem',
+                paddingTop: '0.25rem',
+                paddingBottom: '0.25rem',
+                disabled: !proposals,
+              }}
+              closeOnSelect={false}
+              showOptionSelected
+              showOptionCount
+            >
+              <Box>
+                <Flex
+                  px="0.5rem"
+                  justifyContent="space-between"
+                  gap="1.5rem"
+                >
+                  <Button
+                    variant="tertiary"
+                    size="sm"
+                    mt="0.5rem"
+                    onClick={() => setFilters(allOptions)}
+                  >
+                    {t('selectAll', { ns: 'common' })}
+                  </Button>
+                  <Button
+                    variant="tertiary"
+                    size="sm"
+                    mt="0.5rem"
+                    onClick={() => setFilters([])}
+                  >
+                    {t('clear', { ns: 'common' })}
+                  </Button>
+                </Flex>
+              </Box>
+            </OptionMenu>
+
+            <Sort
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              buttonProps={{ disabled: !proposals.length }}
+            />
+          </Flex>
+        </Flex>
+
         <ProposalsList proposals={proposals} />
       </Flex>
     </Box>
