@@ -159,7 +159,6 @@ export function ProposalsHome() {
             justifyContent="stretch"
             alignItems="stretch"
             mx="0.5rem"
-            my="1rem"
             gap={3}
           >
             {canDelegate && (
@@ -189,18 +188,13 @@ export function ProposalsHome() {
           guard.freezeProposalVoteCount !== null &&
           guard.freezeProposalVoteCount > 0n && <ActivityFreeze />}
 
-        {/* PROPOSALS LIST */}
         <Flex
           justifyContent="space-between"
           alignItems="center"
           mx="0.5rem"
-          my="1rem"
         >
           {/* SORT AND FILTER BUTTONS */}
-          <Flex
-            gap={3}
-            mb="1.5rem"
-          >
+          <Flex gap={3}>
             <OptionMenu
               trigger={
                 <Flex
