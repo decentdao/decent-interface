@@ -236,14 +236,14 @@ export function ProposalsHome() {
                 onClick={delegate}
                 variant="secondary"
               >
-                {t('delegate')}
+                {t('delegate', { ns: 'common' })}
               </Button>
             )}
             {canUserCreateProposal && safe?.address && (
               <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
                 <Button minW={0}>
                   <AddPlus />
-                  <Show above="sm">{t('create')}</Show>
+                  <Show above="sm">{t('createProposal')}</Show>
                 </Button>
               </Link>
             )}
