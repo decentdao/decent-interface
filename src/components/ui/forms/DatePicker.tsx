@@ -195,7 +195,15 @@ export function DatePicker({
 
   const handleDateChange = (e: OnDateChangeValue) => {
     if (e instanceof Date) {
-      onChange?.(new Date(e.setHours(0, 0, 0, 0)));
+      // get the current time and then set selected date to it.
+      const currentHours = new Date().getHours();
+      const currentMinutes = new Date().getMinutes();
+      const currentSeconds = new Date().getSeconds();
+      const currentMilliseconds = new Date().getMilliseconds();
+
+      onChange?.(
+        new Date(e.setHours(currentHours, currentMinutes, currentSeconds, currentMilliseconds)),
+      );
       onClose(); // Close the menu after date selection
     }
   };
