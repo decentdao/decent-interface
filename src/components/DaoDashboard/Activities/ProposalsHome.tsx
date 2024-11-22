@@ -153,6 +153,37 @@ export function ProposalsHome() {
         flexDirection="column"
         gap="1rem"
       >
+        {/* DELEGATE AND CREATE PROPOSAL BUTTONS (mobile version) */}
+        <Show below="md">
+          <Flex
+            justifyContent="stretch"
+            alignItems="stretch"
+            mx="0.5rem"
+            my="1rem"
+            gap={3}
+          >
+            {canDelegate && (
+              <Button
+                onClick={delegate}
+                variant="secondary"
+                size="sm"
+              >
+                {t('delegate', { ns: 'common' })}
+              </Button>
+            )}
+            {canUserCreateProposal && safe?.address && (
+              <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
+                <Button
+                  size="sm"
+                  minW={0}
+                >
+                  {t('createProposal')}
+                </Button>
+              </Link>
+            )}
+          </Flex>
+        </Show>
+
         {/* FREEZE ACTIVITY CARD */}
         {freezeVotingContractAddress &&
           guard.freezeProposalVoteCount !== null &&
@@ -229,25 +260,30 @@ export function ProposalsHome() {
             />
           </Flex>
 
-          {/* DELEGATE AND CREATE PROPOSAL BUTTONS */}
-          <Flex gap={3}>
-            {canDelegate && (
-              <Button
-                onClick={delegate}
-                variant="secondary"
-                size="sm"
-              >
-                {t('delegate', { ns: 'common' })}
-              </Button>
-            )}
-            {canUserCreateProposal && safe?.address && (
-              <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
-                <Button size="sm" minW={0}>
-                  <Show above="sm">{t('createProposal')}</Show>
+          {/* DELEGATE AND CREATE PROPOSAL BUTTONS (non-mobile) */}
+          <Show above="md">
+            <Flex gap={3}>
+              {canDelegate && (
+                <Button
+                  onClick={delegate}
+                  variant="secondary"
+                  size="sm"
+                >
+                  {t('delegate', { ns: 'common' })}
                 </Button>
-              </Link>
-            )}
-          </Flex>
+              )}
+              {canUserCreateProposal && safe?.address && (
+                <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
+                  <Button
+                    size="sm"
+                    minW={0}
+                  >
+                    {t('createProposal')}
+                  </Button>
+                </Link>
+              )}
+            </Flex>
+          </Show>
         </Flex>
 
         <ProposalsList proposals={proposals} />
