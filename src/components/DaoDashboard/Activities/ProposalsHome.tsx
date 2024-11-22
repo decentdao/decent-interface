@@ -1,6 +1,11 @@
-import { Box, Flex, Icon, Show } from '@chakra-ui/react';
+import { Box, Flex, Icon, Show, Button } from '@chakra-ui/react';
 import { CaretDown, Funnel } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { AddPlus } from '../../../assets/theme/custom/icons/AddPlus';
+import { DAO_ROUTES } from '../../../constants/routes';
+import { useProposalsSortedAndFiltered } from '../../../hooks/DAO/proposal/useProposals';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -12,18 +17,12 @@ import {
   GovernanceType,
   SortBy,
 } from '../../../types';
+import { ProposalsList } from '../../Proposals/ProposalsList';
+import { OptionMenu } from '../../ui/menus/OptionMenu';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { Sort } from '../../ui/utils/Sort';
 import { ActivityFreeze } from './ActivityFreeze';
-import useProposalsSortedAndFiltered from '../../../hooks/DAO/proposal/useProposals';
-import { useTranslation } from 'react-i18next';
-import { ProposalsList } from '../../Proposals/ProposalsList';
-import Button from '../../../assets/theme/components/button';
-import { OptionMenu } from '../../ui/menus/OptionMenu';
-import { Link } from 'react-router-dom';
-import { AddPlus } from '../../../assets/theme/custom/icons/AddPlus';
-import { DAO_ROUTES } from '../../../constants/routes';
 
 export function ProposalsHome() {
   const {
@@ -31,6 +30,7 @@ export function ProposalsHome() {
     guard,
     governance: { type },
   } = useFractal();
+
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const [filters, setFilters] = useState<FractalProposalState[]>([]);
 
@@ -42,7 +42,6 @@ export function ProposalsHome() {
   const { addressPrefix } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useDecentModal(ModalType.DELEGATE);
-  const wrapTokenOpen = useDecentModal(ModalType.WRAP_TOKEN);
 
   const canDelegate = useMemo(() => {
     if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
@@ -57,37 +56,8 @@ export function ProposalsHome() {
     }
     return false;
   }, [azoriusGovernance]);
+
   const { canUserCreateProposal } = useCanUserCreateProposal();
-
-  const FILTERS_AZORIUS = [
-    FractalProposalState.ACTIVE,
-    FractalProposalState.TIMELOCKED,
-    FractalProposalState.EXECUTABLE,
-    FractalProposalState.EXECUTED,
-    FractalProposalState.FAILED,
-    FractalProposalState.EXPIRED,
-  ];
-
-  const FILTERS_MULTISIG_BASE = [
-    FractalProposalState.ACTIVE,
-    FractalProposalState.EXECUTABLE,
-    FractalProposalState.EXECUTED,
-
-    FractalProposalState.REJECTED,
-  ];
-
-  const FILTERS_MULTISIG_CHILD = [
-    FractalProposalState.ACTIVE,
-    FractalProposalState.TIMELOCKABLE,
-    FractalProposalState.TIMELOCKED,
-    FractalProposalState.EXECUTABLE,
-    FractalProposalState.EXECUTED,
-
-    FractalProposalState.REJECTED,
-    FractalProposalState.EXPIRED,
-  ];
-
-  const FILTERS_SNAPSHOT = [FractalProposalState.CLOSED, FractalProposalState.PENDING];
 
   const { daoSnapshotENS } = useDaoInfoStore();
   const [allOptions, setAllFilterOptions] = useState<FractalProposalState[]>([]);
@@ -97,6 +67,36 @@ export function ProposalsHome() {
   // Update filter options
   useEffect(() => {
     if (!type) return;
+
+    const FILTERS_AZORIUS = [
+      FractalProposalState.ACTIVE,
+      FractalProposalState.TIMELOCKED,
+      FractalProposalState.EXECUTABLE,
+      FractalProposalState.EXECUTED,
+      FractalProposalState.FAILED,
+      FractalProposalState.EXPIRED,
+    ];
+
+    const FILTERS_MULTISIG_BASE = [
+      FractalProposalState.ACTIVE,
+      FractalProposalState.EXECUTABLE,
+      FractalProposalState.EXECUTED,
+
+      FractalProposalState.REJECTED,
+    ];
+
+    const FILTERS_MULTISIG_CHILD = [
+      FractalProposalState.ACTIVE,
+      FractalProposalState.TIMELOCKABLE,
+      FractalProposalState.TIMELOCKED,
+      FractalProposalState.EXECUTABLE,
+      FractalProposalState.EXECUTED,
+
+      FractalProposalState.REJECTED,
+      FractalProposalState.EXPIRED,
+    ];
+
+    const FILTERS_SNAPSHOT = [FractalProposalState.CLOSED, FractalProposalState.PENDING];
 
     let filterOptions;
     switch (type) {
@@ -236,7 +236,7 @@ export function ProposalsHome() {
                 onClick={delegate}
                 variant="secondary"
               >
-                t('delegate')
+                {t('delegate')}
               </Button>
             )}
             {canUserCreateProposal && safe?.address && (
