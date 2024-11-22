@@ -1,4 +1,4 @@
-import { Box, Flex, Icon } from '@chakra-ui/react';
+import { Box, Flex, Icon, Show } from '@chakra-ui/react';
 import { CaretDown, Funnel } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
@@ -8,14 +8,10 @@ import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusGovernance,
   DecentGovernance,
-  FractalProposal,
   FractalProposalState,
   GovernanceType,
   SortBy,
 } from '../../../types';
-import ProposalCard from '../../Proposals/ProposalCard/ProposalCard';
-import NoDataCard from '../../ui/containers/NoDataCard';
-import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { Sort } from '../../ui/utils/Sort';
@@ -25,12 +21,15 @@ import { useTranslation } from 'react-i18next';
 import { ProposalsList } from '../../Proposals/ProposalsList';
 import Button from '../../../assets/theme/components/button';
 import { OptionMenu } from '../../ui/menus/OptionMenu';
+import { Link } from 'react-router-dom';
+import { AddPlus } from '../../../assets/theme/custom/icons/AddPlus';
+import { DAO_ROUTES } from '../../../constants/routes';
 
 export function ProposalsHome() {
   const {
     guardContracts: { freezeVotingContractAddress },
     guard,
-    governance: { type, loadingProposals, allProposalsLoaded },
+    governance: { type },
   } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const [filters, setFilters] = useState<FractalProposalState[]>([]);
@@ -228,6 +227,26 @@ export function ProposalsHome() {
               setSortBy={setSortBy}
               buttonProps={{ disabled: !proposals.length }}
             />
+          </Flex>
+
+          {/* DELEGATE AND CREATE PROPOSAL BUTTONS */}
+          <Flex gap={3}>
+            {canDelegate && (
+              <Button
+                onClick={delegate}
+                variant="secondary"
+              >
+                t('delegate')
+              </Button>
+            )}
+            {canUserCreateProposal && safe?.address && (
+              <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
+                <Button minW={0}>
+                  <AddPlus />
+                  <Show above="sm">{t('create')}</Show>
+                </Button>
+              </Link>
+            )}
           </Flex>
         </Flex>
 
