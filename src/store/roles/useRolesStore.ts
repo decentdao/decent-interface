@@ -5,6 +5,15 @@ import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStr
 import { DecentRoleHat, RolesStore } from '../../types/roles';
 import { initialHatsStore, sanitize } from './rolesStoreUtils';
 
+const hatToStreamIdMap = new Map<BigInt, string>();
+const getHatToStreamIdMap = () => {
+  return Array.from(hatToStreamIdMap.entries()).map(([hatId, streamId]) => ({
+    hatId,
+    streamId,
+  }));
+};
+const setHatToStreamId = (key: BigInt, value: string) => hatToStreamIdMap.set(key, value);
+
 const useRolesStore = create<RolesStore>()((set, get) => ({
   ...initialHatsStore,
   getHat: hatId => {
@@ -96,10 +105,21 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
   updateRolesWithStreams: (updatedRoles: DecentRoleHat[]) => {
     const existingHatsTree = get().hatsTree;
     if (!existingHatsTree) return;
+    const hatIdToStreamIdMap = getHatToStreamIdMap();
 
     const updatedDecentTree = {
       ...existingHatsTree,
-      roleHats: updatedRoles,
+      roleHats: updatedRoles.map(roleHat => {
+        const filteredStreamIds = hatIdToStreamIdMap
+          .filter(hatToStreamId => hatToStreamId.hatId === BigInt(roleHat.id))
+          .map(hatToStreamId => hatToStreamId.streamId);
+        return {
+          ...roleHat,
+          payments: roleHat.payments?.filter(payment => {
+            return filteredStreamIds.includes(payment.streamId);
+          }),
+        };
+      }),
     };
 
     set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
@@ -130,7 +150,9 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
     }));
   },
   setHatIdsToStreamIds: hatIdsToStreamIds => {
-    set(() => ({ hatIdsToStreamIds }));
+    for (const { hatId, streamId } of hatIdsToStreamIds) {
+      setHatToStreamId(hatId, streamId);
+    }
   },
   resetHatsStore: () => set(() => initialHatsStore),
 }));

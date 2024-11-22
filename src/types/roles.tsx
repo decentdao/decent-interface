@@ -238,7 +238,6 @@ export interface RolesStoreData {
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
   contextChainId: number | null;
-  hatIdsToStreamIds: { hatId: BigInt; streamId: string }[];
 }
 
 export interface RolesStore extends RolesStoreData {

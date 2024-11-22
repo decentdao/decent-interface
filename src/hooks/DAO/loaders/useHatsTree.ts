@@ -3,7 +3,7 @@ import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Address, formatUnits, getAddress, getContract, Hex } from 'viem';
+import { Address, formatUnits, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
@@ -39,7 +39,6 @@ const useHatsTree = () => {
     setHatsTree,
     updateRolesWithStreams,
     resetHatsStore,
-    hatIdsToStreamIds,
   } = useRolesStore();
 
   const ipfsClient = useIPFSClient();
@@ -263,23 +262,6 @@ const useHatsTree = () => {
     [apolloClient, publicClient, sablierSubgraph],
   );
 
-  const getTermedPaymentStreams = useCallback(
-    async (allTermRecipients: Address[], hatId: Hex): Promise<SablierPayment[]> => {
-      const assignedStreamIds = hatIdsToStreamIds
-        .filter(item => item.hatId === BigInt(hatId))
-        .map(({ streamId }) => {
-          return streamId;
-        });
-      const uniqueRecipients = [...new Set(allTermRecipients)];
-      const payments: SablierPayment[] = [];
-      for (const recipient of uniqueRecipients) {
-        payments.push(...(await getPaymentStreams(recipient)));
-      }
-      return payments.filter(stream => assignedStreamIds.includes(stream.streamId));
-    },
-    [getPaymentStreams, hatIdsToStreamIds],
-  );
-
   useEffect(() => {
     async function getHatsStreams() {
       if (hatsTree && hatsTree.roleHats.length > 0 && !streamsFetched) {
@@ -290,12 +272,12 @@ const useHatsTree = () => {
             }
             const payments: SablierPayment[] = [];
             if (hat.isTermed) {
-              payments.push(
-                ...(await getTermedPaymentStreams(
-                  hat.roleTerms.allTerms.map(term => term.nominee),
-                  hat.id,
-                )),
-              );
+              const uniqueRecipients = [
+                ...new Set(hat.roleTerms.allTerms.map(term => term.nominee)),
+              ];
+              for (const recipient of uniqueRecipients) {
+                payments.push(...(await getPaymentStreams(recipient)));
+              }
             } else {
               if (!hat.smartAddress) {
                 throw new Error('Smart account address not found');
@@ -312,14 +294,7 @@ const useHatsTree = () => {
     }
 
     getHatsStreams();
-  }, [
-    hatsTree,
-    updateRolesWithStreams,
-    getPaymentStreams,
-    streamsFetched,
-    hatIdsToStreamIds,
-    getTermedPaymentStreams,
-  ]);
+  }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched]);
 
   useEffect(() => {
     if (safeAddress && safe?.address && safeAddress !== safe.address && hatsTree) {

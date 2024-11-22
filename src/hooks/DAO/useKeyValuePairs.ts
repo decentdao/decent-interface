@@ -143,6 +143,7 @@ const useKeyValuePairs = () => {
               hatsTreeId: getHatsTreeId(logs, chain.id),
               contextChainId: chain.id,
             });
+            setHatIdsToStreamIds(getHatIdsToStreamIds(logs, sablierV2LockupLinear, chain.id));
           }, 20_000);
         },
       },
