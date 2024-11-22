@@ -3,8 +3,11 @@ import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Address, getAddress } from 'viem';
+import { useChainId } from 'wagmi';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useLoadDAONode } from '../../hooks/DAO/loaders/useLoadDAONode';
+import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
+import { setValue, getValue } from '../../hooks/utils/cache/useLocalStorage';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { DaoInfo, WithError } from '../../types';
@@ -29,14 +32,32 @@ export function DaoHierarchyNode({
   const { safe: currentSafe } = useDaoInfoStore();
   const [hierarchyNode, setHierarchyNode] = useState<DaoInfo>();
   const { addressPrefix } = useNetworkConfig();
+  const chainId = useChainId();
   const { loadDao } = useLoadDAONode();
 
   useEffect(() => {
     if (safeAddress) {
+      const cachedNode = getValue({
+        cacheName: CacheKeys.HIERARCHY_DAO_INFO,
+        chainId,
+        daoAddress: safeAddress,
+      });
+      if (cachedNode) {
+        setHierarchyNode(cachedNode);
+        return;
+      }
       loadDao(safeAddress).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           const fnode = _node as DaoInfo;
+          setValue(
+            {
+              cacheName: CacheKeys.HIERARCHY_DAO_INFO,
+              chainId,
+              daoAddress: safeAddress,
+            },
+            fnode,
+          );
           setHierarchyNode(fnode);
         } else if (errorNode.error === 'errorFailedSearch') {
           setHierarchyNode({

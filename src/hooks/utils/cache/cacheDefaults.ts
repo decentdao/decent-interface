@@ -1,5 +1,5 @@
 import { Address } from 'viem';
-import { AzoriusProposal } from '../../../types';
+import { AzoriusProposal, DaoInfo } from '../../../types';
 
 export interface IStorageValue {
   // the value to store, 1 character to minimize cache size
@@ -74,7 +74,7 @@ export interface IPFSHashCacheKey extends CacheKey {
 export interface HierarchyDAOInfoCacheKey extends CacheKey {
   cacheName: CacheKeys.HIERARCHY_DAO_INFO;
   chainId: number;
-  daoInfo: any;
+  daoAddress: Address;
 }
 
 export type CacheKeyType =
@@ -104,6 +104,7 @@ type CacheKeyToValueMap = {
   [CacheKeys.AVERAGE_BLOCK_TIME]: number;
   [CacheKeys.MIGRATION]: number;
   [CacheKeys.IPFS_HASH]: string;
+  [CacheKeys.HIERARCHY_DAO_INFO]: DaoInfo;
 };
 
 export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }
