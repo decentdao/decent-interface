@@ -151,7 +151,6 @@ export interface ITokenAccount {
 export interface FractalStore extends Fractal {
   action: {
     dispatch: Dispatch<FractalActions>;
-    loadReadOnlyValues: () => Promise<void>;
     resetSafeState: () => Promise<void>;
   };
 }
@@ -171,7 +170,6 @@ export interface Fractal {
   treasury: DecentTreasury;
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
-  readOnly: ReadOnlyState;
 }
 
 export interface FractalGovernanceContracts {
@@ -309,21 +307,6 @@ export interface NodeHierarchy {
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
-
-/**
- * Immutable state generally calculated from other stateful objects.
- * These are front end specific values that are commonly used throughout
- * the app.
- */
-export interface ReadOnlyState {
-  /** The "user", meaning the app user, wallet connected or not. */
-  user: ReadOnlyUser;
-}
-
-export interface ReadOnlyUser {
-  /** The number of delegated tokens for the connected Azorius DAO, 1 for a Multisig DAO signer */
-  votingWeight: bigint;
-}
 
 export interface TransferDisplayData {
   eventType: TokenEventType;
