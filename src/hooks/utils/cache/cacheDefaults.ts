@@ -33,6 +33,7 @@ export enum CacheKeys {
   PROPOSAL_CACHE = 'Proposal',
   MIGRATION = 'Migration',
   IPFS_HASH = 'IPFS Hash',
+  HIERARCHY_DAO_INFO = 'Hierarchy DAO Info',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
@@ -70,9 +71,15 @@ export interface IPFSHashCacheKey extends CacheKey {
   hash: string;
   chainId: number;
 }
+export interface HierarchyDAOInfoCacheKey extends CacheKey {
+  cacheName: CacheKeys.HIERARCHY_DAO_INFO;
+  chainId: number;
+  daoInfo: any;
+}
 
 export type CacheKeyType =
   | FavoritesCacheKey
+  | HierarchyDAOInfoCacheKey
   | MasterCacheKey
   | ProposalCacheKey
   | AverageBlockTimeCacheKey
