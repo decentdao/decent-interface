@@ -28,8 +28,11 @@ export const useRolesSchema = () => {
         test: (value, cxt) => {
           if (!value || !cxt.from) return false;
           // @dev finds the parent asset address from the formik context `from` array
-          const [, { value: currentPayment }, { value: currentRoleHat }, { value: formContext }] =
-            cxt.from;
+          // @dev @todo When Payments form is first open these values become undefined, not sure why
+          const currentPayment = cxt.from[1]?.value;
+          const currentRoleHat = cxt.from[2]?.value;
+          const formContext = cxt.from[3]?.value;
+          if (!currentPayment || !currentRoleHat || !formContext) return false;
           const parentAssetAddress = currentPayment.asset?.address;
 
           const currentPaymentIndex = currentRoleHat.roleEditingPaymentIndex;
