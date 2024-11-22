@@ -19,7 +19,7 @@ import { EaseOutComponent } from '../../utils/EaseOutComponent';
 import { SafesList } from './SafesList';
 
 export function SafesMenu() {
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation('home');
   const {
     isOpen: isSafesDrawerOpen,
     onOpen: onSafesDrawerOpen,
@@ -72,7 +72,7 @@ export function SafesMenu() {
                   alignItems="center"
                   gap={2}
                 >
-                  <Text>{t('titleFavorites')}</Text>
+                  <Text>{t('mySafes')}</Text>
                   <Icon
                     as={CaretDown}
                     boxSize="1.5rem"

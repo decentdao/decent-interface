@@ -72,11 +72,15 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
       cursor={disabled ? 'not-allowed' : 'default'}
       {...gridContainerProps}
     >
-      <GridItem alignSelf="center">
+      <GridItem
+        pb="0.5rem"
+        alignSelf="center"
+      >
         {isStringLabel ? (
           <HStack
             pb={1}
             textStyle="body-base"
+            spacing={0}
           >
             <Text color={disabled ? 'white-0' : 'neutral-7'}>{label}</Text>
             {isRequired && <Text color="lilac-0">*</Text>}
@@ -95,6 +99,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
           {children}
         </LabelWrapper>
       </GridItem>
+
       {helperSlot === 'end' && (
         <GridItem>
           <Text color="neutral-7">{helper}</Text>

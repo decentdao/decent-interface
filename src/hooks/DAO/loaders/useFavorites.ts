@@ -1,30 +1,40 @@
 import { useState } from 'react';
 import { Address } from 'viem';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { encodePrefixedAddress } from '../../../utils/address';
-import { CacheKeys, CacheExpiry } from '../../utils/cache/cacheDefaults';
+import { CacheKeys, CacheExpiry, FavoritesCacheValue } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
 export const useAccountFavorites = () => {
-  // @dev favorites are strings of the form networkPrefix:address
-  const [favoritesList, setFavoritesList] = useState<string[]>(
+  const [favoritesList, setFavoritesList] = useState<FavoritesCacheValue[]>(
     getValue({ cacheName: CacheKeys.FAVORITES }) || [],
   );
   const { addressPrefix } = useNetworkConfig();
 
-  const toggleFavorite = (address: Address) => {
-    const addressWithPrefix = encodePrefixedAddress(address, addressPrefix);
+  const toggleFavorite = (address: Address, name: string) => {
     const favorites = getValue({ cacheName: CacheKeys.FAVORITES }) || [];
-    let updatedFavorites: string[] = [];
-    if (favorites.includes(addressWithPrefix)) {
-      updatedFavorites = favorites.filter(favorite => favorite !== addressWithPrefix);
+    let updatedFavorites: FavoritesCacheValue[] = [];
+
+    const favoriteExists = favorites.some(
+      favorite => favorite.address === address && favorite.networkPrefix === addressPrefix,
+    );
+
+    if (favoriteExists) {
+      updatedFavorites = favorites.filter(
+        favorite => !(favorite.address === address && favorite.networkPrefix === addressPrefix),
+      );
     } else {
-      updatedFavorites = favorites.concat([addressWithPrefix]);
+      updatedFavorites = favorites.concat([{ networkPrefix: addressPrefix, address, name }]);
     }
 
     setValue({ cacheName: CacheKeys.FAVORITES }, updatedFavorites, CacheExpiry.NEVER);
     setFavoritesList(updatedFavorites);
   };
 
-  return { favoritesList, toggleFavorite };
+  const isFavorite = (address: Address) => {
+    return favoritesList.some(
+      favorite => favorite.address === address && favorite.networkPrefix === addressPrefix,
+    );
+  };
+
+  return { favoritesList, toggleFavorite, isFavorite };
 };
