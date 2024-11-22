@@ -1,9 +1,8 @@
-import { Box, Flex, Icon, Show, Button } from '@chakra-ui/react';
+import { Box, Flex, Icon, Show, Button, HStack } from '@chakra-ui/react';
 import { CaretDown, Funnel } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { AddPlus } from '../../../assets/theme/custom/icons/AddPlus';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useProposalsSortedAndFiltered } from '../../../hooks/DAO/proposal/useProposals';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
@@ -155,7 +154,7 @@ export function ProposalsHome() {
       >
         {/* DELEGATE AND CREATE PROPOSAL BUTTONS (mobile version) */}
         <Show below="md">
-          <Flex
+          <HStack
             justifyContent="stretch"
             alignItems="stretch"
             mx="0.5rem"
@@ -180,7 +179,7 @@ export function ProposalsHome() {
                 </Button>
               </Link>
             )}
-          </Flex>
+          </HStack>
         </Show>
 
         {/* FREEZE ACTIVITY CARD */}
