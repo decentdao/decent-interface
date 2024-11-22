@@ -273,7 +273,7 @@ const useHatsTree = () => {
             }
             const payments: SablierPayment[] = [];
             if (hat.isTermed) {
-              const foundStreamIDs = hatIdsToStreamIds
+              const assignedStreamed = hatIdsToStreamIds
                 .filter(item => item.hatId === BigInt(hat.id))
                 .map(({ streamId }) => {
                   return streamId;
@@ -283,7 +283,7 @@ const useHatsTree = () => {
               for (const recipient of uniqueRecipients) {
                 payments.push(
                   ...(await getPaymentStreams(recipient)).filter(stream =>
-                    foundStreamIDs.includes(stream.streamId),
+                    assignedStreamed.includes(stream.streamId),
                   ),
                 );
               }
