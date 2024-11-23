@@ -12,7 +12,6 @@ const getHatToStreamIdMap = () => {
     streamId,
   }));
 };
-const setHatToStreamId = (key: BigInt, value: string) => hatToStreamIdMap.set(key, value);
 
 const useRolesStore = create<RolesStore>()((set, get) => ({
   ...initialHatsStore,
@@ -151,7 +150,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
   },
   setHatIdsToStreamIds: hatIdsToStreamIds => {
     for (const { hatId, streamId } of hatIdsToStreamIds) {
-      setHatToStreamId(hatId, streamId);
+      hatToStreamIdMap.set(hatId, streamId);
     }
   },
   resetHatsStore: () => set(() => initialHatsStore),
