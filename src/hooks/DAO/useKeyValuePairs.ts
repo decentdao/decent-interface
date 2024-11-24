@@ -98,7 +98,7 @@ const useKeyValuePairs = () => {
     chain,
     contracts: { keyValuePairs, sablierV2LockupLinear },
   } = useNetworkConfig();
-  const { setHatsTreeId, setHatIdsToStreamIds } = useRolesStore();
+  const { setHatsTreeId, setStreamIdsToHatIds } = useRolesStore();
   const [searchParams] = useSearchParams();
 
   const safeAddress = node.safe?.address;
@@ -122,7 +122,7 @@ const useKeyValuePairs = () => {
           contextChainId: chain.id,
           hatsTreeId: getHatsTreeId(safeEvents, chain.id),
         });
-        setHatIdsToStreamIds(getHatIdsToStreamIds(safeEvents, sablierV2LockupLinear, chain.id));
+        setStreamIdsToHatIds(getHatIdsToStreamIds(safeEvents, sablierV2LockupLinear, chain.id));
       })
       .catch(error => {
         setHatsTreeId({ hatsTreeId: null, contextChainId: chain.id });
@@ -143,7 +143,7 @@ const useKeyValuePairs = () => {
               hatsTreeId: getHatsTreeId(logs, chain.id),
               contextChainId: chain.id,
             });
-            setHatIdsToStreamIds(getHatIdsToStreamIds(logs, sablierV2LockupLinear, chain.id));
+            setStreamIdsToHatIds(getHatIdsToStreamIds(logs, sablierV2LockupLinear, chain.id));
           }, 20_000);
         },
       },
@@ -158,7 +158,7 @@ const useKeyValuePairs = () => {
     publicClient,
     searchParams,
     setHatsTreeId,
-    setHatIdsToStreamIds,
+    setStreamIdsToHatIds,
     sablierV2LockupLinear,
   ]);
 };

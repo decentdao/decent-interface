@@ -5,11 +5,11 @@ import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStr
 import { DecentRoleHat, RolesStore } from '../../types/roles';
 import { initialHatsStore, sanitize } from './rolesStoreUtils';
 
-const hatToStreamIdMap = new Map<BigInt, string>();
-const getHatToStreamIdMap = () => {
-  return Array.from(hatToStreamIdMap.entries()).map(([hatId, streamId]) => ({
-    hatId,
+const streamIdToHatIdMap = new Map<string, BigInt>();
+const getStreamIdToHatIdMap = () => {
+  return Array.from(streamIdToHatIdMap.entries()).map(([streamId, hatId]) => ({
     streamId,
+    hatId,
   }));
 };
 
@@ -104,14 +104,14 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
   updateRolesWithStreams: (updatedRoles: DecentRoleHat[]) => {
     const existingHatsTree = get().hatsTree;
     if (!existingHatsTree) return;
-    const hatIdToStreamIdMap = getHatToStreamIdMap();
+    const streamIdsToHatIdsMap = getStreamIdToHatIdMap();
 
     const updatedDecentTree = {
       ...existingHatsTree,
       roleHats: updatedRoles.map(roleHat => {
-        const filteredStreamIds = hatIdToStreamIdMap
-          .filter(hatToStreamId => hatToStreamId.hatId === BigInt(roleHat.id))
-          .map(hatToStreamId => hatToStreamId.streamId);
+        const filteredStreamIds = streamIdsToHatIdsMap
+          .filter(ids => ids.hatId === BigInt(roleHat.id))
+          .map(ids => ids.streamId);
         return {
           ...roleHat,
           payments: roleHat.payments?.filter(payment => {
@@ -148,9 +148,9 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       },
     }));
   },
-  setHatIdsToStreamIds: hatIdsToStreamIds => {
-    for (const { hatId, streamId } of hatIdsToStreamIds) {
-      hatToStreamIdMap.set(hatId, streamId);
+  setStreamIdsToHatIds: streamIdsToHatIds => {
+    for (const { hatId, streamId } of streamIdsToHatIds) {
+      streamIdToHatIdMap.set(streamId, hatId);
     }
   },
   resetHatsStore: () => set(() => initialHatsStore),
