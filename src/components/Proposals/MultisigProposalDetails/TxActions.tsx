@@ -24,7 +24,6 @@ import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const {
     guardContracts: { freezeGuardContractAddress },
-    readOnly: { user },
   } = useFractal();
   const userAccount = useAccount();
   const safeAPI = useSafeAPI();
@@ -51,7 +50,9 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const { data: walletClient } = useWalletClient();
 
-  if (user.votingWeight === 0n) return null;
+  const isOwner = safe?.owners?.includes(userAccount.address || '');
+
+  if (!isOwner) return null;
 
   if (!proposal.transaction) return null;
 
@@ -244,7 +245,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const hasSigned = !!proposal.confirmations?.find(
     confirm => confirm.owner === userAccount.address,
   );
-  const isOwner = safe?.owners?.includes(userAccount.address || '');
+
   const isPending = asyncRequestPending || contractCallPending;
   if (
     (proposal.state === FractalProposalState.ACTIVE && (hasSigned || !isOwner)) ||

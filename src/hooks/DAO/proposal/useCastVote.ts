@@ -53,7 +53,7 @@ const useCastVote = (proposalId: string, strategy: Address) => {
           successCallback: () => {
             setTimeout(() => {
               getHasVoted();
-              getCanVote(true);
+              getCanVote();
             }, 3000);
           },
         });
@@ -80,7 +80,7 @@ const useCastVote = (proposalId: string, strategy: Address) => {
           successCallback: () => {
             setTimeout(() => {
               getHasVoted();
-              getCanVote(true);
+              getCanVote();
             }, 3000);
           },
         });

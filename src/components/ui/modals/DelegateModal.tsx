@@ -24,7 +24,6 @@ export function DelegateModal({ close }: { close: Function }) {
   const {
     governance,
     governanceContracts: { votesTokenAddress, lockReleaseAddress },
-    action: { loadReadOnlyValues },
   } = useFractal();
   const user = useAccount();
 
@@ -87,7 +86,6 @@ export function DelegateModal({ close }: { close: Function }) {
       failedMessage: t('failedDelegateVote'),
       successMessage: t('successDelegateVote'),
       successCallback: async () => {
-        await loadReadOnlyValues();
         close();
       },
     });
