@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Show, Button, HStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Show, Button } from '@chakra-ui/react';
 import { CaretDown, Funnel } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -154,9 +154,7 @@ export function ProposalsHome() {
       >
         {/* DELEGATE AND CREATE PROPOSAL BUTTONS (mobile version) */}
         <Show below="md">
-          <HStack
-            justifyContent="stretch"
-            alignItems="stretch"
+          <Flex
             mx="0.5rem"
             gap={3}
           >
@@ -165,21 +163,26 @@ export function ProposalsHome() {
                 onClick={delegate}
                 variant="secondary"
                 size="sm"
+                w="100%"
               >
                 {t('delegate', { ns: 'common' })}
               </Button>
             )}
             {canUserCreateProposal && safe?.address && (
-              <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
+              <Link
+                style={{ width: '100%' }}
+                to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}
+              >
                 <Button
                   size="sm"
                   minW={0}
+                  w="100%"
                 >
                   {t('createProposal')}
                 </Button>
               </Link>
             )}
-          </HStack>
+          </Flex>
         </Show>
 
         {/* FREEZE ACTIVITY CARD */}
