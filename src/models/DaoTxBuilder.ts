@@ -53,7 +53,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     attachFractalModule?: boolean,
 
-    parentAddress?: Address,
+    parentAddress?: Address | null,
     parentTokenAddress?: Address,
 
     parentStrategyType?: VotingStrategyType,

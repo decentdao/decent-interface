@@ -14,9 +14,7 @@ export const useCastFreezeVote = () => {
   const {
     guardContracts: { freezeVotingContractAddress, freezeVotingType },
   } = useFractal();
-  const {
-    nodeHierarchy: { parentAddress },
-  } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(null, null, false);
 
   const { t } = useTranslation('transaction');
@@ -35,7 +33,7 @@ export const useCastFreezeVote = () => {
             address: freezeVotingContractAddress,
             client: walletClient,
           });
-          return getUserERC721VotingTokens(parentAddress, null).then(tokensInfo => {
+          return getUserERC721VotingTokens(subgraphInfo?.parentAddress, null).then(tokensInfo => {
             return freezeERC721VotingContract.write.castFreezeVote([
               tokensInfo.totalVotingTokenAddresses,
               tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
@@ -86,7 +84,7 @@ export const useCastFreezeVote = () => {
     freezeVotingContractAddress,
     freezeVotingType,
     getUserERC721VotingTokens,
-    parentAddress,
+    subgraphInfo?.parentAddress,
     t,
     walletClient,
   ]);

@@ -28,15 +28,15 @@ export function ManageDAOMenu() {
     guard,
     guardContracts,
   } = useFractal();
-  const node = useDaoInfoStore();
+  const dao = useDaoInfoStore();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = node.safe?.address;
+  const safeAddress = dao.safe?.address;
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress ?? null, null, false);
   const { handleClawBack } = useClawBack({
-    parentAddress: node.nodeHierarchy.parentAddress,
-    childSafeInfo: node,
+    parentAddress: dao.subgraphInfo?.parentAddress,
+    childSafeInfo: dao,
   });
 
   const { addressPrefix } = useNetworkConfig();
@@ -85,7 +85,7 @@ export function ManageDAOMenu() {
           });
           return contract.write.castFreezeVote();
         } else if (freezeVotingType === FreezeVotingType.ERC721) {
-          getUserERC721VotingTokens(node.nodeHierarchy.parentAddress, null).then(tokensInfo => {
+          getUserERC721VotingTokens(dao.subgraphInfo?.parentAddress, null).then(tokensInfo => {
             if (!guardContracts.freezeVotingContractAddress) {
               throw new Error('freeze voting contract address not set');
             }
@@ -105,7 +105,13 @@ export function ManageDAOMenu() {
         }
       },
     }),
-    [getUserERC721VotingTokens, guardContracts, node.nodeHierarchy.parentAddress, walletClient],
+    [
+      dao.subgraphInfo?.parentAddress,
+      getUserERC721VotingTokens,
+      guardContracts.freezeVotingContractAddress,
+      guardContracts.freezeVotingType,
+      walletClient,
+    ],
   );
 
   const options = useMemo(() => {

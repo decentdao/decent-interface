@@ -25,7 +25,7 @@ export const fractalModuleData = (
   moduleProxyFactoryAddress: Address,
   safeAddress: Address,
   saltNum: bigint,
-  parentAddress?: Address,
+  parentAddress?: Address | null,
 ): FractalModuleData => {
   const fractalModuleCalldata = encodeFunctionData({
     abi: abis.FractalModule,

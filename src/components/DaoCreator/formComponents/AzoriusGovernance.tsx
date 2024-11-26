@@ -25,11 +25,7 @@ import { DAOCreateMode } from './EstablishEssentials';
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
 
-  const {
-    safe,
-    nodeHierarchy: { parentAddress },
-    fractalModules,
-  } = useDaoInfoStore();
+  const { safe, subgraphInfo, fractalModules } = useDaoInfoStore();
 
   const fractalModule = useMemo(
     () => fractalModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL),
@@ -189,7 +185,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           </Alert>
         </Flex>
       </StepWrapper>
-      {!!parentAddress && (
+      {!!subgraphInfo?.parentAddress && (
         <Box
           padding="1.5rem"
           bg="neutral-2"

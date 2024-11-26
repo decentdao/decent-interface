@@ -73,7 +73,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     linearVotingErc721MasterCopy: Address,
     moduleAzoriusMasterCopy: Address,
 
-    parentAddress?: Address,
+    parentAddress?: Address | null,
     parentTokenAddress?: Address,
   ) {
     super(publicClient, true, daoData, parentAddress, parentTokenAddress);

@@ -20,7 +20,7 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
   childSafeInfo: DaoInfo;
-  parentAddress: Address | null;
+  parentAddress: Address | null | undefined;
 }
 
 export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {

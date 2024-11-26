@@ -53,10 +53,7 @@ const useDeployAzorius = () => {
     },
     addressPrefix,
   } = useNetworkConfig();
-  const {
-    safe,
-    nodeHierarchy: { parentAddress },
-  } = useDaoInfoStore();
+  const { safe, subgraphInfo } = useDaoInfoStore();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
   const { submitProposal } = useSubmitProposal();
@@ -86,8 +83,8 @@ const useDeployAzorius = () => {
       let attachFractalModule = false;
       let parentNode: DaoInfo | undefined;
 
-      if (parentAddress) {
-        const loadedParentNode = await loadDao(parentAddress);
+      if (subgraphInfo?.parentAddress) {
+        const loadedParentNode = await loadDao(subgraphInfo.parentAddress);
         const loadingParentNodeError = (loadedParentNode as WithError).error;
         if (loadingParentNodeError) {
           toast.error(t(loadingParentNodeError));
@@ -154,7 +151,7 @@ const useDeployAzorius = () => {
         linearVotingErc20MasterCopy,
         linearVotingErc721MasterCopy,
         moduleAzoriusMasterCopy,
-        parentAddress || undefined,
+        subgraphInfo?.parentAddress ?? undefined,
         parentTokenAddress,
       );
 
@@ -216,7 +213,7 @@ const useDeployAzorius = () => {
       canUserCreateProposal,
       safe,
       publicClient,
-      parentAddress,
+      subgraphInfo?.parentAddress,
       compatibilityFallbackHandler,
       votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
@@ -238,9 +235,9 @@ const useDeployAzorius = () => {
       submitProposal,
       t,
       loadDao,
+      getAddressContractType,
       navigate,
       addressPrefix,
-      getAddressContractType,
     ],
   );
 
