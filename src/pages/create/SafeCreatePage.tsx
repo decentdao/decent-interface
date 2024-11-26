@@ -27,13 +27,13 @@ export function SafeCreatePage() {
   }, []);
 
   const successCallback = useCallback(
-    async (addressPrefix: string, safeAddress: Address) => {
+    async (addressPrefix: string, safeAddress: Address, daoName: string) => {
       setRedirectPending(true);
       const daoFound = await requestWithRetries(
         async () => (safeAPI ? safeAPI.getSafeCreationInfo(safeAddress) : undefined),
         8,
       );
-      toggleFavorite(safeAddress);
+      toggleFavorite(safeAddress, daoName);
       if (daoFound) {
         navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress));
       } else {

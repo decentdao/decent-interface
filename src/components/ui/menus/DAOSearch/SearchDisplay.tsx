@@ -90,6 +90,7 @@ export function SearchDisplay({
             {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
           </Text>
           <SafeDisplayRow
+            name={undefined}
             address={address}
             network={addressPrefix}
             onClick={() => {

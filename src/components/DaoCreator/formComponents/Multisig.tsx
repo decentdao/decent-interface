@@ -78,7 +78,7 @@ export function Multisig(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
-        titleKey="titleSafeConfig"
+        titleKey="titleMultisigSafeConfig"
       >
         <Flex
           flexDirection="column"

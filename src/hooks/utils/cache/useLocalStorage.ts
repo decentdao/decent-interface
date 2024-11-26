@@ -43,8 +43,11 @@ export const setValue = (
   );
 };
 
-export const getValue = <T extends CacheKeyType>(key: T): CacheValueType<T> | null => {
-  const version = CACHE_VERSIONS[key.cacheName];
+export const getValue = <T extends CacheKeyType>(
+  key: T,
+  specificVersion?: number,
+): CacheValueType<T> | null => {
+  const version = specificVersion ?? CACHE_VERSIONS[key.cacheName];
   const rawVal = localStorage.getItem(JSON.stringify({ ...key, version }));
   if (rawVal) {
     const parsed: CacheValue = JSON.parse(rawVal, proposalObjectReviver);
