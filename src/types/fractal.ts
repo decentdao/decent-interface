@@ -128,7 +128,7 @@ export type NullUnionUndefined = null | undefined;
 
 export type GnosisSafe = {
   // replaces SafeInfoResponseWithGuard and SafeWithNextNonce
-  address: Address | NullUnionUndefined;
+  address: Address;
   owners: Address[];
   nonce: number;
   nextNonce: number;
@@ -141,7 +141,7 @@ export interface DAOSubgraph {
   // replaces Part of DaoInfo
   daoName: string | NullUnionUndefined;
   parentAddress: Address | NullUnionUndefined;
-  childNodes: Address[];
+  childAddresses: Address[];
   daoSnapshotENS: string | NullUnionUndefined;
   proposalTemplatesHash: string | NullUnionUndefined;
 }
@@ -154,18 +154,12 @@ export enum DecentModuleType {
   UNKNOWN, // NON-DECENT MODULE
 }
 
-export interface DecentModule {
-  // replaces FractalModuleData
-  address: Address;
-  type: FractalModuleType;
-}
-
 // @todo better typing here, SUBGRAPH has DAO type name,
 export interface IDAO {
   // replaces DaoInfo
   safe: GnosisSafe | null;
   subgraphInfo: DAOSubgraph | null;
-  daoModules: DecentModule[] | null;
+  daoModules: FractalModuleData[] | null;
 }
 
 export interface GovernanceActivity extends ActivityBase {
