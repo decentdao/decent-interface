@@ -1,6 +1,7 @@
 import {
   Alert,
   Box,
+  Button,
   Flex,
   FormControl,
   HStack,
@@ -14,7 +15,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { WarningCircle } from '@phosphor-icons/react';
+import { Minus, Plus, WarningCircle } from '@phosphor-icons/react';
 import { useCallback, useEffect, useMemo, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
@@ -63,50 +64,49 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   // days, hours, minutes, seconds
   const [votingPeriodDays, setVotingPeriodDays] = useState(0);
-  const [votingPeriodHours, setVotingPeriodHours] = useState(0);
-  const [votingPeriodMinutes, setVotingPeriodMinutes] = useState(0);
-  const [votingPeriodSeconds, setVotingPeriodSeconds] = useState(0);
 
   useEffect(() => {
     console.log(values.azorius.votingPeriod);
   }, [values.azorius.votingPeriod]);
 
   useEffect(() => {
-    // convert days, hours, minutes, seconds to minutes
-    const minutes =
-      votingPeriodDays * 24 * 60 +
-      votingPeriodHours * 60 +
-      votingPeriodMinutes +
-      votingPeriodSeconds / 60;
+    // convert days to minutes
+    const minutes = votingPeriodDays * 24 * 60;
 
     setFieldValue('azorius.votingPeriod', { bigintValue: minutes });
-  }, [
-    setFieldValue,
-    votingPeriodDays,
-    votingPeriodHours,
-    votingPeriodMinutes,
-    votingPeriodSeconds,
-  ]);
+  }, [setFieldValue, votingPeriodDays]);
 
-  const MemoizedNumberInput = memo(
-    ({ value, onChange }: { value?: string | number; onChange: (val: string) => void }) => (
-      <NumberInput
-        value={value}
-        onChange={onChange}
-        min={0}
-        focusInputOnChange={true}
-      >
-        <HStack>
-          <NumberInputField min={0} />
-          <VStack>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </VStack>
-        </HStack>
-      </NumberInput>
-    ),
+  const MemoizedNumberStepperInput = memo(
+    ({ value, onChange }: { value?: string | number; onChange: (val: string) => void }) => {
+      const stepperButton = (direction: 'inc' | 'dec') => (
+        <Button
+          variant="secondary"
+          borderColor="neutral-3"
+          p="0.5rem"
+          size="md"
+        >
+          {direction === 'inc' ? <Plus size="1.5rem" /> : <Minus size="1.5rem" />}
+        </Button>
+      );
+
+      return (
+        <NumberInput
+          value={value}
+          onChange={onChange}
+          min={0}
+          focusInputOnChange={true}
+          w="100%"
+        >
+          <HStack gap="0.25rem">
+            <NumberDecrementStepper>{stepperButton('dec')}</NumberDecrementStepper>
+            <NumberInputField min={0} />
+            <NumberIncrementStepper>{stepperButton('inc')}</NumberIncrementStepper>
+          </HStack>
+        </NumberInput>
+      );
+    },
   );
-  MemoizedNumberInput.displayName = 'MemoizedNumberInput';
+  MemoizedNumberStepperInput.displayName = 'MemoizedNumberInput';
 
   return (
     <>
@@ -162,36 +162,18 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           >
             <InputGroup>
               {/* DAYS */}
-              <MemoizedNumberInput
-                value={votingPeriodDays}
-                onChange={val => {
-                  setVotingPeriodDays(Number(val));
-                }}
-              />
+              <Flex
+                flexDirection="column"
+                w="100%"
+                gap="0.5rem"
+              >
+                <Text color="white-0">Days</Text>
 
-              {/* HOURS */}
-              <MemoizedNumberInput
-                value={votingPeriodHours}
-                onChange={val => {
-                  setVotingPeriodHours(Number(val));
-                }}
-              />
-
-              {/* MINUTE */}
-              <MemoizedNumberInput
-                value={votingPeriodMinutes}
-                onChange={val => {
-                  setVotingPeriodMinutes(Number(val));
-                }}
-              />
-
-              {/* <BigIntInput
-                value={values.azorius.votingPeriod.bigintValue}
-                onChange={valuePair => setFieldValue('azorius.votingPeriod', valuePair)}
-                decimalPlaces={0}
-                min="1"
-                data-testid="govConfig-votingPeriod"
-              /> */}
+                <MemoizedNumberStepperInput
+                  value={votingPeriodDays}
+                  onChange={val => setVotingPeriodDays(Number(val))}
+                />
+              </Flex>
             </InputGroup>
           </LabelComponent>
 
