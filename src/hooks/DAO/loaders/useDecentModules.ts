@@ -4,7 +4,7 @@ import { usePublicClient } from 'wagmi';
 import { FractalModuleData, FractalModuleType } from '../../../types';
 import { useAddressContractType } from '../../utils/useAddressContractType';
 
-export const useFractalModules = () => {
+export const useDecentModules = () => {
   const { getAddressContractType } = useAddressContractType();
   const publicClient = usePublicClient();
   const lookupModules = useCallback(
