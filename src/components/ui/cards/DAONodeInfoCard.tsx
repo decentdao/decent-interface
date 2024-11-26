@@ -9,11 +9,9 @@ export const NODE_HEIGHT_REM = 6.75;
 export const NODE_MARGIN_TOP_REM = 1.25;
 
 interface DAONodeInfoCardProps {
-  node: {
-    daoAddress: Address;
-    daoName: string;
-    daoSnapshotENS?: string;
-  };
+  daoAddress: Address;
+  daoName: string;
+  daoSnapshotENS?: string;
   isCurrentViewingDAO: boolean;
 }
 
@@ -28,10 +26,7 @@ interface DAONodeInfoCardProps {
  * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
  */
 export function DAONodeInfoCard(props: DAONodeInfoCardProps) {
-  const {
-    node: { daoAddress, daoName, daoSnapshotENS },
-    isCurrentViewingDAO,
-  } = props;
+  const { daoAddress, daoName, daoSnapshotENS, isCurrentViewingDAO } = props;
 
   const { toggleFavorite, isFavorite } = useAccountFavorites();
 

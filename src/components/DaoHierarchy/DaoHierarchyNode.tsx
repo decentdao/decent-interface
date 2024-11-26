@@ -120,11 +120,9 @@ export function DaoHierarchyNode({
         }}
       >
         <DAONodeInfoCard
-          node={{
-            daoAddress: hierarchyNode.safeAddress,
-            daoName: hierarchyNode?.daoName ?? hierarchyNode.safeAddress,
-            daoSnapshotENS: hierarchyNode?.daoSnapshotENS,
-          }}
+          daoAddress={hierarchyNode.safeAddress}
+          daoName={hierarchyNode?.daoName ?? hierarchyNode.safeAddress}
+          daoSnapshotENS={hierarchyNode?.daoSnapshotENS}
           isCurrentViewingDAO={isCurrentViewingDAO}
         />
       </Link>
