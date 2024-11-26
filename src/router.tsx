@@ -12,7 +12,6 @@ import { SafeHierarchyPage } from './pages/dao/hierarchy/SafeHierarchyPage';
 import { SafeSubDaoCreatePage } from './pages/dao/new/SafeSubDaoCreatePage';
 import { SafeProposalTemplatesPage } from './pages/dao/proposal-templates/SafeProposalTemplatesPage';
 import { SafeCreateProposalTemplatePage } from './pages/dao/proposal-templates/new/SafeCreateProposalTemplatePage';
-import { SafeProposalsPage } from './pages/dao/proposals/SafeProposalsPage';
 import { SafeProposalDetailsPage } from './pages/dao/proposals/[proposalId]';
 import { SafeProposalWithActionsCreatePage } from './pages/dao/proposals/actions/new/SafeProposalWithActionsCreatePage';
 import { SafeProposalCreatePage } from './pages/dao/proposals/new/SafeProposalCreatePage';
@@ -145,7 +144,12 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
               children: [
                 {
                   index: true,
-                  element: <SafeProposalsPage />,
+                  loader: () =>
+                    redirect(
+                      daoAddress
+                        ? DAO_ROUTES.dao.relative(addressPrefix, daoAddress)
+                        : BASE_ROUTES.landing,
+                    ),
                 },
                 {
                   path: ':proposalId',
