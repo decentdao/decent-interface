@@ -125,7 +125,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
                       placeholder
                       <ExternalLink
                         isTextLink
-                        styleVariant="black"
+                        styleVariant="lilac"
                         href={URL_DOCS_GOV_TYPES}
                       >
                         link
@@ -148,7 +148,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
                       placeholder
                       <ExternalLink
                         isTextLink
-                        styleVariant="black"
+                        styleVariant="lilac"
                         href={URL_DOCS_GOV_TYPES}
                       >
                         link
@@ -171,7 +171,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
                       placeholder
                       <ExternalLink
                         isTextLink
-                        styleVariant="black"
+                        styleVariant="lilac"
                         href={URL_DOCS_GOV_TYPES}
                       >
                         link
