@@ -51,6 +51,7 @@ function LabelWrapper({
           textStyle="helper-text-base"
           color="neutral-7"
           mt="2"
+          h="0.5rem"
         >
           {errorMessage && (
             <Flex gap="0.25rem">

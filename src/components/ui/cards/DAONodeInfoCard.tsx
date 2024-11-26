@@ -1,6 +1,7 @@
 import { Center, Flex, FlexProps, Link, Text, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
+import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
@@ -33,6 +34,7 @@ export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
   // for non Fractal Safes
   const displayedAddress = node?.safe?.address;
   const { displayName } = useGetAccountName(displayedAddress);
+  const { toggleFavorite, isFavorite } = useAccountFavorites();
 
   // node hasn't loaded yet
   if (!node || !displayedAddress) {
@@ -50,6 +52,7 @@ export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
   }
 
   const isCurrentDAO = displayedAddress === currentSafe?.address;
+  const daoName = node.daoName || displayName;
 
   return (
     <Link
@@ -91,11 +94,12 @@ export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
           >
             {/* DAO NAME */}
 
-            <Text textStyle="display-xl">{node.daoName || displayName}</Text>
+            <Text textStyle="display-xl">{daoName}</Text>
 
             {/* FAVORITE ICON */}
             <FavoriteIcon
-              safeAddress={displayedAddress}
+              isFavorite={isFavorite(displayedAddress)}
+              toggleFavoriteCallback={() => toggleFavorite(displayedAddress, daoName)}
               data-testid="DAOInfo-favorite"
             />
 

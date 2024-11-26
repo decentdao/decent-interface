@@ -1,5 +1,6 @@
 import { Box, Input, RadioGroup } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import debounce from 'lodash.debounce';
+import { useEffect, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
@@ -57,6 +58,20 @@ export function EstablishEssentials(props: ICreationStepProps) {
 
   const { createOptions } = useNetworkConfig();
 
+  const [snapshotENSInput, setSnapshotENSInput] = useState('');
+
+  const debounceENSInput = useMemo(
+    () =>
+      debounce((input: string) => {
+        setFieldValue('essentials.snapshotENS', input, true);
+      }, 500),
+    [setFieldValue],
+  );
+
+  useEffect(() => {
+    debounceENSInput(snapshotENSInput);
+  }, [debounceENSInput, snapshotENSInput]);
+
   return (
     <>
       <StepWrapper
@@ -96,23 +111,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
               value={values.essentials.governance}
               onChange={handleGovernanceChange}
             >
-              {createOptions.includes(GovernanceType.MULTISIG) && (
-                <RadioWithText
-                  label={t('labelMultisigGov')}
-                  description={t('descMultisigGov')}
-                  testId="choose-multisig"
-                  value={GovernanceType.MULTISIG}
-                  tooltip={
-                    <Trans
-                      i18nKey="tooltipMultisig"
-                      ns="daoCreate"
-                    >
-                      placeholder
-                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
-                    </Trans>
-                  }
-                />
-              )}
               {createOptions.includes(GovernanceType.AZORIUS_ERC20) && (
                 <RadioWithText
                   label={t('labelAzoriusErc20Gov')}
@@ -125,7 +123,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
                       ns="daoCreate"
                     >
                       placeholder
-                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                      <ExternalLink
+                        isTextLink
+                        styleVariant="black"
+                        href={URL_DOCS_GOV_TYPES}
+                      >
+                        link
+                      </ExternalLink>
                     </Trans>
                   }
                 />
@@ -142,7 +146,36 @@ export function EstablishEssentials(props: ICreationStepProps) {
                       ns="daoCreate"
                     >
                       placeholder
-                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                      <ExternalLink
+                        isTextLink
+                        styleVariant="black"
+                        href={URL_DOCS_GOV_TYPES}
+                      >
+                        link
+                      </ExternalLink>
+                    </Trans>
+                  }
+                />
+              )}
+              {createOptions.includes(GovernanceType.MULTISIG) && (
+                <RadioWithText
+                  label={t('labelMultisigGov')}
+                  description={t('descMultisigGov')}
+                  testId="choose-multisig"
+                  value={GovernanceType.MULTISIG}
+                  tooltip={
+                    <Trans
+                      i18nKey="tooltipMultisig"
+                      ns="daoCreate"
+                    >
+                      placeholder
+                      <ExternalLink
+                        isTextLink
+                        styleVariant="black"
+                        href={URL_DOCS_GOV_TYPES}
+                      >
+                        link
+                      </ExternalLink>
                     </Trans>
                   }
                 />
@@ -157,10 +190,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
         >
           <LabelWrapper errorMessage={errors?.essentials?.snapshotENS}>
             <Input
-              value={values.essentials.snapshotENS}
-              onChange={cEvent =>
-                setFieldValue('essentials.snapshotENS', cEvent.target.value.toLowerCase(), true)
-              }
+              value={snapshotENSInput}
+              onChange={cEvent => setSnapshotENSInput(cEvent.target.value.toLowerCase())}
               isDisabled={snapshotENSDisabled}
               data-testid="essentials-snapshotENS"
               placeholder="example.eth"
