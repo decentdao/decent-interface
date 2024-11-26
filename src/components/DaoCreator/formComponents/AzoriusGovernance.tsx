@@ -65,10 +65,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
   const [votingPeriodDays, setVotingPeriodDays] = useState(7);
 
   useEffect(() => {
-    console.log(values.azorius.votingPeriod);
-  }, [values.azorius.votingPeriod]);
-
-  useEffect(() => {
     // convert days to minutes
     const minutes = votingPeriodDays * 24 * 60;
 
@@ -166,8 +162,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
                 w="100%"
                 gap="0.5rem"
               >
-                <Text color="white-0">Days</Text>
-
+                <Text color="white-0">{t('days', { ns: 'common' })}</Text>
                 <MemoizedNumberStepperInput
                   value={votingPeriodDays}
                   onChange={val => setVotingPeriodDays(Number(val))}
