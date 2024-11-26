@@ -124,6 +124,50 @@ export enum FractalProposalState {
   CLOSED = 'stateClosed',
 }
 
+export type NullUnionUndefined = null | undefined;
+
+export type GnosisSafe = {
+  // replaces SafeInfoResponseWithGuard and SafeWithNextNonce
+  address: Address | NullUnionUndefined;
+  owners: Address[];
+  nonce: number;
+  nextNonce: number;
+  threshold: number;
+  modules: Address[];
+  guard: Address | NullUnionUndefined;
+};
+
+export interface DAOSubgraph {
+  // replaces Part of DaoInfo
+  daoName: string | NullUnionUndefined;
+  parentAddress: Address | NullUnionUndefined;
+  childNodes: Address[];
+  daoSnapshotENS: string | NullUnionUndefined;
+  proposalTemplatesHash: string | NullUnionUndefined;
+}
+
+// @todo should we add other Decent Module types here?
+export enum DecentModuleType {
+  // replaces FractalModuleType
+  AZORIUS, // Token Module
+  FRACTAL, // CHILD GOVERNANCE MODULE
+  UNKNOWN, // NON-DECENT MODULE
+}
+
+export interface DecentModule {
+  // replaces FractalModuleData
+  address: Address;
+  type: FractalModuleType;
+}
+
+// @todo better typing here, SUBGRAPH has DAO type name,
+export interface IDAO {
+  // replaces DaoInfo
+  safe: GnosisSafe | null;
+  subgraphInfo: DAOSubgraph | null;
+  daoModules: DecentModule[] | null;
+}
+
 export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
   proposalId: string;
@@ -184,7 +228,7 @@ export interface FractalGovernanceContracts {
   isLoaded: boolean;
 }
 
-export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address; nextNonce: number };
+export type SafeWithNextNonce = SafeInfoResponseWithGuard & { nextNonce: number };
 
 // @dev Information retreived from subgraph
 interface SubgraphDAOInfo {
@@ -224,6 +268,7 @@ export enum FractalModuleType {
   FRACTAL,
   UNKNOWN,
 }
+
 export interface FractalGuardContracts {
   freezeGuardContractAddress?: Address;
   freezeVotingContractAddress?: Address;
