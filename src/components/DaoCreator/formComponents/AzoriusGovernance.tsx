@@ -13,7 +13,6 @@ import {
   NumberInputField,
   Switch,
   Text,
-  VStack,
 } from '@chakra-ui/react';
 import { Minus, Plus, WarningCircle } from '@phosphor-icons/react';
 import { useCallback, useEffect, useMemo, useState, memo } from 'react';
@@ -63,7 +62,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
   useStepRedirect({ values });
 
   // days, hours, minutes, seconds
-  const [votingPeriodDays, setVotingPeriodDays] = useState(0);
+  const [votingPeriodDays, setVotingPeriodDays] = useState(7);
 
   useEffect(() => {
     console.log(values.azorius.votingPeriod);
@@ -73,7 +72,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
     // convert days to minutes
     const minutes = votingPeriodDays * 24 * 60;
 
-    setFieldValue('azorius.votingPeriod', { bigintValue: minutes });
+    setFieldValue('azorius.votingPeriod', { bigintValue: minutes, value: minutes.toString() });
   }, [setFieldValue, votingPeriodDays]);
 
   const MemoizedNumberStepperInput = memo(
