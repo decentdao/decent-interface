@@ -10,21 +10,21 @@ import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
+import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   FractalModuleType,
-  DaoInfo,
   ProposalExecuteData,
   SubDAO,
   VotingStrategyType,
-  WithError,
 } from '../../types';
 import { useAddressContractType } from '../utils/useAddressContractType';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
-import { useLoadDAONode } from './loaders/useLoadDAONode';
+import { FractalModuleData } from './../../types/fractal';
+import { useDecentModules } from './loaders/useDecentModules';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 const useDeployAzorius = () => {
@@ -60,7 +60,24 @@ const useDeployAzorius = () => {
   const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const publicClient = usePublicClient();
-  const { loadDao } = useLoadDAONode();
+  const safeApi = useSafeAPI();
+  const lookupModules = useDecentModules();
+
+  const getParentDAOModules = useCallback(
+    async (address: Address) => {
+      try {
+        if (!safeApi) {
+          throw new Error('Safe API not ready');
+        }
+        const safeInfo = await safeApi.getSafeData(address);
+        const modules = await lookupModules(safeInfo.modules);
+        return modules;
+      } catch {
+        return;
+      }
+    },
+    [lookupModules, safeApi],
+  );
   const safeAddress = safe?.address;
 
   const deployAzorius = useCallback(
@@ -81,17 +98,16 @@ const useDeployAzorius = () => {
       let parentStrategyAddress: Address | undefined;
       let parentStrategyType: VotingStrategyType | undefined;
       let attachFractalModule = false;
-      let parentNode: DaoInfo | undefined;
+      let parentModules: FractalModuleData[];
 
       if (subgraphInfo?.parentAddress) {
-        const loadedParentNode = await loadDao(subgraphInfo.parentAddress);
-        const loadingParentNodeError = (loadedParentNode as WithError).error;
-        if (loadingParentNodeError) {
-          toast.error(t(loadingParentNodeError));
+        const loadedParentModule = await getParentDAOModules(subgraphInfo.parentAddress);
+        if (!loadedParentModule) {
+          toast.error(t('errorLoadingParentNode'));
           return;
         } else {
-          parentNode = loadedParentNode as DaoInfo;
-          const parentAzoriusModule = parentNode.fractalModules.find(
+          parentModules = loadedParentModule;
+          const parentAzoriusModule = parentModules.find(
             fractalModule => fractalModule.moduleType === FractalModuleType.AZORIUS,
           );
           if (parentAzoriusModule) {
@@ -119,7 +135,7 @@ const useDeployAzorius = () => {
             }
           }
 
-          const parentFractalModule = parentNode.fractalModules.find(
+          const parentFractalModule = parentModules.find(
             fractalModule => fractalModule.moduleType === FractalModuleType.FRACTAL,
           );
           if (!parentFractalModule) {
@@ -234,7 +250,7 @@ const useDeployAzorius = () => {
       moduleAzoriusMasterCopy,
       submitProposal,
       t,
-      loadDao,
+      getParentDAOModules,
       getAddressContractType,
       navigate,
       addressPrefix,

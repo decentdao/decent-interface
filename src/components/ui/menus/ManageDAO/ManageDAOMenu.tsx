@@ -36,7 +36,10 @@ export function ManageDAOMenu() {
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress ?? null, null, false);
   const { handleClawBack } = useClawBack({
     parentAddress: dao.subgraphInfo?.parentAddress,
-    childSafeInfo: dao,
+    childSafeInfo: {
+      daoAddress: dao.safe?.address,
+      daoModules: dao.daoModules,
+    },
   });
 
   const { addressPrefix } = useNetworkConfig();
@@ -163,7 +166,7 @@ export function ManageDAOMenu() {
       guard.isFrozen &&
       guard.userHasVotes
     ) {
-      const fractalModule = node.fractalModules.find(
+      const fractalModule = (dao.daoModules ?? []).find(
         module => module.moduleType === FractalModuleType.FRACTAL,
       );
       if (fractalModule) {
@@ -183,18 +186,22 @@ export function ManageDAOMenu() {
       return optionsArr;
     }
   }, [
-    guard,
-    currentTime,
-    navigate,
-    safeAddress,
-    type,
     handleClawBack,
-    canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
+    guard.freezeProposalCreatedTime,
+    guard.freezeProposalPeriod,
+    guard.freezePeriod,
+    guard.userHasVotes,
+    guard.isFrozen,
+    currentTime,
+    safeAddress,
+    navigate,
     addressPrefix,
+    type,
     freezeOption,
-    node.fractalModules,
+    dao.daoModules,
+    canUserCreateProposal,
   ]);
 
   return (

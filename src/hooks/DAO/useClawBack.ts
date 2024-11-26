@@ -13,13 +13,16 @@ import {
 import { logError } from '../../helpers/errorLogging';
 import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { FractalModuleType, DaoInfo } from '../../types';
+import { FractalModuleType, FractalModuleData } from '../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../utils/address';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
-  childSafeInfo: DaoInfo;
+  childSafeInfo: {
+    daoAddress?: Address;
+    daoModules: FractalModuleData[] | null;
+  };
   parentAddress: Address | null | undefined;
 }
 
@@ -31,9 +34,9 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { getTokenBalances } = useBalancesAPI();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo.safe?.address && parentAddress && safeAPI) {
+    if (childSafeInfo.daoAddress && parentAddress && safeAPI) {
       try {
-        const childSafeTokenBalance = await getTokenBalances(childSafeInfo.safe.address);
+        const childSafeTokenBalance = await getTokenBalances(childSafeInfo.daoAddress);
 
         if (childSafeTokenBalance.error || !childSafeTokenBalance.data) {
           toast.error(t('clawBackBalancesError', { duration: Infinity }));
@@ -48,8 +51,8 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         const parentSafeInfo = await safeAPI.getSafeData(parentAddress);
         const canUserCreateProposal = await getCanUserCreateProposal(parentAddress);
 
-        if (canUserCreateProposal && parentAddress && parentSafeInfo) {
-          const fractalModule = childSafeInfo.fractalModules!.find(
+        if (canUserCreateProposal && parentAddress && parentSafeInfo && childSafeInfo.daoModules) {
+          const fractalModule = childSafeInfo.daoModules!.find(
             module => module.moduleType === FractalModuleType.FRACTAL,
           );
 

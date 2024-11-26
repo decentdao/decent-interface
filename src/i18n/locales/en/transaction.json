@@ -19,5 +19,6 @@
   "failedTokenClaim": "Failed to claim {{ symbol }}",
   "successTokenClaim": "You have successfully claimed {{ amount }} {{ symbol }}",
   "snapshotRecastVoteHelper": "You can still change your vote until the voting period ends.",
-  "modifyGovernanceSetAzoriusProposalPendingMessage": "Submitting proposal to modify governance..."
+  "modifyGovernanceSetAzoriusProposalPendingMessage": "Submitting proposal to modify governance...",
+  "errorLoadingParentNode": "Error loading parent"
 }

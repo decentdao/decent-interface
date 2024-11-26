@@ -3,13 +3,14 @@ import { useLocation } from 'react-router-dom';
 import { Address } from 'viem';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { useDecentModules } from '../DAO/loaders/useDecentModules';
 
 export const useUpdateSafeData = (safeAddress?: Address) => {
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
-
-  const { setSafeInfo } = useDaoInfoStore();
+  const lookupModules = useDecentModules();
+  const { setSafeInfo, setDecentModules } = useDaoInfoStore();
 
   useEffect(() => {
     if (!safeAPI || !safeAddress) {
@@ -23,8 +24,9 @@ export const useUpdateSafeData = (safeAddress?: Address) => {
         const safeInfo = await safeAPI.getSafeData(safeAddress);
 
         setSafeInfo(safeInfo);
+        setDecentModules(await lookupModules(safeInfo.modules));
       })();
       prevPathname.current = location.pathname;
     }
-  }, [safeAddress, safeAPI, location, setSafeInfo]);
+  }, [safeAddress, safeAPI, location, setSafeInfo, setDecentModules, lookupModules]);
 };

@@ -26,7 +26,7 @@ import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalMetadata, MetaTransaction, ProposalExecuteData } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useVotingStrategiesAddresses from '../../utils/useVotingStrategiesAddresses';
-import { useFractalModules } from '../loaders/useFractalModules';
+import { useDecentModules } from '../loaders/useDecentModules';
 import { useLoadDAOProposals } from '../loaders/useLoadDAOProposals';
 
 export type SubmitProposalFunction = ({
@@ -49,7 +49,7 @@ interface ISubmitProposal {
   /**
    * @param safeAddress - provided address of DAO to which proposal will be submitted
    */
-  safeAddress?: Address;
+  safeAddress?: Address | null;
 }
 
 interface ISubmitAzoriusProposal extends ISubmitProposal {
@@ -77,12 +77,15 @@ export default function useSubmitProposal() {
     },
     action,
   } = useFractal();
-  const { safe, fractalModules } = useDaoInfoStore();
+  const { safe, daoModules } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
 
   const globalAzoriusContract = useMemo(() => {
-    const azoriusModule = getAzoriusModuleFromModules(fractalModules);
-    if (!azoriusModule || !walletClient) {
+    if (!daoModules || !walletClient) {
+      return;
+    }
+    const azoriusModule = getAzoriusModuleFromModules(daoModules);
+    if (!azoriusModule) {
       return;
     }
 
@@ -91,9 +94,9 @@ export default function useSubmitProposal() {
       address: azoriusModule.moduleAddress,
       client: walletClient,
     });
-  }, [fractalModules, walletClient]);
+  }, [daoModules, walletClient]);
 
-  const lookupModules = useFractalModules();
+  const lookupModules = useDecentModules();
   const {
     chain,
     safeBaseURL,

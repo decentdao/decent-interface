@@ -25,12 +25,12 @@ import { DAOCreateMode } from './EstablishEssentials';
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
 
-  const { safe, subgraphInfo, fractalModules } = useDaoInfoStore();
+  const { safe, subgraphInfo, daoModules } = useDaoInfoStore();
 
-  const fractalModule = useMemo(
-    () => fractalModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL),
-    [fractalModules],
-  );
+  const fractalModule = useMemo(() => {
+    if (!daoModules) return null;
+    return daoModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL);
+  }, [daoModules]);
 
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const { t } = useTranslation(['daoCreate', 'common']);
