@@ -26,9 +26,7 @@ export function SafeController() {
   useTemporaryProposals();
   useAutomaticSwitchChain({ addressPrefix });
 
-  const {
-    nodeHierarchy: { parentAddress },
-  } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
 
   const { errorLoading } = useFractalNode({
     addressPrefix,
@@ -37,7 +35,8 @@ export function SafeController() {
 
   useGovernanceContracts();
   useFractalGuardContracts({});
-  useFractalFreeze({ parentSafeAddress: parentAddress });
+  // @todo - Maybe update typing to be parentSafeAddress: Address | null | undefined
+  useFractalFreeze({ parentSafeAddress: subgraphInfo?.parentAddress ?? null });
   useFractalGovernance();
   useDecentTreasury();
   useERC20Claim();
