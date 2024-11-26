@@ -27,50 +27,13 @@ import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
 import { DAOCreateMode } from './EstablishEssentials';
 
-export function AzoriusGovernance(props: ICreationStepProps) {
-  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
-
-  const {
-    safe,
-    nodeHierarchy: { parentAddress },
-    fractalModules,
-  } = useDaoInfoStore();
-
-  const fractalModule = useMemo(
-    () => fractalModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL),
-    [fractalModules],
-  );
-
-  const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
-  const { t } = useTranslation(['daoCreate', 'common']);
-  const minutesHint = t('minutes', { ns: 'common' });
-
-  const handleNonceChange = useCallback(
-    (nonce?: string) => {
-      setFieldValue('multisig.customNonce', Number(nonce));
-    },
-    [setFieldValue],
-  );
-
-  useEffect(() => {
-    if (showCustomNonce === undefined && safe && mode === DAOCreateMode.EDIT) {
-      setFieldValue('multisig.customNonce', safe.nextNonce);
-      setShowCustomNonce(true);
-    }
-  }, [setFieldValue, safe, showCustomNonce, mode]);
-
-  useStepRedirect({ values });
-
-  // days, hours, minutes, seconds
-  const [votingPeriodDays, setVotingPeriodDays] = useState(7);
-
-  useEffect(() => {
-    // convert days to minutes
-    const minutes = votingPeriodDays * 24 * 60;
-
-    setFieldValue('azorius.votingPeriod', { bigintValue: minutes, value: minutes.toString() });
-  }, [setFieldValue, votingPeriodDays]);
-
+function DayStepperInput({
+  inputValue,
+  onInputChange,
+}: {
+  inputValue: number;
+  onInputChange: (val: number) => void;
+}) {
   const MemoizedNumberStepperInput = memo(
     ({ value, onChange }: { value?: string | number; onChange: (val: string) => void }) => {
       const stepperButton = (direction: 'inc' | 'dec') => (
@@ -102,6 +65,79 @@ export function AzoriusGovernance(props: ICreationStepProps) {
     },
   );
   MemoizedNumberStepperInput.displayName = 'MemoizedNumberInput';
+
+  const { t } = useTranslation('common');
+
+  return (
+    <InputGroup>
+      <Flex
+        flexDirection="column"
+        w="100%"
+        gap="0.5rem"
+      >
+        <Text color="neutral-7">{t('days', { ns: 'common' })}</Text>
+        <MemoizedNumberStepperInput
+          value={inputValue}
+          onChange={val => onInputChange(Number(val))}
+        />
+      </Flex>
+    </InputGroup>
+  );
+}
+
+export function AzoriusGovernance(props: ICreationStepProps) {
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
+
+  const {
+    safe,
+    nodeHierarchy: { parentAddress },
+    fractalModules,
+  } = useDaoInfoStore();
+
+  const fractalModule = useMemo(
+    () => fractalModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL),
+    [fractalModules],
+  );
+
+  const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
+  const { t } = useTranslation(['daoCreate', 'common']);
+
+  const handleNonceChange = useCallback(
+    (nonce?: string) => {
+      setFieldValue('multisig.customNonce', Number(nonce));
+    },
+    [setFieldValue],
+  );
+
+  useEffect(() => {
+    if (showCustomNonce === undefined && safe && mode === DAOCreateMode.EDIT) {
+      setFieldValue('multisig.customNonce', safe.nextNonce);
+      setShowCustomNonce(true);
+    }
+  }, [setFieldValue, safe, showCustomNonce, mode]);
+
+  useStepRedirect({ values });
+
+  const [votingPeriodDays, setVotingPeriodDays] = useState(7);
+  const [timelockPeriodDays, setTimelockPeriodDays] = useState(1);
+  const [executionPeriodDays, setExecutionPeriodDays] = useState(2);
+
+  useEffect(() => {
+    // convert days to minutes
+    const minutes = votingPeriodDays * 24 * 60;
+    setFieldValue('azorius.votingPeriod', { bigintValue: minutes, value: minutes.toString() });
+  }, [setFieldValue, votingPeriodDays]);
+
+  // same for timelock and execution period
+  useEffect(() => {
+    const minutes = timelockPeriodDays * 24 * 60;
+    setFieldValue('azorius.timelock', { bigintValue: minutes, value: minutes.toString() });
+  }, [setFieldValue, timelockPeriodDays]);
+
+  useEffect(() => {
+    const minutes = executionPeriodDays * 24 * 60;
+    setFieldValue('azorius.executionPeriod', { bigintValue: minutes, value: minutes.toString() });
+  }, [setFieldValue, executionPeriodDays]);
 
   return (
     <>
@@ -155,20 +191,10 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             helper={t('helperVotingPeriod')}
             isRequired
           >
-            <InputGroup>
-              {/* DAYS */}
-              <Flex
-                flexDirection="column"
-                w="100%"
-                gap="0.5rem"
-              >
-                <Text color="white-0">{t('days', { ns: 'common' })}</Text>
-                <MemoizedNumberStepperInput
-                  value={votingPeriodDays}
-                  onChange={val => setVotingPeriodDays(Number(val))}
-                />
-              </Flex>
-            </InputGroup>
+            <DayStepperInput
+              inputValue={votingPeriodDays}
+              onInputChange={setVotingPeriodDays}
+            />
           </LabelComponent>
 
           {/* TIMELOCK PERIOD */}
@@ -177,15 +203,10 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             helper={t('helperTimelockPeriod')}
             isRequired
           >
-            <InputGroup>
-              <BigIntInput
-                value={values.azorius.timelock.bigintValue}
-                onChange={valuePair => setFieldValue('azorius.timelock', valuePair)}
-                decimalPlaces={0}
-                data-testid="govConfig-timelock"
-              />
-              <InputRightElement mr="4">{minutesHint}</InputRightElement>
-            </InputGroup>
+            <DayStepperInput
+              inputValue={timelockPeriodDays}
+              onInputChange={setTimelockPeriodDays}
+            />
           </LabelComponent>
 
           {/* EXECUTION PERIOD */}
@@ -194,16 +215,10 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             helper={t('helperExecutionPeriod')}
             isRequired
           >
-            <InputGroup>
-              <BigIntInput
-                value={values.azorius.executionPeriod.bigintValue}
-                onChange={valuePair => setFieldValue('azorius.executionPeriod', valuePair)}
-                decimalPlaces={0}
-                min="1"
-                data-testid="govModule-executionDetails"
-              />
-              <InputRightElement mr="4">{minutesHint}</InputRightElement>
-            </InputGroup>
+            <DayStepperInput
+              inputValue={executionPeriodDays}
+              onInputChange={setExecutionPeriodDays}
+            />
           </LabelComponent>
 
           <Alert
