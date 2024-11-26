@@ -1,14 +1,5 @@
 import { Box, Flex, Hide } from '@chakra-ui/react';
-import {
-  BookOpen,
-  Coins,
-  GitFork,
-  House,
-  Question,
-  Scroll,
-  SquaresFour,
-  UsersThree,
-} from '@phosphor-icons/react';
+import { BookOpen, Coins, GitFork, House, Question, UsersThree } from '@phosphor-icons/react';
 import { WarpcastIcon } from '../../../../assets/theme/custom/icons/WarpcastIcon';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_CHAT, URL_DOCS, URL_FAQ } from '../../../../constants/url';
@@ -106,22 +97,6 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.hierarchy.relative(addressPrefix, safeAddress)}
-          labelKey="nodes"
-          testId="navigation-hierarchyLink"
-          NavigationIcon={GitFork}
-          scope="internal"
-          closeDrawer={closeDrawer}
-        />
-        <NavigationLink
-          href={DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)}
-          labelKey="proposals"
-          testId="navigation-proposalsLink"
-          NavigationIcon={Scroll}
-          scope="internal"
-          closeDrawer={closeDrawer}
-        />
-        <NavigationLink
           href={DAO_ROUTES.treasury.relative(addressPrefix, safeAddress)}
           labelKey="treasury"
           testId="navigation-treasuryLink"
@@ -130,10 +105,10 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress)}
-          labelKey="proposalTemplates"
-          testId="navigation-proposalTemplatesLink"
-          NavigationIcon={SquaresFour}
+          href={DAO_ROUTES.hierarchy.relative(addressPrefix, safeAddress)}
+          labelKey="nodes"
+          testId="navigation-hierarchyLink"
+          NavigationIcon={GitFork}
           scope="internal"
           closeDrawer={closeDrawer}
         />
