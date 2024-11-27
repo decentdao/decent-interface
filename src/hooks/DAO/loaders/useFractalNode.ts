@@ -3,8 +3,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Address, getAddress, isAddress } from 'viem';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
+import { useDecentModules } from './useDecentModules';
 
 export const useFractalNode = ({
   addressPrefix,
@@ -13,6 +15,8 @@ export const useFractalNode = ({
   addressPrefix?: string;
   safeAddress?: Address;
 }) => {
+  const safeApi = useSafeAPI();
+  const lookupModules = useDecentModules();
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
@@ -27,7 +31,7 @@ export const useFractalNode = ({
 
   const { action } = useFractal();
 
-  const { setDaoInfo } = useDaoInfoStore();
+  const { setDaoInfo, setSafeInfo, setDecentModules } = useDaoInfoStore();
 
   const reset = useCallback(
     ({ error }: { error: boolean }) => {
@@ -44,11 +48,15 @@ export const useFractalNode = ({
       setErrorLoading(false);
 
       try {
+        const safeInfo = await safeApi.getSafeData(safeAddress);
+        setSafeInfo(safeInfo);
+        const modules = await lookupModules(safeInfo.modules);
         const graphRawNodeData = await getDAOInfo({ variables: { safeAddress } });
         const graphDAOData = graphRawNodeData.data?.daos[0];
         if (!graphRawNodeData || !graphDAOData) {
           throw new Error('No data found');
         }
+        setDecentModules(modules);
 
         setDaoInfo({
           parentAddress: isAddress(graphDAOData.parentAddress)
@@ -64,7 +72,17 @@ export const useFractalNode = ({
         return;
       }
     }
-  }, [addressPrefix, safeAddress, getDAOInfo, setDaoInfo, reset]);
+  }, [
+    addressPrefix,
+    safeAddress,
+    safeApi,
+    setSafeInfo,
+    lookupModules,
+    getDAOInfo,
+    setDecentModules,
+    setDaoInfo,
+    reset,
+  ]);
 
   useEffect(() => {
     if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current) {
