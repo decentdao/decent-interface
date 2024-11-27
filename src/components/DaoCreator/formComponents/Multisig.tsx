@@ -111,6 +111,17 @@ export function Multisig(props: ICreationStepProps) {
                                 (_, index) => index !== i,
                               ),
                             });
+
+                            // If this removal causes the threshold to be higher than the number of signers, adjust the threshold
+                            if (
+                              values.multisig.signatureThreshold! >
+                              values.multisig.numOfSigners! - 1
+                            ) {
+                              setFieldValue(
+                                'multisig.signatureThreshold',
+                                values.multisig.numOfSigners! - 1,
+                              );
+                            }
                           }}
                           data-testid={'multisig.numOfSigners-' + i}
                         />
