@@ -143,6 +143,15 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
               path: DAO_ROUTES.proposals.path,
               children: [
                 {
+                  index: true,
+                  loader: () =>
+                    redirect(
+                      daoAddress
+                        ? DAO_ROUTES.dao.relative(addressPrefix, daoAddress)
+                        : BASE_ROUTES.landing,
+                    ),
+                },
+                {
                   path: ':proposalId',
                   element: <SafeProposalDetailsPage />,
                 },
