@@ -241,15 +241,13 @@ export interface DaoInfo extends SubgraphDAOInfo {
 }
 
 export interface DaoHierarchyInfo {
-  daoName: string | null;
-  nodeHierarchy: {
-    parentAddress: Address | null;
-    childNodes: {
-      safeAddress: Address;
-    }[];
-  };
   safeAddress: Address;
+  daoName?: string;
   daoSnapshotENS?: string;
+  parentAddress: Address | null;
+  childAddresses: Address[];
+  proposalTemplatesHash?: string;
+  modules: FractalModuleData[];
 }
 
 export interface FractalModuleData {
