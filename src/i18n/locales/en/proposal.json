@@ -22,7 +22,7 @@
   "stateRejectedTip": "The proposal failed due to another proposal being executed with the same nonce.",
   "stateExecutable": "Executable",
   "stateExecutableTip": "The proposal is now able to be executed on chain.",
-  "stateExecuted": "Executed",
+  "stateExecuted": "Passed",
   "stateExecutedTip": "The proposal has been executed.",
   "stateFailed": "Failed",
   "stateFailedTip": "The proposal failed to achieve quorum or did not get enough votes to pass.",
