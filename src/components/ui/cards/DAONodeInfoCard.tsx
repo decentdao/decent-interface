@@ -1,4 +1,4 @@
-import { Flex, Text, VStack } from '@chakra-ui/react';
+import { Flex, Box, Text, VStack } from '@chakra-ui/react';
 import { Address } from 'viem';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import { SnapshotButton } from '../badges/Snapshot';
@@ -31,7 +31,7 @@ export function DAONodeInfoCard(props: DAONodeInfoCardProps) {
   const { toggleFavorite, isFavorite } = useAccountFavorites();
 
   return (
-    <Flex
+    <Box
       minH={`${NODE_HEIGHT_REM}rem`}
       bg="neutral-2"
       _hover={
@@ -49,33 +49,53 @@ export function DAONodeInfoCard(props: DAONodeInfoCardProps) {
       border={isCurrentViewingDAO ? '4px solid' : '1px'}
       borderColor={isCurrentViewingDAO ? 'neutral-4' : 'transparent'}
     >
-      <VStack
-        gap="0.5rem"
-        alignItems="left"
-      >
-        {/* DAO NAME */}
-        <Flex
-          gap="0.5rem"
-          alignItems="center"
-        >
-          {/* DAO NAME */}
+      <Flex justifyItems="space-between">
+        <Flex w="full">
+          <VStack
+            gap="0.5rem"
+            alignItems="left"
+          >
+            {/* DAO NAME */}
+            <Flex
+              gap="0.5rem"
+              alignItems="center"
+            >
+              {/* DAO NAME */}
 
-          <Text textStyle="display-xl">{daoName}</Text>
+              <Text textStyle="display-xl">{daoName}</Text>
 
-          {/* FAVORITE ICON */}
-          <FavoriteIcon
-            isFavorite={isFavorite(daoAddress)}
-            toggleFavoriteCallback={() => toggleFavorite(daoAddress, daoName)}
-            data-testid="DAOInfo-favorite"
-          />
+              {/* FAVORITE ICON */}
+              <FavoriteIcon
+                isFavorite={isFavorite(daoAddress)}
+                toggleFavoriteCallback={() => toggleFavorite(daoAddress, daoName)}
+                data-testid="DAOInfo-favorite"
+              />
 
-          {/* SNAPSHOT ICON LINK */}
-          {daoSnapshotENS && <SnapshotButton snapshotENS={daoSnapshotENS} />}
+              {/* SNAPSHOT ICON LINK */}
+              {daoSnapshotENS && <SnapshotButton snapshotENS={daoSnapshotENS} />}
+            </Flex>
+
+            {/* DAO ADDRESS */}
+            <AddressCopier address={daoAddress} />
+          </VStack>
         </Flex>
-
-        {/* DAO ADDRESS */}
-        <AddressCopier address={daoAddress} />
-      </VStack>
-    </Flex>
+        <Flex
+          alignItems="center"
+          borderRadius="9999px"
+          bg="neutral-3"
+          px="0.75rem"
+          py="0.25rem"
+          h="fit-content"
+        >
+          <Text
+            textStyle="label-large"
+            color="lilac-0"
+            whiteSpace="nowrap"
+          >
+            ERC-20
+          </Text>
+        </Flex>
+      </Flex>
+    </Box>
   );
 }
