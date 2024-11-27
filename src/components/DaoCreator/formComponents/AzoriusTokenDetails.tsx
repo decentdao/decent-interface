@@ -1,10 +1,11 @@
 import { Box, Flex, Input, RadioGroup } from '@chakra-ui/react';
+import { useFormikContext } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
-import { ICreationStepProps, TokenCreationType } from '../../../types';
+import { CreatorFormState, ICreationStepProps, TokenCreationType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -28,23 +29,17 @@ function TokenConfigDisplay(props: ICreationStepProps) {
 }
 
 export function AzoriusTokenDetails(props: ICreationStepProps) {
-  const {
-    transactionPending,
-    isSubDAO,
-    setFieldValue,
-    values,
-    errors,
-    handleChange,
-    isSubmitting,
-    mode,
-  } = props;
+  const { transactionPending, isSubDAO, setFieldValue, errors, handleChange, isSubmitting, mode } =
+    props;
 
   const { t } = useTranslation('daoCreate');
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
 
+  const { values, touched, setTouched } = useFormikContext<CreatorFormState>();
+
   const { checkVotesToken } = usePrepareFormData();
-  const [isImportedVotesToken, setIsImportedVotesToken] = useState<boolean>();
+  const [isImportedVotesToken, setIsValidERC20VotesToken] = useState<boolean>();
 
   useStepRedirect({ values });
   const updateImportFields = useCallback(async () => {
@@ -82,14 +77,14 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       if (!isVotesToken) {
         setFieldValue('erc20Token.tokenName', 'Wrapped ' + name, true);
         setFieldValue('erc20Token.tokenSymbol', 'W' + symbol, true);
-        setIsImportedVotesToken(false);
+        setIsValidERC20VotesToken(false);
       } else {
-        setIsImportedVotesToken(true);
+        setIsValidERC20VotesToken(true);
         setFieldValue('erc20Token.tokenName', name, true);
         setFieldValue('erc20Token.tokenSymbol', symbol, true);
       }
     } else {
-      setIsImportedVotesToken(undefined);
+      setIsValidERC20VotesToken(undefined);
     }
   }, [
     checkVotesToken,
@@ -104,11 +99,15 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     updateImportFields();
   }, [updateImportFields]);
 
-  const tokenImportAddressErrorMessage =
-    values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress;
+  let tokenErrorMsg = '';
 
-  const tokenErrorMsg =
-    tokenImportAddressErrorMessage || (!isImportedVotesToken ? t('errorNotVotingToken') : '');
+  if (touched.erc20Token?.tokenImportAddress) {
+    console.log(errors?.erc20Token?.tokenImportAddress);
+
+    tokenErrorMsg =
+      errors?.erc20Token?.tokenImportAddress ||
+      (!isImportedVotesToken ? t('errorNotVotingToken') : '');
+  }
 
   return (
     <>
@@ -164,7 +163,16 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
               <LabelWrapper errorMessage={tokenErrorMsg}>
                 <Input
                   name="erc20Token.tokenImportAddress"
-                  onChange={handleChange}
+                  onChange={e => {
+                    setTouched({
+                      erc20Token: {
+                        tokenImportAddress: true,
+                      },
+                      ...touched,
+                    });
+
+                    handleChange(e);
+                  }}
                   value={values.erc20Token.tokenImportAddress}
                   placeholder={createAccountSubstring(zeroAddress)}
                   isInvalid={!!tokenErrorMsg}
