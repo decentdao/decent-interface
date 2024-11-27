@@ -8,7 +8,7 @@ import ProposalCard from './ProposalCard/ProposalCard';
 
 export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
-    governance: { loadingProposals, allProposalsLoaded },
+    governance: { type, loadingProposals, allProposalsLoaded },
   } = useFractal();
 
   return (
@@ -17,7 +17,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
       gap="1rem"
       maxW={CONTENT_MAXW}
     >
-      {proposals === undefined || loadingProposals ? (
+      {!type || loadingProposals ? (
         <Box mt={7}>
           <InfoBoxLoader />
         </Box>

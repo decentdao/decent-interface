@@ -109,15 +109,6 @@ export function ManageDAOMenu() {
   );
 
   const options = useMemo(() => {
-    const createSubDAOOption = {
-      optionKey: 'optionCreateSubDAO',
-
-      onClick: () => {
-        if (safeAddress) {
-          navigate(DAO_ROUTES.newSubDao.relative(addressPrefix, safeAddress));
-        }
-      },
-    };
     const clawBackOption = {
       optionKey: 'optionInitiateClawback',
       onClick: handleClawBack,
@@ -146,9 +137,9 @@ export function ManageDAOMenu() {
       guard.userHasVotes
     ) {
       if (type === GovernanceType.MULTISIG) {
-        return [createSubDAOOption, freezeOption, modifyGovernanceOption, settingsOption];
+        return [freezeOption, modifyGovernanceOption, settingsOption];
       } else {
-        return [createSubDAOOption, freezeOption, settingsOption];
+        return [freezeOption, settingsOption];
       }
     } else if (
       guard.freezeProposalCreatedTime !== null &&
@@ -168,25 +159,22 @@ export function ManageDAOMenu() {
     } else {
       const optionsArr = [];
       if (canUserCreateProposal) {
-        optionsArr.push(createSubDAOOption);
         if (type === GovernanceType.MULTISIG) {
           optionsArr.push(modifyGovernanceOption);
         }
       }
+
       optionsArr.push(settingsOption);
       return optionsArr;
     }
   }, [
     guard,
     currentTime,
-    navigate,
-    safeAddress,
     type,
     handleClawBack,
     canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
-    addressPrefix,
     freezeOption,
     node.fractalModules,
   ]);
