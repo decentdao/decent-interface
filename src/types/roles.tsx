@@ -243,8 +243,11 @@ export interface RolesStoreData {
 export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
   getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
-  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
-  setStreamIdsToHatIds: (streamIdsToHatIds: { hatId: BigInt; streamId: string }[]) => void;
+  setHatKeyValuePairData: (args: {
+    contextChainId: number | null;
+    hatsTreeId?: number | null;
+    streamIdsToHatIds: { hatId: BigInt; streamId: string }[];
+  }) => void;
   setHatsTree: (params: {
     hatsTree: Tree | null | undefined;
     chainId: bigint;

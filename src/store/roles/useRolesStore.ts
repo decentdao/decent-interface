@@ -47,16 +47,21 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
 
     return matches[0];
   },
-  setHatsTreeId: args =>
+  setHatKeyValuePairData: args => {
+    const { hatsTreeId, contextChainId, streamIdsToHatIds } = args;
+    for (const { hatId, streamId } of streamIdsToHatIds) {
+      streamIdToHatIdMap.set(streamId, hatId);
+    }
     set(() => {
-      const { hatsTreeId, contextChainId } = args;
       // if `hatsTreeId` is null or undefined,
       // set `hatsTree` to that same value
       if (typeof hatsTreeId !== 'number') {
         return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false, contextChainId: null };
       }
       return { hatsTreeId, streamsFetched: false, contextChainId };
-    }),
+    });
+  },
+
   setHatsTree: async params => {
     const hatsTree = await sanitize(
       params.hatsTree,
@@ -148,11 +153,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       },
     }));
   },
-  setStreamIdsToHatIds: streamIdsToHatIds => {
-    for (const { hatId, streamId } of streamIdsToHatIds) {
-      streamIdToHatIdMap.set(streamId, hatId);
-    }
-  },
+
   resetHatsStore: () => set(() => initialHatsStore),
 }));
 

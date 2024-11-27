@@ -98,7 +98,7 @@ const useKeyValuePairs = () => {
     chain,
     contracts: { keyValuePairs, sablierV2LockupLinear },
   } = useNetworkConfig();
-  const { setHatsTreeId, setStreamIdsToHatIds } = useRolesStore();
+  const { setHatKeyValuePairData } = useRolesStore();
   const [searchParams] = useSearchParams();
 
   const safeAddress = node.safe?.address;
@@ -118,14 +118,18 @@ const useKeyValuePairs = () => {
     keyValuePairsContract.getEvents
       .ValueUpdated({ theAddress: safeAddress }, { fromBlock: 0n })
       .then(safeEvents => {
-        setHatsTreeId({
+        setHatKeyValuePairData({
           contextChainId: chain.id,
           hatsTreeId: getHatsTreeId(safeEvents, chain.id),
+          streamIdsToHatIds: getHatIdsToStreamIds(safeEvents, sablierV2LockupLinear, chain.id),
         });
-        setStreamIdsToHatIds(getHatIdsToStreamIds(safeEvents, sablierV2LockupLinear, chain.id));
       })
       .catch(error => {
-        setHatsTreeId({ hatsTreeId: null, contextChainId: chain.id });
+        setHatKeyValuePairData({
+          hatsTreeId: null,
+          contextChainId: chain.id,
+          streamIdsToHatIds: [],
+        });
         logError(error);
       });
 
@@ -139,11 +143,11 @@ const useKeyValuePairs = () => {
           // time to index, and do that most cleanly by not even telling the rest
           // of our code that we have the hats tree id until some time has passed.
           setTimeout(() => {
-            setHatsTreeId({
-              hatsTreeId: getHatsTreeId(logs, chain.id),
+            setHatKeyValuePairData({
               contextChainId: chain.id,
+              hatsTreeId: getHatsTreeId(logs, chain.id),
+              streamIdsToHatIds: getHatIdsToStreamIds(logs, sablierV2LockupLinear, chain.id),
             });
-            setStreamIdsToHatIds(getHatIdsToStreamIds(logs, sablierV2LockupLinear, chain.id));
           }, 20_000);
         },
       },
@@ -157,8 +161,7 @@ const useKeyValuePairs = () => {
     safeAddress,
     publicClient,
     searchParams,
-    setHatsTreeId,
-    setStreamIdsToHatIds,
+    setHatKeyValuePairData,
     sablierV2LockupLinear,
   ]);
 };
