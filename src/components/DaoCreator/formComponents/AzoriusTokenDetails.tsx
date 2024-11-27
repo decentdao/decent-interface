@@ -1,12 +1,10 @@
-import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
-import { Info } from '@phosphor-icons/react';
+import { Box, Flex, Input, RadioGroup } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { ICreationStepProps, TokenCreationType } from '../../../types';
-import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -107,9 +105,10 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   }, [updateImportFields]);
 
   const tokenImportAddressErrorMessage =
-    values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress
-      ? errors.erc20Token.tokenImportAddress
-      : undefined;
+    values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress;
+
+  const tokenErrorMsg =
+    tokenImportAddressErrorMessage || (!isImportedVotesToken ? t('errorNotVotingToken') : '');
 
   return (
     <>
@@ -162,35 +161,16 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           </RadioGroup>
           {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
             <>
-              <LabelWrapper errorMessage={tokenImportAddressErrorMessage}>
+              <LabelWrapper errorMessage={tokenErrorMsg}>
                 <Input
                   name="erc20Token.tokenImportAddress"
                   onChange={handleChange}
                   value={values.erc20Token.tokenImportAddress}
                   placeholder={createAccountSubstring(zeroAddress)}
-                  isInvalid={!!tokenImportAddressErrorMessage}
+                  isInvalid={!!tokenErrorMsg}
                   isRequired
                 />
               </LabelWrapper>
-              {isImportedVotesToken === false && !errors.erc20Token?.tokenImportAddress && (
-                <Flex
-                  gap={4}
-                  alignItems="center"
-                >
-                  <SupportTooltip
-                    IconComponent={Info}
-                    label={t('warningExistingTokenTooltip')}
-                    color="neutral-7"
-                  />
-                  <Text
-                    color="neutral-7"
-                    textStyle="helper-text-base"
-                    whiteSpace="pre-wrap"
-                  >
-                    {t('warningExistingToken')}
-                  </Text>
-                </Flex>
-              )}
             </>
           )}
         </Flex>

@@ -19,15 +19,11 @@ import PaymentWithdrawModal from './PaymentWithdrawModal';
 import ProposalTemplateModal from './ProposalTemplateModal';
 import StakeModal from './Stake';
 import { UnsavedChangesWarningContent } from './UnsavedChangesWarningContent';
-import { UnwrapToken } from './UnwrapToken';
-import { WrapToken } from './WrapToken';
 
 export enum ModalType {
   NONE,
   DELEGATE,
   STAKE,
-  WRAP_TOKEN,
-  UNWRAP_TOKEN,
   CONFIRM_URL,
   REMOVE_SIGNER,
   ADD_SIGNER,
@@ -50,8 +46,6 @@ export type ModalPropsTypes = {
   [ModalType.NONE]: {};
   [ModalType.DELEGATE]: {};
   [ModalType.STAKE]: {};
-  [ModalType.WRAP_TOKEN]: {};
-  [ModalType.UNWRAP_TOKEN]: {};
   [ModalType.ADD_PERMISSION]: {};
   [ModalType.CONFIRM_DELETE_STRATEGY]: {};
   [ModalType.CONFIRM_URL]: { url: string };
@@ -150,14 +144,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       case ModalType.STAKE:
         modalTitle = t('stakeTitle');
         modalContent = <StakeModal close={closeModal} />;
-        break;
-      case ModalType.WRAP_TOKEN:
-        modalTitle = t('wrapTokenTitle');
-        modalContent = <WrapToken close={closeModal} />;
-        break;
-      case ModalType.UNWRAP_TOKEN:
-        modalTitle = t('unwrapTokenTitle');
-        modalContent = <UnwrapToken close={closeModal} />;
         break;
       case ModalType.CONFIRM_URL:
         modalTitle = t('confirmUrlTitle');
