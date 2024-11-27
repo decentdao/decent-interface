@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
-import { Center, Flex, Icon, Link } from '@chakra-ui/react';
-import { AlignCenterVertical, ArrowElbowDownRight } from '@phosphor-icons/react';
+import { Center, Flex, Icon, Link, Text } from '@chakra-ui/react';
+import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
@@ -123,15 +123,20 @@ export function DaoHierarchyNode({
     return (
       <Flex
         w="full"
-        minH="full"
+        bg="neutral-2"
+        p="1.5rem"
+        width="100%"
+        borderRadius="0.75rem"
+        border="1px"
+        borderColor="transparent"
       >
         <Center w="100%">
-          <Icon
-            as={AlignCenterVertical}
-            boxSize="32px"
-            color="neutral-6"
-          />
-          <div>{t('errorMySafesNotLoaded')}</div>
+          <Text
+            textStyle="label-base"
+            color="red-0"
+          >
+            {t('errorMySafesNotLoaded')}
+          </Text>
         </Center>
       </Flex>
     );
