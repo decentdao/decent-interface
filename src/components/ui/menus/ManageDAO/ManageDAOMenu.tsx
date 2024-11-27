@@ -163,6 +163,7 @@ export function ManageDAOMenu() {
           optionsArr.push(modifyGovernanceOption);
         }
       }
+
       optionsArr.push(settingsOption);
       return optionsArr;
     }

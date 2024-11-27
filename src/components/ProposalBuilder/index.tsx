@@ -87,8 +87,8 @@ export function ProposalBuilder({
 
   const successCallback = () => {
     if (safeAddress) {
-      // Redirecting to proposals page so that user will see newly created Proposal
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
+      // Redirecting to home page so that user will see newly created Proposal
+      navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress));
     }
   };
 
