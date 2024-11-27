@@ -1,5 +1,8 @@
-import { Link, LinkProps } from '@chakra-ui/react';
+import { Flex, Link, LinkProps } from '@chakra-ui/react';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import { Ref } from 'react';
+
+type StyleVariants = 'grey' | 'green' | 'black' | 'lilac';
 
 export default function ExternalLink({
   children,
@@ -8,7 +11,7 @@ export default function ExternalLink({
   styleVariant = 'green',
   ...rest
 }: LinkProps & {
-  styleVariant?: 'grey' | 'green' | 'black';
+  styleVariant?: StyleVariants;
   isTextLink?: boolean;
   internalRef?: Ref<any>;
 }) {
@@ -35,6 +38,14 @@ export default function ExternalLink({
       },
       active: {
         color: 'black',
+      },
+    },
+    lilac: {
+      hover: {
+        textDecoration: 'underline',
+      },
+      active: {
+        color: 'lilac--3',
       },
     },
   };
@@ -73,33 +84,56 @@ export default function ExternalLink({
         borderWidth: '1px',
       },
     },
+    lilac: {
+      hover: {
+        bg: 'lilac-3',
+        borderColor: 'lilac-3',
+      },
+      active: {
+        bg: 'lilac--3',
+        borderColor: 'lilac--3',
+        borderWidth: '1px',
+      },
+    },
   };
 
   const linkColor = {
     green: 'celery-0',
     grey: 'neutral-6',
     black: 'black',
+    lilac: 'lilac--3',
   };
 
   return (
-    <Link
-      color={linkColor[styleVariant]}
-      padding="0.25rem 0.75rem"
-      gap="0.25rem"
-      borderRadius="625rem"
-      borderColor="transparent"
-      borderWidth="1px"
-      _hover={isTextLink ? textLinkStyles[styleVariant].hover : pillLinkStyles[styleVariant].hover}
-      _active={
-        isTextLink ? textLinkStyles[styleVariant].active : pillLinkStyles[styleVariant].active
-      }
-      target="_blank"
-      rel="noreferrer"
-      textDecoration="none"
-      ref={internalRef}
-      {...rest}
-    >
-      {children}
-    </Link>
+    <Flex>
+      <Link
+        color={linkColor[styleVariant]}
+        padding="0.25rem 0.75rem"
+        gap="0.25rem"
+        borderRadius="625rem"
+        borderColor="transparent"
+        borderWidth="1px"
+        _hover={
+          isTextLink ? textLinkStyles[styleVariant].hover : pillLinkStyles[styleVariant].hover
+        }
+        _active={
+          isTextLink ? textLinkStyles[styleVariant].active : pillLinkStyles[styleVariant].active
+        }
+        target="_blank"
+        rel="noreferrer"
+        textDecoration="none"
+        ref={internalRef}
+        {...rest}
+      >
+        <Flex
+          gap="0.25rem"
+          mx="-0.75rem"
+          alignItems="center"
+        >
+          {children}
+          {isTextLink && <ArrowUpRight />}
+        </Flex>
+      </Link>
+    </Flex>
   );
 }
