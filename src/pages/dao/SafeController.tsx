@@ -35,7 +35,6 @@ export function SafeController() {
 
   useGovernanceContracts();
   useFractalGuardContracts({});
-  // @todo - Maybe update typing to be parentSafeAddress: Address | null | undefined
   useFractalFreeze({ parentSafeAddress: subgraphInfo?.parentAddress ?? null });
   useFractalGovernance();
   useDecentTreasury();
