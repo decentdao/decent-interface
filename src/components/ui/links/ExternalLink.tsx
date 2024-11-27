@@ -65,7 +65,6 @@ export default function ExternalLink({
     grey: {
       hover: {
         bg: 'neutral-2',
-        borderColor: 'neutral-4',
       },
       active: {
         bg: 'neutral-5',
@@ -112,7 +111,6 @@ export default function ExternalLink({
         gap="0.25rem"
         borderRadius="625rem"
         borderColor="transparent"
-        borderWidth="1px"
         _hover={
           isTextLink ? textLinkStyles[styleVariant].hover : pillLinkStyles[styleVariant].hover
         }
@@ -126,6 +124,7 @@ export default function ExternalLink({
         {...rest}
       >
         <Flex
+          padding="0.25rem 0.75rem"
           gap="0.25rem"
           mx="-0.75rem"
           alignItems="center"
