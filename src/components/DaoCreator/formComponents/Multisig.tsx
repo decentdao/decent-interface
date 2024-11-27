@@ -73,6 +73,7 @@ export function Multisig(props: ICreationStepProps) {
           <LabelComponent
             label={t('titleSignerAddresses')}
             helper={t('subTitleSignerAddresses')}
+            alignLabel="flex-start"
             isRequired
           >
             <Flex
