@@ -1,7 +1,7 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Box } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { Activities } from '../../components/DaoDashboard/Activities';
+import { ProposalsHome } from '../../components/DaoDashboard/Activities/ProposalsHome';
 import { ERCO20Claim } from '../../components/DaoDashboard/ERC20Claim';
 import { DaoInfoHeader } from '../../components/DaoDashboard/Info/DaoInfoHeader';
 import { CONTENT_MAXW } from '../../constants/common';
@@ -19,7 +19,7 @@ export function SafeDashboardPage() {
       >
         <DaoInfoHeader />
         <ERCO20Claim />
-        <Activities />
+        <ProposalsHome />
       </Box>
     </>
   );

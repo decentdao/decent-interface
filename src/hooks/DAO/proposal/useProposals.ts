@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalProposalState, SortBy } from '../../../types';
 
-export default function useProposals({
+export function useProposalsSortedAndFiltered({
   sortBy,
   filters,
 }: {

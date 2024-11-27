@@ -13,7 +13,6 @@
   "titleActive": "Active",
   "titleTotal": "Total",
   "titleTreasury": "Treasury",
-  "noActivity": "No Activity",
   "proposalDescription_one": "Proposal to execute {{count}} transaction",
   "proposalDescription_other": "Proposal to execute {{count}} transactions",
   "freezeDescription": "Freeze vote pending on child Safe",
