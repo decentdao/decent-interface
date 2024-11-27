@@ -24,7 +24,6 @@ export const useUpdateSafeData = (safeAddress?: Address) => {
         const safeInfo = await safeAPI.getSafeData(safeAddress);
 
         setSafeInfo(safeInfo);
-        setDecentModules(await lookupModules(safeInfo.modules));
       })();
       prevPathname.current = location.pathname;
     }
