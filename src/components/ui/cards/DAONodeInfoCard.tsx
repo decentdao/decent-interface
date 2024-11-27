@@ -8,13 +8,6 @@ import AddressCopier from '../links/AddressCopier';
 export const NODE_HEIGHT_REM = 6.75;
 export const NODE_MARGIN_TOP_REM = 1.25;
 
-interface DAONodeInfoCardProps {
-  daoAddress: Address;
-  daoName: string;
-  daoSnapshotENS?: string;
-  isCurrentViewingDAO: boolean;
-}
-
 /**
  * Info card used on each DAO in the hierarchy page.
  *
@@ -25,7 +18,12 @@ interface DAONodeInfoCardProps {
  * Simply using the useFractal() hook to get info will end up with the current DAO's
  * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
  */
-export function DAONodeInfoCard(props: DAONodeInfoCardProps) {
+export function DAONodeInfoCard(props: {
+  daoAddress: Address;
+  daoName: string;
+  daoSnapshotENS?: string;
+  isCurrentViewingDAO: boolean;
+}) {
   const { daoAddress, daoName, daoSnapshotENS, isCurrentViewingDAO } = props;
 
   const { toggleFavorite, isFavorite } = useAccountFavorites();
