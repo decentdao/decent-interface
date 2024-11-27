@@ -1,8 +1,7 @@
 import { Box, Input, RadioGroup } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
+import { useTranslation } from 'react-i18next';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
@@ -10,7 +9,6 @@ import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../..
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
-import ExternalLink from '../../ui/links/ExternalLink';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
@@ -117,21 +115,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descAzoriusErc20Gov')}
                   testId="choose-azorius"
                   value={GovernanceType.AZORIUS_ERC20}
-                  tooltip={
-                    <Trans
-                      i18nKey="tooltipTokenVoting"
-                      ns="daoCreate"
-                    >
-                      placeholder
-                      <ExternalLink
-                        isTextLink
-                        styleVariant="lilac"
-                        href={URL_DOCS_GOV_TYPES}
-                      >
-                        link
-                      </ExternalLink>
-                    </Trans>
-                  }
                 />
               )}
               {createOptions.includes(GovernanceType.AZORIUS_ERC721) && (
@@ -140,21 +123,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descAzoriusErc721Gov')}
                   testId="choose-azorius-erc721"
                   value={GovernanceType.AZORIUS_ERC721}
-                  tooltip={
-                    <Trans
-                      i18nKey="tooltipNftVoting"
-                      ns="daoCreate"
-                    >
-                      placeholder
-                      <ExternalLink
-                        isTextLink
-                        styleVariant="lilac"
-                        href={URL_DOCS_GOV_TYPES}
-                      >
-                        link
-                      </ExternalLink>
-                    </Trans>
-                  }
                 />
               )}
               {createOptions.includes(GovernanceType.MULTISIG) && (
@@ -163,21 +131,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descMultisigGov')}
                   testId="choose-multisig"
                   value={GovernanceType.MULTISIG}
-                  tooltip={
-                    <Trans
-                      i18nKey="tooltipMultisig"
-                      ns="daoCreate"
-                    >
-                      placeholder
-                      <ExternalLink
-                        isTextLink
-                        styleVariant="lilac"
-                        href={URL_DOCS_GOV_TYPES}
-                      >
-                        link
-                      </ExternalLink>
-                    </Trans>
-                  }
                 />
               )}
             </RadioGroup>

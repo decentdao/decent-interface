@@ -52,7 +52,7 @@ function DayStepperInput({
           value={value}
           onChange={onChange}
           min={0}
-          focusInputOnChange={true}
+          focusInputOnChange
           w="100%"
         >
           <HStack gap="0.25rem">
