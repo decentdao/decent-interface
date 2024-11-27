@@ -7,7 +7,7 @@
   "titleManageDAO": "Manage Safe",
   "titleViewDAODetails": "View Safe Details",
   "titleManageProposalTemplate": "Manage Template",
-  "optionCreateSubDAO": "Add a child Safe",
+  "optionCreateSubDAO": "Create SubDAO",
   "optionInitiateFreeze": "Initiate a Freeze",
   "optionInitiateClawback": "Initiate Clawback",
   "optionRemoveTemplate": "Remove Template",
