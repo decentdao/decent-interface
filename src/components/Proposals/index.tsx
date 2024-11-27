@@ -46,7 +46,7 @@ export default function Proposals() {
     governance: { type },
     guardContracts,
   } = useFractal();
-  const { daoSnapshotENS } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
 
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const [filters, setFilters] = useState<FractalProposalState[]>([]);
@@ -73,12 +73,12 @@ export default function Proposals() {
         }
         break;
     }
-    if (daoSnapshotENS) {
+    if (subgraphInfo?.daoSnapshotENS) {
       options = [...options, ...FILTERS_SNAPSHOT];
     }
     setAllOptions(options);
     setFilters(options);
-  }, [daoSnapshotENS, guardContracts.freezeGuardContractAddress, type]);
+  }, [subgraphInfo?.daoSnapshotENS, guardContracts.freezeGuardContractAddress, type]);
 
   const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {

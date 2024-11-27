@@ -91,7 +91,7 @@ export default function useCreateRoles() {
       moduleAzoriusAddress,
     },
   } = useFractal();
-  const { safe, daoName } = useDaoInfoStore();
+  const { safe, subgraphInfo } = useDaoInfoStore();
   const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
     addressPrefix,
@@ -521,7 +521,7 @@ export default function useCreateRoles() {
       const topHat = {
         details: await uploadHatDescription(
           hatsDetailsBuilder({
-            name: daoName || safeAddress,
+            name: subgraphInfo?.daoName || safeAddress,
             description: '',
           }),
           ipfsClient,
@@ -577,7 +577,7 @@ export default function useCreateRoles() {
       safeAddress,
       getEnableDisableDecentHatsModuleData,
       decentHatsCreationModule,
-      daoName,
+      subgraphInfo?.daoName,
       ipfsClient,
       hatsElectionsEligibilityMasterCopy,
       createHatStructsForNewTreeFromRolesFormValues,

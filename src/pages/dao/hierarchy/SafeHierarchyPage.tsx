@@ -14,12 +14,7 @@ export function SafeHierarchyPage() {
     amplitude.track(analyticsEvents.HierarchyPageOpened);
   }, []);
 
-  const {
-    safe,
-    daoName,
-    nodeHierarchy: { parentAddress },
-    isHierarchyLoaded,
-  } = useDaoInfoStore();
+  const { safe, subgraphInfo } = useDaoInfoStore();
 
   const { t } = useTranslation('breadcrumbs');
 
@@ -27,13 +22,14 @@ export function SafeHierarchyPage() {
 
   const safeAddress = safe?.address;
 
-  if (!safeAddress || !isHierarchyLoaded) {
+  if (!safeAddress || !subgraphInfo) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />
       </Center>
     );
   }
+  const { daoName, parentAddress } = subgraphInfo;
 
   return (
     <Box>

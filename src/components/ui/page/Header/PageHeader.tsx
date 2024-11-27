@@ -32,7 +32,7 @@ function PageHeader({
   children,
   showSafeAddress,
 }: PageHeaderProps) {
-  const { safe, daoName } = useDaoInfoStore();
+  const { safe, subgraphInfo } = useDaoInfoStore();
 
   const { addressPrefix } = useNetworkConfig();
   const safeAddress = safe?.address;
@@ -43,13 +43,14 @@ function PageHeader({
     if (hasDAOLink && safeAddress) {
       setLinks([
         {
-          terminus: daoName || (safeAddress && createAccountSubstring(safeAddress)) || '',
+          terminus:
+            subgraphInfo?.daoName || (safeAddress && createAccountSubstring(safeAddress)) || '',
           path: DAO_ROUTES.dao.relative(addressPrefix, safeAddress),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, daoName, safeAddress, breadcrumbs, addressPrefix]);
+  }, [hasDAOLink, subgraphInfo?.daoName, safeAddress, breadcrumbs, addressPrefix]);
 
   const showAction = !!buttonProps || !!ButtonIcon || !!children;
 
