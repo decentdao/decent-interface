@@ -79,23 +79,24 @@ export function DAONodeInfoCard(props: {
             <AddressCopier address={daoAddress} />
           </VStack>
         </Flex>
-        <Flex
-          alignItems="center"
-          borderRadius="9999px"
-          bg="neutral-3"
-          px="0.75rem"
-          py="0.25rem"
-          h="fit-content"
-        >
+        <Flex gap="0.5rem">
           {votingStrategies.map((type, index) => (
-            <Text
+            <Box
               key={index}
-              textStyle="label-large"
-              color="lilac-0"
-              whiteSpace="nowrap"
+              borderRadius="9999px"
+              bg="neutral-3"
+              px="0.75rem"
+              py="0.25rem"
+              h="fit-content"
             >
-              {type}
-            </Text>
+              <Text
+                textStyle="label-large"
+                color="lilac-0"
+                whiteSpace="nowrap"
+              >
+                {type}
+              </Text>
+            </Box>
           ))}
         </Flex>
       </Flex>
