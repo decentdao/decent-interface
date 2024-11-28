@@ -159,7 +159,7 @@ export interface IDAO {
   // replaces DaoInfo
   safe: GnosisSafe | null;
   subgraphInfo: DAOSubgraph | null;
-  modules: FractalModuleData[] | null;
+  modules: DecentModule[] | null;
 }
 
 export interface GovernanceActivity extends ActivityBase {
@@ -236,7 +236,7 @@ interface SubgraphDAOInfo {
 // @dev Information retreived from Safe
 export interface DaoInfo extends SubgraphDAOInfo {
   safe: SafeWithNextNonce | null;
-  fractalModules: FractalModuleData[];
+  fractalModules: DecentModule[];
   isModulesLoaded?: boolean;
 }
 
@@ -247,10 +247,10 @@ export interface DaoHierarchyInfo {
   parentAddress: Address | null;
   childAddresses: Address[];
   proposalTemplatesHash?: string;
-  modules: FractalModuleData[];
+  modules: DecentModule[];
 }
 
-export interface FractalModuleData {
+export interface DecentModule {
   moduleAddress: Address;
   moduleType: FractalModuleType;
 }

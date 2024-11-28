@@ -8,7 +8,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FreezeGuardType, FreezeVotingType } from '../../../types';
 import { useAddressContractType } from '../../utils/useAddressContractType';
-import { FractalModuleData, FractalModuleType, GnosisSafe } from './../../../types/fractal';
+import { DecentModule, FractalModuleType, GnosisSafe } from './../../../types/fractal';
 
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
   // load key for component; helps prevent unnecessary calls
@@ -26,7 +26,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const publicClient = usePublicClient();
 
   const loadFractalGuardContracts = useCallback(
-    async (_safe: GnosisSafe, _fractalModules: FractalModuleData[]) => {
+    async (_safe: GnosisSafe, _fractalModules: DecentModule[]) => {
       if (!publicClient) {
         return;
       }

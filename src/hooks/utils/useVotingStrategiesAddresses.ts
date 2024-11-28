@@ -5,7 +5,7 @@ import { usePublicClient } from 'wagmi';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { FractalModuleData } from '../../types';
+import { DecentModule } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
 import { useDecentModules } from '../DAO/loaders/useDecentModules';
 import { useAddressContractType } from './useAddressContractType';
@@ -19,7 +19,7 @@ const useVotingStrategiesAddresses = () => {
 
   const getVotingStrategies = useCallback(
     async (safeAddress?: Address) => {
-      let azoriusModule: FractalModuleData | undefined;
+      let azoriusModule: DecentModule | undefined;
 
       if (safeAddress) {
         if (!safeAPI) {

@@ -13,7 +13,7 @@ import {
 import { logError } from '../../helpers/errorLogging';
 import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { FractalModuleType, FractalModuleData } from '../../types';
+import { FractalModuleType, DecentModule } from '../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../utils/address';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -21,7 +21,7 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 interface IUseClawBack {
   childSafeInfo: {
     daoAddress?: Address;
-    modules: FractalModuleData[] | null;
+    modules: DecentModule[] | null;
   };
   parentAddress: Address | null | undefined;
 }

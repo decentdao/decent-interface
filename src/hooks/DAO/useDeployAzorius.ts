@@ -23,7 +23,7 @@ import {
 } from '../../types';
 import { useAddressContractType } from '../utils/useAddressContractType';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
-import { FractalModuleData } from './../../types/fractal';
+import { DecentModule } from './../../types/fractal';
 import { useDecentModules } from './loaders/useDecentModules';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -98,7 +98,7 @@ const useDeployAzorius = () => {
       let parentStrategyAddress: Address | undefined;
       let parentStrategyType: VotingStrategyType | undefined;
       let attachFractalModule = false;
-      let parentModules: FractalModuleData[];
+      let parentModules: DecentModule[];
 
       if (subgraphInfo?.parentAddress) {
         const loadedParentModule = await getParentDAOModules(subgraphInfo.parentAddress);

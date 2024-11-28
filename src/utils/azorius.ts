@@ -16,7 +16,7 @@ import {
   DataDecoded,
   DecodedTransaction,
   ERC721ProposalVote,
-  FractalModuleData,
+  DecentModule,
   FractalModuleType,
   FractalProposalState,
   MetaTransaction,
@@ -321,7 +321,7 @@ export const parseDecodedData = (
   return Array.from(eventTransactionMap.values());
 };
 
-export function getAzoriusModuleFromModules(modules: FractalModuleData[]) {
+export function getAzoriusModuleFromModules(modules: DecentModule[]) {
   return modules.find(module => module.moduleType === FractalModuleType.AZORIUS);
 }
 
