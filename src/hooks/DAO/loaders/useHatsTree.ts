@@ -271,10 +271,10 @@ const useHatsTree = () => {
               return hat;
             }
             const payments: SablierPayment[] = [];
-            // @todo - update Datepicker to choose more precise dates (Date.now())
             if (hat.isTermed) {
-              const recipients = hat.roleTerms.allTerms.map(term => term.nominee);
-              const uniqueRecipients = [...new Set(recipients)];
+              const uniqueRecipients = [
+                ...new Set(hat.roleTerms.allTerms.map(term => term.nominee)),
+              ];
               for (const recipient of uniqueRecipients) {
                 payments.push(...(await getPaymentStreams(recipient)));
               }

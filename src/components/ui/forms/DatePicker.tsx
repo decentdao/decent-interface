@@ -195,7 +195,7 @@ export function DatePicker({
 
   const handleDateChange = (e: OnDateChangeValue) => {
     if (e instanceof Date) {
-      onChange?.(new Date(e.setHours(0, 0, 0, 0)));
+      onChange?.(e);
       onClose(); // Close the menu after date selection
     }
   };
