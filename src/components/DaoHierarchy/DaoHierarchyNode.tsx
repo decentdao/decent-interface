@@ -175,6 +175,9 @@ export function DaoHierarchyNode({
         return;
       }
       loadDao(safeAddress).then(_node => {
+        if (!_node) {
+          setErrorLoading(true);
+        }
         setValue(
           {
             cacheName: CacheKeys.HIERARCHY_DAO_INFO,
