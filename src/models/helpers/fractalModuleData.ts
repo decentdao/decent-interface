@@ -14,7 +14,7 @@ import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 import { generateContractByteCodeLinear, generateSalt } from './utils';
 
-export interface FractalModuleData {
+export interface DecentModule {
   predictedFractalModuleAddress: string;
   deployFractalModuleTx: SafeTransaction;
   enableFractalModuleTx: SafeTransaction;
@@ -26,7 +26,7 @@ export const fractalModuleData = (
   safeAddress: Address,
   saltNum: bigint,
   parentAddress?: Address | null,
-): FractalModuleData => {
+): DecentModule => {
   const fractalModuleCalldata = encodeFunctionData({
     abi: abis.FractalModule,
     functionName: 'setUp',

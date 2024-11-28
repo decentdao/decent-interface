@@ -88,7 +88,7 @@ export default function SettingsNavigation() {
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
   const { governance } = useFractal();
-  const { safe, daoModules } = useDaoInfoStore();
+  const { safe, modules } = useDaoInfoStore();
   const azoriusGovernance = governance as AzoriusGovernance;
 
   return (
@@ -143,7 +143,7 @@ export default function SettingsNavigation() {
               textStyle="body-base"
               color="neutral-7"
             >
-              {(daoModules ?? []).length + (safe?.guard ? 1 : 0)}
+              {(modules ?? []).length + (safe?.guard ? 1 : 0)}
             </Text>
           </SettingsLink>
           <SettingsLink

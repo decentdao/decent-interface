@@ -8,14 +8,14 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FreezeGuardType, FreezeVotingType } from '../../../types';
 import { useAddressContractType } from '../../utils/useAddressContractType';
-import { FractalModuleData, FractalModuleType, GnosisSafe } from './../../../types/fractal';
+import { DecentModule, FractalModuleType, GnosisSafe } from './../../../types/fractal';
 
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
   const { action } = useFractal();
 
-  const { daoModules, safe, subgraphInfo } = useDaoInfoStore();
+  const { modules, safe, subgraphInfo } = useDaoInfoStore();
 
   const safeAddress = safe?.address;
 
@@ -26,7 +26,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const publicClient = usePublicClient();
 
   const loadFractalGuardContracts = useCallback(
-    async (_safe: GnosisSafe, _fractalModules: FractalModuleData[]) => {
+    async (_safe: GnosisSafe, _fractalModules: DecentModule[]) => {
       if (!publicClient) {
         return;
       }
@@ -124,11 +124,11 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   );
 
   const setGuardContracts = useCallback(async () => {
-    if (!safe || daoModules === null) return;
-    const contracts = await loadFractalGuardContracts(safe, daoModules);
+    if (!safe || modules === null) return;
+    const contracts = await loadFractalGuardContracts(safe, modules);
     if (!contracts) return;
     action.dispatch({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
-  }, [action, safe, daoModules, loadFractalGuardContracts]);
+  }, [action, safe, modules, loadFractalGuardContracts]);
 
   useEffect(() => {
     if (

@@ -133,7 +133,7 @@ export type GnosisSafe = {
   nonce: number;
   nextNonce: number;
   threshold: number;
-  modules: Address[];
+  modulesAddresses: Address[];
   guard: Address | NullUnionUndefined;
 };
 
@@ -159,7 +159,7 @@ export interface IDAO {
   // replaces DaoInfo
   safe: GnosisSafe | null;
   subgraphInfo: DAOSubgraph | null;
-  daoModules: FractalModuleData[] | null;
+  modules: DecentModule[] | null;
 }
 
 export interface GovernanceActivity extends ActivityBase {
@@ -236,7 +236,7 @@ interface SubgraphDAOInfo {
 // @dev Information retreived from Safe
 export interface DaoInfo extends SubgraphDAOInfo {
   safe: SafeWithNextNonce | null;
-  fractalModules: FractalModuleData[];
+  fractalModules: DecentModule[];
   isModulesLoaded?: boolean;
 }
 export type DaoHierarchyStrategyType = 'ERC-20' | 'ERC-721' | 'MULTISIG';
@@ -247,11 +247,11 @@ export interface DaoHierarchyInfo {
   parentAddress: Address | null;
   childAddresses: Address[];
   proposalTemplatesHash?: string;
-  modules: FractalModuleData[];
+  modules: DecentModule[];
   votingStrategies: DaoHierarchyStrategyType[];
 }
 
-export interface FractalModuleData {
+export interface DecentModule {
   moduleAddress: Address;
   moduleType: FractalModuleType;
 }

@@ -13,7 +13,7 @@ import {
 import { logError } from '../../helpers/errorLogging';
 import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { FractalModuleType, FractalModuleData } from '../../types';
+import { FractalModuleType, DecentModule } from '../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../utils/address';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -21,7 +21,7 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 interface IUseClawBack {
   childSafeInfo: {
     daoAddress?: Address;
-    daoModules: FractalModuleData[] | null;
+    modules: DecentModule[] | null;
   };
   parentAddress: Address | null | undefined;
 }
@@ -51,8 +51,8 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         const parentSafeInfo = await safeAPI.getSafeData(parentAddress);
         const canUserCreateProposal = await getCanUserCreateProposal(parentAddress);
 
-        if (canUserCreateProposal && parentAddress && parentSafeInfo && childSafeInfo.daoModules) {
-          const fractalModule = childSafeInfo.daoModules!.find(
+        if (canUserCreateProposal && parentAddress && parentSafeInfo && childSafeInfo.modules) {
+          const fractalModule = childSafeInfo.modules!.find(
             module => module.moduleType === FractalModuleType.FRACTAL,
           );
 

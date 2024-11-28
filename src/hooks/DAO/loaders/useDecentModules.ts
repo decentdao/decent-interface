@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import { FractalModuleData, FractalModuleType } from '../../../types';
+import { DecentModule, FractalModuleType } from '../../../types';
 import { useAddressContractType } from '../../utils/useAddressContractType';
 
 export const useDecentModules = () => {
@@ -15,7 +15,7 @@ export const useDecentModules = () => {
 
           const masterCopyData = await getAddressContractType(moduleAddress);
 
-          let safeModule: FractalModuleData;
+          let safeModule: DecentModule;
 
           if (masterCopyData.isModuleAzorius && publicClient) {
             safeModule = {

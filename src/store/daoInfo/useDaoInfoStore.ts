@@ -1,16 +1,16 @@
 import { getAddress } from 'viem';
 import { create } from 'zustand';
-import { DAOSubgraph, FractalModuleData, IDAO, SafeWithNextNonce } from '../../types';
+import { DAOSubgraph, DecentModule, IDAO, SafeWithNextNonce } from '../../types';
 
 export const initialDaoInfoStore: IDAO = {
   safe: null,
   subgraphInfo: null,
-  daoModules: null,
+  modules: null,
 };
 export interface DaoInfoStore extends IDAO {
   setSafeInfo: (safe: SafeWithNextNonce) => void;
   setDaoInfo: (daoInfo: DAOSubgraph) => void;
-  setDecentModules: (modules: FractalModuleData[]) => void;
+  setDecentModules: (modules: DecentModule[]) => void;
   updateDaoName: (newDaoName: string) => void;
   resetDaoInfoStore: () => void;
 }
@@ -22,7 +22,7 @@ export const useDaoInfoStore = create<DaoInfoStore>()(set => ({
     set({
       safe: {
         owners: owners.map(getAddress),
-        modules: modules.map(getAddress),
+        modulesAddresses: modules.map(getAddress),
         guard: getAddress(guard),
         address: getAddress(address),
         nextNonce,
@@ -37,8 +37,8 @@ export const useDaoInfoStore = create<DaoInfoStore>()(set => ({
     set({ subgraphInfo });
   },
 
-  setDecentModules: (daoModules: FractalModuleData[]) => {
-    set({ daoModules });
+  setDecentModules: (modules: DecentModule[]) => {
+    set({ modules });
   },
   updateDaoName: (newDaoName: string) => {
     set(state => {

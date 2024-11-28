@@ -77,14 +77,14 @@ export default function useSubmitProposal() {
     },
     action,
   } = useFractal();
-  const { safe, daoModules } = useDaoInfoStore();
+  const { safe, modules } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
 
   const globalAzoriusContract = useMemo(() => {
-    if (!daoModules || !walletClient) {
+    if (!modules || !walletClient) {
       return;
     }
-    const azoriusModule = getAzoriusModuleFromModules(daoModules);
+    const azoriusModule = getAzoriusModuleFromModules(modules);
     if (!azoriusModule) {
       return;
     }
@@ -94,7 +94,7 @@ export default function useSubmitProposal() {
       address: azoriusModule.moduleAddress,
       client: walletClient,
     });
-  }, [daoModules, walletClient]);
+  }, [modules, walletClient]);
 
   const lookupModules = useDecentModules();
   const {
