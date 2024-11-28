@@ -17,7 +17,7 @@ import { useAddressContractType } from '../../hooks/utils/useAddressContractType
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { DaoHierarchyInfo, DaoHierarchyStrategyType, FractalModuleData } from '../../types';
+import { DaoHierarchyInfo, DaoHierarchyStrategyType, DecentModule } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../ui/cards/DAONodeInfoCard';
 import { BarLoader } from '../ui/loaders/BarLoader';
@@ -59,7 +59,7 @@ export function DaoHierarchyNode({
   });
 
   const getVotingStrategies = useCallback(
-    async (azoriusModule: FractalModuleData) => {
+    async (azoriusModule: DecentModule) => {
       if (!publicClient) {
         throw new Error('Public Client is not set!');
       }
@@ -92,7 +92,7 @@ export function DaoHierarchyNode({
   );
 
   const getGovernanceTypes = useCallback(
-    async (azoriusModule: FractalModuleData) => {
+    async (azoriusModule: DecentModule) => {
       const votingStrategies = await getVotingStrategies(azoriusModule);
 
       if (!votingStrategies) {
