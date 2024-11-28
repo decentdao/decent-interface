@@ -1,20 +1,24 @@
 import { useLazyQuery } from '@apollo/client';
 import { Center, Flex, Icon, Link, Text } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
-import { Address } from 'viem';
-import { useChainId } from 'wagmi';
+import { Address, getContract, zeroAddress } from 'viem';
+import { useChainId, usePublicClient } from 'wagmi';
 import { DAOQueryDocument } from '../../../.graphclient';
+import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useDecentModules } from '../../hooks/DAO/loaders/useDecentModules';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { setValue, getValue } from '../../hooks/utils/cache/useLocalStorage';
+import { useAddressContractType } from '../../hooks/utils/useAddressContractType';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { DaoHierarchyInfo } from '../../types';
+import { DaoHierarchyInfo, DaoHierarchyStrategyType, FractalModuleData } from '../../types';
+import { getAzoriusModuleFromModules } from '../../utils';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../ui/cards/DAONodeInfoCard';
 import { BarLoader } from '../ui/loaders/BarLoader';
 
@@ -41,6 +45,9 @@ export function DaoHierarchyNode({
   const [hasErrorLoading, setErrorLoading] = useState<boolean>(false);
   const { addressPrefix, subgraph } = useNetworkConfig();
   const chainId = useChainId();
+  const publicClient = usePublicClient();
+
+  const { getAddressContractType } = useAddressContractType();
   const lookupModules = useDecentModules();
 
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
@@ -50,6 +57,77 @@ export function DaoHierarchyNode({
       subgraphVersion: subgraph.version,
     },
   });
+
+  const getVotingStrategies = useCallback(
+    async (azoriusModule: FractalModuleData) => {
+      if (!publicClient) {
+        throw new Error('Public Client is not set!');
+      }
+
+      const azoriusContract = getContract({
+        abi: abis.Azorius,
+        address: azoriusModule.moduleAddress,
+        client: publicClient,
+      });
+
+      const [strategies, nextStrategy] = await azoriusContract.read.getStrategies([
+        SENTINEL_ADDRESS,
+        3n,
+      ]);
+      const result = Promise.all(
+        [...strategies, nextStrategy]
+          .filter(
+            strategyAddress =>
+              strategyAddress !== SENTINEL_ADDRESS && strategyAddress !== zeroAddress,
+          )
+          .map(async strategyAddress => ({
+            ...(await getAddressContractType(strategyAddress)),
+            strategyAddress,
+          })),
+      );
+
+      return result;
+    },
+    [getAddressContractType, publicClient],
+  );
+
+  const getGovernanceTypes = useCallback(
+    async (azoriusModule: FractalModuleData) => {
+      const votingStrategies = await getVotingStrategies(azoriusModule);
+
+      if (!votingStrategies) {
+        throw new Error('No voting strategies found');
+      }
+
+      if (!publicClient) {
+        throw new Error('Public Client is not set!');
+      }
+
+      let governanceTypes: DaoHierarchyStrategyType[] = [];
+
+      await Promise.all(
+        votingStrategies.map(async votingStrategy => {
+          const {
+            isLinearVotingErc20,
+            isLinearVotingErc721,
+            isLinearVotingErc20WithHatsProposalCreation,
+            isLinearVotingErc721WithHatsProposalCreation,
+          } = votingStrategy;
+          if (isLinearVotingErc20) {
+            governanceTypes.push('ERC-20');
+          } else if (isLinearVotingErc721) {
+            governanceTypes.push('ERC-721');
+          } else if (isLinearVotingErc20WithHatsProposalCreation) {
+            governanceTypes.push('ERC-20');
+          } else if (isLinearVotingErc721WithHatsProposalCreation) {
+            governanceTypes.push('ERC-721');
+          }
+        }),
+      );
+      return governanceTypes;
+    },
+    [getVotingStrategies, publicClient],
+  );
 
   const loadDao = useCallback(
     async (_safeAddress: Address) => {
@@ -61,6 +139,10 @@ export function DaoHierarchyNode({
         const graphRawNodeData = await getDAOInfo({ variables: { safeAddress: _safeAddress } });
         const modules = await lookupModules(safe.modules);
         const graphDAOData = graphRawNodeData.data?.daos[0];
+        const azoriusModule = getAzoriusModuleFromModules(modules ?? []);
+        const votingStrategies: DaoHierarchyStrategyType[] = azoriusModule
+          ? await getGovernanceTypes(azoriusModule)
+          : ['MULTISIG'];
         if (!graphRawNodeData || !graphDAOData) {
           throw new Error('No data found');
         }
@@ -72,12 +154,13 @@ export function DaoHierarchyNode({
           daoSnapshotENS: graphDAOData.snapshotENS as string | undefined,
           proposalTemplatesHash: graphDAOData.proposalTemplatesHash as string | undefined,
           modules,
+          votingStrategies,
         };
       } catch (e) {
         setErrorLoading(true);
       }
     },
-    [getDAOInfo, lookupModules, safeApi],
+    [getDAOInfo, getGovernanceTypes, lookupModules, safeApi],
   );
 
   useEffect(() => {
@@ -166,6 +249,7 @@ export function DaoHierarchyNode({
           daoName={hierarchyNode?.daoName ?? hierarchyNode.safeAddress}
           daoSnapshotENS={hierarchyNode?.daoSnapshotENS}
           isCurrentViewingDAO={isCurrentViewingDAO}
+          votingStrategies={hierarchyNode.votingStrategies}
         />
       </Link>
 

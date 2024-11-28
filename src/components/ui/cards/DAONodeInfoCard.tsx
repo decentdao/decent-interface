@@ -1,6 +1,7 @@
 import { Flex, Box, Text, VStack } from '@chakra-ui/react';
 import { Address } from 'viem';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
+import { DaoHierarchyStrategyType } from '../../../types';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
@@ -23,8 +24,9 @@ export function DAONodeInfoCard(props: {
   daoName: string;
   daoSnapshotENS?: string;
   isCurrentViewingDAO: boolean;
+  votingStrategies: DaoHierarchyStrategyType[];
 }) {
-  const { daoAddress, daoName, daoSnapshotENS, isCurrentViewingDAO } = props;
+  const { daoAddress, daoName, daoSnapshotENS, isCurrentViewingDAO, votingStrategies } = props;
 
   const { toggleFavorite, isFavorite } = useAccountFavorites();
 
@@ -85,13 +87,16 @@ export function DAONodeInfoCard(props: {
           py="0.25rem"
           h="fit-content"
         >
-          <Text
-            textStyle="label-large"
-            color="lilac-0"
-            whiteSpace="nowrap"
-          >
-            ERC-20
-          </Text>
+          {votingStrategies.map((type, index) => (
+            <Text
+              key={index}
+              textStyle="label-large"
+              color="lilac-0"
+              whiteSpace="nowrap"
+            >
+              {type}
+            </Text>
+          ))}
         </Flex>
       </Flex>
     </Box>
