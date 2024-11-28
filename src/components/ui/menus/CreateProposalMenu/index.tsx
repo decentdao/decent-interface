@@ -67,8 +67,8 @@ export function CreateProposalMenu({ safeAddress }: { safeAddress: Address }) {
                 <MenuList>
                   <Box
                     backdropFilter="auto"
-                    backdropBlur="10px"
                     bg={NEUTRAL_2_82_TRANSPARENT}
+                    backdropBlur="10px"
                     border="1px solid"
                     borderColor="neutral-3"
                     className="scroll-dark"
@@ -99,7 +99,7 @@ export function CreateProposalMenu({ safeAddress }: { safeAddress: Address }) {
                       </MenuItem>
                     </Box>
                     <Divider my="0.25rem" />
-                    <Box>
+                    <Box px="0.25rem">
                       <MenuItem
                         as={Button}
                         variant="tertiary"
