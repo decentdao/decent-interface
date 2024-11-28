@@ -21,7 +21,7 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 interface IUseClawBack {
   childSafeInfo: {
     daoAddress?: Address;
-    daoModules: FractalModuleData[] | null;
+    modules: FractalModuleData[] | null;
   };
   parentAddress: Address | null | undefined;
 }
@@ -51,8 +51,8 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         const parentSafeInfo = await safeAPI.getSafeData(parentAddress);
         const canUserCreateProposal = await getCanUserCreateProposal(parentAddress);
 
-        if (canUserCreateProposal && parentAddress && parentSafeInfo && childSafeInfo.daoModules) {
-          const fractalModule = childSafeInfo.daoModules!.find(
+        if (canUserCreateProposal && parentAddress && parentSafeInfo && childSafeInfo.modules) {
+          const fractalModule = childSafeInfo.modules!.find(
             module => module.moduleType === FractalModuleType.FRACTAL,
           );
 

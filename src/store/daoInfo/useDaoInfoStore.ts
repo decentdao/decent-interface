@@ -5,7 +5,7 @@ import { DAOSubgraph, FractalModuleData, IDAO, SafeWithNextNonce } from '../../t
 export const initialDaoInfoStore: IDAO = {
   safe: null,
   subgraphInfo: null,
-  daoModules: null,
+  modules: null,
 };
 export interface DaoInfoStore extends IDAO {
   setSafeInfo: (safe: SafeWithNextNonce) => void;
@@ -37,8 +37,8 @@ export const useDaoInfoStore = create<DaoInfoStore>()(set => ({
     set({ subgraphInfo });
   },
 
-  setDecentModules: (daoModules: FractalModuleData[]) => {
-    set({ daoModules });
+  setDecentModules: (modules: FractalModuleData[]) => {
+    set({ modules });
   },
   updateDaoName: (newDaoName: string) => {
     set(state => {

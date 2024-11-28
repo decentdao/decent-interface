@@ -38,7 +38,7 @@ export function ManageDAOMenu() {
     parentAddress: dao.subgraphInfo?.parentAddress,
     childSafeInfo: {
       daoAddress: dao.safe?.address,
-      daoModules: dao.daoModules,
+      modules: dao.modules,
     },
   });
 
@@ -166,7 +166,7 @@ export function ManageDAOMenu() {
       guard.isFrozen &&
       guard.userHasVotes
     ) {
-      const fractalModule = (dao.daoModules ?? []).find(
+      const fractalModule = (dao.modules ?? []).find(
         module => module.moduleType === FractalModuleType.FRACTAL,
       );
       if (fractalModule) {
@@ -200,7 +200,7 @@ export function ManageDAOMenu() {
     addressPrefix,
     type,
     freezeOption,
-    dao.daoModules,
+    dao.modules,
     canUserCreateProposal,
   ]);
 

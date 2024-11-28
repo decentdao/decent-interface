@@ -19,7 +19,7 @@ export function SafeModulesSettingsPage() {
   const {
     guardContracts: { freezeGuardContractAddress, freezeVotingContractAddress },
   } = useFractal();
-  const { daoModules, safe } = useDaoInfoStore();
+  const { modules, safe } = useDaoInfoStore();
 
   return (
     <>
@@ -42,9 +42,9 @@ export function SafeModulesSettingsPage() {
             w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
             mx={{ base: '-0.75rem', md: '-1.5rem' }}
           />
-          {daoModules !== null ? (
-            daoModules.length > 0 ? (
-              daoModules.map(({ moduleAddress, moduleType }) => {
+          {modules !== null ? (
+            modules.length > 0 ? (
+              modules.map(({ moduleAddress, moduleType }) => {
                 const moduleHelper =
                   moduleType === FractalModuleType.AZORIUS
                     ? ' (Azorius Module)'

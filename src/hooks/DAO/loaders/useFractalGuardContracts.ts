@@ -15,7 +15,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const loadKey = useRef<string>();
   const { action } = useFractal();
 
-  const { daoModules, safe, subgraphInfo } = useDaoInfoStore();
+  const { modules, safe, subgraphInfo } = useDaoInfoStore();
 
   const safeAddress = safe?.address;
 
@@ -124,11 +124,11 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   );
 
   const setGuardContracts = useCallback(async () => {
-    if (!safe || daoModules === null) return;
-    const contracts = await loadFractalGuardContracts(safe, daoModules);
+    if (!safe || modules === null) return;
+    const contracts = await loadFractalGuardContracts(safe, modules);
     if (!contracts) return;
     action.dispatch({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
-  }, [action, safe, daoModules, loadFractalGuardContracts]);
+  }, [action, safe, modules, loadFractalGuardContracts]);
 
   useEffect(() => {
     if (

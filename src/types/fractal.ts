@@ -159,7 +159,7 @@ export interface IDAO {
   // replaces DaoInfo
   safe: GnosisSafe | null;
   subgraphInfo: DAOSubgraph | null;
-  daoModules: FractalModuleData[] | null;
+  modules: FractalModuleData[] | null;
 }
 
 export interface GovernanceActivity extends ActivityBase {

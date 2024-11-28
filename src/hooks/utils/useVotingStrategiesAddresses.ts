@@ -29,10 +29,10 @@ const useVotingStrategiesAddresses = () => {
         const safeModules = await lookupModules(safeInfo.modules);
         azoriusModule = getAzoriusModuleFromModules(safeModules);
       } else {
-        if (!node.daoModules) {
+        if (!node.modules) {
           throw new Error('DAO modules not ready');
         }
-        azoriusModule = getAzoriusModuleFromModules(node.daoModules);
+        azoriusModule = getAzoriusModuleFromModules(node.modules);
       }
 
       if (!azoriusModule || !publicClient) {
@@ -62,7 +62,7 @@ const useVotingStrategiesAddresses = () => {
       );
       return result;
     },
-    [lookupModules, getAddressContractType, node.daoModules, publicClient, safeAPI],
+    [lookupModules, getAddressContractType, node.modules, publicClient, safeAPI],
   );
 
   return { getVotingStrategies };
