@@ -133,7 +133,7 @@ export type GnosisSafe = {
   nonce: number;
   nextNonce: number;
   threshold: number;
-  modules: Address[];
+  modulesAddresses: Address[];
   guard: Address | NullUnionUndefined;
 };
 

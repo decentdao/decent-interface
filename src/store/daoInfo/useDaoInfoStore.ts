@@ -22,7 +22,7 @@ export const useDaoInfoStore = create<DaoInfoStore>()(set => ({
     set({
       safe: {
         owners: owners.map(getAddress),
-        modules: modules.map(getAddress),
+        modulesAddresses: modules.map(getAddress),
         guard: getAddress(guard),
         address: getAddress(address),
         nextNonce,
