@@ -316,8 +316,8 @@ export default function useSubmitProposal() {
         // Submitting proposal to any DAO out of global context
         const votingStrategies = await getVotingStrategies(safeAddress);
         const safeInfo = await safeAPI.getSafeInfo(safeAddress);
-        const modules = await lookupModules(safeInfo.modules);
-        const azoriusModule = getAzoriusModuleFromModules(modules);
+        const decentModules = await lookupModules(safeInfo.modules);
+        const azoriusModule = getAzoriusModuleFromModules(decentModules);
         if (!azoriusModule || !votingStrategies) {
           await submitMultisigProposal({
             proposalData,
