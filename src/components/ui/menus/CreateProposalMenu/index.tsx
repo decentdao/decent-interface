@@ -37,18 +37,15 @@ export function CreateProposalMenu({ safeAddress }: { safeAddress: Address }) {
           <Fragment>
             <MenuButton
               as={Button}
-              variant="tertiary"
-              data-testid="header-favoritesMenuButton"
-              p="0.75rem"
-              color="white-0"
+              variant="secondary"
               border="1px solid transparent"
               borderRadius="0.75rem"
-              _hover={{ color: 'white-0', bg: 'neutral-3' }}
+              _hover={{ bg: 'neutral-2' }}
               _active={{
-                color: 'white-0',
+                color: 'lilac-0',
                 border: '1px solid',
-                borderColor: 'neutral-4',
-                bg: 'neutral-3',
+                borderColor: 'neutral-3',
+                bg: 'neutral-2',
               }}
             >
               <Flex
@@ -77,12 +74,11 @@ export function CreateProposalMenu({ safeAddress }: { safeAddress: Address }) {
                     rounded="0.75rem"
                     py="0.25rem"
                   >
-                    <Box px="0.25rem">
+                    <Box px="0.15rem">
                       <MenuItem
                         as={Button}
                         variant="tertiary"
-                        w="full"
-                        h="3rem"
+                        h="2.5rem"
                         onClick={() =>
                           navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, safeAddress))
                         }
@@ -99,12 +95,11 @@ export function CreateProposalMenu({ safeAddress }: { safeAddress: Address }) {
                       </MenuItem>
                     </Box>
                     <Divider my="0.25rem" />
-                    <Box px="0.25rem">
+                    <Box px="0.15rem">
                       <MenuItem
                         as={Button}
                         variant="tertiary"
-                        w="full"
-                        h="3rem"
+                        h="2.5rem"
                         onClick={() =>
                           navigate(
                             DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress),
