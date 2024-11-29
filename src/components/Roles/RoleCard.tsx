@@ -33,7 +33,7 @@ export function AvatarAndRoleName({
   const copyToClipboard = useCopyText();
 
   return (
-    <Flex alignItems="center">
+    <Flex alignItems="top">
       {wearerAddress ? (
         <Avatar
           size="xl"
@@ -49,7 +49,8 @@ export function AvatarAndRoleName({
       )}
       <Flex
         direction="column"
-        ml="1rem"
+        ml="1.5rem"
+        mt="-0.125rem"
       >
         <Text
           textStyle="display-lg"
@@ -78,6 +79,7 @@ export function AvatarAndRoleName({
           <Flex
             mt="1rem"
             gap="0.25rem"
+            ml="-0.25rem"
           >
             <Text
               textStyle="button-small"
