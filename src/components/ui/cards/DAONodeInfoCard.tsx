@@ -11,7 +11,7 @@ export const NODE_MARGIN_TOP_REM = 1.25;
 interface DAONodeInfoCardProps {
   daoAddress: Address;
   daoName: string;
-  daoSnapshotENS?: string;
+  daoSnapshotENS: string | null;
   isCurrentViewingDAO: boolean;
 }
 

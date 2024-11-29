@@ -41,10 +41,11 @@ function PageHeader({
 
   useEffect(() => {
     if (hasDAOLink && safeAddress) {
+      const safeAddressSubstring = subgraphInfo?.daoName ?? createAccountSubstring(safeAddress);
+      if (!safeAddressSubstring) return;
       setLinks([
         {
-          terminus:
-            subgraphInfo?.daoName || (safeAddress && createAccountSubstring(safeAddress)) || '',
+          terminus: safeAddressSubstring,
           path: DAO_ROUTES.dao.relative(addressPrefix, safeAddress),
         },
         ...breadcrumbs,

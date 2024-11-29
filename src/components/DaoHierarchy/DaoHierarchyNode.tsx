@@ -52,7 +52,7 @@ export function DaoHierarchyNode({
   });
 
   const loadDao = useCallback(
-    async (_safeAddress: Address) => {
+    async (_safeAddress: Address): Promise<DaoHierarchyInfo | undefined> => {
       if (!safeApi) {
         throw new Error('Safe API not ready');
       }
@@ -65,16 +65,17 @@ export function DaoHierarchyNode({
           throw new Error('No data found');
         }
         return {
-          daoName: graphDAOData.name as string | undefined,
+          daoName: graphDAOData.name ?? null,
           safeAddress: _safeAddress,
-          parentAddress: graphDAOData.parentAddress,
+          parentAddress: graphDAOData.parentAddress ?? null,
           childAddresses: graphDAOData.hierarchy.map(child => child.address),
-          daoSnapshotENS: graphDAOData.snapshotENS as string | undefined,
-          proposalTemplatesHash: graphDAOData.proposalTemplatesHash as string | undefined,
+          daoSnapshotENS: graphDAOData.snapshotENS ?? null,
+          proposalTemplatesHash: graphDAOData.proposalTemplatesHash ?? null,
           modules,
         };
       } catch (e) {
         setErrorLoading(true);
+        return;
       }
     },
     [getDAOInfo, lookupModules, safeApi],
@@ -92,6 +93,7 @@ export function DaoHierarchyNode({
         return;
       }
       loadDao(safeAddress).then(_node => {
+        if (!_node) return;
         setValue(
           {
             cacheName: CacheKeys.HIERARCHY_DAO_INFO,

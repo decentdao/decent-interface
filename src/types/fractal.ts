@@ -124,8 +124,6 @@ export enum FractalProposalState {
   CLOSED = 'stateClosed',
 }
 
-export type NullUnionUndefined = null | undefined;
-
 export type GnosisSafe = {
   // replaces SafeInfoResponseWithGuard and SafeWithNextNonce
   address: Address;
@@ -134,16 +132,16 @@ export type GnosisSafe = {
   nextNonce: number;
   threshold: number;
   modulesAddresses: Address[];
-  guard: Address | NullUnionUndefined;
+  guard: Address | null;
 };
 
 export interface DAOSubgraph {
   // replaces Part of DaoInfo
-  daoName: string | NullUnionUndefined;
-  parentAddress: Address | NullUnionUndefined;
+  daoName: string | null;
+  parentAddress: Address | null;
   childAddresses: Address[];
-  daoSnapshotENS: string | NullUnionUndefined;
-  proposalTemplatesHash: string | NullUnionUndefined;
+  daoSnapshotENS: string | null;
+  proposalTemplatesHash: string | null;
 }
 
 // @todo should we add other Decent Module types here?
@@ -242,11 +240,11 @@ export interface DaoInfo extends SubgraphDAOInfo {
 
 export interface DaoHierarchyInfo {
   safeAddress: Address;
-  daoName?: string;
-  daoSnapshotENS?: string;
+  daoName: string | null;
+  daoSnapshotENS: string | null;
   parentAddress: Address | null;
   childAddresses: Address[];
-  proposalTemplatesHash?: string;
+  proposalTemplatesHash: string | null;
   modules: DecentModule[];
 }
 
