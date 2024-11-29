@@ -4,6 +4,7 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../hooks/utils/useAvatar';
+import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import {
   EditBadgeStatus,
@@ -29,6 +30,7 @@ export function AvatarAndRoleName({
 
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);
+  const copyToClipboard = useCopyText();
 
   return (
     <Flex alignItems="center">
@@ -57,7 +59,18 @@ export function AvatarAndRoleName({
         </Text>
         <Text
           textStyle="button-small"
-          color="neutral-7"
+          p="0.25rem 0.5rem"
+          ml="-0.75rem"
+          rounded="1rem"
+          bg="neutral-3"
+          color="lilac-0"
+          _hover={{
+            color: 'white-0',
+            bg: 'neutral-4',
+          }}
+          cursor="pointer"
+          maxW="fit-content"
+          onClick={() => copyToClipboard(wearerAddress)}
         >
           {displayName ?? t('unassigned')}
         </Text>
