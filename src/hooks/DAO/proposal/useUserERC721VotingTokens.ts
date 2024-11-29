@@ -19,7 +19,7 @@ import useVotingStrategiesAddresses from '../../utils/useVotingStrategiesAddress
  * @returns {string[]} `remainingTokenAddresses` - same as `totalVotingTokenAddresses` - repeats contract address of NFT for each token ID in `remainingTokenIds` array.
  */
 export default function useUserERC721VotingTokens(
-  safeAddress: Address | null | undefined,
+  safeAddress: Address | null,
   proposalId: string | null,
   loadOnMount: boolean = true,
 ) {
@@ -45,7 +45,7 @@ export default function useUserERC721VotingTokens(
   const globalContextSafeAddress = safe?.address;
 
   const getUserERC721VotingTokens = useCallback(
-    async (_safeAddress: Address | null | undefined, _proposalId: number | null) => {
+    async (_safeAddress: Address | null, _proposalId: number | null) => {
       const totalTokenAddresses: Address[] = [];
       const totalTokenIds: string[] = [];
       const tokenAddresses: Address[] = [];
