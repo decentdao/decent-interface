@@ -65,7 +65,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     linearVotingErc20MasterCopy: Address,
     linearVotingErc721MasterCopy: Address,
     moduleAzoriusMasterCopy: Address,
-    parentAddress?: Address | null,
+    parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
     super(publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);

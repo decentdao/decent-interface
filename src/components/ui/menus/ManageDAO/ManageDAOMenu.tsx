@@ -35,7 +35,7 @@ export function ManageDAOMenu() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress ?? null, null, false);
   const { handleClawBack } = useClawBack({
-    parentAddress: dao.subgraphInfo?.parentAddress,
+    parentAddress: dao.subgraphInfo?.parentAddress ?? null,
     childSafeInfo: {
       daoAddress: dao.safe?.address,
       modules: dao.modules,
@@ -88,23 +88,25 @@ export function ManageDAOMenu() {
           });
           return contract.write.castFreezeVote();
         } else if (freezeVotingType === FreezeVotingType.ERC721) {
-          getUserERC721VotingTokens(dao.subgraphInfo?.parentAddress, null).then(tokensInfo => {
-            if (!guardContracts.freezeVotingContractAddress) {
-              throw new Error('freeze voting contract address not set');
-            }
-            if (!walletClient) {
-              throw new Error('wallet client not set');
-            }
-            const freezeERC721VotingContract = getContract({
-              abi: abis.ERC721FreezeVoting,
-              address: guardContracts.freezeVotingContractAddress,
-              client: walletClient,
-            });
-            return freezeERC721VotingContract.write.castFreezeVote([
-              tokensInfo.totalVotingTokenAddresses,
-              tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
-            ]);
-          });
+          getUserERC721VotingTokens(dao.subgraphInfo?.parentAddress ?? null, null).then(
+            tokensInfo => {
+              if (!guardContracts.freezeVotingContractAddress) {
+                throw new Error('freeze voting contract address not set');
+              }
+              if (!walletClient) {
+                throw new Error('wallet client not set');
+              }
+              const freezeERC721VotingContract = getContract({
+                abi: abis.ERC721FreezeVoting,
+                address: guardContracts.freezeVotingContractAddress,
+                client: walletClient,
+              });
+              return freezeERC721VotingContract.write.castFreezeVote([
+                tokensInfo.totalVotingTokenAddresses,
+                tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
+              ]);
+            },
+          );
         }
       },
     }),

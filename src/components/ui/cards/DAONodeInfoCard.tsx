@@ -22,7 +22,7 @@ export const NODE_MARGIN_TOP_REM = 1.25;
 export function DAONodeInfoCard(props: {
   daoAddress: Address;
   daoName: string;
-  daoSnapshotENS?: string;
+  daoSnapshotENS: string | null;
   isCurrentViewingDAO: boolean;
   votingStrategies: DaoHierarchyStrategyType[];
 }) {

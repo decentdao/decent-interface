@@ -23,7 +23,7 @@ interface IUseClawBack {
     daoAddress?: Address;
     modules: DecentModule[] | null;
   };
-  parentAddress: Address | null | undefined;
+  parentAddress: Address | null;
 }
 
 export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {

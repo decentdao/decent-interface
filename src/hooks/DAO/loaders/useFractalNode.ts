@@ -63,9 +63,9 @@ export const useFractalNode = ({
             ? getAddress(graphDAOData.parentAddress)
             : null,
           childAddresses: graphDAOData.hierarchy.map(child => getAddress(child.address)),
-          daoName: graphDAOData.name,
-          daoSnapshotENS: graphDAOData.snapshotENS,
-          proposalTemplatesHash: graphDAOData.proposalTemplatesHash,
+          daoName: graphDAOData.name ?? null,
+          daoSnapshotENS: graphDAOData.snapshotENS ?? null,
+          proposalTemplatesHash: graphDAOData.proposalTemplatesHash ?? null,
         });
       } catch (e) {
         reset({ error: true });

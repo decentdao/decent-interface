@@ -33,12 +33,14 @@ export const useCastFreezeVote = () => {
             address: freezeVotingContractAddress,
             client: walletClient,
           });
-          return getUserERC721VotingTokens(subgraphInfo?.parentAddress, null).then(tokensInfo => {
-            return freezeERC721VotingContract.write.castFreezeVote([
-              tokensInfo.totalVotingTokenAddresses,
-              tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
-            ]);
-          });
+          return getUserERC721VotingTokens(subgraphInfo?.parentAddress ?? null, null).then(
+            tokensInfo => {
+              return freezeERC721VotingContract.write.castFreezeVote([
+                tokensInfo.totalVotingTokenAddresses,
+                tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
+              ]);
+            },
+          );
         },
         pendingMessage: t('pendingCastFreezeVote'),
         failedMessage: t('failedCastFreezeVote'),

@@ -49,7 +49,7 @@ interface ISubmitProposal {
   /**
    * @param safeAddress - provided address of DAO to which proposal will be submitted
    */
-  safeAddress?: Address | null;
+  safeAddress?: Address;
 }
 
 interface ISubmitAzoriusProposal extends ISubmitProposal {
@@ -374,7 +374,6 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
-            safeAddress: safe?.address,
           });
         } else {
           const userProposerVotingStrategy = (
