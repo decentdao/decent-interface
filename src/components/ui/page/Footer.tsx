@@ -43,17 +43,17 @@ function NavigationIconLink(props: {
 }
 
 export function Footer() {
-  const { t } = useTranslation('navigation');
+  const { t } = useTranslation(['navigation', 'home']);
   return (
     <Flex
       w="100%"
       flexWrap="wrap"
       justifyContent={{ base: 'flex-start', md: 'center' }}
       alignItems="center"
-      gap={{ base: 4, md: 8 }}
+      gap={4}
     >
-      <Flex gap={4}>
-        <ExternalLink href="/docs/fractal_audit.pdf">{t('audit')}</ExternalLink>
+      <Flex>
+        <ExternalLink href="/docs/fractal_audit.pdf">{t('audit', { ns: 'home' })}</ExternalLink>
         <ExternalLink
           href={`https://github.com/decentdao/decent-interface/releases/tag/v${import.meta.env.PACKAGE_VERSION}`}
         >
@@ -66,7 +66,7 @@ export function Footer() {
         styleVariant="grey"
         fontSize="1.2rem"
       >
-        {t('madeWithLove')}
+        {t('madeWithLove', { ns: 'home' })}
       </ExternalLink>
 
       <Flex
