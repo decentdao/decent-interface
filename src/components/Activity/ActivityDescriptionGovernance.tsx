@@ -109,7 +109,7 @@ export function ProposalTitle({
       >
         <Text
           as="span"
-          textStyle="display-xl"
+          textStyle="heading-medium"
           maxW="100%"
         >
           {titleText}

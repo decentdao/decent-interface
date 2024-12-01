@@ -94,7 +94,7 @@ export function DAONodeInfoCard({ node, ...rest }: InfoProps) {
           >
             {/* DAO NAME */}
 
-            <Text textStyle="display-xl">{daoName}</Text>
+            <Text textStyle="heading-medium">{daoName}</Text>
 
             {/* FAVORITE ICON */}
             <FavoriteIcon
