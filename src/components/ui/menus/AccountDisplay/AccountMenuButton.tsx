@@ -48,7 +48,7 @@ function WalletMenuButton() {
       </Box>
       <Show above="md">
         <Text
-          textStyle={{ base: 'label-small', md: 'button-base' }}
+          textStyle={{ base: 'label-small', md: 'body-large' }}
           mb="1px"
         >
           {accountDisplayName}

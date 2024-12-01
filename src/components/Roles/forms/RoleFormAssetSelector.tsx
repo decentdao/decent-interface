@@ -110,7 +110,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
                   gap={2}
                 >
                   <Text
-                    textStyle="button-base"
+                    textStyle="body-large"
                     color="neutral-7"
                   >
                     {formatCoin(asset?.balance, true, asset?.decimals, asset?.symbol, true)}
@@ -118,13 +118,13 @@ function AssetsList({ formIndex }: { formIndex: number }) {
                   {asset?.usdValue && (
                     <>
                       <Text
-                        textStyle="button-base"
+                        textStyle="body-large"
                         color="neutral-7"
                       >
                         {'•'}
                       </Text>
                       <Text
-                        textStyle="button-base"
+                        textStyle="body-large"
                         color="neutral-7"
                       >
                         {formatUSD(asset?.usdValue)}

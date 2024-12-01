@@ -7,7 +7,7 @@ export default {
     borderRadius: '0.5rem',
   },
   base: {
-    apply: 'textStyles.button-base',
+    apply: 'textStyles.body-large',
     height: '1.5rem',
     width: '1.5rem',
     padding: '0.25rem',
@@ -27,7 +27,7 @@ export default {
     borderRadius: '0.5rem',
   },
   'icon-md': {
-    apply: 'textStyles.button-base',
+    apply: 'textStyles.body-large',
     height: '1.5rem',
     width: '1.5rem',
     padding: '0.25rem',
