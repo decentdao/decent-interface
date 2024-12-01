@@ -339,7 +339,7 @@ export function RolePaymentDetails({
           >
             <Flex justifyContent="space-between">
               <Text
-                textStyle="display-2xl"
+                textStyle="heading-large"
                 color="white-0"
               >
                 {payment.amount?.bigintValue

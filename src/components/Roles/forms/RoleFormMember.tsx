@@ -104,7 +104,7 @@ function RoleMemberConfirmationScreen({
           w="auto"
         />
         <Text
-          textStyle="display-2xl"
+          textStyle="heading-large"
           textAlign="center"
         >
           {t('addTermLengthTitle')}

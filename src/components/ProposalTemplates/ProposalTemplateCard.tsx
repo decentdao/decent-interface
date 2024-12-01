@@ -105,7 +105,7 @@ export default function ProposalTemplateCard({
           name={title}
           borderRadius={0}
           getInitials={(_title: string) => _title.slice(0, 2)}
-          textStyle="display-2xl"
+          textStyle="heading-large"
           color="white-0"
         />
         <OptionMenu
