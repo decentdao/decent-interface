@@ -350,7 +350,7 @@ function StreamBuilder({
           isRequired
           disabled={pendingTransaction}
           subLabel={
-            <HStack textStyle="helper-text-base">
+            <HStack textStyle="labels-large">
               <Text>{t('example', { ns: 'common' })}:</Text>
               <ExampleLabel>0x4168592...</ExampleLabel>
             </HStack>
@@ -371,7 +371,7 @@ function StreamBuilder({
           isRequired
           disabled={pendingTransaction}
           subLabel={
-            <HStack textStyle="helper-text-base">
+            <HStack textStyle="labels-large">
               <Text>{t('example', { ns: 'common' })}:</Text>
               <ExampleLabel>0x4168592...</ExampleLabel>
             </HStack>
@@ -389,7 +389,7 @@ function StreamBuilder({
           label="Stream Total Amount"
           helper="The total amount of token to stream. Has to be equal to the sum of tranches amount"
           subLabel={
-            <HStack textStyle="helper-text-base">
+            <HStack textStyle="labels-large">
               <Text>{t('example', { ns: 'common' })}:</Text>
               <ExampleLabel>10000</ExampleLabel>
             </HStack>

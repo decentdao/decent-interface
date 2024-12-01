@@ -8,7 +8,7 @@ const paddingAddonLeft = { pl: '3rem', pr: '1rem' };
 const paddingAddonRight = { pl: '1rem', pr: '4rem' };
 
 const baseStyle = {
-  apply: 'textStyles.input-text',
+  apply: 'textStyles.body-small',
   height: '2.5rem',
 };
 const base = defineStyle({
@@ -33,7 +33,7 @@ const baseWithAddons = defineStyle({
 
 // @todo is this being used?
 const xlStyle = {
-  apply: 'input-text',
+  apply: 'body-small',
   h: '4.375rem',
 };
 

@@ -48,7 +48,7 @@ function LabelWrapper({
         </Flex>
         {children}
         <Box
-          textStyle="helper-text-base"
+          textStyle="labels-large"
           color="neutral-7"
           mt="2"
           h="0.5rem"

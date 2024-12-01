@@ -184,7 +184,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                   />
                   <Text
                     color="neutral-7"
-                    textStyle="helper-text-base"
+                    textStyle="labels-large"
                     whiteSpace="pre-wrap"
                   >
                     {t('warningExistingToken')}

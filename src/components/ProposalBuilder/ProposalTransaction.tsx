@@ -75,7 +75,7 @@ export default function ProposalTransaction({
         isRequired
         disabled={transactionPending}
         subLabel={
-          <HStack textStyle="helper-text-base">
+          <HStack textStyle="labels-large">
             <Text>{t('example', { ns: 'common' })}:</Text>
             <ExampleLabel>yourdomain.eth</ExampleLabel>
             <Text>{t('or', { ns: 'common' })}</Text>

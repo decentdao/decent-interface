@@ -77,7 +77,7 @@ function RemoveSignerModal({
           color="red-0"
         />
         <Text
-          textStyle="helper-text-base"
+          textStyle="labels-large"
           color="red-0"
         >
           {t('removeSignerWarning', { ns: 'modals' })}
