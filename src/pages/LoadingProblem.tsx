@@ -37,7 +37,7 @@ function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQ
         >
           <Text
             w="full"
-            textStyle={{ base: 'display-2xl', lg: 'display-4xl' }}
+            textStyle={{ base: 'display-2xl', lg: 'heading-large' }}
           >
             {t('errorSentryFallbackTitle')}
           </Text>

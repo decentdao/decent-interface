@@ -89,7 +89,7 @@ export function DAOInfoCard() {
         >
           {/* DAO NAME */}
           <Text
-            textStyle="display-4xl"
+            textStyle="heading-large"
             data-testid="DAOInfo-name"
           >
             {daoName}

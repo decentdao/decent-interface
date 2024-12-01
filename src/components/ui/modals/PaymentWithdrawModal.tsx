@@ -165,7 +165,7 @@ export default function PaymentWithdrawModal({
               {t('available')}
             </Text>
             <Text
-              textStyle="display-4xl"
+              textStyle="heading-large"
               w="full"
             >
               {formatCoin(
