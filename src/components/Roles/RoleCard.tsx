@@ -83,7 +83,7 @@ export function AvatarAndRoleName({
               h="1.25rem"
             >
               <Text
-                textStyle="helper-text-small"
+                textStyle="labels-small"
                 lineHeight="1rem"
                 align="center"
               >

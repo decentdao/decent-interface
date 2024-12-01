@@ -260,7 +260,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                       <EaseOutComponent>
                         <Text
                           px="1rem"
-                          textStyle="helper-text-small"
+                          textStyle="labels-small"
                           color="neutral-7"
                         >
                           {t('titleAssets', { ns: 'treasury' })}

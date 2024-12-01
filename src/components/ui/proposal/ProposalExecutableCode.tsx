@@ -22,7 +22,7 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
   return (
     <Flex
       width="full"
-      textStyle="code-snippet-base"
+      textStyle="snippets-large"
       color="white-0"
       alignItems="center"
       justifyContent="space-between"
