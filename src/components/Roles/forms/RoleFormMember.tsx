@@ -260,7 +260,7 @@ function RoleFormMemberTermToggle() {
                   alignItems="center"
                   gap={2}
                 >
-                  <Text textStyle="label-large">{t('addTermLengths')}</Text>
+                  <Text textStyle="body-small">{t('addTermLengths')}</Text>
                   <Icon
                     size="1rem"
                     as={WarningDiamond}
@@ -268,7 +268,7 @@ function RoleFormMemberTermToggle() {
                   />
                 </Flex>
                 <Text
-                  textStyle="label-small"
+                  textStyle="labels-small"
                   color="neutral-7"
                 >
                   {t('addTermLengthSubTitle')}

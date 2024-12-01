@@ -25,7 +25,7 @@ export function ERC721TokensContainer() {
             {/* HEADER TITLES */}
             <GridItem colSpan={{ base: 1, lg: 2 }}>
               <Text
-                textStyle="label-small"
+                textStyle="labels-small"
                 color="neutral-7"
               >
                 {t('governanceTokenNameLabel')}
@@ -33,7 +33,7 @@ export function ERC721TokensContainer() {
             </GridItem>
             <GridItem colSpan={1}>
               <Text
-                textStyle="label-small"
+                textStyle="labels-small"
                 color="neutral-7"
               >
                 {t('governanceTokenSymbolLabel')}
@@ -41,7 +41,7 @@ export function ERC721TokensContainer() {
             </GridItem>
             <GridItem colSpan={1}>
               <Text
-                textStyle="label-small"
+                textStyle="labels-small"
                 color="neutral-7"
               >
                 {t('governanceTokenWeightLabel')}
@@ -49,7 +49,7 @@ export function ERC721TokensContainer() {
             </GridItem>
             <GridItem colSpan={1}>
               <Text
-                textStyle="label-small"
+                textStyle="labels-small"
                 color="neutral-7"
               >
                 {t('governanceTokenTotalWeightLabel')}

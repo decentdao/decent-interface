@@ -27,7 +27,7 @@ export function ERC20TokenContainer() {
           <Box w={{ base: 'full', sm: 'auto' }}>
             <Text
               color="neutral-7"
-              textStyle="label-small"
+              textStyle="labels-small"
             >
               {t('governanceTokenNameLabel')}
             </Text>
@@ -40,7 +40,7 @@ export function ERC20TokenContainer() {
           <Box w={{ base: 'full', sm: 'auto' }}>
             <Text
               color="neutral-7"
-              textStyle="label-small"
+              textStyle="labels-small"
             >
               {t('governanceTokenSymbolLabel')}
             </Text>
@@ -51,7 +51,7 @@ export function ERC20TokenContainer() {
           <Box w={{ base: 'full', sm: 'auto' }}>
             <Text
               color="neutral-7"
-              textStyle="label-small"
+              textStyle="labels-small"
             >
               {t('governanceTokenSupplyLabel')}
             </Text>

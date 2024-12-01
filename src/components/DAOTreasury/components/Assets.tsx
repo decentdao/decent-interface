@@ -51,7 +51,7 @@ export function Assets() {
   return (
     <Box mt={{ base: '1rem', lg: 0 }}>
       <Text
-        textStyle="label-small"
+        textStyle="labels-small"
         color="neutral-7"
         px={{ base: '1rem', lg: '1.5rem' }}
       >

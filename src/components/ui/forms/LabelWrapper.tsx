@@ -32,7 +32,7 @@ function LabelWrapper({
           h="fit-content"
           color={labelColor}
           mb="2"
-          textStyle="label-base"
+          textStyle="labels-large"
         >
           <Text>{label}</Text>
           {isRequired && <Text color="lilac-0">*</Text>}

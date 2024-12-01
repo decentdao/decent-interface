@@ -37,7 +37,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
           />
           <Box>
             <Text
-              textStyle="label-small"
+              textStyle="labels-small"
               color="neutral-7"
             >
               {t(displayData.eventType == TokenEventType.WITHDRAW ? 'labelSent' : 'labelReceived')}

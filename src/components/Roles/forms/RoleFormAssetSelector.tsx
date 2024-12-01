@@ -100,7 +100,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
               />
               <Flex flexDir="column">
                 <Text
-                  textStyle="label-base"
+                  textStyle="labels-large"
                   color="white-0"
                 >
                   {asset?.symbol}
@@ -203,7 +203,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                           boxSize="2.25rem"
                         />
                         <Text
-                          textStyle="label-large"
+                          textStyle="body-small"
                           color="white-0"
                         >
                           {selectedAsset?.symbol ?? t('selectLabel', { ns: 'modals' })}

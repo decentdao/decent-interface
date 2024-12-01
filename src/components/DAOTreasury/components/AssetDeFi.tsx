@@ -22,21 +22,21 @@ export function DeFiHeader() {
       <HStack px={{ base: '1rem', lg: '1.5rem' }}>
         <Text
           w="40%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnProtocols')}
         </Text>
         <Text
           w="35%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnValue')}
         </Text>
         <Text
           w="25%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnAllocation')}

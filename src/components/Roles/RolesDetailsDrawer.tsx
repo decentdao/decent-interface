@@ -66,7 +66,7 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
     >
       <Icon as={icon} />
       <Text
-        textStyle="label-base"
+        textStyle="labels-large"
         color="neutral-7"
       >
         {label}

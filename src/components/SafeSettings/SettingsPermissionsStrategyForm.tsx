@@ -70,7 +70,7 @@ export function SettingsPermissionsStrategyForm({
               boxSize="2.25rem"
             />
             <Text
-              textStyle="label-large"
+              textStyle="body-small"
               color="white-0"
             >
               {votesToken.symbol}

@@ -65,7 +65,7 @@ function ProposalAuthor({ activity }: { activity: FractalProposal }) {
       gap={2}
       alignItems="center"
       color="neutral-7"
-      textStyle="label-base"
+      textStyle="labels-large"
     >
       <Avatar
         size="sm"

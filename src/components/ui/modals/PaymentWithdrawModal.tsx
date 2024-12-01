@@ -149,7 +149,7 @@ export default function PaymentWithdrawModal({
               w="2rem"
               h="2rem"
             />
-            <Text textStyle="label-large">{paymentAssetSymbol}</Text>
+            <Text textStyle="body-small">{paymentAssetSymbol}</Text>
           </Flex>
           <Flex
             px="1rem"
@@ -158,7 +158,7 @@ export default function PaymentWithdrawModal({
             flex="1"
           >
             <Text
-              textStyle="label-small"
+              textStyle="labels-small"
               color="neutral-7"
               w="full"
             >
@@ -188,7 +188,7 @@ export default function PaymentWithdrawModal({
             w="full"
           >
             <Text
-              textStyle="label-small"
+              textStyle="labels-small"
               color="neutral-7"
               w="100px"
             >
@@ -205,7 +205,7 @@ export default function PaymentWithdrawModal({
                   size={iconSize}
                 />
               </Box>
-              <Text textStyle="label-base">{withdrawInformation.recipient}</Text>
+              <Text textStyle="labels-large">{withdrawInformation.recipient}</Text>
             </Flex>
           </Flex>
           <Flex
@@ -214,7 +214,7 @@ export default function PaymentWithdrawModal({
             w="full"
           >
             <Text
-              textStyle="label-small"
+              textStyle="labels-small"
               color="neutral-7"
               w="100px"
             >
