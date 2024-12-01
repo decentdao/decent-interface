@@ -719,7 +719,6 @@ function StreamsBuilder({
                       <WarningCircle size="24" />
                     </Box>
                     <Text
-                      textStyle="body-base-strong"
                       whiteSpace="pre-wrap"
                       ml="1rem"
                     >

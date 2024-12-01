@@ -324,12 +324,7 @@ export function SafeRoleEditDetailsPage() {
                             paymentIndex === undefined ? goBackToRolesEdit : goBackToRoleEdit
                           }
                         />
-                        <Text
-                          textStyle="body-base"
-                          color="neutral-8"
-                        >
-                          {goBackText}
-                        </Text>
+                        <Text color="neutral-8">{goBackText}</Text>
                       </Flex>
                       {paymentIndex === undefined && (
                         <Box position="relative">

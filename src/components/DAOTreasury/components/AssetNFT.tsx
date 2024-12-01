@@ -67,7 +67,6 @@ export function NFTRow({ asset, isLast }: { asset: NFTBalance; isLast: boolean }
           value={asset.tokenAddress}
           _hover={{ bg: 'transparent' }}
           color="white-0"
-          textStyle="body-base"
           wordBreak="break-word"
         >
           {name}
@@ -79,7 +78,6 @@ export function NFTRow({ asset, isLast }: { asset: NFTBalance; isLast: boolean }
           value={asset.tokenAddress}
           secondaryValue={id}
           color="white-0"
-          textStyle="body-base"
           _hover={{ bg: 'transparent' }}
         >
           <Text as="span">{`#${createAccountSubstring(id)}`}</Text>

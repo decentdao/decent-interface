@@ -90,7 +90,7 @@ export default function RolesDetailsDrawerMobile({
         >
           {t('roleDescription')}
         </Text>
-        <Text textStyle="body-base">{roleHat.description}</Text>
+        <Text>{roleHat.description}</Text>
       </Box>
       {roleHat.canCreateProposals && (
         <Box

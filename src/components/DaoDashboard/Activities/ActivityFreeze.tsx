@@ -13,7 +13,6 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   return (
     <Text
       color="neutral-7"
-      textStyle="body-base-strong"
       gap="0.5rem"
     >
       {t(isFrozen ? 'frozenDescription' : 'freezeDescription')}

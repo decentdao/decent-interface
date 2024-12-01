@@ -148,7 +148,6 @@ function RemoveSignerModal({
         />
         <Text
           color="yellow-0"
-          textStyle="body-base-strong"
           whiteSpace="pre-wrap"
         >
           {t('updateSignerWarning', { ns: 'modals' })}

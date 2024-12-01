@@ -239,10 +239,7 @@ export default function ProposalTransaction({
                             testId={`transactions.${transactionIndex}.parameters.${i}.signature`}
                           />
                           <Box mt={4}>
-                            <Text
-                              textStyle="body-base"
-                              mb="1.5rem"
-                            >
+                            <Text mb="1.5rem">
                               {t('labelParameterValue', { ns: 'proposalTemplate' })}
                             </Text>
                             {!isProposalMode && (

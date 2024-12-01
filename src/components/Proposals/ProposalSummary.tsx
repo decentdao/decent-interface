@@ -132,7 +132,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
       justifyContent="flex-end"
       alignItems="flex-start"
       variant="text"
-      textStyle="body-base"
       color="celery-0"
       _active={{ color: 'celery--2' }}
       onClick={toggleShowVotingPower}
@@ -179,7 +178,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
           alignItems="center"
         >
           <Text
-            textStyle="body-base"
             color="neutral-7"
             w="full"
           >
@@ -206,7 +204,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
           alignItems="center"
         >
           <Text
-            textStyle="body-base"
             color="neutral-7"
             w="full"
           >
@@ -232,7 +229,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
             flexWrap="wrap"
           >
             <Text
-              textStyle="body-base"
               color="neutral-7"
               w="full"
             >

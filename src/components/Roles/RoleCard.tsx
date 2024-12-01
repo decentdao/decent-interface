@@ -133,7 +133,6 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
           {t('payment')}
         </Text>
         <Flex
-          textStyle="body-base"
           color="white-0"
           gap="0.25rem"
           alignItems="center"
@@ -150,7 +149,6 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
           <EtherscanLink
             color="white-0"
             _hover={{ bg: 'transparent' }}
-            textStyle="body-base"
             padding={0}
             borderWidth={0}
             value={payment.asset?.address ?? null}

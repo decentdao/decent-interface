@@ -212,12 +212,7 @@ function GuardDetails(props: ICreationStepProps) {
             >
               <Info size="24" />
             </Box>
-            <Text
-              textStyle="body-base-strong"
-              whiteSpace="pre-wrap"
-            >
-              {t('freezeGuardDescription')}
-            </Text>
+            <Text whiteSpace="pre-wrap">{t('freezeGuardDescription')}</Text>
           </Alert>
         </Flex>
       </StepWrapper>

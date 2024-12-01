@@ -121,12 +121,7 @@ function RoleMemberConfirmationScreen({
               as={ClockCountdown}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-1')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-1')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -136,12 +131,7 @@ function RoleMemberConfirmationScreen({
               weight="fill"
             />
 
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-2')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-2')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -150,12 +140,7 @@ function RoleMemberConfirmationScreen({
               as={ReceiptX}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-3')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-3')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -164,12 +149,7 @@ function RoleMemberConfirmationScreen({
               as={HandCoins}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-4')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-4')}</Text>
           </Flex>
         </Flex>
         <Flex

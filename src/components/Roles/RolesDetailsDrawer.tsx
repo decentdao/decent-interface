@@ -47,7 +47,6 @@ export function RoleProposalPermissionBadge({
         color="celery-0"
         bgColor="celery--6"
         textTransform="unset"
-        textStyle="body-base"
         fontSize="1rem"
         lineHeight="1.5rem"
         fontWeight="normal"
@@ -200,21 +199,11 @@ export default function RolesDetailsDrawer({
                     url={avatarURL}
                   />
                 )}
-                <Text
-                  textStyle="body-base"
-                  color="white-0"
-                >
-                  {displayName}
-                </Text>
+                <Text color="white-0">{displayName}</Text>
               </Flex>
             </GridItem>
             <GridItem area="dValue">
-              <Text
-                textStyle="body-base"
-                color="white-0"
-              >
-                {roleHat.description}
-              </Text>
+              <Text color="white-0">{roleHat.description}</Text>
             </GridItem>
             <GridItem
               area="pValue"

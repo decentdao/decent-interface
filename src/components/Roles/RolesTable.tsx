@@ -76,12 +76,7 @@ function RoleNameEditColumn({
           justifyContent="space-between"
           w="full"
         >
-          <Text
-            textStyle="body-base"
-            color="lilac-0"
-          >
-            {roleName}
-          </Text>
+          <Text color="lilac-0">{roleName}</Text>
           <EditBadge editStatus={editStatus} />
         </Flex>
         <Icon
@@ -129,7 +124,6 @@ function MemberColumn({
           />
         )}
         <Text
-          textStyle="body-base"
           color={isTermed && !isCurrentTermActive ? 'neutral-6' : 'white-0'}
           ml="0.5rem"
         >
@@ -150,7 +144,6 @@ function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
       minWidth="140px"
       textAlign="center"
       color="neutral-5"
-      textStyle="body-base"
     >
       {paymentsCount !== undefined ? (
         <Box
@@ -199,7 +192,6 @@ export function RolesRow({
       onClick={handleRoleClick}
     >
       <Td
-        textStyle="body-base"
         color="lilac-0"
         width="25%"
         minW="230px"

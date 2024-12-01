@@ -91,7 +91,6 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
         <EtherscanLink
           color="white-0"
           _hover={{ bg: 'transparent' }}
-          textStyle="body-base"
           padding={0}
           borderWidth={0}
           value={isNativePosition ? (safe?.address ?? null) : asset.position?.address || null}

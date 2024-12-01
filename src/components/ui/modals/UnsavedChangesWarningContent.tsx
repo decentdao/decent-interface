@@ -29,7 +29,6 @@ export function UnsavedChangesWarningContent({
         </Text>
         <Text
           mt="0.5rem"
-          textStyle="body-base"
           textAlign="center"
         >
           {t('unsavedChangesDescription')}

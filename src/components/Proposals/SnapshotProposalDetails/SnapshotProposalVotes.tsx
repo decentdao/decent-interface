@@ -95,12 +95,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 justifyContent="center"
                 width="100%"
               >
-                <Text
-                  color="neutral-7"
-                  textStyle="body-base"
-                >
-                  {t('shutterVotesHidden')} |
-                </Text>
+                <Text color="neutral-7">{t('shutterVotesHidden')} |</Text>
                 <ProposalCountdown
                   proposal={proposal}
                   showIcon={false}

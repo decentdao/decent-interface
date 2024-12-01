@@ -62,7 +62,7 @@ export default function NestedPageHeader({ title, backButton, children }: Nested
       <Box width="25%">
         <BackButton {...backButton} />
       </Box>
-      <Text textStyle="body-base-strong">{title}</Text>
+      <Text>{title}</Text>
       {children || <Box width="25%" />}
     </Flex>
   );
