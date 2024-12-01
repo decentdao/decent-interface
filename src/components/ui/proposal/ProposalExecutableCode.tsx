@@ -168,7 +168,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Fractal
             <>
               <AccordionButton
                 p={0}
-                textStyle="display-lg"
+                textStyle="heading-small"
                 color="lilac-0"
               >
                 <AccordionIcon

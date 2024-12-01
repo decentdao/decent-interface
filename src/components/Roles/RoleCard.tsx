@@ -50,7 +50,7 @@ export function AvatarAndRoleName({
         ml="1rem"
       >
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="white-0"
         >
           {name}
@@ -257,7 +257,7 @@ export function RoleCardShort({
     >
       <Flex justifyContent="space-between">
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="lilac-0"
         >
           {name}

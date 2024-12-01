@@ -98,7 +98,7 @@ export function ProposalTitle({
   const titleText = proposalIdText + ' ' + proposaltitleText;
   return (
     <Box
-      textStyle="display-lg"
+      textStyle="heading-small"
       color="white-0"
       pr="1.5rem"
     >

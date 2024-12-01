@@ -287,7 +287,7 @@ function TermSelectorMenu({ paymentIndex }: { paymentIndex: number }) {
                       <Text
                         mb="1.5rem"
                         px={8}
-                        textStyle="display-lg"
+                        textStyle="heading-small"
                         color="white-0"
                       >
                         {t('selectTerm')}

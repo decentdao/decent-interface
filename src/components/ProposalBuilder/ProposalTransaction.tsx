@@ -104,7 +104,7 @@ export default function ProposalTransaction({
       {/* FUNCTION SPECIFICATION */}
       <Box>
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           mb="1.5rem"
         >
           {t('functionHeader')}
@@ -169,10 +169,10 @@ export default function ProposalTransaction({
                           });
                         }}
                         p={0}
-                        textStyle="display-lg"
+                        textStyle="heading-small"
                         color="lilac-0"
                       >
-                        <Text textStyle="display-lg">
+                        <Text textStyle="heading-small">
                           <Flex
                             alignItems="center"
                             gap={2}

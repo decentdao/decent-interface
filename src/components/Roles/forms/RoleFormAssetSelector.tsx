@@ -55,7 +55,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
         justifyContent="center"
       >
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="neutral-7"
         >
           {t('emptyRolesAssets')}
@@ -226,7 +226,9 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                           flexWrap="wrap"
                           gap="1rem"
                         >
-                          <Text textStyle="display-lg">{t('titleAssets', { ns: 'treasury' })}</Text>
+                          <Text textStyle="heading-small">
+                            {t('titleAssets', { ns: 'treasury' })}
+                          </Text>
                           <Divider
                             variant="darker"
                             mx="-1.5rem"

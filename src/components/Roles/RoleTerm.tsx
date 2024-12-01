@@ -59,7 +59,7 @@ function RoleTermHeaderTitle({
       gap={2}
       alignItems="center"
     >
-      <Text textStyle="display-lg">{t('termNumber', { number: termNumber })}</Text>
+      <Text textStyle="heading-small">{t('termNumber', { number: termNumber })}</Text>
       <Text
         textStyle="label-small"
         color="neutral-5"

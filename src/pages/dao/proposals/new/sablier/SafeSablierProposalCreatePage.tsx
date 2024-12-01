@@ -177,7 +177,7 @@ function ProposalDetails({
         spacing={3}
         align="left"
       >
-        <Text textStyle="display-lg">{t('preview')}</Text>
+        <Text textStyle="heading-small">{t('preview')}</Text>
         <Divider />
         <HStack justifyContent="space-between">
           <Text color="neutral-7">{t('previewTitle')}</Text>
@@ -480,10 +480,10 @@ function StreamBuilder({
                             });
                           }}
                           p={0}
-                          textStyle="display-lg"
+                          textStyle="heading-small"
                           color="lilac-0"
                         >
-                          <Text textStyle="display-lg">
+                          <Text textStyle="heading-small">
                             <Flex
                               alignItems="center"
                               gap={2}
@@ -666,7 +666,7 @@ function StreamsBuilder({
                 <AccordionButton
                   py="0.25rem"
                   px="1.5rem"
-                  textStyle="display-lg"
+                  textStyle="heading-small"
                   color="lilac-0"
                   justifyContent="space-between"
                 >
@@ -676,7 +676,7 @@ function StreamsBuilder({
                   >
                     {isExpanded ? <CaretDown /> : <CaretRight />}
                     <Text
-                      textStyle="display-lg"
+                      textStyle="heading-small"
                       textTransform="capitalize"
                     >
                       Stream {index + 1} ({stream.type})

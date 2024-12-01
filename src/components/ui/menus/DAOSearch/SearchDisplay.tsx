@@ -64,7 +64,7 @@ export function SearchDisplay({
           boxSize="1.5rem"
         />
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="red-1"
         >
           {errorMessage}

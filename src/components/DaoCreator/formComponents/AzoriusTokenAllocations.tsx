@@ -109,7 +109,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                       <>
                         <AccordionButton
                           p={0}
-                          textStyle="display-lg"
+                          textStyle="heading-small"
                           color="lilac-0"
                         >
                           {isExpanded ? <CaretDown /> : <CaretRight />}

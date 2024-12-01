@@ -37,7 +37,7 @@ export default function HomePage() {
         alignItems="flex-end"
         mt="2.5rem"
       >
-        <Text textStyle="display-lg">{t('mySafes')}</Text>
+        <Text textStyle="heading-small">{t('mySafes')}</Text>
         <Spacer />
         <Link to={BASE_ROUTES.create}>
           <Button

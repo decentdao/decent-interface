@@ -269,7 +269,7 @@ export function SafeRoleEditDetailsPage() {
                         as={ArrowLeft}
                         boxSize="1.5rem"
                       />
-                      <Text textStyle="display-lg">{goBackText}</Text>
+                      <Text textStyle="heading-small">{goBackText}</Text>
                     </Button>
                     {paymentIndex === undefined && (
                       <Box position="relative">

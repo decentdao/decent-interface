@@ -275,7 +275,7 @@ export function ProposalBuilder({
                               h="1.5rem"
                             />
                             <Text
-                              textStyle="display-lg"
+                              textStyle="heading-small"
                               ml={2}
                             >
                               {t('actions', { ns: 'actions' })}

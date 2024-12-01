@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 function ContentBoxTitle({ children }: { children: ReactNode }) {
   return (
     <Text
-      textStyle="display-lg"
+      textStyle="heading-small"
       color="white-0"
     >
       {children}

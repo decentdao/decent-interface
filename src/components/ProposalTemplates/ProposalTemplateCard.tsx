@@ -123,7 +123,7 @@ export default function ProposalTemplateCard({
         />
       </Flex>
       <Text
-        textStyle="display-lg"
+        textStyle="heading-small"
         color="white-0"
         my="0.5rem"
       >

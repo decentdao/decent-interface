@@ -24,7 +24,7 @@ export function TitledInfoBox({
     >
       <Text
         data-testid={titleTestId}
-        textStyle="display-lg"
+        textStyle="heading-small"
         px={{ base: '1rem', lg: '1.5rem' }}
       >
         {title}

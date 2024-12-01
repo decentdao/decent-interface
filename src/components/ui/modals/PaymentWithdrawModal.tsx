@@ -117,7 +117,7 @@ export default function PaymentWithdrawModal({
       <Text
         textAlign="center"
         px="1.5rem"
-        textStyle="display-lg"
+        textStyle="heading-small"
         w="full"
       >
         {t('withdrawPaymentTitle')}

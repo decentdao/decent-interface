@@ -38,7 +38,7 @@ export function SectionTitle({
               gap="0.25rem"
             >
               <Text
-                textStyle="display-lg"
+                textStyle="heading-small"
                 color="white-0"
               >
                 {title}

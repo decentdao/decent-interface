@@ -65,7 +65,7 @@ function RolesDetailsPayments({
         my={4}
       />
       <Text
-        textStyle="display-lg"
+        textStyle="heading-small"
         color="white-0"
       >
         {t('payments')}

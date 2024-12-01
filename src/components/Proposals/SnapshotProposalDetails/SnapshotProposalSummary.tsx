@@ -74,7 +74,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
         my: 0,
       }}
     >
-      <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
+      <Text textStyle="heading-small">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider variant="darker" />
         <InfoRow

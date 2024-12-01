@@ -150,7 +150,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
         my: 0,
       }}
     >
-      <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
+      <Text textStyle="heading-small">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider
           variant="darker"
