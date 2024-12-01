@@ -82,7 +82,7 @@ export function SearchDisplay({
       >
         <ErrorBoundary fallback={MySafesErrorFallback}>
           <Text
-            textStyle="button-small"
+            textStyle="labels-large"
             color="neutral-7"
             py="1rem"
             px="0.5rem"

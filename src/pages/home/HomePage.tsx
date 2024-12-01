@@ -45,7 +45,7 @@ export default function HomePage() {
             size="sm"
             cursor="pointer"
           >
-            <Text textStyle="button-small">{t('createCTA')}</Text>
+            <Text textStyle="labels-large">{t('createCTA')}</Text>
           </Button>
         </Link>
       </Flex>

@@ -56,7 +56,7 @@ export function AvatarAndRoleName({
           {name}
         </Text>
         <Text
-          textStyle="button-small"
+          textStyle="labels-large"
           color="neutral-7"
         >
           {displayName ?? t('unassigned')}
@@ -67,7 +67,7 @@ export function AvatarAndRoleName({
             gap="0.25rem"
           >
             <Text
-              textStyle="button-small"
+              textStyle="labels-large"
               color="neutral-7"
               alignSelf="center"
             >
@@ -127,7 +127,7 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
         ml="4rem"
       >
         <Text
-          textStyle="button-small"
+          textStyle="labels-large"
           color="neutral-7"
         >
           {t('payment')}
