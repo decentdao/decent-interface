@@ -1,6 +1,6 @@
 export default {
   lg: {
-    apply: 'textStyles.button-large',
+    apply: 'textStyles.body-large',
     height: '4.5rem',
     padding: '1.5rem 2.5rem',
   },
@@ -15,7 +15,7 @@ export default {
     padding: '0.25rem .5rem',
   },
   'icon-lg': {
-    apply: 'textStyles.button-large',
+    apply: 'textStyles.body-large',
     height: '2.25rem',
     width: '2.25rem',
     borderRadius: '0.5rem',
