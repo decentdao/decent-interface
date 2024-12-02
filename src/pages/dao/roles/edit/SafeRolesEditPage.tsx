@@ -23,7 +23,7 @@ import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
-import { EditBadgeStatus, RoleFormValues } from '../../../../types/roles';
+import { RoleFormValues } from '../../../../types/roles';
 
 export function SafeRolesEditPage() {
   useEffect(() => {
@@ -39,29 +39,6 @@ export function SafeRolesEditPage() {
 
   const navigate = useNavigate();
   const { createEditRolesProposal } = useCreateRoles();
-
-  function generateRoleProposalTitle({ formValues }: { formValues: RoleFormValues }) {
-    const filteredHats = formValues.hats.filter(hat => !!hat.editedRole);
-    const addedHatsCount = filteredHats.filter(
-      hat => hat.editedRole!.status === EditBadgeStatus.New,
-    ).length;
-    const updatedHatsCount = filteredHats.filter(
-      hat => hat.editedRole!.status === EditBadgeStatus.Updated,
-    ).length;
-    const removedHatsCount = filteredHats.filter(
-      hat => hat.editedRole!.status === EditBadgeStatus.Removed,
-    ).length;
-
-    const addedHatsText = addedHatsCount > 0 ? t('addedHats', { count: addedHatsCount }) : '';
-
-    const updatedHatsText =
-      updatedHatsCount > 0 ? t('updatedHats', { count: updatedHatsCount }) : '';
-
-    const removedHatsText =
-      removedHatsCount > 0 ? t('removedHats', { count: removedHatsCount }) : '';
-
-    return [addedHatsText, updatedHatsText, removedHatsText].filter(Boolean).join('. ');
-  }
 
   const initialValues: RoleFormValues = useMemo(() => {
     const hats = hatsTree?.roleHats || [];
@@ -103,7 +80,7 @@ export function SafeRolesEditPage() {
       validateOnMount
       onSubmit={createEditRolesProposal}
     >
-      {({ handleSubmit, values, touched, setFieldValue }) => (
+      {({ handleSubmit, values, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
           {blocker.state === 'blocked' && (
             <>
@@ -216,12 +193,6 @@ export function SafeRolesEditPage() {
             </Button>
             <Button
               onClick={() => {
-                if (!touched.proposalMetadata?.title || !values.proposalMetadata.title) {
-                  setFieldValue(
-                    'proposalMetadata.title',
-                    generateRoleProposalTitle({ formValues: values }),
-                  );
-                }
                 if (blocker.reset) {
                   blocker.reset();
                 }
