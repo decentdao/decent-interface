@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useMemo } from 'react';
@@ -11,6 +11,7 @@ import {
 import { RoleFormValues, SablierPaymentFormValues } from '../../../types/roles';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
+import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from '../RolePaymentDetails';
 
 export function RoleFormPaymentStreams() {
@@ -58,6 +59,26 @@ export function RoleFormPaymentStreams() {
     <FieldArray name="roleEditing.payments">
       {({ push: pushPayment }: { push: (streamFormValue: SablierPaymentFormValues) => void }) => (
         <Box>
+          {sortedPayments.length === 0 && (
+            <Flex
+              padding="1.5rem"
+              border="1px solid"
+              borderColor="neutral-3"
+              borderRadius="0.25rem"
+              my="1.5rem"
+              justifyContent="space-between"
+            >
+              <Flex flexDir="column">
+                <Text textStyle="label-large">{t('noPaymentsTitle')}</Text>
+                <Text
+                  textStyle="label-small"
+                  color="neutral-7"
+                >
+                  {t('noPaymentsSubTitle')}
+                </Text>
+              </Flex>
+            </Flex>
+          )}
           <Button
             variant="secondary"
             size="sm"
@@ -76,6 +97,7 @@ export function RoleFormPaymentStreams() {
           >
             {t('addPayment')}
           </Button>
+          <Divider my="1rem" />
           <Box mt="0.5rem">
             {sortedPayments.map((payment, index) => {
               // @note don't render if form isn't valid
