@@ -17,6 +17,7 @@ import {
   SortBy,
 } from '../../../types';
 import { ProposalsList } from '../../Proposals/ProposalsList';
+import { CreateProposalMenu } from '../../ui/menus/CreateProposalMenu';
 import { OptionMenu } from '../../ui/menus/OptionMenu';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
@@ -258,25 +259,19 @@ export function ProposalsHome() {
 
           {/* DELEGATE AND CREATE PROPOSAL BUTTONS (non-mobile) */}
           <Show above="md">
-            <Flex gap={3}>
+            <Flex gap={6}>
               {canDelegate && (
                 <Button
                   onClick={delegate}
                   variant="secondary"
-                  size="sm"
+                  border={0}
+                  size="md"
                 >
                   {t('delegate', { ns: 'common' })}
                 </Button>
               )}
               {canUserCreateProposal && safe?.address && (
-                <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
-                  <Button
-                    size="sm"
-                    minW={0}
-                  >
-                    {t('createProposal')}
-                  </Button>
-                </Link>
+                <CreateProposalMenu safeAddress={safe.address} />
               )}
             </Flex>
           </Show>
