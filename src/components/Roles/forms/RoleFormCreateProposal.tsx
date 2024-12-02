@@ -276,7 +276,11 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         </Button>
         <Button
           onClick={submitForm}
-          isDisabled={isSubmitting}
+          isDisabled={
+            isSubmitting ||
+            !values.proposalMetadata.title.trim() ||
+            !values.proposalMetadata.description.trim()
+          }
         >
           {t('submitProposal')}
         </Button>
