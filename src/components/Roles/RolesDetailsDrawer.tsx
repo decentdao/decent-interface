@@ -18,6 +18,8 @@ import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIc
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useAddress from '../../hooks/utils/useAddress';
 import useAvatar from '../../hooks/utils/useAvatar';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
+import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
@@ -29,6 +31,7 @@ import { RoleDetailsDrawerProps } from '../../types/roles';
 import { BarLoader } from '../ui/loaders/BarLoader';
 import ModalTooltip from '../ui/modals/ModalTooltip';
 import Avatar from '../ui/page/Header/Avatar';
+import Markdown from '../ui/proposal/Markdown';
 import Divider from '../ui/utils/Divider';
 import RoleDetailsTabs from './RoleDetailsTabs';
 
@@ -106,6 +109,9 @@ export default function RolesDetailsDrawer({
     [roleHat.payments],
   );
 
+  const { canUserCreateProposal } = useCanUserCreateProposal();
+  const copyToClipboard = useCopyText();
+
   if (!safe?.address) return null;
 
   return (
@@ -134,6 +140,7 @@ export default function RolesDetailsDrawer({
               size="icon-sm"
               aria-label="Close Drawer"
               as={X}
+              cursor="pointer"
               onClick={onClose}
             />
             <Flex
@@ -141,13 +148,16 @@ export default function RolesDetailsDrawer({
               alignItems="center"
             >
               {/* @todo add `...` Menu? */}
-              <IconButton
-                variant="tertiary"
-                size="icon-sm"
-                aria-label="Edit Role"
-                as={PencilWithLineIcon}
-                onClick={() => onEdit(roleHat.id)}
-              />
+              {canUserCreateProposal && (
+                <IconButton
+                  variant="tertiary"
+                  size="icon-sm"
+                  aria-label="Edit Role"
+                  cursor="pointer"
+                  as={PencilWithLineIcon}
+                  onClick={() => onEdit(roleHat.id)}
+                />
+              )}
             </Flex>
           </Flex>
           <Text
@@ -165,6 +175,7 @@ export default function RolesDetailsDrawer({
             `}
             gridRowGap="1rem"
             gridColumnGap="2rem"
+            alignItems="center"
           >
             <GridItem area="mLabel">
               <RoleAndDescriptionLabel
@@ -190,6 +201,18 @@ export default function RolesDetailsDrawer({
               <Flex
                 alignItems="center"
                 gap="0.5rem"
+                p="0.25rem 0.5rem"
+                ml="-0.75rem"
+                rounded="1rem"
+                bg="neutral-3"
+                color="lilac-0"
+                _hover={{
+                  color: 'white-0',
+                  bg: 'neutral-4',
+                }}
+                cursor="pointer"
+                maxW="fit-content"
+                onClick={() => copyToClipboard(roleHatWearerAddress)}
               >
                 {loadingRoleHatWearerAddress || !roleHatWearerAddress ? (
                   <BarLoader />
@@ -200,21 +223,14 @@ export default function RolesDetailsDrawer({
                     url={avatarURL}
                   />
                 )}
-                <Text
-                  textStyle="body-base"
-                  color="white-0"
-                >
-                  {displayName}
-                </Text>
+                <Text textStyle="body-base">{displayName}</Text>
               </Flex>
             </GridItem>
             <GridItem area="dValue">
-              <Text
-                textStyle="body-base"
-                color="white-0"
-              >
-                {roleHat.description}
-              </Text>
+              <Markdown
+                content={roleHat.description}
+                collapsedLines={100}
+              />
             </GridItem>
             <GridItem
               area="pValue"
