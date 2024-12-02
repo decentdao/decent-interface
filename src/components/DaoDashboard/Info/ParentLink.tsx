@@ -9,11 +9,11 @@ import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
  * Displays a link to the current DAO's parent, if it has one.
  */
 export function ParentLink() {
-  const { nodeHierarchy } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('breadcrumbs');
 
-  if (!nodeHierarchy.parentAddress) {
+  if (!subgraphInfo?.parentAddress) {
     return null;
   }
 
@@ -21,7 +21,7 @@ export function ParentLink() {
     <Link
       color="celery-0"
       _hover={{ textDecoration: 'none', color: 'celery--6' }}
-      to={DAO_ROUTES.dao.relative(addressPrefix, nodeHierarchy.parentAddress)}
+      to={DAO_ROUTES.dao.relative(addressPrefix, subgraphInfo.parentAddress)}
       marginBottom="1rem"
       as={RouterLink}
       width="fit-content"

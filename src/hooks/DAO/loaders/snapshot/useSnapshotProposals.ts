@@ -8,12 +8,12 @@ import { createSnapshotGraphQlClient } from './';
 
 export const useSnapshotProposals = () => {
   const { action } = useFractal();
-  const { daoSnapshotENS } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   const currentSnapshotENS = useRef<string | undefined>();
   const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
 
   const loadSnapshotProposals = useCallback(async () => {
-    if (snaphshotGraphQlClient) {
+    if (snaphshotGraphQlClient && !!subgraphInfo) {
       snaphshotGraphQlClient
         .query({
           query: gql`
@@ -21,7 +21,7 @@ export const useSnapshotProposals = () => {
         proposals(
           first: 50,
           where: {
-            space_in: ["${daoSnapshotENS}"]
+            space_in: ["${subgraphInfo.daoSnapshotENS}"]
           },
           orderBy: "created",
           orderDirection: desc
@@ -71,11 +71,15 @@ export const useSnapshotProposals = () => {
           });
         });
     }
-  }, [action, daoSnapshotENS, snaphshotGraphQlClient]);
+  }, [snaphshotGraphQlClient, subgraphInfo, action]);
 
   useEffect(() => {
-    if (!daoSnapshotENS || daoSnapshotENS === currentSnapshotENS.current) return;
-    currentSnapshotENS.current = daoSnapshotENS;
+    if (
+      !subgraphInfo?.daoSnapshotENS ||
+      subgraphInfo?.daoSnapshotENS === currentSnapshotENS.current
+    )
+      return;
+    currentSnapshotENS.current = subgraphInfo.daoSnapshotENS;
     loadSnapshotProposals();
-  }, [daoSnapshotENS, loadSnapshotProposals]);
+  }, [subgraphInfo?.daoSnapshotENS, loadSnapshotProposals]);
 };

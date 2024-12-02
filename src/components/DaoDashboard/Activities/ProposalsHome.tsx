@@ -59,7 +59,7 @@ export function ProposalsHome() {
 
   const { canUserCreateProposal } = useCanUserCreateProposal();
 
-  const { daoSnapshotENS } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   const [allOptions, setAllFilterOptions] = useState<FractalProposalState[]>([]);
 
   const { t } = useTranslation(['proposal', 'common']);
@@ -114,12 +114,12 @@ export function ProposalsHome() {
         break;
     }
 
-    if (daoSnapshotENS) {
+    if (subgraphInfo?.daoSnapshotENS) {
       filterOptions = [...filterOptions, ...FILTERS_SNAPSHOT];
     }
     setAllFilterOptions(filterOptions);
     setFilters(filterOptions);
-  }, [daoSnapshotENS, guardContracts.freezeGuardContractAddress, type]);
+  }, [subgraphInfo?.daoSnapshotENS, guardContracts.freezeGuardContractAddress, type]);
 
   const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {

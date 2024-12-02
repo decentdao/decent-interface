@@ -26,7 +26,7 @@ export function SafeTreasuryPage() {
   const {
     treasury: { assetsFungible, transfers },
   } = useFractal();
-  const { daoName } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation(['treasury', 'modals']);
   const { canUserCreateProposal } = useCanUserCreateProposal();
@@ -65,7 +65,7 @@ export function SafeTreasuryPage() {
       <PageHeader
         title={t('headerTitle', {
           ns: 'breadcrumbs',
-          daoName,
+          daoName: subgraphInfo?.daoName,
           subject: t('treasury', { ns: 'breadcrumbs' }),
         })}
         showSafeAddress

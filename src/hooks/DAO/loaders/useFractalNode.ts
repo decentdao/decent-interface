@@ -1,8 +1,12 @@
+import { useLazyQuery } from '@apollo/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Address } from 'viem';
+import { Address, getAddress, isAddress } from 'viem';
+import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
-import { useLoadDAONode } from './useLoadDAONode';
+import { useDecentModules } from './useDecentModules';
 
 export const useFractalNode = ({
   addressPrefix,
@@ -11,14 +15,23 @@ export const useFractalNode = ({
   addressPrefix?: string;
   safeAddress?: Address;
 }) => {
+  const safeApi = useSafeAPI();
+  const lookupModules = useDecentModules();
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
+  const { subgraph } = useNetworkConfig();
+  const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
+    context: {
+      subgraphSpace: subgraph.space,
+      subgraphSlug: subgraph.slug,
+      subgraphVersion: subgraph.version,
+    },
+  });
 
   const { action } = useFractal();
 
-  const { setDaoInfo } = useDaoInfoStore();
-  const { loadDao } = useLoadDAONode();
+  const { setDaoInfo, setSafeInfo, setDecentModules } = useDaoInfoStore();
 
   const reset = useCallback(
     ({ error }: { error: boolean }) => {
@@ -35,19 +48,41 @@ export const useFractalNode = ({
       setErrorLoading(false);
 
       try {
-        const daoInfo = await loadDao(safeAddress);
-        if (!daoInfo.safe) {
-          throw new Error('Invalid Safe');
+        const safeInfo = await safeApi.getSafeData(safeAddress);
+        setSafeInfo(safeInfo);
+        const modules = await lookupModules(safeInfo.modules);
+        const graphRawNodeData = await getDAOInfo({ variables: { safeAddress } });
+        const graphDAOData = graphRawNodeData.data?.daos[0];
+        if (!graphRawNodeData || !graphDAOData) {
+          throw new Error('No data found');
         }
-        setDaoInfo(daoInfo);
+        setDecentModules(modules);
+
+        setDaoInfo({
+          parentAddress: isAddress(graphDAOData.parentAddress)
+            ? getAddress(graphDAOData.parentAddress)
+            : null,
+          childAddresses: graphDAOData.hierarchy.map(child => getAddress(child.address)),
+          daoName: graphDAOData.name ?? null,
+          daoSnapshotENS: graphDAOData.snapshotENS ?? null,
+          proposalTemplatesHash: graphDAOData.proposalTemplatesHash ?? null,
+        });
       } catch (e) {
-        // TODO: this is the thing causing an error when
-        // trying to load a DAO with a valid address which is not a Safe
         reset({ error: true });
         return;
       }
     }
-  }, [addressPrefix, safeAddress, loadDao, setDaoInfo, reset]);
+  }, [
+    addressPrefix,
+    safeAddress,
+    safeApi,
+    setSafeInfo,
+    lookupModules,
+    getDAOInfo,
+    setDecentModules,
+    setDaoInfo,
+    reset,
+  ]);
 
   useEffect(() => {
     if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current) {

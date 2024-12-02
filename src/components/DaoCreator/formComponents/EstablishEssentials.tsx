@@ -22,27 +22,38 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors, mode } = props;
 
-  const { daoName, daoSnapshotENS, safe } = useDaoInfoStore();
+  const { subgraphInfo, safe } = useDaoInfoStore();
 
   const isEdit = mode === DAOCreateMode.EDIT;
 
   const safeAddress = safe?.address;
 
   useEffect(() => {
-    if (isEdit) {
-      setFieldValue('essentials.daoName', daoName, false);
-      if (safeAddress && createAccountSubstring(safeAddress) !== daoName) {
+    if (isEdit && subgraphInfo) {
+      setFieldValue('essentials.daoName', subgraphInfo.daoName, false);
+      if (safeAddress && createAccountSubstring(safeAddress) !== subgraphInfo.daoName) {
         // Pre-fill the snapshot URL form field when editing
-        setFieldValue('essentials.snapshotENS', daoSnapshotENS || '', false);
+        setFieldValue('essentials.snapshotENS', subgraphInfo.daoSnapshotENS || '', false);
       }
     }
-  }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, safeAddress]);
+  }, [
+    setFieldValue,
+    mode,
+    subgraphInfo?.daoName,
+    subgraphInfo?.daoSnapshotENS,
+    isEdit,
+    safeAddress,
+    subgraphInfo,
+  ]);
 
   const daoNameDisabled =
-    isEdit && !!daoName && !!safeAddress && createAccountSubstring(safeAddress) !== daoName;
+    isEdit &&
+    !!subgraphInfo?.daoName &&
+    !!safeAddress &&
+    createAccountSubstring(safeAddress) !== subgraphInfo?.daoName;
 
   // If in governance edit mode and snapshot URL is already set, disable the field
-  const snapshotENSDisabled = isEdit && !!daoSnapshotENS;
+  const snapshotENSDisabled = isEdit && !!subgraphInfo?.daoSnapshotENS;
 
   const handleGovernanceChange = (value: string) => {
     if (value === GovernanceType.AZORIUS_ERC20) {

@@ -18,7 +18,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     useState<ExtendedSnapshotProposal | null>(null);
   const { address } = useAccount();
 
-  const { daoSnapshotENS } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
 
   const snapshotProposal = useMemo(() => {
@@ -211,7 +211,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       query UserVotingWeight {
           vp(
               voter: "${address}"
-              space: "${daoSnapshotENS}"
+              space: "${subgraphInfo?.daoSnapshotENS}"
               proposal: "${snapshotProposal.snapshotProposalId}"
           ) {
               vp
@@ -236,7 +236,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     }
 
     return emptyVotingWeight;
-  }, [address, snapshotProposal?.snapshotProposalId, snaphshotGraphQlClient, daoSnapshotENS]);
+  }, [
+    address,
+    snapshotProposal?.snapshotProposalId,
+    snaphshotGraphQlClient,
+    subgraphInfo?.daoSnapshotENS,
+  ]);
 
   return {
     loadVotingWeight,
