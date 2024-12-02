@@ -12,7 +12,7 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
   const [selectedChoice, setSelectedChoice] = useState<number>();
   const [snapshotWeightedChoice, setSnapshotWeightedChoice] = useState<number[]>([]);
 
-  const { daoSnapshotENS } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
 
   const { data: walletClient } = useWalletClient();
 
@@ -36,7 +36,7 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
 
   const castSnapshotVote = useCallback(
     async (onSuccess?: () => Promise<void>) => {
-      if (daoSnapshotENS && extendedSnapshotProposal && walletClient) {
+      if (subgraphInfo?.daoSnapshotENS && extendedSnapshotProposal && walletClient) {
         let toastId;
         const mappedSnapshotWeightedChoice: { [choiceKey: number]: number } = {};
         if (extendedSnapshotProposal.type === 'weighted') {
@@ -60,7 +60,7 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
               extendedSnapshotProposal.proposalId,
             );
             await submitSnapshotVote(walletClient, {
-              space: daoSnapshotENS,
+              space: subgraphInfo.daoSnapshotENS,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
               privacy: extendedSnapshotProposal.privacy,
@@ -69,7 +69,7 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
             });
           } else {
             await submitSnapshotVote(walletClient, {
-              space: daoSnapshotENS,
+              space: subgraphInfo.daoSnapshotENS,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
               choice,
@@ -92,7 +92,7 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
     },
     [
       walletClient,
-      daoSnapshotENS,
+      subgraphInfo?.daoSnapshotENS,
       extendedSnapshotProposal,
       selectedChoice,
       snapshotWeightedChoice,

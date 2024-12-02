@@ -28,15 +28,18 @@ export function ManageDAOMenu() {
     guard,
     guardContracts,
   } = useFractal();
-  const node = useDaoInfoStore();
+  const dao = useDaoInfoStore();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = node.safe?.address;
+  const safeAddress = dao.safe?.address;
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress ?? null, null, false);
   const { handleClawBack } = useClawBack({
-    parentAddress: node.nodeHierarchy.parentAddress,
-    childSafeInfo: node,
+    parentAddress: dao.subgraphInfo?.parentAddress ?? null,
+    childSafeInfo: {
+      daoAddress: dao.safe?.address,
+      modules: dao.modules,
+    },
   });
 
   const { addressPrefix } = useNetworkConfig();
@@ -85,27 +88,35 @@ export function ManageDAOMenu() {
           });
           return contract.write.castFreezeVote();
         } else if (freezeVotingType === FreezeVotingType.ERC721) {
-          getUserERC721VotingTokens(node.nodeHierarchy.parentAddress, null).then(tokensInfo => {
-            if (!guardContracts.freezeVotingContractAddress) {
-              throw new Error('freeze voting contract address not set');
-            }
-            if (!walletClient) {
-              throw new Error('wallet client not set');
-            }
-            const freezeERC721VotingContract = getContract({
-              abi: abis.ERC721FreezeVoting,
-              address: guardContracts.freezeVotingContractAddress,
-              client: walletClient,
-            });
-            return freezeERC721VotingContract.write.castFreezeVote([
-              tokensInfo.totalVotingTokenAddresses,
-              tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
-            ]);
-          });
+          getUserERC721VotingTokens(dao.subgraphInfo?.parentAddress ?? null, null).then(
+            tokensInfo => {
+              if (!guardContracts.freezeVotingContractAddress) {
+                throw new Error('freeze voting contract address not set');
+              }
+              if (!walletClient) {
+                throw new Error('wallet client not set');
+              }
+              const freezeERC721VotingContract = getContract({
+                abi: abis.ERC721FreezeVoting,
+                address: guardContracts.freezeVotingContractAddress,
+                client: walletClient,
+              });
+              return freezeERC721VotingContract.write.castFreezeVote([
+                tokensInfo.totalVotingTokenAddresses,
+                tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
+              ]);
+            },
+          );
         }
       },
     }),
-    [getUserERC721VotingTokens, guardContracts, node.nodeHierarchy.parentAddress, walletClient],
+    [
+      dao.subgraphInfo?.parentAddress,
+      getUserERC721VotingTokens,
+      guardContracts.freezeVotingContractAddress,
+      guardContracts.freezeVotingType,
+      walletClient,
+    ],
   );
 
   const options = useMemo(() => {
@@ -157,7 +168,7 @@ export function ManageDAOMenu() {
       guard.isFrozen &&
       guard.userHasVotes
     ) {
-      const fractalModule = node.fractalModules.find(
+      const fractalModule = (dao.modules ?? []).find(
         module => module.moduleType === FractalModuleType.FRACTAL,
       );
       if (fractalModule) {
@@ -177,18 +188,22 @@ export function ManageDAOMenu() {
       return optionsArr;
     }
   }, [
-    guard,
-    currentTime,
-    navigate,
-    safeAddress,
-    type,
     handleClawBack,
-    canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
+    guard.freezeProposalCreatedTime,
+    guard.freezeProposalPeriod,
+    guard.freezePeriod,
+    guard.userHasVotes,
+    guard.isFrozen,
+    currentTime,
+    safeAddress,
+    navigate,
     addressPrefix,
+    type,
     freezeOption,
-    node.fractalModules,
+    dao.modules,
+    canUserCreateProposal,
   ]);
 
   return (

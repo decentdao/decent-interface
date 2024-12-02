@@ -32,7 +32,7 @@ export function SafeEditGovernancePage() {
     governance: { type },
   } = useFractal();
   const user = useAccount();
-  const { safe, daoName, daoSnapshotENS } = useDaoInfoStore();
+  const { safe, subgraphInfo } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['daoEdit', 'common', 'breadcrumbs']);
   const navigate = useNavigate();
@@ -47,15 +47,15 @@ export function SafeEditGovernancePage() {
   }
 
   const handleDeployAzorius: DAOTrigger = (daoData, customNonce) => {
-    const shouldSetName = daoData.daoName !== daoName;
+    const shouldSetName = daoData.daoName !== subgraphInfo?.daoName;
 
     // We will add a set snapshot tx, if the current safe's snapshot is different from the new one, AND
     //   EITHER:
     //      - the current snapshot is not null, OR
     //      - the current snapshot WAS indeed null (for a safe that does not already have an ENS set), but the new snapshot is not empty
     const shouldSetSnapshot =
-      daoSnapshotENS !== daoData.snapshotENS &&
-      (daoSnapshotENS !== null || daoData.snapshotENS !== '');
+      subgraphInfo?.daoSnapshotENS !== daoData.snapshotENS &&
+      (subgraphInfo?.daoSnapshotENS !== null || daoData.snapshotENS !== '');
 
     deployAzorius(daoData as AzoriusERC20DAO | AzoriusERC721DAO | SubDAO, customNonce, {
       shouldSetName,

@@ -1,36 +1,26 @@
-import { Center, Flex, Icon, Link } from '@chakra-ui/react';
+import { useLazyQuery } from '@apollo/client';
+import { Center, Flex, Icon, Link, Text } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
-import { Address } from 'viem';
-import { useChainId } from 'wagmi';
+import { Address, getContract, zeroAddress } from 'viem';
+import { useChainId, usePublicClient } from 'wagmi';
+import { DAOQueryDocument } from '../../../.graphclient';
+import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
-import { useLoadDAONode } from '../../hooks/DAO/loaders/useLoadDAONode';
+import { useDecentModules } from '../../hooks/DAO/loaders/useDecentModules';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { setValue, getValue } from '../../hooks/utils/cache/useLocalStorage';
+import { useAddressContractType } from '../../hooks/utils/useAddressContractType';
+import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { DaoHierarchyInfo, DaoInfo, WithError } from '../../types';
+import { DaoHierarchyInfo, DaoHierarchyStrategyType, DecentModule } from '../../types';
+import { getAzoriusModuleFromModules } from '../../utils';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../ui/cards/DAONodeInfoCard';
 import { BarLoader } from '../ui/loaders/BarLoader';
-
-function transformNode(node: DaoInfo, safeAddress: Address): DaoHierarchyInfo {
-  return {
-    daoName: node.daoName,
-    safeAddress: safeAddress,
-    nodeHierarchy: {
-      parentAddress: node.nodeHierarchy.parentAddress,
-      childNodes: node.nodeHierarchy.childNodes.map(child => {
-        if (!child.safe) {
-          throw new Error('Child node does not have a safe');
-        }
-        return {
-          safeAddress: child.safe.address,
-        };
-      }),
-    },
-  };
-}
 
 /**
  * A recursive component that displays a "hierarchy" of DAOInfoCards.
@@ -49,10 +39,130 @@ export function DaoHierarchyNode({
   depth: number;
 }) {
   const { safe: currentSafe } = useDaoInfoStore();
+  const { t } = useTranslation('common');
+  const safeApi = useSafeAPI();
   const [hierarchyNode, setHierarchyNode] = useState<DaoHierarchyInfo>();
-  const { addressPrefix } = useNetworkConfig();
+  const [hasErrorLoading, setErrorLoading] = useState<boolean>(false);
+  const { addressPrefix, subgraph } = useNetworkConfig();
   const chainId = useChainId();
-  const { loadDao } = useLoadDAONode();
+  const publicClient = usePublicClient();
+
+  const { getAddressContractType } = useAddressContractType();
+  const lookupModules = useDecentModules();
+
+  const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
+    context: {
+      subgraphSpace: subgraph.space,
+      subgraphSlug: subgraph.slug,
+      subgraphVersion: subgraph.version,
+    },
+  });
+
+  const getVotingStrategies = useCallback(
+    async (azoriusModule: DecentModule) => {
+      if (!publicClient) {
+        throw new Error('Public Client is not set!');
+      }
+
+      const azoriusContract = getContract({
+        abi: abis.Azorius,
+        address: azoriusModule.moduleAddress,
+        client: publicClient,
+      });
+
+      const [strategies, nextStrategy] = await azoriusContract.read.getStrategies([
+        SENTINEL_ADDRESS,
+        3n,
+      ]);
+      const result = Promise.all(
+        [...strategies, nextStrategy]
+          .filter(
+            strategyAddress =>
+              strategyAddress !== SENTINEL_ADDRESS && strategyAddress !== zeroAddress,
+          )
+          .map(async strategyAddress => ({
+            ...(await getAddressContractType(strategyAddress)),
+            strategyAddress,
+          })),
+      );
+
+      return result;
+    },
+    [getAddressContractType, publicClient],
+  );
+
+  const getGovernanceTypes = useCallback(
+    async (azoriusModule: DecentModule) => {
+      const votingStrategies = await getVotingStrategies(azoriusModule);
+
+      if (!votingStrategies) {
+        throw new Error('No voting strategies found');
+      }
+
+      if (!publicClient) {
+        throw new Error('Public Client is not set!');
+      }
+
+      let governanceTypes: DaoHierarchyStrategyType[] = [];
+
+      await Promise.all(
+        votingStrategies.map(async votingStrategy => {
+          const {
+            isLinearVotingErc20,
+            isLinearVotingErc721,
+            isLinearVotingErc20WithHatsProposalCreation,
+            isLinearVotingErc721WithHatsProposalCreation,
+          } = votingStrategy;
+          if (isLinearVotingErc20) {
+            governanceTypes.push('ERC-20');
+          } else if (isLinearVotingErc721) {
+            governanceTypes.push('ERC-721');
+          } else if (isLinearVotingErc20WithHatsProposalCreation) {
+            governanceTypes.push('ERC-20');
+          } else if (isLinearVotingErc721WithHatsProposalCreation) {
+            governanceTypes.push('ERC-721');
+          }
+        }),
+      );
+      return governanceTypes;
+    },
+    [getVotingStrategies, publicClient],
+  );
+
+  const loadDao = useCallback(
+    async (_safeAddress: Address): Promise<DaoHierarchyInfo | undefined> => {
+      if (!safeApi) {
+        throw new Error('Safe API not ready');
+      }
+      try {
+        const safe = await safeApi.getSafeInfo(_safeAddress);
+        const graphRawNodeData = await getDAOInfo({ variables: { safeAddress: _safeAddress } });
+        const modules = await lookupModules(safe.modules);
+        const graphDAOData = graphRawNodeData.data?.daos[0];
+        const azoriusModule = getAzoriusModuleFromModules(modules ?? []);
+        const votingStrategies: DaoHierarchyStrategyType[] = azoriusModule
+          ? await getGovernanceTypes(azoriusModule)
+          : ['MULTISIG'];
+        if (!graphRawNodeData || !graphDAOData) {
+          throw new Error('No data found');
+        }
+        return {
+          daoName: graphDAOData.name ?? null,
+          safeAddress: _safeAddress,
+          parentAddress: graphDAOData.parentAddress ?? null,
+          childAddresses: graphDAOData.hierarchy.map(child => child.address),
+          daoSnapshotENS: graphDAOData.snapshotENS ?? null,
+          proposalTemplatesHash: graphDAOData.proposalTemplatesHash ?? null,
+          modules,
+          votingStrategies,
+        };
+      } catch (e) {
+        setErrorLoading(true);
+        return;
+      }
+    },
+    [getDAOInfo, getGovernanceTypes, lookupModules, safeApi],
+  );
 
   useEffect(() => {
     if (safeAddress) {
@@ -66,22 +176,18 @@ export function DaoHierarchyNode({
         return;
       }
       loadDao(safeAddress).then(_node => {
-        const errorNode = _node as WithError;
-        if (!errorNode.error) {
-          const fnode = _node as DaoInfo;
-          const theNode = transformNode(fnode, safeAddress);
-          setValue(
-            {
-              cacheName: CacheKeys.HIERARCHY_DAO_INFO,
-              chainId,
-              daoAddress: safeAddress,
-            },
-            theNode,
-          );
-          setHierarchyNode(theNode);
-        } else if (errorNode.error === 'errorFailedSearch') {
-          setHierarchyNode(undefined);
+        if (!_node) {
+          setErrorLoading(true);
         }
+        setValue(
+          {
+            cacheName: CacheKeys.HIERARCHY_DAO_INFO,
+            chainId,
+            daoAddress: safeAddress,
+          },
+          _node,
+        );
+        setHierarchyNode(_node);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,6 +201,29 @@ export function DaoHierarchyNode({
       >
         <Center w="100%">
           <BarLoader />
+        </Center>
+      </Flex>
+    );
+  }
+
+  if (hasErrorLoading) {
+    return (
+      <Flex
+        w="full"
+        bg="neutral-2"
+        p="1.5rem"
+        width="100%"
+        borderRadius="0.75rem"
+        border="1px"
+        borderColor="transparent"
+      >
+        <Center w="100%">
+          <Text
+            textStyle="label-base"
+            color="red-0"
+          >
+            {t('errorMySafesNotLoaded')}
+          </Text>
         </Center>
       </Flex>
     );
@@ -124,15 +253,16 @@ export function DaoHierarchyNode({
           daoName={hierarchyNode?.daoName ?? hierarchyNode.safeAddress}
           daoSnapshotENS={hierarchyNode?.daoSnapshotENS}
           isCurrentViewingDAO={isCurrentViewingDAO}
+          votingStrategies={hierarchyNode.votingStrategies}
         />
       </Link>
 
       {/* CHILD NODES */}
-      {hierarchyNode?.nodeHierarchy.childNodes.map(childNode => {
+      {hierarchyNode?.childAddresses.map(childAddress => {
         return (
           <Flex
             minH={`${NODE_HEIGHT_REM}rem`}
-            key={childNode.safeAddress}
+            key={childAddress}
             gap="1.25rem"
           >
             <Icon
@@ -140,11 +270,11 @@ export function DaoHierarchyNode({
               my={`${NODE_HEIGHT_REM / 2.5}rem`}
               ml="0.5rem"
               boxSize="32px"
-              color={currentSafe?.address === childNode.safeAddress ? 'celery-0' : 'neutral-6'}
+              color={currentSafe?.address === childAddress ? 'celery-0' : 'neutral-6'}
             />
 
             <DaoHierarchyNode
-              safeAddress={childNode.safeAddress}
+              safeAddress={childAddress}
               depth={depth + 1}
             />
           </Flex>

@@ -124,6 +124,42 @@ export enum FractalProposalState {
   CLOSED = 'stateClosed',
 }
 
+export type GnosisSafe = {
+  // replaces SafeInfoResponseWithGuard and SafeWithNextNonce
+  address: Address;
+  owners: Address[];
+  nonce: number;
+  nextNonce: number;
+  threshold: number;
+  modulesAddresses: Address[];
+  guard: Address | null;
+};
+
+export interface DAOSubgraph {
+  // replaces Part of DaoInfo
+  daoName: string | null;
+  parentAddress: Address | null;
+  childAddresses: Address[];
+  daoSnapshotENS: string | null;
+  proposalTemplatesHash: string | null;
+}
+
+// @todo should we add other Decent Module types here?
+export enum DecentModuleType {
+  // replaces FractalModuleType
+  AZORIUS, // Token Module
+  FRACTAL, // CHILD GOVERNANCE MODULE
+  UNKNOWN, // NON-DECENT MODULE
+}
+
+// @todo better typing here, SUBGRAPH has DAO type name,
+export interface IDAO {
+  // replaces DaoInfo
+  safe: GnosisSafe | null;
+  subgraphInfo: DAOSubgraph | null;
+  modules: DecentModule[] | null;
+}
+
 export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
   proposalId: string;
@@ -184,7 +220,7 @@ export interface FractalGovernanceContracts {
   isLoaded: boolean;
 }
 
-export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address; nextNonce: number };
+export type SafeWithNextNonce = SafeInfoResponseWithGuard & { nextNonce: number };
 
 // @dev Information retreived from subgraph
 interface SubgraphDAOInfo {
@@ -198,23 +234,22 @@ interface SubgraphDAOInfo {
 // @dev Information retreived from Safe
 export interface DaoInfo extends SubgraphDAOInfo {
   safe: SafeWithNextNonce | null;
-  fractalModules: FractalModuleData[];
+  fractalModules: DecentModule[];
   isModulesLoaded?: boolean;
 }
-
+export type DaoHierarchyStrategyType = 'ERC-20' | 'ERC-721' | 'MULTISIG';
 export interface DaoHierarchyInfo {
-  daoName: string | null;
-  nodeHierarchy: {
-    parentAddress: Address | null;
-    childNodes: {
-      safeAddress: Address;
-    }[];
-  };
   safeAddress: Address;
-  daoSnapshotENS?: string;
+  daoName: string | null;
+  daoSnapshotENS: string | null;
+  parentAddress: Address | null;
+  childAddresses: Address[];
+  proposalTemplatesHash: string | null;
+  modules: DecentModule[];
+  votingStrategies: DaoHierarchyStrategyType[];
 }
 
-export interface FractalModuleData {
+export interface DecentModule {
   moduleAddress: Address;
   moduleType: FractalModuleType;
 }
@@ -224,6 +259,7 @@ export enum FractalModuleType {
   FRACTAL,
   UNKNOWN,
 }
+
 export interface FractalGuardContracts {
   freezeGuardContractAddress?: Address;
   freezeVotingContractAddress?: Address;

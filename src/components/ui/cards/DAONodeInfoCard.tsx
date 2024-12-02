@@ -1,19 +1,13 @@
-import { Flex, Text, VStack } from '@chakra-ui/react';
+import { Flex, Box, Text, VStack } from '@chakra-ui/react';
 import { Address } from 'viem';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
+import { DaoHierarchyStrategyType } from '../../../types';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
 
 export const NODE_HEIGHT_REM = 6.75;
 export const NODE_MARGIN_TOP_REM = 1.25;
-
-interface DAONodeInfoCardProps {
-  daoAddress: Address;
-  daoName: string;
-  daoSnapshotENS?: string;
-  isCurrentViewingDAO: boolean;
-}
 
 /**
  * Info card used on each DAO in the hierarchy page.
@@ -25,13 +19,19 @@ interface DAONodeInfoCardProps {
  * Simply using the useFractal() hook to get info will end up with the current DAO's
  * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
  */
-export function DAONodeInfoCard(props: DAONodeInfoCardProps) {
-  const { daoAddress, daoName, daoSnapshotENS, isCurrentViewingDAO } = props;
+export function DAONodeInfoCard(props: {
+  daoAddress: Address;
+  daoName: string;
+  daoSnapshotENS: string | null;
+  isCurrentViewingDAO: boolean;
+  votingStrategies: DaoHierarchyStrategyType[];
+}) {
+  const { daoAddress, daoName, daoSnapshotENS, isCurrentViewingDAO, votingStrategies } = props;
 
   const { toggleFavorite, isFavorite } = useAccountFavorites();
 
   return (
-    <Flex
+    <Box
       minH={`${NODE_HEIGHT_REM}rem`}
       bg="neutral-2"
       _hover={
@@ -49,33 +49,57 @@ export function DAONodeInfoCard(props: DAONodeInfoCardProps) {
       border={isCurrentViewingDAO ? '4px solid' : '1px'}
       borderColor={isCurrentViewingDAO ? 'neutral-4' : 'transparent'}
     >
-      <VStack
-        gap="0.5rem"
-        alignItems="left"
-      >
-        {/* DAO NAME */}
-        <Flex
-          gap="0.5rem"
-          alignItems="center"
-        >
-          {/* DAO NAME */}
+      <Flex justifyItems="space-between">
+        <Flex w="full">
+          <VStack
+            gap="0.5rem"
+            alignItems="left"
+          >
+            {/* DAO NAME */}
+            <Flex
+              gap="0.5rem"
+              alignItems="center"
+            >
+              {/* DAO NAME */}
 
-          <Text textStyle="display-xl">{daoName}</Text>
+              <Text textStyle="display-xl">{daoName}</Text>
 
-          {/* FAVORITE ICON */}
-          <FavoriteIcon
-            isFavorite={isFavorite(daoAddress)}
-            toggleFavoriteCallback={() => toggleFavorite(daoAddress, daoName)}
-            data-testid="DAOInfo-favorite"
-          />
+              {/* FAVORITE ICON */}
+              <FavoriteIcon
+                isFavorite={isFavorite(daoAddress)}
+                toggleFavoriteCallback={() => toggleFavorite(daoAddress, daoName)}
+                data-testid="DAOInfo-favorite"
+              />
 
-          {/* SNAPSHOT ICON LINK */}
-          {daoSnapshotENS && <SnapshotButton snapshotENS={daoSnapshotENS} />}
+              {/* SNAPSHOT ICON LINK */}
+              {daoSnapshotENS && <SnapshotButton snapshotENS={daoSnapshotENS} />}
+            </Flex>
+
+            {/* DAO ADDRESS */}
+            <AddressCopier address={daoAddress} />
+          </VStack>
         </Flex>
-
-        {/* DAO ADDRESS */}
-        <AddressCopier address={daoAddress} />
-      </VStack>
-    </Flex>
+        <Flex gap="0.5rem">
+          {votingStrategies.map((type, index) => (
+            <Box
+              key={index}
+              borderRadius="9999px"
+              bg="neutral-3"
+              px="0.75rem"
+              py="0.25rem"
+              h="fit-content"
+            >
+              <Text
+                textStyle="label-large"
+                color="lilac-0"
+                whiteSpace="nowrap"
+              >
+                {type}
+              </Text>
+            </Box>
+          ))}
+        </Flex>
+      </Flex>
+    </Box>
   );
 }
