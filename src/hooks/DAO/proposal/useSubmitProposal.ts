@@ -26,7 +26,7 @@ import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalMetadata, MetaTransaction, ProposalExecuteData } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useVotingStrategiesAddresses from '../../utils/useVotingStrategiesAddresses';
-import { useFractalModules } from '../loaders/useFractalModules';
+import { useDecentModules } from '../loaders/useDecentModules';
 import { useLoadDAOProposals } from '../loaders/useLoadDAOProposals';
 
 export type SubmitProposalFunction = ({
@@ -77,12 +77,15 @@ export default function useSubmitProposal() {
     },
     action,
   } = useFractal();
-  const { safe, fractalModules } = useDaoInfoStore();
+  const { safe, modules } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
 
   const globalAzoriusContract = useMemo(() => {
-    const azoriusModule = getAzoriusModuleFromModules(fractalModules);
-    if (!azoriusModule || !walletClient) {
+    if (!modules || !walletClient) {
+      return;
+    }
+    const azoriusModule = getAzoriusModuleFromModules(modules);
+    if (!azoriusModule) {
       return;
     }
 
@@ -91,9 +94,9 @@ export default function useSubmitProposal() {
       address: azoriusModule.moduleAddress,
       client: walletClient,
     });
-  }, [fractalModules, walletClient]);
+  }, [modules, walletClient]);
 
-  const lookupModules = useFractalModules();
+  const lookupModules = useDecentModules();
   const {
     chain,
     safeBaseURL,
@@ -313,8 +316,8 @@ export default function useSubmitProposal() {
         // Submitting proposal to any DAO out of global context
         const votingStrategies = await getVotingStrategies(safeAddress);
         const safeInfo = await safeAPI.getSafeInfo(safeAddress);
-        const modules = await lookupModules(safeInfo.modules);
-        const azoriusModule = getAzoriusModuleFromModules(modules);
+        const decentModules = await lookupModules(safeInfo.modules);
+        const azoriusModule = getAzoriusModuleFromModules(decentModules);
         if (!azoriusModule || !votingStrategies) {
           await submitMultisigProposal({
             proposalData,
@@ -371,7 +374,6 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
-            safeAddress: safe?.address,
           });
         } else {
           const userProposerVotingStrategy = (

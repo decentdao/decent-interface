@@ -90,8 +90,6 @@ class EnhancedSafeApiKit extends SafeApiKit {
     const safeInfo = {
       ...safeInfoResponse,
       nextNonce,
-      address: getAddress(safeInfoResponse.address),
-      guard: getAddress(safeInfoResponse.guard),
     };
     return safeInfo;
   }
