@@ -237,7 +237,7 @@ export interface DaoInfo extends SubgraphDAOInfo {
   fractalModules: DecentModule[];
   isModulesLoaded?: boolean;
 }
-
+export type DaoHierarchyStrategyType = 'ERC-20' | 'ERC-721' | 'MULTISIG';
 export interface DaoHierarchyInfo {
   safeAddress: Address;
   daoName: string | null;
@@ -246,6 +246,7 @@ export interface DaoHierarchyInfo {
   childAddresses: Address[];
   proposalTemplatesHash: string | null;
   modules: DecentModule[];
+  votingStrategies: DaoHierarchyStrategyType[];
 }
 
 export interface DecentModule {
