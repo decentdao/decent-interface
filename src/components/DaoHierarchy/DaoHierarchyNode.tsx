@@ -124,7 +124,7 @@ export function DaoHierarchyNode({
           }
         }),
       );
-      return governanceTypes;
+      return governanceTypes.filter((value, index, self) => self.indexOf(value) === index);
     },
     [getVotingStrategies, publicClient],
   );
