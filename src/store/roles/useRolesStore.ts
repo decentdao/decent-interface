@@ -5,6 +5,14 @@ import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStr
 import { DecentRoleHat, RolesStore } from '../../types/roles';
 import { initialHatsStore, sanitize } from './rolesStoreUtils';
 
+const streamIdToHatIdMap = new Map<string, BigInt>();
+const getStreamIdToHatIdMap = () => {
+  return Array.from(streamIdToHatIdMap.entries()).map(([streamId, hatId]) => ({
+    streamId,
+    hatId,
+  }));
+};
+
 const useRolesStore = create<RolesStore>()((set, get) => ({
   ...initialHatsStore,
   getHat: hatId => {
@@ -39,16 +47,21 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
 
     return matches[0];
   },
-  setHatsTreeId: args =>
+  setHatKeyValuePairData: args => {
+    const { hatsTreeId, contextChainId, streamIdsToHatIds } = args;
+    for (const { hatId, streamId } of streamIdsToHatIds) {
+      streamIdToHatIdMap.set(streamId, hatId);
+    }
     set(() => {
-      const { hatsTreeId, contextChainId } = args;
       // if `hatsTreeId` is null or undefined,
       // set `hatsTree` to that same value
       if (typeof hatsTreeId !== 'number') {
         return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false, contextChainId: null };
       }
       return { hatsTreeId, streamsFetched: false, contextChainId };
-    }),
+    });
+  },
+
   setHatsTree: async params => {
     const hatsTree = await sanitize(
       params.hatsTree,
@@ -96,10 +109,23 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
   updateRolesWithStreams: (updatedRoles: DecentRoleHat[]) => {
     const existingHatsTree = get().hatsTree;
     if (!existingHatsTree) return;
+    const streamIdsToHatIdsMap = getStreamIdToHatIdMap();
 
     const updatedDecentTree = {
       ...existingHatsTree,
-      roleHats: updatedRoles,
+      roleHats: updatedRoles.map(roleHat => {
+        const filteredStreamIds = streamIdsToHatIdsMap
+          .filter(ids => ids.hatId === BigInt(roleHat.id))
+          .map(ids => ids.streamId);
+        return {
+          ...roleHat,
+          payments: roleHat.isTermed
+            ? roleHat.payments?.filter(payment => {
+                return filteredStreamIds.includes(payment.streamId);
+              })
+            : roleHat.payments,
+        };
+      }),
     };
 
     set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
@@ -129,6 +155,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       },
     }));
   },
+
   resetHatsStore: () => set(() => initialHatsStore),
 }));
 

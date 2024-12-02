@@ -639,6 +639,7 @@ export default function useCreateRoles() {
             hats: [hatStruct],
             topHatId: BigInt(hatsTree.topHat.id),
             topHatAccount: hatsTree.topHat.smartAddress,
+            keyValuePairs,
           },
         ],
       });
@@ -670,6 +671,7 @@ export default function useCreateRoles() {
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsElectionsEligibilityMasterCopy,
+      keyValuePairs,
     ],
   );
 

@@ -3,7 +3,7 @@ import { defineStyle } from '@chakra-ui/react';
 
 const baseStyle = defineStyle({
   alignItems: 'center',
-  borderRadius: '4px',
+  borderRadius: '0.5rem',
   boxShadow: 'none',
   display: 'flex',
   justifyContent: 'center',

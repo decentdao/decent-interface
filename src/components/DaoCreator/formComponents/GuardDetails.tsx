@@ -97,7 +97,6 @@ function GuardDetails(props: ICreationStepProps) {
         >
           {governanceFormType === GovernanceType.MULTISIG && (
             <>
-              <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
               <LabelComponent
                 label={t('labelTimelockPeriod')}
                 helper={t('helperTimelockPeriod')}
@@ -113,13 +112,6 @@ function GuardDetails(props: ICreationStepProps) {
                   />
                   <InputRightElement mr="4">{minutes}</InputRightElement>
                 </InputGroup>
-                <Text
-                  textStyle="helper-text-base"
-                  color="neutral-7"
-                  mt="0.5rem"
-                >
-                  {t('exampleTimelockPeriod')}
-                </Text>
               </LabelComponent>
               <LabelComponent
                 label={t('labelExecutionPeriod')}
@@ -136,13 +128,6 @@ function GuardDetails(props: ICreationStepProps) {
                   />
                   <InputRightElement mr="4">{minutes}</InputRightElement>
                 </InputGroup>
-                <Text
-                  textStyle="helper-text-base"
-                  color="neutral-7"
-                  mt="0.5rem"
-                >
-                  {t('exampleExecutionPeriod')}
-                </Text>
               </LabelComponent>
             </>
           )}

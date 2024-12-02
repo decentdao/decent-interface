@@ -1,5 +1,5 @@
 import { Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
-import { SquaresFour, Trash } from '@phosphor-icons/react';
+import { ArrowLeft, SquaresFour } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -87,8 +87,8 @@ export function ProposalBuilder({
 
   const successCallback = () => {
     if (safeAddress) {
-      // Redirecting to proposals page so that user will see newly created Proposal
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
+      // Redirecting to home page so that user will see newly created Proposal
+      navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress));
     }
   };
 
@@ -165,7 +165,7 @@ export function ProposalBuilder({
                         },
                       ]
                 }
-                ButtonIcon={Trash}
+                ButtonIcon={ArrowLeft}
                 buttonProps={{
                   isDisabled: pendingCreateTx,
                   variant: 'secondary',

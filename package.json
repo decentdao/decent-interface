@@ -8,7 +8,7 @@
     "@chakra-ui/anatomy": "^2.2.2",
     "@chakra-ui/react": "^2.8.2",
     "@fontsource/space-mono": "^5.0.19",
-    "@fractal-framework/fractal-contracts": "^1.4.1",
+    "@fractal-framework/fractal-contracts": "^1.4.2",
     "@graphprotocol/client-apollo": "^1.0.16",
     "@hatsprotocol/modules-sdk": "^1.4.0",
     "@hatsprotocol/sdk-v1-core": "^0.9.0",

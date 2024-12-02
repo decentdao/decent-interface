@@ -118,5 +118,7 @@
   "ipfsSavingErrorMessage": "Error saving data to IPFS, please try again later.",
   "confirm": "Confirm",
   "automaticChainSwitchingErrorMessage": "We couldn't automatically switch to the DAO's network. Please try to switch networks in your connected wallet.",
-  "and": "and"
+  "and": "and",
+  "days": "Days",
+  "owner": "Owner"
 }

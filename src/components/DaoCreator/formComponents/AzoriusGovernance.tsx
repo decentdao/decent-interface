@@ -1,19 +1,24 @@
 import {
   Alert,
   Box,
+  Button,
   Flex,
   FormControl,
+  HStack,
   InputGroup,
   InputRightElement,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
   Switch,
   Text,
 } from '@chakra-ui/react';
-import { WarningCircle } from '@phosphor-icons/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Minus, Plus, WarningCircle } from '@phosphor-icons/react';
+import { useCallback, useEffect, useMemo, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
-import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -21,6 +26,64 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
 import { DAOCreateMode } from './EstablishEssentials';
+
+function DayStepperInput({
+  inputValue,
+  onInputChange,
+}: {
+  inputValue: number;
+  onInputChange: (val: number) => void;
+}) {
+  const MemoizedNumberStepperInput = memo(
+    ({ value, onChange }: { value?: string | number; onChange: (val: string) => void }) => {
+      const stepperButton = (direction: 'inc' | 'dec') => (
+        <Button
+          variant="secondary"
+          borderColor="neutral-3"
+          p="0.5rem"
+          size="md"
+        >
+          {direction === 'inc' ? <Plus size="1.5rem" /> : <Minus size="1.5rem" />}
+        </Button>
+      );
+
+      return (
+        <NumberInput
+          value={value}
+          onChange={onChange}
+          min={0}
+          focusInputOnChange
+          w="100%"
+        >
+          <HStack gap="0.25rem">
+            <NumberDecrementStepper>{stepperButton('dec')}</NumberDecrementStepper>
+            <NumberInputField min={0} />
+            <NumberIncrementStepper>{stepperButton('inc')}</NumberIncrementStepper>
+          </HStack>
+        </NumberInput>
+      );
+    },
+  );
+  MemoizedNumberStepperInput.displayName = 'MemoizedNumberInput';
+
+  const { t } = useTranslation('common');
+
+  return (
+    <InputGroup>
+      <Flex
+        flexDirection="column"
+        w="100%"
+        gap="0.5rem"
+      >
+        <Text color="neutral-7">{t('days', { ns: 'common' })}</Text>
+        <MemoizedNumberStepperInput
+          value={inputValue}
+          onChange={val => onInputChange(Number(val))}
+        />
+      </Flex>
+    </InputGroup>
+  );
+}
 
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
@@ -34,7 +97,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const { t } = useTranslation(['daoCreate', 'common']);
-  const minutes = t('minutes', { ns: 'common' });
 
   const handleNonceChange = useCallback(
     (nonce?: string) => {
@@ -52,6 +114,27 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   useStepRedirect({ values });
 
+  const [votingPeriodDays, setVotingPeriodDays] = useState(7);
+  const [timelockPeriodDays, setTimelockPeriodDays] = useState(1);
+  const [executionPeriodDays, setExecutionPeriodDays] = useState(2);
+
+  useEffect(() => {
+    // convert days to minutes
+    const minutes = votingPeriodDays * 24 * 60;
+    setFieldValue('azorius.votingPeriod', { bigintValue: minutes, value: minutes.toString() });
+  }, [setFieldValue, votingPeriodDays]);
+
+  // same for timelock and execution period
+  useEffect(() => {
+    const minutes = timelockPeriodDays * 24 * 60;
+    setFieldValue('azorius.timelock', { bigintValue: minutes, value: minutes.toString() });
+  }, [setFieldValue, timelockPeriodDays]);
+
+  useEffect(() => {
+    const minutes = executionPeriodDays * 24 * 60;
+    setFieldValue('azorius.executionPeriod', { bigintValue: minutes, value: minutes.toString() });
+  }, [setFieldValue, executionPeriodDays]);
+
   return (
     <>
       <StepWrapper
@@ -64,30 +147,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           flexDirection="column"
           gap={8}
         >
-          <ContentBoxTitle>{t('titleProposalSettings', { ns: 'daoCreate' })}</ContentBoxTitle>
-          <LabelComponent
-            label={t('labelVotingPeriod')}
-            helper={t('helperVotingPeriod')}
-            isRequired
-          >
-            <InputGroup>
-              <BigIntInput
-                value={values.azorius.votingPeriod.bigintValue}
-                onChange={valuePair => setFieldValue('azorius.votingPeriod', valuePair)}
-                decimalPlaces={0}
-                min="1"
-                data-testid="govConfig-votingPeriod"
-              />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
-            </InputGroup>
-            <Text
-              textStyle="helper-text-base"
-              color="neutral-7"
-              mt="0.5rem"
-            >
-              {t('exampleVotingPeriod')}
-            </Text>
-          </LabelComponent>
+          {/* QUORUM */}
           {values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20 ? (
             <LabelComponent
               label={t('quorum', { ns: 'common' })}
@@ -120,51 +180,43 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               />
             </LabelComponent>
           )}
+
+          {/* VOTING PERIOD */}
+          <LabelComponent
+            label={t('labelVotingPeriod')}
+            helper={t('helperVotingPeriod')}
+            isRequired
+          >
+            <DayStepperInput
+              inputValue={votingPeriodDays}
+              onInputChange={setVotingPeriodDays}
+            />
+          </LabelComponent>
+
+          {/* TIMELOCK PERIOD */}
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
             isRequired
           >
-            <InputGroup>
-              <BigIntInput
-                value={values.azorius.timelock.bigintValue}
-                onChange={valuePair => setFieldValue('azorius.timelock', valuePair)}
-                decimalPlaces={0}
-                data-testid="govConfig-timelock"
-              />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
-            </InputGroup>
-            <Text
-              textStyle="helper-text-base"
-              color="neutral-7"
-              mt="0.5rem"
-            >
-              {t('exampleTimelockPeriod')}
-            </Text>
+            <DayStepperInput
+              inputValue={timelockPeriodDays}
+              onInputChange={setTimelockPeriodDays}
+            />
           </LabelComponent>
+
+          {/* EXECUTION PERIOD */}
           <LabelComponent
             label={t('labelExecutionPeriod')}
             helper={t('helperExecutionPeriod')}
             isRequired
           >
-            <InputGroup>
-              <BigIntInput
-                value={values.azorius.executionPeriod.bigintValue}
-                onChange={valuePair => setFieldValue('azorius.executionPeriod', valuePair)}
-                decimalPlaces={0}
-                min="1"
-                data-testid="govModule-executionDetails"
-              />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
-            </InputGroup>
-            <Text
-              textStyle="helper-text-base"
-              color="neutral-7"
-              mt="0.5rem"
-            >
-              {t('exampleExecutionPeriod')}
-            </Text>
+            <DayStepperInput
+              inputValue={executionPeriodDays}
+              onInputChange={setExecutionPeriodDays}
+            />
           </LabelComponent>
+
           <Alert
             status="info"
             gap={4}
