@@ -17,7 +17,7 @@ import { BACKGROUND_SEMI_TRANSPARENT, SEXY_BOX_SHADOW_T_T } from '../../../../co
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
-export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
+export function DAOSearch() {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState<string>('');
   const [typing, setTyping] = useState<boolean>(false);
@@ -154,7 +154,6 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               errorMessage={errorMessage}
               address={address}
               onClickView={resetSearch}
-              closeDrawer={closeDrawer}
             />
           </Box>
         </Popover>
