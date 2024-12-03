@@ -1,4 +1,4 @@
-import { Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
 import { IconProps, BookOpen, Sparkle, ArrowUpRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -46,18 +46,10 @@ function CardContent({ icon, title, subtitle }: CardContentProps) {
             color="lilac-0"
           />
         </Flex>
-        <Flex
-          direction="column"
-          gap={2}
-        >
-          <Text textStyle="heading-small">{title}</Text>
-          <Text
-            textStyle="body-medium"
-            color="neutral-7"
-          >
-            {subtitle}
-          </Text>
-        </Flex>
+        <Box textStyle="labels-large">
+          <Text>{title}</Text>
+          <Text color="neutral-7">{subtitle}</Text>
+        </Box>
       </Flex>
     </GridItem>
   );
