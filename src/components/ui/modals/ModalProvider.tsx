@@ -6,7 +6,6 @@ import { ProposalTemplate } from '../../../types';
 import AddSignerModal from '../../SafeSettings/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../SafeSettings/Signers/modals/RemoveSignerModal';
 import DraggableDrawer from '../containers/DraggableDrawer';
-import { DAOSearch } from '../menus/DAOSearch';
 import AddStrategyPermissionModal from './AddStrategyPermissionModal';
 import { ConfirmDeleteStrategyModal } from './ConfirmDeleteStrategyModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
@@ -35,7 +34,6 @@ export enum ModalType {
   CREATE_PROPOSAL_FROM_TEMPLATE,
   COPY_PROPOSAL_TEMPLATE,
   CONFIRM_MODIFY_GOVERNANCE,
-  SEARCH_SAFE,
   WARN_UNSAVED_CHANGES,
   WITHDRAW_PAYMENT,
   CONFIRM_CANCEL_PAYMENT,
@@ -67,7 +65,6 @@ export type ModalPropsTypes = {
     templateIndex: number;
   };
   [ModalType.CONFIRM_MODIFY_GOVERNANCE]: {};
-  [ModalType.SEARCH_SAFE]: {};
   [ModalType.WARN_UNSAVED_CHANGES]: {
     discardChanges: () => void;
     keepEditing: () => void;
@@ -213,10 +210,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         hasWarning = true;
         modalTitle = t('confirmModifyGovernanceTitle');
         modalContent = <ConfirmModifyGovernanceModal close={closeModal} />;
-        break;
-      case ModalType.SEARCH_SAFE:
-        isSearchInput = true;
-        modalContent = <DAOSearch closeDrawer={closeModal} />;
         break;
       case ModalType.WARN_UNSAVED_CHANGES:
         modalContent = (
