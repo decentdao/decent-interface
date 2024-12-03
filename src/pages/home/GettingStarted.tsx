@@ -18,7 +18,6 @@ function CardContent({ icon, title, subtitle }: CardContentProps) {
       bg="neutral-2"
       borderRadius="lg"
       cursor="pointer"
-      _hover={{ bg: 'gray.700' }}
     >
       <Flex
         direction="column"
@@ -35,7 +34,7 @@ function CardContent({ icon, title, subtitle }: CardContentProps) {
           />
           <Icon
             as={ArrowUpRight}
-            boxSize={5}
+            boxSize={6}
             color="lilac-0"
           />
         </Flex>
