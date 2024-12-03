@@ -18,6 +18,8 @@ function CardContent({ icon, title, subtitle }: CardContentProps) {
       bg="neutral-2"
       borderRadius="lg"
       cursor="pointer"
+      _hover={{ bg: 'neutral-3' }}
+      transition="all 300ms ease-in-out"
     >
       <Flex
         direction="column"
