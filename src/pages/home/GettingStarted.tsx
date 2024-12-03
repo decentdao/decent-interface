@@ -18,7 +18,13 @@ function CardContent({ icon, title, subtitle }: CardContentProps) {
       bg="neutral-2"
       borderRadius="lg"
       cursor="pointer"
-      _hover={{ bg: 'neutral-3' }}
+      border="1px solid"
+      borderColor="transparent"
+      _hover={{
+        backgroundColor: 'neutral-3',
+        border: '1px solid',
+        borderColor: 'neutral-4',
+      }}
       transition="all 300ms ease-in-out"
     >
       <Flex
