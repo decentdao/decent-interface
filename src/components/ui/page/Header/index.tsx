@@ -24,7 +24,6 @@ import {
 } from '../../../../constants/common';
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { AccountDisplay } from '../../menus/AccountDisplay';
-import { DAOSearch } from '../../menus/DAOSearch';
 import { SafesMenu } from '../../menus/SafesMenu';
 import { ModalType } from '../../modals/ModalProvider';
 import { useDecentModal } from '../../modals/useDecentModal';
@@ -143,15 +142,6 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       }}
     >
       <HeaderLogo />
-      <Show above="md">
-        <Box
-          w="full"
-          mr="1rem"
-        >
-          <DAOSearch />
-        </Box>
-      </Show>
-
       <Flex
         w="full"
         h={HEADER_HEIGHT}
