@@ -1,8 +1,6 @@
-import { Flex, Button, Text, Spacer } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { BASE_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { MySafes } from './MySafes';
@@ -30,16 +28,6 @@ export default function HomePage() {
         mt="2.5rem"
       >
         <Text textStyle="heading-small">{t('mySafes')}</Text>
-        <Spacer />
-        <Link to={BASE_ROUTES.create}>
-          <Button
-            variant="secondary"
-            size="sm"
-            cursor="pointer"
-          >
-            <Text textStyle="labels-large">{t('createCTA')}</Text>
-          </Button>
-        </Link>
       </Flex>
 
       <Flex
