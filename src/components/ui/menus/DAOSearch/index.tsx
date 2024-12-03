@@ -9,7 +9,7 @@ import {
   useOutsideClick,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from '../../../../assets/theme/custom/icons/Search';
 import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
@@ -23,7 +23,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { errorMessage, isLoading, address, setSearchString } = useSearchDao();
 
   const { onClose } = useDisclosure(); // popover close function
-  const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
+  const ref = useRef<HTMLInputElement>(null);
 
   const debouncedInput = useMemo(
     () =>
