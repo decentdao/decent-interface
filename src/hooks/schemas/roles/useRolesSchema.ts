@@ -12,15 +12,15 @@ import {
 import { useValidationAddress } from '../common/useValidationAddress';
 
 // @todo: needs typing
-const getRoleHatAndParentAssetAddress = (cxt: any) => {
+const getPaymentValidationContextData = (cxt: any) => {
   // @dev finds the parent asset address from the formik context `from` array
   // @dev @todo When Payments form is first open these values become undefined, not sure why
   const currentPayment = cxt.from[1]?.value;
   const currentRoleHat = cxt.from[2]?.value;
   const formContext = cxt.from[3]?.value;
 
-  if (!currentPayment || !currentRoleHat || !formContext) return {};
-  const parentAssetAddress = getAddress(currentPayment.asset?.address);
+  if (!currentPayment || !currentRoleHat || !formContext || !currentPayment.asset) return {};
+  const parentAssetAddress = getAddress(currentPayment.asset.address);
 
   return {
     currentRoleHat,
@@ -46,7 +46,7 @@ export const useRolesSchema = () => {
         test: (value, cxt) => {
           if (!value || !cxt.from) return false;
 
-          const { parentAssetAddress } = getRoleHatAndParentAssetAddress(cxt);
+          const { parentAssetAddress } = getPaymentValidationContextData(cxt);
 
           if (!parentAssetAddress) return false;
           const asset = assetsFungible.find(
@@ -64,7 +64,7 @@ export const useRolesSchema = () => {
         test: (value, cxt) => {
           if (!value || !cxt.from) return false;
           const { parentAssetAddress, currentRoleHat, formContextHats } =
-            getRoleHatAndParentAssetAddress(cxt);
+            getPaymentValidationContextData(cxt);
 
           if (!parentAssetAddress) return false;
 
