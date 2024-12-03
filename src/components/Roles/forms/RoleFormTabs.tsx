@@ -11,7 +11,7 @@ import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import RoleFormInfo from './RoleFormInfo';
 import { RoleFormMember } from './RoleFormMember';
-import RoleFormPaymentStream from './RoleFormPaymentStream';
+import { RoleFormPaymentStream } from './RoleFormPaymentStream';
 import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
