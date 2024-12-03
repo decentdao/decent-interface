@@ -187,8 +187,11 @@ export function SafeRoleEditDetailsPage() {
         values.roleEditing.payments.filter((_, index) => index !== paymentIndex),
       );
     }
+
     setFieldValue('newRoleTerm', undefined);
-    setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+    setTimeout(() => {
+      setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+    }, 200);
   };
 
   const goBackText = t(
