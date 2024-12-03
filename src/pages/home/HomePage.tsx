@@ -1,9 +1,10 @@
-import { Flex, Text, Spacer, Show, Hide, Box } from '@chakra-ui/react';
+import { Box, Flex, Hide, Show, Spacer, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DAOSearch } from '../../components/ui/menus/DAOSearch';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { GettingStarted } from './GettingStarted';
 import { MySafes } from './MySafes';
 
 export default function HomePage() {
@@ -54,8 +55,10 @@ export default function HomePage() {
         direction="column"
         w="full"
         mt="1.5rem"
+        gap="1.5rem"
       >
         <MySafes />
+        <GettingStarted />
       </Flex>
     </Flex>
   );

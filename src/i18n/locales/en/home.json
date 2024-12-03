@@ -1,7 +1,11 @@
 {
   "createCTA": "Create DAO",
+  "createCTASubtitle": "Launch your org onchain.",
   "mySafes": "My DAOs",
   "audit": "Audit",
   "viewAll": "View All",
-  "madeWithLove": "Made with love by Decent Labs"
+  "madeWithLove": "Made with love by Decent Labs",
+  "gettingStarted": "Getting Started",
+  "exploreDocsCTA": "Explore Docs",
+  "exploreDocsCTASubtitle": "Learn about our features."
 }
