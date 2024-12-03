@@ -1,6 +1,6 @@
 import { Button, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import { useFormikContext } from 'formik';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Blocker, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
@@ -55,6 +55,8 @@ export function RoleFormTabs({
     }
   }, [setFieldValue, values.hats, values.roleEditing, hatId]);
 
+  const [tabIndex, setTabIndex] = useState(0);
+
   const safeAddress = safe?.address;
   if (!safeAddress) return null;
 
@@ -70,7 +72,11 @@ export function RoleFormTabs({
 
   return (
     <>
-      <Tabs variant="twoTone">
+      <Tabs
+        index={tabIndex}
+        onChange={setTabIndex}
+        variant="twoTone"
+      >
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
           <Tab>{t('member')}</Tab>
