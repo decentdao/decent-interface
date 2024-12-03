@@ -120,7 +120,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               <InputLeftElement ml="0.5rem">
                 <Search
                   boxSize="1.75rem"
-                  color="white"
+                  color="neutral-6"
                 />
               </InputLeftElement>
               <Input
