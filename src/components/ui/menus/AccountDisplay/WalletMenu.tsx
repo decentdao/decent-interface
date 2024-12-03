@@ -25,7 +25,7 @@ export function WalletMenu({ containerRef }: { containerRef: RefObject<HTMLDivEl
       backdropBlur="10px"
       border="1px solid"
       borderColor="neutral-3"
-      zIndex={1}
+      zIndex="popover"
       py="0.25rem"
     >
       {user.address && (
