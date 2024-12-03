@@ -1,6 +1,7 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, Spacer, Show, Hide, Box } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DAOSearch } from '../../components/ui/menus/DAOSearch';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { MySafes } from './MySafes';
@@ -21,14 +22,33 @@ export default function HomePage() {
     <Flex
       direction="column"
       alignItems="center"
+      mt="2.5rem"
     >
-      <Flex
-        w="100%"
-        alignItems="flex-end"
-        mt="2.5rem"
-      >
-        <Text textStyle="heading-small">{t('mySafes')}</Text>
-      </Flex>
+      {/* Mobile */}
+      <Hide above="md">
+        <Flex
+          direction="column"
+          w="100%"
+          gap="1.5rem"
+        >
+          <DAOSearch />
+          <Text textStyle="heading-small">{t('mySafes')}</Text>
+        </Flex>
+      </Hide>
+
+      {/* Desktop */}
+      <Show above="md">
+        <Flex
+          w="100%"
+          alignItems="center"
+        >
+          <Text textStyle="heading-small">{t('mySafes')}</Text>
+          <Spacer />
+          <Box w="24rem">
+            <DAOSearch />
+          </Box>
+        </Flex>
+      </Show>
 
       <Flex
         direction="column"
