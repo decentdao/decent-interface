@@ -15,7 +15,7 @@ export default function EditBadge({ editStatus }: EditBadgeProps) {
     <Box
       rounded="0.75rem"
       w="fit-content"
-      textStyle="label-base"
+      textStyle="labels-large"
       borderColor={displayColor}
       textColor={displayColor}
       border="1px solid"

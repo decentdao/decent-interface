@@ -17,16 +17,11 @@ export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
 
   return (
     <Box>
-      <Text
-        marginBottom="1rem"
-        textStyle="text-base-sans-regular"
-      >
-        {t('confirmModifyGovernanceDescription')}
-      </Text>
+      <Text marginBottom="1rem">{t('confirmModifyGovernanceDescription')}</Text>
       <Divider marginBottom="1rem" />
       <Text
         marginBottom="1rem"
-        textStyle="text-xl-mono-medium"
+        textStyle="heading-medium"
       >
         {t('confirmAction')}
       </Text>

@@ -156,7 +156,7 @@ export function InfoProposals() {
         mb="0.5rem"
       >
         <Scroll size="1.5rem" />
-        <Text textStyle="display-lg">{t('titleProposals')}</Text>
+        <Text textStyle="heading-small">{t('titleProposals')}</Text>
       </Flex>
 
       <Flex

@@ -72,7 +72,7 @@ export function DAOInfoCard() {
                 color="lilac-0"
                 borderRadius="625rem"
                 p="0.25rem 0.75rem"
-                textStyle="button-base"
+                textStyle="body-large"
               >
                 Parent
               </Link>
@@ -89,7 +89,7 @@ export function DAOInfoCard() {
         >
           {/* DAO NAME */}
           <Text
-            textStyle="display-4xl"
+            textStyle="heading-large"
             data-testid="DAOInfo-name"
           >
             {daoName}

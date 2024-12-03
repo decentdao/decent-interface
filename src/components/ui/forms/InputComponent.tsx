@@ -82,7 +82,6 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
         {isStringLabel ? (
           <HStack
             pb={1}
-            textStyle="body-base"
             spacing={0}
           >
             <Text>{label}</Text>

@@ -62,7 +62,7 @@ export function SafeRolesEditProposalSummaryPage() {
                   as={ArrowLeft}
                   boxSize="1.5rem"
                 />
-                <Text textStyle="display-lg">{t('proposalNew', { ns: 'breadcrumbs' })}</Text>
+                <Text textStyle="heading-small">{t('proposalNew', { ns: 'breadcrumbs' })}</Text>
               </Flex>
             </Flex>
             <RoleFormCreateProposal

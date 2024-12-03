@@ -53,13 +53,13 @@ export function AvatarAndRoleName({
         mt="-0.125rem"
       >
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="white-0"
         >
           {name}
         </Text>
         <Text
-          textStyle="button-small"
+          textStyle="labels-large"
           p="0.25rem 0.5rem"
           ml="-0.75rem"
           rounded="1rem"
@@ -82,7 +82,7 @@ export function AvatarAndRoleName({
             ml="-0.25rem"
           >
             <Text
-              textStyle="button-small"
+              textStyle="labels-large"
               color="neutral-7"
               alignSelf="center"
             >
@@ -98,7 +98,7 @@ export function AvatarAndRoleName({
               h="1.25rem"
             >
               <Text
-                textStyle="helper-text-small"
+                textStyle="labels-small"
                 lineHeight="1rem"
                 align="center"
               >
@@ -142,13 +142,12 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
         ml="4rem"
       >
         <Text
-          textStyle="button-small"
+          textStyle="labels-large"
           color="neutral-7"
         >
           {t('payment')}
         </Text>
         <Flex
-          textStyle="body-base"
           color="white-0"
           gap="0.25rem"
           alignItems="center"
@@ -165,7 +164,6 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
           <EtherscanLink
             color="white-0"
             _hover={{ bg: 'transparent' }}
-            textStyle="body-base"
             padding={0}
             borderWidth={0}
             value={payment.asset?.address ?? null}
@@ -274,7 +272,7 @@ export function RoleCardShort({
     >
       <Flex justifyContent="space-between">
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="lilac-0"
         >
           {name}

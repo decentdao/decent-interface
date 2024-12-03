@@ -171,7 +171,7 @@ function GuardDetails(props: ICreationStepProps) {
               <InputRightElement mr="4">{minutes}</InputRightElement>
             </InputGroup>
             <Text
-              textStyle="helper-text-base"
+              textStyle="labels-large"
               color="neutral-7"
               mt="0.5rem"
             >
@@ -195,7 +195,7 @@ function GuardDetails(props: ICreationStepProps) {
               <InputRightElement mr="4">{minutes}</InputRightElement>
             </InputGroup>
             <Text
-              textStyle="helper-text-base"
+              textStyle="labels-large"
               color="neutral-7"
               mt="0.5rem"
             >
@@ -212,12 +212,7 @@ function GuardDetails(props: ICreationStepProps) {
             >
               <Info size="24" />
             </Box>
-            <Text
-              textStyle="body-base-strong"
-              whiteSpace="pre-wrap"
-            >
-              {t('freezeGuardDescription')}
-            </Text>
+            <Text whiteSpace="pre-wrap">{t('freezeGuardDescription')}</Text>
           </Alert>
         </Flex>
       </StepWrapper>

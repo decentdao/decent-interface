@@ -69,7 +69,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
           {proposal.eventDate && (
             <Text
               mt={2}
-              textStyle="helper-text-base"
+              textStyle="labels-large"
               color="neutral-6"
             >
               {t('created')} {format(proposal.eventDate, DEFAULT_DATE_FORMAT)}

@@ -36,7 +36,7 @@ export function NetworkSelector({
       >
         <Text
           px="0.5rem"
-          textStyle="helper-text-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('network')}

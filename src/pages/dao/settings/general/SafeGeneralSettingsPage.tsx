@@ -136,7 +136,7 @@ export function SafeGeneralSettingsPage() {
             flexDir="column"
             gap="1rem"
           >
-            <Text textStyle="display-lg">{t('daoMetadataName')}</Text>
+            <Text textStyle="heading-small">{t('daoMetadataName')}</Text>
             <InputComponent
               isRequired={false}
               onChange={e => setName(e.target.value)}
@@ -164,7 +164,7 @@ export function SafeGeneralSettingsPage() {
             flexDir="column"
             gap="1rem"
           >
-            <Text textStyle="display-lg">
+            <Text textStyle="heading-small">
               {subgraphInfo?.daoSnapshotENS
                 ? t('daoMetadataSnapshot')
                 : t('daoMetadataConnectSnapshot')}

@@ -38,7 +38,7 @@ export function SettingsPermissionsStrategyForm({
           alignItems="center"
           ref={tooltipContainerRef}
         >
-          <Text textStyle="display-lg">{t('asset')}</Text>
+          <Text textStyle="heading-small">{t('asset')}</Text>
           <Text color="lilac-0">*</Text>
           <ModalTooltip
             containerRef={tooltipContainerRef}
@@ -70,7 +70,7 @@ export function SettingsPermissionsStrategyForm({
               boxSize="2.25rem"
             />
             <Text
-              textStyle="label-large"
+              textStyle="body-small"
               color="white-0"
             >
               {votesToken.symbol}

@@ -177,7 +177,7 @@ function ProposalDetails({
         spacing={3}
         align="left"
       >
-        <Text textStyle="display-lg">{t('preview')}</Text>
+        <Text textStyle="heading-small">{t('preview')}</Text>
         <Divider />
         <HStack justifyContent="space-between">
           <Text color="neutral-7">{t('previewTitle')}</Text>
@@ -350,7 +350,7 @@ function StreamBuilder({
           isRequired
           disabled={pendingTransaction}
           subLabel={
-            <HStack textStyle="helper-text-base">
+            <HStack textStyle="labels-large">
               <Text>{t('example', { ns: 'common' })}:</Text>
               <ExampleLabel>0x4168592...</ExampleLabel>
             </HStack>
@@ -371,7 +371,7 @@ function StreamBuilder({
           isRequired
           disabled={pendingTransaction}
           subLabel={
-            <HStack textStyle="helper-text-base">
+            <HStack textStyle="labels-large">
               <Text>{t('example', { ns: 'common' })}:</Text>
               <ExampleLabel>0x4168592...</ExampleLabel>
             </HStack>
@@ -389,7 +389,7 @@ function StreamBuilder({
           label="Stream Total Amount"
           helper="The total amount of token to stream. Has to be equal to the sum of tranches amount"
           subLabel={
-            <HStack textStyle="helper-text-base">
+            <HStack textStyle="labels-large">
               <Text>{t('example', { ns: 'common' })}:</Text>
               <ExampleLabel>10000</ExampleLabel>
             </HStack>
@@ -480,10 +480,10 @@ function StreamBuilder({
                             });
                           }}
                           p={0}
-                          textStyle="display-lg"
+                          textStyle="heading-small"
                           color="lilac-0"
                         >
-                          <Text textStyle="display-lg">
+                          <Text textStyle="heading-small">
                             <Flex
                               alignItems="center"
                               gap={2}
@@ -666,7 +666,7 @@ function StreamsBuilder({
                 <AccordionButton
                   py="0.25rem"
                   px="1.5rem"
-                  textStyle="display-lg"
+                  textStyle="heading-small"
                   color="lilac-0"
                   justifyContent="space-between"
                 >
@@ -676,7 +676,7 @@ function StreamsBuilder({
                   >
                     {isExpanded ? <CaretDown /> : <CaretRight />}
                     <Text
-                      textStyle="display-lg"
+                      textStyle="heading-small"
                       textTransform="capitalize"
                     >
                       Stream {index + 1} ({stream.type})
@@ -719,7 +719,6 @@ function StreamsBuilder({
                       <WarningCircle size="24" />
                     </Box>
                     <Text
-                      textStyle="body-base-strong"
                       whiteSpace="pre-wrap"
                       ml="1rem"
                     >

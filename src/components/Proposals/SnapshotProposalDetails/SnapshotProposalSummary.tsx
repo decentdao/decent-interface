@@ -57,7 +57,6 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
       justifyContent="flex-end"
       alignItems="flex-start"
       variant="text"
-      textStyle="body-base"
       color="celery-0"
       onClick={toggleShowVotingPower}
     >
@@ -75,7 +74,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
         my: 0,
       }}
     >
-      <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
+      <Text textStyle="heading-small">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider variant="darker" />
         <InfoRow
@@ -86,12 +85,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           marginTop={4}
           justifyContent="space-between"
         >
-          <Text
-            textStyle="body-base"
-            color="neutral-7"
-          >
-            {t('ipfs')}
-          </Text>
+          <Text color="neutral-7">{t('ipfs')}</Text>
           <ExternalLink href={`https://snapshot.4everland.link/ipfs/${proposal.ipfs}`}>
             #{proposal.ipfs.slice(0, 7)}
           </ExternalLink>
@@ -111,12 +105,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           marginBottom={4}
           justifyContent="space-between"
         >
-          <Text
-            textStyle="body-base"
-            color="neutral-7"
-          >
-            {t('votingPower')}
-          </Text>
+          <Text color="neutral-7">{t('votingPower')}</Text>
           {showVotingPower ? (
             <DecentTooltip
               label={t('votingPowerTooltip')}

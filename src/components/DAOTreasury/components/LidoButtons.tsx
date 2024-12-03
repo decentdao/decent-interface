@@ -25,7 +25,7 @@ export default function LidoButtons() {
             my="1rem"
           />
           <Text
-            textStyle="label-small"
+            textStyle="labels-small"
             color="neutral-7"
             my="1rem"
             px={{ base: '1rem', lg: '1.5rem' }}

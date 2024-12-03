@@ -12,7 +12,7 @@ export interface TypographyValue {
 
 interface TypographyToken {
   $type: string;
-  $value: TypographyValue;
+  value: TypographyValue;
 }
 
 interface TypographyTokenGroup {
@@ -25,11 +25,17 @@ interface TypographyScheme {
 
 const extractTypographyFromJson = (tokens: TypographyScheme) => {
   const typography: Record<string, TypographyValue> = {};
-  Object.entries(tokens).forEach(([, value]) => {
-    Object.entries(value).forEach(([innerKey, innerValue]) => {
-      const formattedInnerKey = innerKey.replace(/\s+/g, '-').toLowerCase();
-      if (innerValue && typeof innerValue === 'object' && innerValue.$value) {
-        typography[`${formattedInnerKey}`] = innerValue.$value;
+
+  Object.entries(tokens).forEach(([groupKey, groupValue]) => {
+    Object.entries(groupValue).forEach(([styleKey, styleValue]) => {
+      const formattedKey = `${groupKey}-${styleKey}`.replace(/\s+/g, '-').toLowerCase();
+      if (styleValue && typeof styleValue.value === 'object' && styleValue.value) {
+        typography[formattedKey] = {
+          ...styleValue.value,
+          fontSize: `${styleValue.value.fontSize}px`,
+          letterSpacing: `${styleValue.value.letterSpacing}px`,
+          lineHeight: `${styleValue.value.lineHeight}px`,
+        };
       }
     });
   });

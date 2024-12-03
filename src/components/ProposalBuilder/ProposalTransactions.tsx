@@ -82,10 +82,10 @@ export default function ProposalTransactions({
                       });
                     }}
                     p="0.25rem"
-                    textStyle="display-lg"
+                    textStyle="heading-small"
                     color="lilac-0"
                   >
-                    <Text textStyle="display-lg">
+                    <Text textStyle="heading-small">
                       <Flex
                         alignItems="center"
                         gap={2}

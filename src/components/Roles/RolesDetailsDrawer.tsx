@@ -50,7 +50,6 @@ export function RoleProposalPermissionBadge({
         color="celery-0"
         bgColor="celery--6"
         textTransform="unset"
-        textStyle="body-base"
         fontSize="1rem"
         lineHeight="1.5rem"
         fontWeight="normal"
@@ -70,7 +69,7 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
     >
       <Icon as={icon} />
       <Text
-        textStyle="label-base"
+        textStyle="labels-large"
         color="neutral-7"
       >
         {label}
@@ -161,7 +160,7 @@ export default function RolesDetailsDrawer({
             </Flex>
           </Flex>
           <Text
-            textStyle="display-2xl"
+            textStyle="heading-large"
             color="white-0"
             my="1rem"
           >
@@ -223,7 +222,7 @@ export default function RolesDetailsDrawer({
                     url={avatarURL}
                   />
                 )}
-                <Text textStyle="body-base">{displayName}</Text>
+                <Text>{displayName}</Text>
               </Flex>
             </GridItem>
             <GridItem area="dValue">

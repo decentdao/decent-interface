@@ -140,7 +140,7 @@ export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void })
         alignItems="center"
       >
         <WarningCircle size={40} />
-        <Text textStyle="display-xl">{t('areYouSure')}</Text>
+        <Text textStyle="heading-medium">{t('areYouSure')}</Text>
       </Flex>
       <Flex
         flexDirection="column"

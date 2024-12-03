@@ -152,7 +152,7 @@ export function SafePermissionsSettingsPage() {
                 <Box>
                   <Text>{t('permissionCreateProposalsTitle')}</Text>
                   <Text
-                    textStyle="button-small"
+                    textStyle="labels-large"
                     color="neutral-7"
                   >
                     {t('permissionsCreateProposalsDescription', {

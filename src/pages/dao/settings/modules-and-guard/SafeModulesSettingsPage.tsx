@@ -37,7 +37,7 @@ export function SafeModulesSettingsPage() {
           flexDirection="column"
           gap="1rem"
         >
-          <Text textStyle="display-lg">{t('daoModulesAndGuard')}</Text>
+          <Text textStyle="heading-small">{t('daoModulesAndGuard')}</Text>
           <Divider
             w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
             mx={{ base: '-0.75rem', md: '-1.5rem' }}
@@ -72,7 +72,7 @@ export function SafeModulesSettingsPage() {
           flexDir="column"
           mt="2rem"
         >
-          <Text textStyle="display-lg">{t('guardTitle')}</Text>
+          <Text textStyle="heading-small">{t('guardTitle')}</Text>
           <Divider
             my="1rem"
             w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}

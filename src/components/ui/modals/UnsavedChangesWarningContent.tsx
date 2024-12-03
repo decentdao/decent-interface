@@ -23,13 +23,12 @@ export function UnsavedChangesWarningContent({
         <WarningCircle size="2.5rem" />
         <Text
           mt="1rem"
-          textStyle="display-xl"
+          textStyle="heading-medium"
         >
           {t('unsavedChanges')}
         </Text>
         <Text
           mt="0.5rem"
-          textStyle="body-base"
           textAlign="center"
         >
           {t('unsavedChangesDescription')}

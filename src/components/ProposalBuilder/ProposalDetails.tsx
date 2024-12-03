@@ -40,7 +40,7 @@ export default function ProposalTemplateDetails({
         spacing={3}
         align="left"
       >
-        <Text textStyle="display-lg">{t('preview')}</Text>
+        <Text textStyle="heading-small">{t('preview')}</Text>
         <Divider />
         <HStack justifyContent="space-between">
           <Text color="neutral-7">{t('previewTitle')}</Text>

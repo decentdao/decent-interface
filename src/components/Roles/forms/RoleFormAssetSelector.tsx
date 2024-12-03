@@ -55,7 +55,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
         justifyContent="center"
       >
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="neutral-7"
         >
           {t('emptyRolesAssets')}
@@ -100,7 +100,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
               />
               <Flex flexDir="column">
                 <Text
-                  textStyle="label-base"
+                  textStyle="labels-large"
                   color="white-0"
                 >
                   {asset?.symbol}
@@ -110,7 +110,7 @@ function AssetsList({ formIndex }: { formIndex: number }) {
                   gap={2}
                 >
                   <Text
-                    textStyle="button-base"
+                    textStyle="body-large"
                     color="neutral-7"
                   >
                     {formatCoin(asset?.balance, true, asset?.decimals, asset?.symbol, true)}
@@ -118,13 +118,13 @@ function AssetsList({ formIndex }: { formIndex: number }) {
                   {asset?.usdValue && (
                     <>
                       <Text
-                        textStyle="button-base"
+                        textStyle="body-large"
                         color="neutral-7"
                       >
                         {'•'}
                       </Text>
                       <Text
-                        textStyle="button-base"
+                        textStyle="body-large"
                         color="neutral-7"
                       >
                         {formatUSD(asset?.usdValue)}
@@ -203,7 +203,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                           boxSize="2.25rem"
                         />
                         <Text
-                          textStyle="label-large"
+                          textStyle="body-small"
                           color="white-0"
                         >
                           {selectedAsset?.symbol ?? t('selectLabel', { ns: 'modals' })}
@@ -226,7 +226,9 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                           flexWrap="wrap"
                           gap="1rem"
                         >
-                          <Text textStyle="display-lg">{t('titleAssets', { ns: 'treasury' })}</Text>
+                          <Text textStyle="heading-small">
+                            {t('titleAssets', { ns: 'treasury' })}
+                          </Text>
                           <Divider
                             variant="darker"
                             mx="-1.5rem"
@@ -258,7 +260,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                       <EaseOutComponent>
                         <Text
                           px="1rem"
-                          textStyle="helper-text-small"
+                          textStyle="labels-small"
                           color="neutral-7"
                         >
                           {t('titleAssets', { ns: 'treasury' })}

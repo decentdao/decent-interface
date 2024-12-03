@@ -37,10 +37,7 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
   return (
     <>
       <GridItem>
-        <Text
-          textStyle="body-base"
-          color="neutral-7"
-        >
+        <Text color="neutral-7">
           {displayName}
           {user.address === vote.voter && t('isMeSuffix')}
         </Text>
@@ -57,24 +54,14 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
               }
               return (
                 <StatusBox key={choiceIdx}>
-                  <Text
-                    textStyle="body-base"
-                    color="neutral-7"
-                  >
-                    {proposal.choices[(choiceIdx as number) - 1]}
-                  </Text>
+                  <Text color="neutral-7">{proposal.choices[(choiceIdx as number) - 1]}</Text>
                 </StatusBox>
               );
             })}
           </Flex>
         ) : (
           <StatusBox>
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {proposal.choices[(vote.choice as number) - 1]}
-            </Text>
+            <Text color="neutral-7">{proposal.choices[(vote.choice as number) - 1]}</Text>
           </StatusBox>
         )}
       </GridItem>
@@ -93,10 +80,7 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
               }
               return (
                 <StatusBox key={strategyIdx}>
-                  <Text
-                    textStyle="body-base"
-                    color="neutral-7"
-                  >
+                  <Text color="neutral-7">
                     {choiceWeight} {strategy.params.symbol}
                   </Text>
                 </StatusBox>
@@ -104,10 +88,7 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
             })}
           </Flex>
         ) : (
-          <Text
-            textStyle="body-base"
-            color="neutral-7"
-          >
+          <Text color="neutral-7">
             {vote.votingWeight} {voteSymbol}
           </Text>
         )}
