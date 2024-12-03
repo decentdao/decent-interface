@@ -59,7 +59,7 @@ export function RoleFormPaymentStreams() {
     <FieldArray name="roleEditing.payments">
       {({ push: pushPayment }: { push: (streamFormValue: SablierPaymentFormValues) => void }) => (
         <Box>
-          {!values.roleEditing && sortedPayments.length === 0 && (
+          {sortedPayments.length === 0 && (
             <Flex
               padding="1.5rem"
               border="1px solid"
@@ -97,7 +97,7 @@ export function RoleFormPaymentStreams() {
           >
             {t('addPayment')}
           </Button>
-          {!values.roleEditing && <Divider my="1rem" />}
+          <Divider my="1rem" />
           <Box mt="0.5rem">
             {sortedPayments.map((payment, index) => {
               // @note don't render if form isn't valid
