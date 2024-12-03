@@ -20,8 +20,7 @@ export default function RoleFormInfo() {
   return (
     <>
       <Box
-        px={{ base: '1rem', md: 0 }}
-        py="1rem"
+        p="1.5rem"
         bg="neutral-2"
         boxShadow={{
           base: DETAILS_BOX_SHADOW,
