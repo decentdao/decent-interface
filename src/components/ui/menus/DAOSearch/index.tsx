@@ -88,13 +88,13 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           backgroundColor={BACKGROUND_SEMI_TRANSPARENT}
           backdropFilter={isOpen ? 'blur(10px)' : 'blur(0px)'}
           zIndex="overlay"
-          transition="all 0.2s ease-in-out"
+          transition="all 300ms ease-in-out"
           opacity={isOpen ? 1 : 0}
           visibility={isOpen ? 'visible' : 'hidden'}
           sx={{
             _before: {
               content: '""',
-              transition: 'backdrop-filter 0.2s ease-in-out',
+              transition: 'backdrop-filter 300ms ease-in-out',
             },
           }}
         />
