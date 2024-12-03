@@ -1,4 +1,4 @@
-import { Box, Flex, Hide, Show, Spacer, Text } from '@chakra-ui/react';
+import { Box, Flex, Hide, Show, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DAOSearch } from '../../components/ui/menus/DAOSearch';
@@ -41,9 +41,15 @@ export default function HomePage() {
         <Flex
           w="100%"
           alignItems="end"
+          gap="1rem"
+          justifyContent="space-between"
         >
-          <Text textStyle="heading-small">{t('mySafes')}</Text>
-          <Spacer />
+          <Text
+            textStyle="heading-small"
+            whiteSpace="nowrap"
+          >
+            {t('mySafes')}
+          </Text>
           <Box w="24rem">
             <DAOSearch />
           </Box>
