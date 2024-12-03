@@ -248,25 +248,28 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
           </Flex>
         )}
       </Box>
-      <Show below="md">
-        <Alert
-          status="info"
-          my="1.5rem"
-          gap="1rem"
+
+      {/* PAYMENT CANCEL HINT */}
+      <Alert
+        status="info"
+        my="1.5rem"
+        gap="1rem"
+      >
+        <Box
+          width="1.5rem"
+          height="1.5rem"
         >
-          <Box
-            width="1.5rem"
-            height="1.5rem"
-          >
-            <Info size="24" />
-          </Box>
-          <Text
-            textStyle="body-base-strong"
-            whiteSpace="pre-wrap"
-          >
-            {t(payment?.isCancelling ? 'cancellingPaymentInfoMessage' : 'cancelPaymentInfoMessage')}
-          </Text>
-        </Alert>
+          <Info size="24" />
+        </Box>
+        <Text
+          textStyle="body-base-strong"
+          whiteSpace="pre-wrap"
+        >
+          {t(payment?.isCancelling ? 'cancellingPaymentInfoMessage' : 'cancelPaymentInfoMessage')}
+        </Text>
+      </Alert>
+
+      <Show below="md">
         {canBeCancelled && (
           <Button
             color="red-1"
