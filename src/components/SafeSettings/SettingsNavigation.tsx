@@ -83,7 +83,7 @@ export default function SettingsNavigation() {
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
   const { governance } = useFractal();
-  const { safe, fractalModules } = useDaoInfoStore();
+  const { safe, modules } = useDaoInfoStore();
   const azoriusGovernance = governance as AzoriusGovernance;
 
   return (
@@ -131,7 +131,7 @@ export default function SettingsNavigation() {
             leftIcon={<Stack fontSize="1.5rem" />}
             title={t('daoModulesAndGuard')}
           >
-            <Text color="neutral-7">{fractalModules.length + safe.guard ? 1 : 0}</Text>
+            <Text color="neutral-7">{(modules ?? []).length + (safe?.guard ? 1 : 0)}</Text>
           </SettingsLink>
           <SettingsLink
             path={DAO_ROUTES.settingsPermissions.relative(addressPrefix, safe.address)}

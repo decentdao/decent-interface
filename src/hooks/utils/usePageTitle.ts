@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 
 export const usePageTitle = () => {
-  const { daoName } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   useEffect(() => {
-    if (daoName) {
-      document.title = `${import.meta.env.VITE_APP_NAME} | ${daoName}`;
+    if (subgraphInfo?.daoName) {
+      document.title = `${import.meta.env.VITE_APP_NAME} | ${subgraphInfo?.daoName}`;
     }
 
     return () => {
       document.title = import.meta.env.VITE_APP_NAME;
     };
-  }, [daoName]);
+  }, [subgraphInfo?.daoName]);
 };

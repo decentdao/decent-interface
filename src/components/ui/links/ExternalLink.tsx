@@ -105,35 +105,31 @@ export default function ExternalLink({
   };
 
   return (
-    <Flex>
-      <Link
-        color={linkColor[styleVariant]}
-        padding="0.25rem 0.75rem"
+    <Link
+      padding="0.25rem 0.75rem"
+      color={linkColor[styleVariant]}
+      gap="0.25rem"
+      borderColor="transparent"
+      borderWidth="1px"
+      borderRadius="625rem"
+      w="fit-content"
+      _hover={isTextLink ? textLinkStyles[styleVariant].hover : pillLinkStyles[styleVariant].hover}
+      _active={
+        isTextLink ? textLinkStyles[styleVariant].active : pillLinkStyles[styleVariant].active
+      }
+      target="_blank"
+      rel="noreferrer"
+      textDecoration="none"
+      ref={internalRef}
+      {...rest}
+    >
+      <Flex
         gap="0.25rem"
-        borderRadius="625rem"
-        borderColor="transparent"
-        borderWidth="1px"
-        _hover={
-          isTextLink ? textLinkStyles[styleVariant].hover : pillLinkStyles[styleVariant].hover
-        }
-        _active={
-          isTextLink ? textLinkStyles[styleVariant].active : pillLinkStyles[styleVariant].active
-        }
-        target="_blank"
-        rel="noreferrer"
-        textDecoration="none"
-        ref={internalRef}
-        {...rest}
+        alignItems="center"
       >
-        <Flex
-          gap="0.25rem"
-          mx="-0.75rem"
-          alignItems="center"
-        >
-          {children}
-          {isTextLink && <ArrowUpRight />}
-        </Flex>
-      </Link>
-    </Flex>
+        {children}
+        {isTextLink && <ArrowUpRight />}
+      </Flex>
+    </Link>
   );
 }

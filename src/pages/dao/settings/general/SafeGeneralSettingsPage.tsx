@@ -27,7 +27,7 @@ export function SafeGeneralSettingsPage() {
 
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { daoName, daoSnapshotENS, safe } = useDaoInfoStore();
+  const { subgraphInfo, safe } = useDaoInfoStore();
   const {
     addressPrefix,
     contracts: { keyValuePairs },
@@ -36,19 +36,26 @@ export function SafeGeneralSettingsPage() {
   const safeAddress = safe?.address;
 
   useEffect(() => {
-    if (daoName && safeAddress && createAccountSubstring(safeAddress) !== daoName) {
-      setName(daoName);
+    if (
+      subgraphInfo?.daoName &&
+      safeAddress &&
+      createAccountSubstring(safeAddress) !== subgraphInfo?.daoName
+    ) {
+      setName(subgraphInfo.daoName);
     }
 
-    if (daoSnapshotENS) {
-      setSnapshotENS(daoSnapshotENS);
+    if (subgraphInfo?.daoSnapshotENS) {
+      setSnapshotENS(subgraphInfo?.daoSnapshotENS);
     }
-  }, [daoName, daoSnapshotENS, safeAddress]);
+  }, [subgraphInfo?.daoName, subgraphInfo?.daoSnapshotENS, safeAddress]);
 
   const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
     const lowerCasedValue = e.target.value.toLowerCase();
     setSnapshotENS(lowerCasedValue);
-    if (validateENSName(lowerCasedValue) || (e.target.value === '' && daoSnapshotENS)) {
+    if (
+      validateENSName(lowerCasedValue) ||
+      (e.target.value === '' && subgraphInfo?.daoSnapshotENS)
+    ) {
       setSnapshotENSValid(true);
     } else {
       setSnapshotENSValid(false);
@@ -61,8 +68,8 @@ export function SafeGeneralSettingsPage() {
     }
   };
 
-  const nameChanged = name !== daoName;
-  const snapshotChanged = snapshotENSValid && snapshotENS !== daoSnapshotENS;
+  const nameChanged = name !== subgraphInfo?.daoName;
+  const snapshotChanged = snapshotENSValid && snapshotENS !== subgraphInfo?.daoSnapshotENS;
 
   const handleEditGeneralGovernance = () => {
     const changeTitles = [];
@@ -158,7 +165,9 @@ export function SafeGeneralSettingsPage() {
             gap="1rem"
           >
             <Text textStyle="heading-small">
-              {daoSnapshotENS ? t('daoMetadataSnapshot') : t('daoMetadataConnectSnapshot')}
+              {subgraphInfo?.daoSnapshotENS
+                ? t('daoMetadataSnapshot')
+                : t('daoMetadataConnectSnapshot')}
             </Text>
             <InputComponent
               isRequired={false}
