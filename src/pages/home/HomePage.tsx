@@ -22,7 +22,6 @@ export default function HomePage() {
   return (
     <Flex
       direction="column"
-      alignItems="center"
       mt="2.5rem"
     >
       {/* Mobile */}
@@ -41,7 +40,7 @@ export default function HomePage() {
       <Show above="md">
         <Flex
           w="100%"
-          alignItems="center"
+          alignItems="end"
         >
           <Text textStyle="heading-small">{t('mySafes')}</Text>
           <Spacer />
