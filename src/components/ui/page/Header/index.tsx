@@ -132,11 +132,6 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       maxW="100vw"
       borderBottom="1px"
       borderBottomColor="neutral-3"
-      // Doesn't seem to work either way arghhh
-      box-shadow={{
-        base: SEXY_BOX_SHADOW_T_T,
-        md: '0px',
-      }}
     >
       <HeaderLogo />
       <Flex
