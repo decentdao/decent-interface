@@ -181,9 +181,10 @@ export interface EditedRole {
 export interface RoleHatFormValue
   extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments' | 'roleTerms'>> {
   id: Hex;
+  // The user-input field that could either be an address or an ENS name.
   wearer?: string;
   // Not a user-input field.
-  // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+  // `resolvedWearer` is dynamically set from the resolved address of `wearer`, in case it's an ENS name.
   resolvedWearer?: Address;
   payments?: SablierPaymentFormValues[];
   // form specific state

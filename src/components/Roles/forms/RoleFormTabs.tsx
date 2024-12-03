@@ -106,6 +106,7 @@ export function RoleFormTabs({
               } else if (existingRoleHat !== undefined) {
                 setFieldValue(`hats.${hatIndex}`, {
                   ...existingRoleHat,
+                  resolvedWearer: existingRoleHat.wearerAddress,
                   roleTerms: existingRoleHat.roleTerms.allTerms,
                 });
               }
