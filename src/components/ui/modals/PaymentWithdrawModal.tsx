@@ -115,7 +115,7 @@ export function PaymentWithdrawModal({
       px={{ base: '1rem', md: 0 }}
     >
       {/* AVAILABLE */}
-      <Flex>
+      <Flex alignItems="center">
         <Text
           color="neutral-7"
           flex={3}
@@ -131,8 +131,8 @@ export function PaymentWithdrawModal({
             src={paymentAssetLogo}
             fallbackSrc="/images/coin-icon-default.svg"
             alt={paymentAssetSymbol}
-            w="2rem"
-            h="2rem"
+            w="1.5rem"
+            h="1.5rem"
           />
           <Flex gap="0.25rem">
             <Text w="full">
@@ -150,15 +150,16 @@ export function PaymentWithdrawModal({
       </Flex>
 
       {/* RECIPIENT */}
-      <Flex>
+      <Flex mt="0.25rem">
         <Text
           color="neutral-7"
           flex={3}
+          mt="-0.25rem"
         >
           {t('withdrawTo')}
         </Text>
+
         <Flex
-          alignItems="flex-start"
           gap={{ base: '0.25rem', md: '0.5rem' }}
           flex={5}
         >
@@ -200,20 +201,27 @@ export function PaymentWithdrawModal({
           <Text>{chain.name}</Text>
         </Flex>
       </Flex>
-      <Button
-        isDisabled={pendingTransaction}
-        onClick={handleWithdraw}
-        leftIcon={<Download />}
+
+      <Flex
+        flexDirection="column"
+        gap="0.75rem"
+        mt="1.5rem"
       >
-        {t('withdraw')}
-      </Button>
-      <Button
-        isDisabled={pendingTransaction}
-        variant="secondary"
-        onClick={onClose}
-      >
-        {t('cancel', { ns: 'common' })}
-      </Button>
+        <Button
+          isDisabled={pendingTransaction}
+          onClick={handleWithdraw}
+          leftIcon={<Download />}
+        >
+          {t('withdraw')}
+        </Button>
+        <Button
+          isDisabled={pendingTransaction}
+          variant="secondary"
+          onClick={onClose}
+        >
+          {t('cancel', { ns: 'common' })}
+        </Button>
+      </Flex>
     </Flex>
   );
 }
