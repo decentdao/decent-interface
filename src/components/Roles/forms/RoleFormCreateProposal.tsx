@@ -71,8 +71,8 @@ export function RoleFormCreateProposal({ close }: { close: () => void }) {
         const wearer =
           roleHat.isTermed && !!termedNominee
             ? termedNominee
-            : !!roleHat?.wearer
-              ? getAddress(roleHat.wearer)
+            : !!roleHat?.resolvedWearer
+              ? roleHat.resolvedWearer
               : zeroAddress;
 
         return {
