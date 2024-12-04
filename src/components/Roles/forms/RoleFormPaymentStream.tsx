@@ -149,7 +149,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
     <>
       <Box
         p="1.5rem"
-        mt={8}
+        mt={4}
         bg="neutral-2"
         boxShadow={{
           base: DETAILS_BOX_SHADOW,
