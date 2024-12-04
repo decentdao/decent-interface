@@ -3,12 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import * as Yup from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  RoleFormValues,
-  RoleHatFormValue,
-  SablierPayment,
-  SablierPaymentFormValues,
-} from '../../../types/roles';
+import { RoleFormValues, RoleHatFormValue, SablierPaymentFormValues } from '../../../types/roles';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 // @todo: needs typing
@@ -16,6 +11,7 @@ const getPaymentValidationContextData = (cxt: any) => {
   // @dev finds the parent asset address from the formik context `from` array
   // @dev @todo When Payments form is first open these values become undefined, not sure why
   const currentPayment = cxt.from[1]?.value;
+
   const currentRoleHat = cxt.from[2]?.value;
   const formContext = cxt.from[3]?.value;
 
@@ -110,7 +106,8 @@ export const useRolesSchema = () => {
           .default(undefined)
           .nullable()
           .when({
-            is: (payment: SablierPayment) => payment !== undefined,
+            is: (payment: SablierPaymentFormValues) =>
+              payment !== undefined && !payment.isValidatedAndSaved,
             then: _paymentSchema =>
               _paymentSchema
                 .shape({

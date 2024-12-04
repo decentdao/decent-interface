@@ -210,6 +210,7 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
                 isDisabled={!!roleEditingPaymentsErrors}
                 onClick={() => {
                   setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+                  setFieldValue(`roleEditing.payments.${formIndex}.isValidatedAndSaved`, true);
                 }}
               >
                 {t('save')}
@@ -255,7 +256,6 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
       </Box>
 
       <Show below="md">
-        {/* PAYMENT CANCEL HINT */}
         <PaymentCancelHint />
         {canBeCancelled && (
           <Button
