@@ -4,7 +4,7 @@ import { addDays, addMinutes } from 'date-fns';
 import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CARD_SHADOW, isDevMode } from '../../../constants/common';
+import { DETAILS_BOX_SHADOW, isDevMode } from '../../../constants/common';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import { DatePicker } from '../../ui/forms/DatePicker';
@@ -148,15 +148,14 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   return (
     <>
       <Box
-        px={{ base: '1rem', md: 0 }}
-        py="1rem"
+        p="1.5rem"
+        mt={8}
         bg="neutral-2"
         boxShadow={{
-          base: CARD_SHADOW,
+          base: DETAILS_BOX_SHADOW,
           md: 'unset',
         }}
         borderRadius="0.5rem"
-        position="relative"
       >
         <SectionTitle
           title={t('asset')}

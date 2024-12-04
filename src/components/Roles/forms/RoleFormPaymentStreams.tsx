@@ -12,6 +12,24 @@ import { RoleFormValues, SablierPaymentFormValues } from '../../../types/roles';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';
+import RoleFormPaymentStream from './RoleFormPaymentStream';
+import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
+
+export function RoleFormPaymentRenderer() {
+  const { values } = useFormikContext<RoleFormValues>();
+
+  if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
+    if (values.roleEditing?.isTermed) {
+      return (
+        <RoleFormPaymentStreamTermed paymentIndex={values.roleEditing.roleEditingPaymentIndex} />
+      );
+    } else {
+      return <RoleFormPaymentStream formIndex={values.roleEditing.roleEditingPaymentIndex} />;
+    }
+  }
+
+  return null;
+}
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
@@ -76,6 +94,7 @@ export function RoleFormPaymentStreams() {
           >
             {t('addPayment')}
           </Button>
+          <RoleFormPaymentRenderer />
           <Box mt="0.5rem">
             {sortedPayments.map((payment, index) => {
               // @note don't render if form isn't valid
