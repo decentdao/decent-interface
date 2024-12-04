@@ -1,5 +1,4 @@
-import { Box, Button, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
-import { SquaresFour } from '@phosphor-icons/react';
+import { Box, Button, Flex, FormControl, Show, Text } from '@chakra-ui/react';
 import { Field, FieldInputProps, FormikProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -219,21 +218,11 @@ export function RoleFormCreateProposal({ close }: { close: () => void }) {
       </Flex>
 
       <Flex
-        mt={4}
+        mt={6}
         mb={2}
         alignItems="center"
       >
-        <Icon
-          as={SquaresFour}
-          w="1.5rem"
-          h="1.5rem"
-        />
-        <Text
-          textStyle="display-lg"
-          ml={2}
-        >
-          {t('actions', { ns: 'actions' })}
-        </Text>
+        <Text ml={2}>{t('actions', { ns: 'actions' })}</Text>
       </Flex>
       {editedRoles.map((role, index) => {
         return (

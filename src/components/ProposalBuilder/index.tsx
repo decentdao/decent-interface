@@ -1,5 +1,5 @@
-import { Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
-import { SquaresFour, Trash } from '@phosphor-icons/react';
+import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Trash } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -265,21 +265,11 @@ export function ProposalBuilder({
                           gap="0.5rem"
                         >
                           <Flex
-                            mt={4}
+                            mt={6}
                             mb={2}
                             alignItems="center"
                           >
-                            <Icon
-                              as={SquaresFour}
-                              w="1.5rem"
-                              h="1.5rem"
-                            />
-                            <Text
-                              textStyle="display-lg"
-                              ml={2}
-                            >
-                              {t('actions', { ns: 'actions' })}
-                            </Text>
+                            <Text ml={2}>{t('actions', { ns: 'actions' })}</Text>
                           </Flex>
                           {actions.map((action, index) => {
                             return (
