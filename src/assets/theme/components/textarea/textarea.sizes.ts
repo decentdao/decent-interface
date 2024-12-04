@@ -5,7 +5,7 @@ const paddingAddonLeft = { pl: '3rem', pr: '1rem' };
 const paddingAddonRight = { pl: '1rem', pr: '4rem' };
 
 const baseStyle = {
-  apply: 'textStyles.input-text',
+  apply: 'textStyles.body-small',
   py: '1rem',
 };
 

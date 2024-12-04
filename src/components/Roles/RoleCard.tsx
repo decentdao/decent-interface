@@ -4,6 +4,7 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../hooks/utils/useAvatar';
+import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import {
   EditBadgeStatus,
@@ -29,9 +30,10 @@ export function AvatarAndRoleName({
 
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);
+  const copyToClipboard = useCopyText();
 
   return (
-    <Flex alignItems="center">
+    <Flex alignItems="top">
       {wearerAddress ? (
         <Avatar
           size="xl"
@@ -47,17 +49,29 @@ export function AvatarAndRoleName({
       )}
       <Flex
         direction="column"
-        ml="1rem"
+        ml="1.5rem"
+        mt="-0.125rem"
       >
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="white-0"
         >
           {name}
         </Text>
         <Text
-          textStyle="button-small"
-          color="neutral-7"
+          textStyle="labels-large"
+          p="0.25rem 0.5rem"
+          ml="-0.75rem"
+          rounded="1rem"
+          bg="neutral-3"
+          color="lilac-0"
+          _hover={{
+            color: 'white-0',
+            bg: 'neutral-4',
+          }}
+          cursor="pointer"
+          maxW="fit-content"
+          onClick={() => copyToClipboard(wearerAddress)}
         >
           {displayName ?? t('unassigned')}
         </Text>
@@ -65,9 +79,10 @@ export function AvatarAndRoleName({
           <Flex
             mt="1rem"
             gap="0.25rem"
+            ml="-0.25rem"
           >
             <Text
-              textStyle="button-small"
+              textStyle="labels-large"
               color="neutral-7"
               alignSelf="center"
             >
@@ -83,7 +98,7 @@ export function AvatarAndRoleName({
               h="1.25rem"
             >
               <Text
-                textStyle="helper-text-small"
+                textStyle="labels-small"
                 lineHeight="1rem"
                 align="center"
               >
@@ -127,13 +142,12 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
         ml="4rem"
       >
         <Text
-          textStyle="button-small"
+          textStyle="labels-large"
           color="neutral-7"
         >
           {t('payment')}
         </Text>
         <Flex
-          textStyle="body-base"
           color="white-0"
           gap="0.25rem"
           alignItems="center"
@@ -150,7 +164,6 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
           <EtherscanLink
             color="white-0"
             _hover={{ bg: 'transparent' }}
-            textStyle="body-base"
             padding={0}
             borderWidth={0}
             value={payment.asset?.address ?? null}
@@ -259,7 +272,7 @@ export function RoleCardShort({
     >
       <Flex justifyContent="space-between">
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="lilac-0"
         >
           {name}

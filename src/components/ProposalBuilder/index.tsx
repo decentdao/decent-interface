@@ -1,5 +1,5 @@
 import { Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
-import { SquaresFour, Trash } from '@phosphor-icons/react';
+import { ArrowLeft, SquaresFour } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -165,7 +165,7 @@ export function ProposalBuilder({
                         },
                       ]
                 }
-                ButtonIcon={Trash}
+                ButtonIcon={ArrowLeft}
                 buttonProps={{
                   isDisabled: pendingCreateTx,
                   variant: 'secondary',
@@ -275,7 +275,7 @@ export function ProposalBuilder({
                               h="1.5rem"
                             />
                             <Text
-                              textStyle="display-lg"
+                              textStyle="heading-small"
                               ml={2}
                             >
                               {t('actions', { ns: 'actions' })}

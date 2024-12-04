@@ -36,7 +36,7 @@ export function DAOInfoCard() {
     );
   }
 
-  const daoName = node.daoName || displayName;
+  const daoName = node.subgraphInfo?.daoName || displayName;
 
   return (
     <Box>
@@ -62,7 +62,7 @@ export function DAOInfoCard() {
             />
 
             {/* PARENT TAG */}
-            {node.nodeHierarchy.childNodes.length > 0 && (
+            {!!node.subgraphInfo && node.subgraphInfo.childAddresses.length > 0 && (
               <Link
                 to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
                 as={RouterLink}
@@ -72,7 +72,7 @@ export function DAOInfoCard() {
                 color="lilac-0"
                 borderRadius="625rem"
                 p="0.25rem 0.75rem"
-                textStyle="button-base"
+                textStyle="body-large"
               >
                 Parent
               </Link>
@@ -89,7 +89,7 @@ export function DAOInfoCard() {
         >
           {/* DAO NAME */}
           <Text
-            textStyle="display-4xl"
+            textStyle="heading-large"
             data-testid="DAOInfo-name"
           >
             {daoName}
@@ -100,7 +100,9 @@ export function DAOInfoCard() {
         <AddressCopier address={displayedAddress} />
 
         {/* SNAPSHOT ICON LINK */}
-        {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
+        {node.subgraphInfo?.daoSnapshotENS && (
+          <SnapshotButton snapshotENS={node.subgraphInfo.daoSnapshotENS} />
+        )}
       </Flex>
     </Box>
   );

@@ -64,7 +64,7 @@ function RemoveSignerModal({
 
   return (
     <Box>
-      <Text textStyle="label-base">{t('removeSignerLabel', { ns: 'modals' })}</Text>
+      <Text textStyle="labels-large">{t('removeSignerLabel', { ns: 'modals' })}</Text>
       <Input
         value={ensName ? ensName : selectedSigner}
         disabled={true}
@@ -77,7 +77,7 @@ function RemoveSignerModal({
           color="red-0"
         />
         <Text
-          textStyle="helper-text-base"
+          textStyle="labels-large"
           color="red-0"
         >
           {t('removeSignerWarning', { ns: 'modals' })}
@@ -148,7 +148,6 @@ function RemoveSignerModal({
         />
         <Text
           color="yellow-0"
-          textStyle="body-base-strong"
           whiteSpace="pre-wrap"
         >
           {t('updateSignerWarning', { ns: 'modals' })}

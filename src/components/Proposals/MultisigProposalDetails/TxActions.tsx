@@ -2,7 +2,7 @@ import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, getContract, isHex } from 'viem';
+import { getAddress, getContract, isHex, zeroAddress } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { Check } from '../../../assets/theme/custom/icons/Check';
@@ -50,7 +50,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const { data: walletClient } = useWalletClient();
 
-  const isOwner = safe?.owners?.includes(userAccount.address || '');
+  const isOwner = safe?.owners?.includes(userAccount.address ?? zeroAddress);
 
   if (!isOwner) return null;
 

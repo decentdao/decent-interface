@@ -79,14 +79,7 @@ export function CustomNonceInput({
         testId={`custom-nonce`}
         isInvalid={!!errorMessage}
       />
-      {errorMessage && (
-        <Text
-          color="red-0"
-          textStyle="body-base"
-        >
-          {errorMessage}
-        </Text>
-      )}
+      {errorMessage && <Text color="red-0">{errorMessage}</Text>}
     </VStack>
   );
 }

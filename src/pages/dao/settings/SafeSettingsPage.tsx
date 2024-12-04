@@ -7,7 +7,7 @@ import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 
 export function SafeSettingsPage() {
   const { t } = useTranslation(['settings']);
-  const { daoName } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   const location = useLocation();
   const paths = location.pathname.split('/');
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -23,7 +23,7 @@ export function SafeSettingsPage() {
               path: '',
             },
           ]}
-          title={t('settingsPageTitle', { daoName })}
+          title={t('settingsPageTitle', { daoName: subgraphInfo?.daoName })}
         />
       )}
       <Flex flexDirection={{ base: 'column', md: 'row' }}>

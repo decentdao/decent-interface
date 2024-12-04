@@ -36,12 +36,12 @@ export default function ProgressBar({
         px="1rem"
         height="100%"
       >
-        <Text textStyle="label-small">{label}</Text>
+        <Text textStyle="labels-small">{label}</Text>
         {customValueComponent ? (
           <>{customValueComponent}</>
         ) : (
           <Text
-            textStyle="label-small"
+            textStyle="labels-small"
             display="inline-flex"
             alignItems="center"
             height="100%"
@@ -83,7 +83,7 @@ export function QuorumProgressBar({
         customValueComponent={
           totalQuorum ? (
             <Text
-              textStyle="label-small"
+              textStyle="labels-small"
               whiteSpace="nowrap"
               overflow="clip"
             >
@@ -101,7 +101,6 @@ export function QuorumProgressBar({
       />
       {helperText && (
         <Text
-          textStyle="body-base"
           color="neutral-7"
           marginTop={3}
         >

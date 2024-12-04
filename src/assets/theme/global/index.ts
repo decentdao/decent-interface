@@ -6,8 +6,9 @@ export default {
     body: {
       background: 'neutral-1',
       backgroundRepeat: 'no-repeat',
-      fontFamily: 'body',
-      color: 'white',
+      fontFamily: 'DM Sans',
+      textStyle: 'body-small',
+      color: 'white-0',
       height: '100%',
     },
     html: {

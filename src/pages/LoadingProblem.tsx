@@ -37,17 +37,17 @@ function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQ
         >
           <Text
             w="full"
-            textStyle={{ base: 'display-2xl', lg: 'display-4xl' }}
+            textStyle="heading-large"
           >
             {t('errorSentryFallbackTitle')}
           </Text>
           <Text
-            textStyle={{ base: 'display-lg', lg: 'display-xl' }}
+            textStyle="heading-medium"
             mt="0.5rem"
           >
             {t(`${type}1`, { chain: chain.name })}
           </Text>
-          <Text textStyle={{ base: 'display-lg', lg: 'display-xl' }}>{t(`${type}2`)}</Text>
+          <Text textStyle="heading-medium">{t(`${type}2`)}</Text>
         </Box>
         <Flex alignItems="flex-end">
           <Hide above="lg">

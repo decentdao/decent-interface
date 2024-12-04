@@ -101,7 +101,7 @@ export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
           mb="0.5rem"
         >
           <Bank size="1.5rem" />
-          <Text textStyle="display-lg">{t('titleGovernance')}</Text>
+          <Text textStyle="heading-small">{t('titleGovernance')}</Text>
         </Flex>
       )}
 

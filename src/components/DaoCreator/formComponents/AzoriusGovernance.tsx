@@ -89,16 +89,12 @@ function DayStepperInput({
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
 
-  const {
-    safe,
-    nodeHierarchy: { parentAddress },
-    fractalModules,
-  } = useDaoInfoStore();
+  const { safe, subgraphInfo, modules } = useDaoInfoStore();
 
-  const fractalModule = useMemo(
-    () => fractalModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL),
-    [fractalModules],
-  );
+  const fractalModule = useMemo(() => {
+    if (!modules) return null;
+    return modules.find(_module => _module.moduleType === FractalModuleType.FRACTAL);
+  }, [modules]);
 
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const { t } = useTranslation(['daoCreate', 'common']);
@@ -233,7 +229,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               <WarningCircle size="24" />
             </Box>
             <Text
-              textStyle="body-base-strong"
               whiteSpace="pre-wrap"
               ml="1rem"
             >
@@ -242,7 +237,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           </Alert>
         </Flex>
       </StepWrapper>
-      {!!parentAddress && (
+      {!!subgraphInfo?.parentAddress && (
         <Box
           padding="1.5rem"
           bg="neutral-2"

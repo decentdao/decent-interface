@@ -198,7 +198,7 @@ export function SendAssetsModal({
               >
                 <Text
                   color={overDraft ? 'red-0' : 'neutral-7'}
-                  textStyle="helper-text-base"
+                  textStyle="labels-large"
                   as="span"
                 >
                   {t('selectSublabel', {

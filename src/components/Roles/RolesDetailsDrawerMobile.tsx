@@ -3,6 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import useAddress from '../../hooks/utils/useAddress';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   paymentSorterByActiveStatus,
@@ -12,6 +13,7 @@ import {
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { RoleDetailsDrawerProps } from '../../types/roles';
 import DraggableDrawer from '../ui/containers/DraggableDrawer';
+import Markdown from '../ui/proposal/Markdown';
 import { AvatarAndRoleName } from './RoleCard';
 import RoleDetailsTabs from './RoleDetailsTabs';
 import { RoleProposalPermissionBadge } from './RolesDetailsDrawer';
@@ -43,6 +45,8 @@ export default function RolesDetailsDrawerMobile({
 
   const { address: roleHatWearerAddress } = useAddress(roleHatWearer);
 
+  const { canUserCreateProposal } = useCanUserCreateProposal();
+
   if (!safe?.address || !hatsTree) return null;
 
   return (
@@ -63,19 +67,21 @@ export default function RolesDetailsDrawerMobile({
             alignItems="center"
             gap="1rem"
           >
-            <IconButton
-              variant="tertiary"
-              aria-label="Edit Role"
-              onClick={() => onEdit(roleHat.id)}
-              size="icon-sm"
-              icon={
-                <Icon
-                  as={PencilWithLineIcon}
-                  color="lilac-0"
-                  aria-hidden
-                />
-              }
-            />
+            {canUserCreateProposal && (
+              <IconButton
+                variant="tertiary"
+                aria-label="Edit Role"
+                onClick={() => onEdit(roleHat.id)}
+                size="icon-sm"
+                icon={
+                  <Icon
+                    as={PencilWithLineIcon}
+                    color="lilac-0"
+                    aria-hidden
+                  />
+                }
+              />
+            )}
           </Flex>
         </Flex>
       }
@@ -86,11 +92,16 @@ export default function RolesDetailsDrawerMobile({
       >
         <Text
           color="neutral-7"
-          textStyle="button-small"
+          textStyle="labels-large"
+          mb="0.25rem"
         >
           {t('roleDescription')}
         </Text>
-        <Text textStyle="body-base">{roleHat.description}</Text>
+
+        <Markdown
+          content={roleHat.description}
+          collapsedLines={100}
+        />
       </Box>
       {roleHat.canCreateProposals && (
         <Box
@@ -101,7 +112,7 @@ export default function RolesDetailsDrawerMobile({
         >
           <Text
             color="neutral-7"
-            textStyle="button-small"
+            textStyle="labels-large"
           >
             {t('permissions')}
           </Text>

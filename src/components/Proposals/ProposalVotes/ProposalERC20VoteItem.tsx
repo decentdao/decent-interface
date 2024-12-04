@@ -23,37 +23,21 @@ export default function ProposalERC20VoteItem({
   return (
     <>
       <GridItem>
-        <Text
-          textStyle="body-base"
-          color="neutral-7"
-        >
+        <Text color="neutral-7">
           {displayName}
           {user.address === vote.voter && t('isMeSuffix')}
         </Text>
       </GridItem>
       <GridItem>
         <StatusBox>
-          <Text
-            textStyle="body-base"
-            color="neutral-7"
-          >
-            {t(vote.choice.label)}
-          </Text>
+          <Text color="neutral-7">{t(vote.choice.label)}</Text>
         </StatusBox>
       </GridItem>
       <GridItem>
-        <Text
-          textStyle="body-base"
-          color="neutral-7"
-        >
-          {formatPercentage(vote.weight, govTokenTotalSupply)}
-        </Text>
+        <Text color="neutral-7">{formatPercentage(vote.weight, govTokenTotalSupply)}</Text>
       </GridItem>
       <GridItem>
-        <Text
-          textStyle="body-base"
-          color="neutral-7"
-        >
+        <Text color="neutral-7">
           {formatCoin(vote.weight, true, govTokenDecimals, govTokenSymbol)}
         </Text>
       </GridItem>

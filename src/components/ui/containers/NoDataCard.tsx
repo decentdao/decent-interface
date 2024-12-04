@@ -21,7 +21,6 @@ export default function NoDataCard({
       p="1rem"
     >
       <Text
-        textStyle="body-base"
         textAlign="center"
         color="neutral-6"
       >

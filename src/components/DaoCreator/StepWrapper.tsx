@@ -41,7 +41,7 @@ export function StepWrapper({
             w="full"
           >
             <Text
-              textStyle="display-2xl"
+              textStyle="heading-large"
               color="white-0"
             >
               {t(titleKey)}

@@ -1,5 +1,5 @@
 import { Address } from 'viem';
-import { AzoriusProposal } from '../../../types';
+import { AzoriusProposal, DaoHierarchyInfo } from '../../../types';
 
 export interface IStorageValue {
   // the value to store, 1 character to minimize cache size
@@ -33,6 +33,7 @@ export enum CacheKeys {
   PROPOSAL_CACHE = 'Proposal',
   MIGRATION = 'Migration',
   IPFS_HASH = 'IPFS Hash',
+  HIERARCHY_DAO_INFO = 'Hierarchy DAO Info',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
@@ -70,9 +71,15 @@ export interface IPFSHashCacheKey extends CacheKey {
   hash: string;
   chainId: number;
 }
+export interface HierarchyDAOInfoCacheKey extends CacheKey {
+  cacheName: CacheKeys.HIERARCHY_DAO_INFO;
+  chainId: number;
+  daoAddress: Address;
+}
 
 export type CacheKeyType =
   | FavoritesCacheKey
+  | HierarchyDAOInfoCacheKey
   | MasterCacheKey
   | ProposalCacheKey
   | AverageBlockTimeCacheKey
@@ -97,6 +104,7 @@ type CacheKeyToValueMap = {
   [CacheKeys.AVERAGE_BLOCK_TIME]: number;
   [CacheKeys.MIGRATION]: number;
   [CacheKeys.IPFS_HASH]: string;
+  [CacheKeys.HIERARCHY_DAO_INFO]: DaoHierarchyInfo;
 };
 
 export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }
@@ -114,6 +122,7 @@ export const CACHE_VERSIONS: { [key: string]: number } = Object.freeze({
   [CacheKeys.MASTER_COPY]: 1,
   [CacheKeys.PROPOSAL_CACHE]: 1,
   [CacheKeys.AVERAGE_BLOCK_TIME]: 1,
+  [CacheKeys.HIERARCHY_DAO_INFO]: 1,
 });
 
 /**
