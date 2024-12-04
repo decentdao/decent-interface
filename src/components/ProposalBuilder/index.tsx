@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
