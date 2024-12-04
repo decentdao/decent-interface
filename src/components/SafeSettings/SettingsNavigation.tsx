@@ -52,12 +52,7 @@ function SettingsLink({
           color="lilac-0"
         >
           {leftIcon}
-          <Text
-            textStyle="body-base"
-            color="white-0"
-          >
-            {title}
-          </Text>
+          <Text color="white-0">{title}</Text>
         </Flex>
         <Show below="md">
           <Flex
@@ -88,7 +83,7 @@ export default function SettingsNavigation() {
   const { t } = useTranslation('settings');
   const { addressPrefix } = useNetworkConfig();
   const { governance } = useFractal();
-  const { safe, fractalModules } = useDaoInfoStore();
+  const { safe, modules } = useDaoInfoStore();
   const azoriusGovernance = governance as AzoriusGovernance;
 
   return (
@@ -127,10 +122,7 @@ export default function SettingsNavigation() {
             leftIcon={<Bank fontSize="1.5rem" />}
             title={t('daoSettingsGovernance')}
           >
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
+            <Text color="neutral-7">
               {t(azoriusGovernance.votingStrategy?.strategyType ?? 'labelMultisig')}
             </Text>
           </SettingsLink>
@@ -139,12 +131,7 @@ export default function SettingsNavigation() {
             leftIcon={<Stack fontSize="1.5rem" />}
             title={t('daoModulesAndGuard')}
           >
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {fractalModules.length + safe.guard ? 1 : 0}
-            </Text>
+            <Text color="neutral-7">{(modules ?? []).length + (safe?.guard ? 1 : 0)}</Text>
           </SettingsLink>
           <SettingsLink
             path={DAO_ROUTES.settingsPermissions.relative(addressPrefix, safe.address)}
@@ -152,12 +139,7 @@ export default function SettingsNavigation() {
             title={t('permissionsTitle')}
             showDivider={false}
           >
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {azoriusGovernance.votingStrategy ? 1 : 0}
-            </Text>
+            <Text color="neutral-7">{azoriusGovernance.votingStrategy ? 1 : 0}</Text>
           </SettingsLink>
         </>
       )}

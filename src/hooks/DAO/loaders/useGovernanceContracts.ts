@@ -19,12 +19,12 @@ export const useGovernanceContracts = () => {
   const { getAddressContractType } = useAddressContractType();
 
   const { getVotingStrategies } = useVotingStrategyAddress();
-  const { fractalModules, isModulesLoaded, safe } = node;
+  const { modules, safe } = node;
 
   const safeAddress = safe?.address;
 
   const loadGovernanceContracts = useCallback(async () => {
-    const azoriusModule = getAzoriusModuleFromModules(fractalModules);
+    const azoriusModule = getAzoriusModuleFromModules(modules ?? []);
 
     const votingStrategies = await getVotingStrategies();
 
@@ -128,15 +128,15 @@ export const useGovernanceContracts = () => {
         },
       });
     }
-  }, [action, fractalModules, getVotingStrategies, publicClient, getAddressContractType]);
+  }, [action, modules, getVotingStrategies, publicClient, getAddressContractType]);
 
   useEffect(() => {
-    if (currentValidAddress.current !== safeAddress && isModulesLoaded) {
+    if (currentValidAddress.current !== safeAddress && modules !== null) {
       loadGovernanceContracts();
       currentValidAddress.current = safeAddress;
     }
     if (!safeAddress) {
       currentValidAddress.current = null;
     }
-  }, [isModulesLoaded, loadGovernanceContracts, safeAddress]);
+  }, [modules, loadGovernanceContracts, safeAddress]);
 };

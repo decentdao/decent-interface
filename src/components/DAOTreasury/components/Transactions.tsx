@@ -37,7 +37,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
           />
           <Box>
             <Text
-              textStyle="label-small"
+              textStyle="labels-small"
               color="neutral-7"
             >
               {t(displayData.eventType == TokenEventType.WITHDRAW ? 'labelSent' : 'labelReceived')}
@@ -101,7 +101,6 @@ function EmptyTransactions() {
   const { t } = useTranslation('treasury');
   return (
     <Text
-      textStyle="body-base"
       color="neutral-6"
       data-testid="text-empty-transactions"
       align="center"
@@ -179,7 +178,7 @@ export function PaginationCount({ shownTransactions }: { shownTransactions: numb
     <Flex gap="0.25rem">
       <Text
         color="neutral-7"
-        textStyle="helper-text-base"
+        textStyle="labels-large"
       >
         {t('transactionsShownCount', {
           count: totalTransfers > shownTransactions ? shownTransactions : totalTransfers,
@@ -189,7 +188,7 @@ export function PaginationCount({ shownTransactions }: { shownTransactions: numb
         type="address"
         value={safe.address}
         p={0}
-        textStyle="helper-text-base"
+        textStyle="labels-large"
         outline="unset"
         outlineOffset="unset"
         borderWidth={0}

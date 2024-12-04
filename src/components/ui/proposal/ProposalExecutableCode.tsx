@@ -22,7 +22,7 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
   return (
     <Flex
       width="full"
-      textStyle="code-snippet-base"
+      textStyle="snippets-large"
       color="white-0"
       alignItems="center"
       justifyContent="space-between"
@@ -168,7 +168,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Fractal
             <>
               <AccordionButton
                 p={0}
-                textStyle="display-lg"
+                textStyle="heading-small"
                 color="lilac-0"
               >
                 <AccordionIcon

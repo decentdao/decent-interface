@@ -28,7 +28,7 @@ export default function AddStrategyPermissionModal({ closeModal }: { closeModal:
         justifyContent="space-between"
         alignItems="center"
       >
-        <Text textStyle="display-lg">{t('addPermissionTitle')}</Text>
+        <Text textStyle="heading-small">{t('addPermissionTitle')}</Text>
         <Show above="md">
           <IconButton
             variant="ghost"
@@ -66,7 +66,7 @@ export default function AddStrategyPermissionModal({ closeModal }: { closeModal:
             flexDirection="column"
             gap={1}
           >
-            <Text textStyle="display-lg">{t('permissionCreateProposalsTitle')}</Text>
+            <Text textStyle="heading-small">{t('permissionCreateProposalsTitle')}</Text>
             <Text color="neutral-7">{t('permissionCreateProposalsDescription')}</Text>
           </Flex>
         </Card>
@@ -85,7 +85,7 @@ export default function AddStrategyPermissionModal({ closeModal }: { closeModal:
             gap={1}
             color="neutral-6"
           >
-            <Text textStyle="display-lg">{t('permissionComingSoonTitle')}</Text>
+            <Text textStyle="heading-small">{t('permissionComingSoonTitle')}</Text>
             <Text>{t('permissionComingSoonDescription')}</Text>
           </Flex>
         </Card>

@@ -23,7 +23,7 @@ export function ProposalInfo({
 }) {
   const metaData = useGetMetadata(proposal);
   const { t } = useTranslation('proposal');
-  const { daoSnapshotENS } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
   const { snapshotProposal } = useSnapshotProposal(proposal);
 
   const [modalType, props] = useMemo(() => {
@@ -62,10 +62,10 @@ export function ProposalInfo({
           showIcon={false}
           textColor="neutral-7"
         />
-        {snapshotProposal && (
+        {snapshotProposal && subgraphInfo && (
           <>
             <SnapshotButton
-              snapshotENS={`${daoSnapshotENS}/proposal/${snapshotProposal.proposalId}`}
+              snapshotENS={`${subgraphInfo.daoSnapshotENS}/proposal/${snapshotProposal.proposalId}`}
             />
             {(proposal as ExtendedSnapshotProposal).privacy === 'shutter' && (
               <Button

@@ -1,6 +1,6 @@
 {
-  "createProposalTemplate": "New Proposal Template",
-  "proposalTemplateTitle": "Proposal Template Title",
+  "createProposalTemplate": "Create Proposal Template",
+  "proposalTemplateTitle": "Title",
   "proposalTemplateTitleHelperText": "A short title for this proposal template",
   "proposalTemplateDescription": "Description",
   "proposalTemplateDescriptionHelperText": "Markdown syntax supported",

@@ -12,7 +12,7 @@ import {
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
-import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
+import { fractalModuleData, DecentModule } from './helpers/fractalModuleData';
 
 export class DaoTxBuilder extends BaseTxBuilder {
   private readonly saltNum;
@@ -231,7 +231,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   //
 
   private setFractalModuleTxs(): void {
-    const { enableFractalModuleTx, deployFractalModuleTx }: FractalModuleData = fractalModuleData(
+    const { enableFractalModuleTx, deployFractalModuleTx }: DecentModule = fractalModuleData(
       this.moduleFractalMasterCopy,
       this.zodiacModuleProxyFactory,
       this.safeContractAddress,

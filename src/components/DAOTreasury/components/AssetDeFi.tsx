@@ -22,21 +22,21 @@ export function DeFiHeader() {
       <HStack px={{ base: '1rem', lg: '1.5rem' }}>
         <Text
           w="40%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnProtocols')}
         </Text>
         <Text
           w="35%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnValue')}
         </Text>
         <Text
           w="25%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnAllocation')}
@@ -91,7 +91,6 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
         <EtherscanLink
           color="white-0"
           _hover={{ bg: 'transparent' }}
-          textStyle="body-base"
           padding={0}
           borderWidth={0}
           value={isNativePosition ? (safe?.address ?? null) : asset.position?.address || null}

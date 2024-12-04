@@ -16,7 +16,6 @@ export default function InfoRow({
   return (
     <Box marginTop="1rem">
       <Text
-        textStyle="body-base"
         color="neutral-7"
         w="full"
       >

@@ -189,12 +189,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
               >
                 <Info size="24" />
               </Box>
-              <Text
-                textStyle="body-base-strong"
-                whiteSpace="pre-wrap"
-              >
-                {t('cancelPaymentInfoMessage')}
-              </Text>
+              <Text whiteSpace="pre-wrap">{t('cancelPaymentInfoMessage')}</Text>
             </Alert>
           </Show>
         )}
@@ -260,10 +255,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
           >
             <Info size="24" />
           </Box>
-          <Text
-            textStyle="body-base-strong"
-            whiteSpace="pre-wrap"
-          >
+          <Text whiteSpace="pre-wrap">
             {t(payment?.isCancelling ? 'cancellingPaymentInfoMessage' : 'cancelPaymentInfoMessage')}
           </Text>
         </Alert>

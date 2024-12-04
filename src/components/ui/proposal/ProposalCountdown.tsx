@@ -92,7 +92,7 @@ export function ProposalCountdown({
         >
           <Text
             color={textColor}
-            textStyle="label-base"
+            textStyle="labels-large"
           >
             {showDays && `${zeroPad(daysLeft)}:`}
             {showHours && `${zeroPad(hoursLeft)}:`}

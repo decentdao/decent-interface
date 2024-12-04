@@ -28,7 +28,7 @@ export default function PaymentCancelConfirmModal({
         px={4}
         textAlign="center"
       >
-        <Text textStyle="display-xl">{t('confirmCancelPaymentTitle')}</Text>
+        <Text textStyle="heading-medium">{t('confirmCancelPaymentTitle')}</Text>
         <Text>{t('confirmCancelPaymentBody')}</Text>
       </Box>
       <Flex
