@@ -219,7 +219,12 @@ export function RoleFormCreateProposal({ close }: { close: () => void }) {
         mb={2}
         alignItems="center"
       >
-        <Text ml={2}>{t('actions', { ns: 'actions' })}</Text>
+        <Text
+          textStyle="body-base"
+          ml={2}
+        >
+          {t('actions', { ns: 'actions' })}
+        </Text>
       </Flex>
       {editedRoles.map((role, index) => {
         return (
