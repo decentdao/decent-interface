@@ -24,7 +24,7 @@ import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
 
-export default function RoleFormCreateProposal({ close }: { close: () => void }) {
+export function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerEditingRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
 

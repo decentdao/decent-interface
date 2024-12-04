@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import RoleFormCreateProposal from '../../../../../components/Roles/forms/RoleFormCreateProposal';
+import { RoleFormCreateProposal } from '../../../../../components/Roles/forms/RoleFormCreateProposal';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { SIDEBAR_WIDTH, useHeaderHeight } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
@@ -89,7 +89,7 @@ export function SafeRolesEditProposalSummaryPage() {
               title={t('proposalNew', { ns: 'breadcrumbs' })}
               breadcrumbs={[
                 {
-                  terminus: t('roles'),
+                  terminus: t('createProposal', { ns: 'proposal' }),
                   path: '',
                 },
               ]}
