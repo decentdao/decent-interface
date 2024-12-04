@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { RoleFormCreateProposal } from '../../../../../components/Roles/forms/RoleFormCreateProposal';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
-import { SIDEBAR_WIDTH, useHeaderHeight } from '../../../../../constants/common';
+import { SIDEBAR_WIDTH, useFooterHeight, useHeaderHeight } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
@@ -22,6 +22,8 @@ export function SafeRolesEditProposalSummaryPage() {
 
   const safeAddress = safe?.address;
 
+  const footerHeight = useFooterHeight();
+
   // @dev redirects back to roles edit page if no roles are edited (user refresh)
   useEffect(() => {
     const editedRoles = values.hats.filter(hat => !!hat.editedRole);
@@ -31,6 +33,7 @@ export function SafeRolesEditProposalSummaryPage() {
   }, [values.hats, safeAddress, navigate, addressPrefix]);
 
   if (!safeAddress) return null;
+
   return (
     <Box>
       <Show below="md">
@@ -78,12 +81,12 @@ export function SafeRolesEditProposalSummaryPage() {
             top={`calc(1rem + ${headerHeight})`}
             left={{ base: SIDEBAR_WIDTH, '3xl': `calc(${SIDEBAR_WIDTH} + 9rem)` }}
             bg="neutral-1"
-            px="1rem"
+            px={`${window.innerWidth / 100}rem`}
             width={{
               base: `calc(100% - ${SIDEBAR_WIDTH})`,
               '3xl': `calc(100% - 9rem - ${SIDEBAR_WIDTH})`,
             }}
-            h={`calc(100vh - ${headerHeight})`}
+            h={`calc(100vh - ${headerHeight} - ${footerHeight})`}
           >
             <PageHeader
               title={t('proposalNew', { ns: 'breadcrumbs' })}
