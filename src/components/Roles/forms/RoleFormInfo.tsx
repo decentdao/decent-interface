@@ -107,12 +107,18 @@ export default function RoleFormInfo() {
           <Field name="roleEditing.canCreateProposals">
             {() => (
               <Flex
+                mt={6}
                 justifyContent="space-between"
                 alignItems="center"
                 padding={4}
                 borderRadius={8}
                 border="1px solid"
                 borderColor="neutral-3"
+                bg="neutral-2"
+                boxShadow={{
+                  base: DETAILS_BOX_SHADOW,
+                  md: 'unset',
+                }}
               >
                 <Text>{t('canCreateProposals')}</Text>
                 <Switch
