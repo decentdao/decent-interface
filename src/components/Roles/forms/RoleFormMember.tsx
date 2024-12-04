@@ -104,7 +104,7 @@ function RoleMemberConfirmationScreen({
           w="auto"
         />
         <Text
-          textStyle="display-2xl"
+          textStyle="heading-large"
           textAlign="center"
         >
           {t('addTermLengthTitle')}
@@ -121,12 +121,7 @@ function RoleMemberConfirmationScreen({
               as={ClockCountdown}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-1')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-1')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -136,12 +131,7 @@ function RoleMemberConfirmationScreen({
               weight="fill"
             />
 
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-2')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-2')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -150,12 +140,7 @@ function RoleMemberConfirmationScreen({
               as={ReceiptX}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-3')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-3')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -164,12 +149,7 @@ function RoleMemberConfirmationScreen({
               as={HandCoins}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-4')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-4')}</Text>
           </Flex>
         </Flex>
         <Flex
@@ -182,7 +162,7 @@ function RoleMemberConfirmationScreen({
             as={Warning}
             weight="fill"
           />
-          <Text textStyle="helper-text-base">{t('termedRoleConfirmation-warning')}</Text>
+          <Text textStyle="labels-large">{t('termedRoleConfirmation-warning')}</Text>
         </Flex>
         <Flex
           gap={4}
@@ -280,7 +260,7 @@ function RoleFormMemberTermToggle() {
                   alignItems="center"
                   gap={2}
                 >
-                  <Text textStyle="label-large">{t('addTermLengths')}</Text>
+                  <Text textStyle="body-small">{t('addTermLengths')}</Text>
                   <Icon
                     size="1rem"
                     as={WarningDiamond}
@@ -288,7 +268,7 @@ function RoleFormMemberTermToggle() {
                   />
                 </Flex>
                 <Text
-                  textStyle="label-small"
+                  textStyle="labels-small"
                   color="neutral-7"
                 >
                   {t('addTermLengthSubTitle')}

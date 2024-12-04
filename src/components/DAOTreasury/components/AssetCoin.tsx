@@ -22,21 +22,21 @@ export function CoinHeader() {
       <HStack px={{ base: '1rem', lg: '1.5rem' }}>
         <Text
           w="40%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnCoins')}
         </Text>
         <Text
           w="35%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnValue')}
         </Text>
         <Text
           w="25%"
-          textStyle="label-small"
+          textStyle="labels-small"
           color="neutral-7"
         >
           {t('columnAllocation')}
@@ -82,7 +82,6 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
         <EtherscanLink
           color="white-0"
           _hover={{ bg: 'transparent' }}
-          textStyle="body-base"
           padding={0}
           borderWidth={0}
           value={etherscanLinkValue}
@@ -111,7 +110,7 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
         </Text>
         {asset.usdPrice && asset.usdValue && (
           <Text
-            textStyle="label-small"
+            textStyle="labels-small"
             color="neutral-7"
             width="100%"
           >

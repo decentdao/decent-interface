@@ -28,7 +28,7 @@ export function MenuItemButton({
         justifyContent="space-between"
         rightIcon={<Icon size="1.5rem" />}
       >
-        <Text textStyle="button-base">{label}</Text>
+        <Text textStyle="body-large">{label}</Text>
       </MenuItem>
     </Box>
   );

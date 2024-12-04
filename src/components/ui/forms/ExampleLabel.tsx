@@ -9,7 +9,7 @@ export default function ExampleLabel({ children, ...rest }: PropsWithChildren<Te
       px="6px"
       py="2px"
       color="white-0"
-      textStyle="code-snippet-helper-small"
+      textStyle="snippets-small"
       as="span"
       {...rest}
     >

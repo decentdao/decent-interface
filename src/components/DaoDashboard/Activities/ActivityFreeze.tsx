@@ -13,7 +13,6 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   return (
     <Text
       color="neutral-7"
-      textStyle="body-base-strong"
       gap="0.5rem"
     >
       {t(isFrozen ? 'frozenDescription' : 'freezeDescription')}
@@ -68,7 +67,7 @@ export function ActivityFreeze() {
           alignItems="center"
           gap="2rem"
         >
-          <Text textStyle="text-base-sans-regular">
+          <Text>
             {!isFrozen && freezeVotesThreshold !== null && freezeVotesThreshold > 0n && (
               <DecentTooltip
                 label={t('tipFreeze', { amount: voteToThreshold })}
@@ -79,9 +78,7 @@ export function ActivityFreeze() {
             )}
           </Text>
           {!isFreezeProposalDeadlinePassed && !isFreezeDeadlinePassed && (
-            <Text textStyle="text-base-sans-regular">
-              {isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
-            </Text>
+            <Text>{isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}</Text>
           )}
           {!isFrozen && <FreezeButton />}
         </Flex>

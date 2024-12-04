@@ -37,7 +37,7 @@ export default function HomePage() {
         alignItems="flex-end"
         mt="2.5rem"
       >
-        <Text textStyle="display-lg">{t('mySafes')}</Text>
+        <Text textStyle="heading-small">{t('mySafes')}</Text>
         <Spacer />
         <Link to={BASE_ROUTES.create}>
           <Button
@@ -45,7 +45,7 @@ export default function HomePage() {
             size="sm"
             cursor="pointer"
           >
-            <Text textStyle="button-small">{t('createCTA')}</Text>
+            <Text textStyle="labels-large">{t('createCTA')}</Text>
           </Button>
         </Link>
       </Flex>

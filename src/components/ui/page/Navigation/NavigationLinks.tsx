@@ -1,8 +1,7 @@
 import { Box, Flex, Hide } from '@chakra-ui/react';
 import { BookOpen, Coins, GitFork, House, Question, UsersThree } from '@phosphor-icons/react';
-import { WarpcastIcon } from '../../../../assets/theme/custom/icons/WarpcastIcon';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { URL_CHAT, URL_DOCS, URL_FAQ } from '../../../../constants/url';
+import { URL_DOCS, URL_FAQ } from '../../../../constants/url';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import Divider from '../../utils/Divider';
@@ -28,14 +27,6 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         labelKey="faq"
         testId="navigationExternal-faq"
         NavigationIcon={Question}
-        scope="external"
-        closeDrawer={closeDrawer}
-      />
-      <NavigationLink
-        href={URL_CHAT}
-        labelKey="chat"
-        testId="navigationExternal-chat"
-        NavigationIcon={WarpcastIcon}
         scope="external"
         closeDrawer={closeDrawer}
       />

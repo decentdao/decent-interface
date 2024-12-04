@@ -142,5 +142,7 @@
   "clawBackEmptyTransactionsError": "Failed to process clawback - child Safe has no safely transferrable tokens",
   "pendingProposalNotice": "Pending proposal still processing",
   "metadataFailedParsePlaceholder": "Unknown - Failed to parse metadata",
-  "multisigNonceDuplicateErrorMessage": "Transaction with the same nonce already exists"
+  "multisigNonceDuplicateErrorMessage": "Transaction with the same nonce already exists",
+  "createFromScratch": "Create from scratch",
+  "browseTemplates": "Browse templates"
 }

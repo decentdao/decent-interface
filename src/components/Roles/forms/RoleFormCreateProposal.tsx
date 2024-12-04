@@ -220,7 +220,7 @@ export function RoleFormCreateProposal({ close }: { close: () => void }) {
         alignItems="center"
       >
         <Text
-          textStyle="body-base"
+          textStyle="heading-small"
           ml={2}
         >
           {t('actions', { ns: 'actions' })}

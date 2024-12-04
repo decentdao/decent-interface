@@ -29,17 +29,17 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
         }}
       >
         <Flex justifyContent="space-between">
-          <Text textStyle="display-lg">{t('breakdownTitle')}</Text>
+          <Text textStyle="heading-small">{t('breakdownTitle')}</Text>
           <Flex>
             <Text
               color="white-0"
-              textStyle="display-lg"
+              textStyle="heading-small"
             >
               {t('totalVotes')}
             </Text>
             <Text
               ml={1}
-              textStyle="display-lg"
+              textStyle="heading-small"
             >
               {totalVotesCasted}
               {strategies.map((strategy, index) =>
@@ -82,7 +82,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
       </ContentBox>
       {votes && votes.length !== 0 && (
         <ContentBox containerBoxProps={{ bg: 'transparent' }}>
-          <Text textStyle="display-lg">
+          <Text textStyle="heading-small">
             {t('votesTitle')} ({votes.length})
           </Text>
           <Divider my={4} />
@@ -95,12 +95,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 justifyContent="center"
                 width="100%"
               >
-                <Text
-                  color="neutral-7"
-                  textStyle="body-base"
-                >
-                  {t('shutterVotesHidden')} |
-                </Text>
+                <Text color="neutral-7">{t('shutterVotesHidden')} |</Text>
                 <ProposalCountdown
                   proposal={proposal}
                   showIcon={false}

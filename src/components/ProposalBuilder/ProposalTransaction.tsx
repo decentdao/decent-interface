@@ -75,7 +75,7 @@ export default function ProposalTransaction({
         isRequired
         disabled={transactionPending}
         subLabel={
-          <HStack textStyle="helper-text-base">
+          <HStack textStyle="labels-large">
             <Text>{t('example', { ns: 'common' })}:</Text>
             <ExampleLabel>yourdomain.eth</ExampleLabel>
             <Text>{t('or', { ns: 'common' })}</Text>
@@ -104,7 +104,7 @@ export default function ProposalTransaction({
       {/* FUNCTION SPECIFICATION */}
       <Box>
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           mb="1.5rem"
         >
           {t('functionHeader')}
@@ -169,10 +169,10 @@ export default function ProposalTransaction({
                           });
                         }}
                         p={0}
-                        textStyle="display-lg"
+                        textStyle="heading-small"
                         color="lilac-0"
                       >
-                        <Text textStyle="display-lg">
+                        <Text textStyle="heading-small">
                           <Flex
                             alignItems="center"
                             gap={2}
@@ -239,10 +239,7 @@ export default function ProposalTransaction({
                             testId={`transactions.${transactionIndex}.parameters.${i}.signature`}
                           />
                           <Box mt={4}>
-                            <Text
-                              textStyle="body-base"
-                              mb="1.5rem"
-                            >
+                            <Text mb="1.5rem">
                               {t('labelParameterValue', { ns: 'proposalTemplate' })}
                             </Text>
                             {!isProposalMode && (

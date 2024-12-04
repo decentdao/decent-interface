@@ -24,7 +24,7 @@ function PaymentDate({ label, date }: { label: string; date?: Date }) {
       gap="0.5rem"
     >
       <Text
-        textStyle="label-small"
+        textStyle="labels-small"
         color="neutral-7"
       >
         {t(label)}
@@ -39,7 +39,7 @@ function PaymentDate({ label, date }: { label: string; date?: Date }) {
           color={date ? 'lilac-0' : 'neutral-6'}
         />
         <Text
-          textStyle="label-small"
+          textStyle="labels-small"
           color={date ? 'white-0' : 'neutral-6'}
         >
           {date ? format(date, DEFAULT_DATE_FORMAT) : '---'}
@@ -57,7 +57,7 @@ function TermedAssigned({ termNumber }: { termNumber: number }) {
       gap="0.5rem"
     >
       <Text
-        textStyle="label-small"
+        textStyle="labels-small"
         color="neutral-7"
       >
         {t('assigned')}
@@ -72,7 +72,7 @@ function TermedAssigned({ termNumber }: { termNumber: number }) {
           color="lila-0"
         />
         <Text
-          textStyle="label-small"
+          textStyle="labels-small"
           color="white-0"
         >
           {t('termNumber', { number: termNumber })}
@@ -325,7 +325,7 @@ export function RolePaymentDetails({
                   fallbackSrc="/images/coin-icon-default.svg"
                 />
                 <Text
-                  textStyle="display-2xl"
+                  textStyle="heading-large"
                   color="white-0"
                 >
                   {payment.amount?.bigintValue

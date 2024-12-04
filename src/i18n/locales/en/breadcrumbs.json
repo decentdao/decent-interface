@@ -8,7 +8,7 @@
   "proposal": "#{{proposalId}} {{proposalTitle}}",
   "proposalTemplates": "Proposal Templates",
   "proposalTemplate": "{{proposalTemplateTitle}}",
-  "proposalTemplateNew": "New Proposal Template",
+  "proposalTemplateNew": "Create Proposal Template",
   "modifyGovernance": "Modify Governance",
   "parentLink": "Parent-Safe",
   "settings": "Settings"

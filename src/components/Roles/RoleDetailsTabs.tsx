@@ -1,4 +1,4 @@
-import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
@@ -36,7 +36,6 @@ function RolesDetailsPayments({
   roleHatSmartAccountAddress: Address | undefined;
   roleTerms: RoleTermDetailProp[];
 }) {
-  const { t } = useTranslation(['roles']);
   const sortedPayments = useMemo(
     () =>
       payments
@@ -64,12 +63,6 @@ function RolesDetailsPayments({
         variant="darker"
         my={4}
       />
-      <Text
-        textStyle="display-lg"
-        color="white-0"
-      >
-        {t('payments')}
-      </Text>
       {sortedPayments.map(payment => {
         const thisPaymentIndex = payments?.findIndex(p => p.streamId === payment.streamId);
         return (
@@ -110,27 +103,16 @@ export default function RoleDetailsTabs({
   })[];
 }) {
   const { t } = useTranslation(['roles']);
-  const isTermed = roleTerms.allTerms.length > 0;
   return (
     <Tabs
       variant="twoTone"
       mt={4}
     >
       <TabList>
-        {isTermed && <Tab>{t('terms')}</Tab>}
         <Tab>{t('payments')}</Tab>
+        <Tab>{t('terms')}</Tab>
       </TabList>
       <TabPanels mt={4}>
-        {isTermed && (
-          <TabPanel>
-            <RoleTermDetails
-              hatId={hatId}
-              currentTerm={roleTerms.currentTerm}
-              nextTerm={roleTerms.nextTerm}
-              expiredTerms={roleTerms.expiredTerms}
-            />
-          </TabPanel>
-        )}
         <TabPanel>
           <RolesDetailsPayments
             payments={sortedPayments}
@@ -138,6 +120,14 @@ export default function RoleDetailsTabs({
             roleHatId={hatId}
             roleHatSmartAccountAddress={roleHatSmartAccountAddress}
             roleHatWearerAddress={roleHatWearerAddress}
+          />
+        </TabPanel>
+        <TabPanel>
+          <RoleTermDetails
+            hatId={hatId}
+            currentTerm={roleTerms.currentTerm}
+            nextTerm={roleTerms.nextTerm}
+            expiredTerms={roleTerms.expiredTerms}
           />
         </TabPanel>
       </TabPanels>

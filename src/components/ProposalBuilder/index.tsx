@@ -1,5 +1,5 @@
-import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
-import { Trash } from '@phosphor-icons/react';
+import { Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -165,7 +165,7 @@ export function ProposalBuilder({
                         },
                       ]
                 }
-                ButtonIcon={Trash}
+                ButtonIcon={ArrowLeft}
                 buttonProps={{
                   isDisabled: pendingCreateTx,
                   variant: 'secondary',
