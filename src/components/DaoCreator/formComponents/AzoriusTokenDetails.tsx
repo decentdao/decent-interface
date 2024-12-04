@@ -74,11 +74,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         },
         true,
       );
-      if (!isVotesToken) {
-        setFieldValue('erc20Token.tokenName', 'Wrapped ' + name, true);
-        setFieldValue('erc20Token.tokenSymbol', 'W' + symbol, true);
-        setIsValidERC20VotesToken(false);
-      } else {
+      if (isVotesToken) {
         setIsValidERC20VotesToken(true);
         setFieldValue('erc20Token.tokenName', name, true);
         setFieldValue('erc20Token.tokenSymbol', symbol, true);

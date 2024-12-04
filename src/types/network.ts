@@ -35,7 +35,6 @@ export type NetworkConfig = {
 
     linearVotingErc20MasterCopy: Address;
     linearVotingErc20HatsWhitelistingMasterCopy: Address;
-    linearVotingErc20WrappedMasterCopy: Address;
     linearVotingErc721MasterCopy: Address;
     linearVotingErc721HatsWhitelistingMasterCopy: Address;
 
@@ -50,7 +49,6 @@ export type NetworkConfig = {
     freezeVotingMultisigMasterCopy: Address;
 
     votesErc20MasterCopy: Address;
-    votesErc20WrapperMasterCopy: Address;
 
     claimErc20MasterCopy: Address;
 

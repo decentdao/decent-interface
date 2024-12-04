@@ -33,7 +33,6 @@ const useDeployAzorius = () => {
   const {
     contracts: {
       compatibilityFallbackHandler,
-      votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
       gnosisSafeProxyFactory,
@@ -80,7 +79,6 @@ const useDeployAzorius = () => {
         return;
       }
 
-      let parentTokenAddress: Address | undefined;
       let parentStrategyAddress: Address | undefined;
       let parentStrategyType: VotingStrategyType | undefined;
       let attachFractalModule = false;
@@ -110,12 +108,6 @@ const useDeployAzorius = () => {
 
             const masterCopyData = await getAddressContractType(parentStrategyAddress);
             if (masterCopyData.isLinearVotingErc20) {
-              const votingStrategyContract = getContract({
-                abi: abis.LinearERC20Voting,
-                client: publicClient,
-                address: parentStrategyAddress,
-              });
-              parentTokenAddress = await votingStrategyContract.read.governanceToken();
               parentStrategyType = VotingStrategyType.LINEAR_ERC20;
             } else if (masterCopyData.isLinearVotingErc721) {
               parentStrategyType = VotingStrategyType.LINEAR_ERC721;
@@ -137,7 +129,6 @@ const useDeployAzorius = () => {
         true,
         daoData,
         compatibilityFallbackHandler,
-        votesErc20WrapperMasterCopy,
         votesErc20MasterCopy,
         keyValuePairs,
         gnosisSafeProxyFactory,
@@ -155,7 +146,6 @@ const useDeployAzorius = () => {
         linearVotingErc721MasterCopy,
         moduleAzoriusMasterCopy,
         parentAddress || undefined,
-        parentTokenAddress,
       );
 
       txBuilderFactory.setSafeContract(safeAddress);
@@ -218,7 +208,6 @@ const useDeployAzorius = () => {
       publicClient,
       parentAddress,
       compatibilityFallbackHandler,
-      votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
       gnosisSafeProxyFactory,
