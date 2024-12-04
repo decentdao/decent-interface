@@ -1,4 +1,5 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
@@ -7,6 +8,7 @@ import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { createAccountSubstring } from '../../hooks/utils/useGetAccountName';
+import { useGetSafeName } from '../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
@@ -36,10 +38,19 @@ export function SafeDisplayRow({
     },
   });
 
+  const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
+  const [safeName, setSafeName] = useState(name);
+
+  useEffect(() => {
+    if (!safeName) {
+      getSafeName(address).then(setSafeName);
+    }
+  }, [address, getSafeName, safeName]);
+
   const { t } = useTranslation('dashboard');
 
   // if the safe name is an ENS name, let's attempt to get the avatar for that
-  const avatarURL = useAvatar(name ?? '');
+  const avatarURL = useAvatar(safeName ?? '');
 
   const onClickNav = () => {
     if (onClick) onClick();
@@ -80,10 +91,10 @@ export function SafeDisplayRow({
       />
       <Flex flexDir="column">
         <Text
-          color={name ? nameColor : 'neutral-6'}
+          color={safeName ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'labels-large' : 'body-large'}
         >
-          {name || t('loadingFavorite')}
+          {safeName || t('loadingFavorite')}
         </Text>
         {showAddress && <Text textStyle="body-large">{createAccountSubstring(address)}</Text>}
       </Flex>

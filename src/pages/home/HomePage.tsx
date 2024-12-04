@@ -1,11 +1,10 @@
-import { Flex, Button, Text, Spacer, Hide } from '@chakra-ui/react';
+import { Box, Flex, Hide, Show, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { DecentSignature } from '../../assets/theme/custom/icons/DecentSignature';
-import { BASE_ROUTES } from '../../constants/routes';
+import { DAOSearch } from '../../components/ui/menus/DAOSearch';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { GettingStarted } from './GettingStarted';
 import { MySafes } from './MySafes';
 
 export default function HomePage() {
@@ -23,39 +22,48 @@ export default function HomePage() {
   return (
     <Flex
       direction="column"
-      alignItems="center"
+      mt="2.5rem"
     >
+      {/* Mobile */}
       <Hide above="md">
-        <DecentSignature
-          mt="3rem"
-          height="auto"
-          width="8rem"
-        />
+        <Flex
+          direction="column"
+          w="100%"
+          gap="1.5rem"
+        >
+          <DAOSearch />
+          <Text textStyle="heading-small">{t('mySafes')}</Text>
+        </Flex>
       </Hide>
-      <Flex
-        w="100%"
-        alignItems="flex-end"
-        mt="2.5rem"
-      >
-        <Text textStyle="heading-small">{t('mySafes')}</Text>
-        <Spacer />
-        <Link to={BASE_ROUTES.create}>
-          <Button
-            variant="secondary"
-            size="sm"
-            cursor="pointer"
+
+      {/* Desktop */}
+      <Show above="md">
+        <Flex
+          w="100%"
+          alignItems="end"
+          gap="1rem"
+          justifyContent="space-between"
+        >
+          <Text
+            textStyle="heading-small"
+            whiteSpace="nowrap"
           >
-            <Text textStyle="labels-large">{t('createCTA')}</Text>
-          </Button>
-        </Link>
-      </Flex>
+            {t('mySafes')}
+          </Text>
+          <Box w="24rem">
+            <DAOSearch />
+          </Box>
+        </Flex>
+      </Show>
 
       <Flex
         direction="column"
         w="full"
         mt="1.5rem"
+        gap="1.5rem"
       >
         <MySafes />
+        <GettingStarted />
       </Flex>
     </Flex>
   );

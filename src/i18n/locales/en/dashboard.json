@@ -1,6 +1,5 @@
 {
   "emptyFavorites": "You haven't added any DAOs yet.",
-  "emptyFavoritesSubtext": "Create or find a DAO above.",
   "loadingFavorite": "Loading DAO Name",
   "errorInvalidSearch": "Oops! This Ethereum address is invalid.",
   "errorFailedSearch": "Sorry, this address is not a DAO on {{chain}}.",

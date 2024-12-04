@@ -42,7 +42,7 @@ export function OptionMenu({
       borderColor="neutral-3"
       borderRadius="0.78rem"
       mr={menuListMr || ['auto', '1rem']}
-      zIndex={1000}
+      zIndex="popover"
     >
       <Box
         borderRadius="0.75rem"
