@@ -1,13 +1,4 @@
-import {
-  Text,
-  Flex,
-  Grid,
-  IconButton,
-  NumberInput,
-  NumberInputField,
-  Icon,
-  Button,
-} from '@chakra-ui/react';
+import { Text, Flex, Grid, IconButton, Icon, Button } from '@chakra-ui/react';
 import { MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +6,7 @@ import { ICreationStepProps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
+import { NumberStepperInput } from '../../ui/forms/NumberStepperInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
@@ -119,6 +111,17 @@ export function Multisig(props: ICreationStepProps) {
                                 (_, index) => index !== i,
                               ),
                             });
+
+                            // If this removal causes the threshold to be higher than the number of signers, adjust the threshold
+                            if (
+                              values.multisig.signatureThreshold! >
+                              values.multisig.numOfSigners! - 1
+                            ) {
+                              setFieldValue(
+                                'multisig.signatureThreshold',
+                                values.multisig.numOfSigners! - 1,
+                              );
+                            }
                           }}
                           data-testid={'multisig.numOfSigners-' + i}
                         />
@@ -139,13 +142,10 @@ export function Multisig(props: ICreationStepProps) {
             isRequired
           >
             {/* @todo replace with stepper input */}
-            <NumberInput
-              value={values.multisig.signatureThreshold}
+            <NumberStepperInput
               onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
-              isInvalid={!!errors.multisig?.signatureThreshold}
-            >
-              <NumberInputField data-testid="safeConfig-thresholdInput" />
-            </NumberInput>
+              value={values.multisig.signatureThreshold}
+            />
           </LabelComponent>
         </Flex>
       </StepWrapper>

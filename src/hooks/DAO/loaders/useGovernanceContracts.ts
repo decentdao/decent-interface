@@ -61,21 +61,12 @@ export const useGovernanceContracts = () => {
       const govTokenAddress = await ozLinearVotingContract.read.governanceToken();
       // govTokenAddress might be either
       // - a valid VotesERC20 contract
-      // - a valid VotesERC20Wrapper contract
       // - a valid LockRelease contract
       // - or none of these which is against business logic
 
-      const { isVotesErc20, isVotesErc20Wrapper } = await getAddressContractType(govTokenAddress);
+      const { isVotesErc20 } = await getAddressContractType(govTokenAddress);
 
       if (isVotesErc20) {
-        votesTokenAddress = govTokenAddress;
-      } else if (isVotesErc20Wrapper) {
-        const wrapperContract = getContract({
-          abi: abis.VotesERC20Wrapper,
-          address: govTokenAddress,
-          client: publicClient,
-        });
-        underlyingTokenAddress = await wrapperContract.read.underlying();
         votesTokenAddress = govTokenAddress;
       } else {
         const possibleLockRelease = getContract({
