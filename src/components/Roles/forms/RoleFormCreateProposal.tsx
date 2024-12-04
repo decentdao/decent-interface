@@ -16,7 +16,6 @@ import {
 import { SendAssetsAction } from '../../ProposalBuilder/ProposalActionCard';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
-import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { AddActions } from '../../ui/modals/AddActions';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
@@ -152,21 +151,20 @@ export function RoleFormCreateProposal({ close }: { close: () => void }) {
               field: FieldInputProps<string>;
               form: FormikProps<RoleFormValues>;
             }) => (
-              <LabelWrapper label={t('proposalTitle', { ns: 'proposal' })}>
-                <InputComponent
-                  value={field.value}
-                  onChange={e => {
-                    setFieldValue('proposalMetadata.title', e.target.value);
-                    setFieldTouched('proposalMetadata.title', true);
-                  }}
-                  testId={field.name}
-                  placeholder="Proposal Title"
-                  isRequired={false}
-                  gridContainerProps={{
-                    gridTemplateColumns: { base: '1fr', md: '1fr' },
-                  }}
-                />
-              </LabelWrapper>
+              <InputComponent
+                value={field.value}
+                label={t('proposalTitle', { ns: 'proposal' })}
+                onChange={e => {
+                  setFieldValue('proposalMetadata.title', e.target.value);
+                  setFieldTouched('proposalMetadata.title', true);
+                }}
+                testId={field.name}
+                placeholder="Proposal Title"
+                isRequired
+                gridContainerProps={{
+                  gridTemplateColumns: { base: '1fr', md: '1fr' },
+                }}
+              />
             )}
           </Field>
         </FormControl>
@@ -179,20 +177,19 @@ export function RoleFormCreateProposal({ close }: { close: () => void }) {
               field: FieldInputProps<string>;
               form: FormikProps<RoleFormValues>;
             }) => (
-              <LabelWrapper label={t('proposalDescription', { ns: 'proposal' })}>
-                <TextareaComponent
-                  value={field.value}
-                  onChange={e => {
-                    setFieldValue('proposalMetadata.description', e.target.value);
-                    setFieldTouched('proposalMetadata.description', true);
-                  }}
-                  isRequired={false}
-                  placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
-                  gridContainerProps={{
-                    gridTemplateColumns: { base: '1fr', md: '1fr' },
-                  }}
-                />
-              </LabelWrapper>
+              <TextareaComponent
+                value={field.value}
+                label={t('proposalDescription', { ns: 'proposal' })}
+                onChange={e => {
+                  setFieldValue('proposalMetadata.description', e.target.value);
+                  setFieldTouched('proposalMetadata.description', true);
+                }}
+                isRequired
+                placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
+                gridContainerProps={{
+                  gridTemplateColumns: { base: '1fr', md: '1fr' },
+                }}
+              />
             )}
           </Field>
         </FormControl>
