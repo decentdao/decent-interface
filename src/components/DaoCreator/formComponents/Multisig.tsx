@@ -37,6 +37,8 @@ export function Multisig(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
+        totalSteps={props.totalSteps}
+        stepNumber={2}
         titleKey="titleMultisigSafeConfig"
       >
         <Flex

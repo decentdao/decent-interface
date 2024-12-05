@@ -89,6 +89,8 @@ function GuardDetails(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
+        totalSteps={props.totalSteps}
+        stepNumber={3}
         titleKey="titleGuardConfig"
       >
         <Flex

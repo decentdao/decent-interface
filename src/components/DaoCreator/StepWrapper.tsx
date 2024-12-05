@@ -16,6 +16,19 @@ interface IStepWrapper {
   shouldWrapChildren?: boolean;
   children: ReactNode;
   mode: DAOCreateMode;
+  totalSteps: number;
+  stepNumber: number;
+}
+
+function Step({ index, stepNumber }: { index: number; stepNumber: number }) {
+  return (
+    <Box
+      width="100%"
+      height="4px"
+      bg={stepNumber === index ? 'lilac-0' : 'neutral-6'}
+      borderRadius="full"
+    ></Box>
+  );
 }
 
 export function StepWrapper({
@@ -24,6 +37,8 @@ export function StepWrapper({
   isFormSubmitting,
   children,
   mode,
+  totalSteps,
+  stepNumber,
   shouldWrapChildren = true,
 }: IStepWrapper) {
   const { safe } = useDaoInfoStore();
@@ -71,6 +86,21 @@ export function StepWrapper({
           }}
         />
       )}
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        width="100%"
+        mb="2rem"
+        gap="0.25rem"
+      >
+        {Array.from({ length: totalSteps }, (_, index) => (
+          <Step
+            key={index}
+            index={index + 1}
+            stepNumber={stepNumber}
+          />
+        ))}
+      </Flex>
       {shouldWrapChildren ? (
         <Box
           mt="1.5rem"

@@ -87,6 +87,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
+        totalSteps={props.totalSteps}
+        stepNumber={1}
         titleKey="titleEssentials"
       >
         <InputComponent
@@ -126,6 +128,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descAzoriusErc20Gov')}
                   testId="choose-azorius"
                   value={GovernanceType.AZORIUS_ERC20}
+                  onClick={() => {
+                    props.onGovernanceTypeChange(GovernanceType.AZORIUS_ERC20);
+                  }}
                 />
               )}
               {createOptions.includes(GovernanceType.AZORIUS_ERC721) && (
@@ -134,6 +139,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descAzoriusErc721Gov')}
                   testId="choose-azorius-erc721"
                   value={GovernanceType.AZORIUS_ERC721}
+                  onClick={() => {
+                    props.onGovernanceTypeChange(GovernanceType.AZORIUS_ERC721);
+                  }}
                 />
               )}
               {createOptions.includes(GovernanceType.MULTISIG) && (
@@ -142,6 +150,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descMultisigGov')}
                   testId="choose-multisig"
                   value={GovernanceType.MULTISIG}
+                  onClick={() => {
+                    props.onGovernanceTypeChange(GovernanceType.MULTISIG);
+                  }}
                 />
               )}
             </RadioGroup>

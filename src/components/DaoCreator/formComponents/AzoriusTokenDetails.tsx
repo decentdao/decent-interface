@@ -111,6 +111,8 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
+        totalSteps={props.totalSteps}
+        stepNumber={2}
         titleKey="titleAzoriusConfig"
       >
         <Flex

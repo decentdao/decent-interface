@@ -106,6 +106,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         titleKey="titleGovConfig"
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
+        totalSteps={props.totalSteps}
+        stepNumber={3}
       >
         <Flex
           flexDirection="column"
