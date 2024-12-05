@@ -225,6 +225,8 @@ function RoleTermExpiredTerms({
     <Box
       borderRadius="0.5rem"
       boxShadow="layeredShadowBorder"
+      bg="neutral-2"
+      p="1.5rem"
     >
       <Accordion allowToggle>
         <AccordionItem
@@ -238,7 +240,6 @@ function RoleTermExpiredTerms({
               <AccordionButton
                 borderTopRadius="0.5rem"
                 borderBottomRadius="0.5rem"
-                p="1rem"
               >
                 <Flex
                   alignItems="center"

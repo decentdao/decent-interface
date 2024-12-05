@@ -18,6 +18,7 @@ import { SafeProposalCreatePage } from './pages/dao/proposals/new/SafeProposalCr
 import { SafeSablierProposalCreatePage } from './pages/dao/proposals/new/sablier/SafeSablierProposalCreatePage';
 import { SafeRolesPage } from './pages/dao/roles/SafeRolesPage';
 import { SafeRoleDetailsPage } from './pages/dao/roles/details/SafeRoleDetailsPage';
+import SafeRolesEditFormikPageWrapper from './pages/dao/roles/edit/SafeRolesEditFormikPageWrapper';
 import { SafeRolesEditPage } from './pages/dao/roles/edit/SafeRolesEditPage';
 import { SafeRoleEditDetailsPage } from './pages/dao/roles/edit/details/SafeRoleEditDetailsPage';
 import { SafeRolesEditProposalSummaryPage } from './pages/dao/roles/edit/summary/SafeRolesEditProposalSummaryPage';
@@ -82,8 +83,11 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.roles.path,
-              element: <SafeRolesPage />,
               children: [
+                {
+                  index: true,
+                  element: <SafeRolesPage />,
+                },
                 {
                   path: 'details',
                   element: <SafeRoleDetailsPage />,
@@ -92,8 +96,12 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.rolesEdit.path,
-              element: <SafeRolesEditPage />,
+              element: <SafeRolesEditFormikPageWrapper />,
               children: [
+                {
+                  index: true,
+                  element: <SafeRolesEditPage />,
+                },
                 {
                   path: 'details',
                   element: <SafeRoleEditDetailsPage />,
