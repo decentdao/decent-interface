@@ -1,35 +1,18 @@
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { useSwitchChain } from 'wagmi';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { getChainIdFromPrefix } from '../../utils/url';
 
 export const useAutomaticSwitchChain = ({
-  addressPrefix,
+  urlAddressPrefix,
 }: {
-  addressPrefix: string | undefined;
+  urlAddressPrefix: string | undefined;
 }) => {
-  const { t } = useTranslation(['common']);
-  const networkConfig = useNetworkConfigStore();
-  const { switchChain } = useSwitchChain({
-    mutation: {
-      onSuccess: () => {
-        window.location.reload();
-      },
-      onError: error => {
-        if (error.name !== 'UserRejectedRequestError') {
-          toast.warning(t('automaticChainSwitchingErrorMessage'));
-        }
-      },
-    },
-  });
+  const { setCurrentConfig, getConfigByChainId, addressPrefix } = useNetworkConfigStore();
 
   useEffect(() => {
-    if (addressPrefix === undefined || networkConfig.addressPrefix === addressPrefix) {
+    if (urlAddressPrefix === undefined || addressPrefix === urlAddressPrefix) {
       return;
     }
-
-    switchChain({ chainId: getChainIdFromPrefix(addressPrefix) });
-  }, [switchChain, addressPrefix, networkConfig.addressPrefix]);
+    setCurrentConfig(getConfigByChainId(getChainIdFromPrefix(urlAddressPrefix)));
+  }, [addressPrefix, setCurrentConfig, getConfigByChainId, urlAddressPrefix]);
 };

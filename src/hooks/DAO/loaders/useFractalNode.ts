@@ -11,9 +11,11 @@ import { useDecentModules } from './useDecentModules';
 export const useFractalNode = ({
   addressPrefix,
   safeAddress,
+  wrongNetwork,
 }: {
   addressPrefix?: string;
   safeAddress?: Address;
+  wrongNetwork?: boolean;
 }) => {
   const safeApi = useSafeAPI();
   const lookupModules = useDecentModules();
@@ -85,11 +87,11 @@ export const useFractalNode = ({
   ]);
 
   useEffect(() => {
-    if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current) {
+    if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current && !wrongNetwork) {
       reset({ error: false });
       setDAO();
     }
-  }, [addressPrefix, safeAddress, setDAO, reset]);
+  }, [addressPrefix, safeAddress, setDAO, reset, wrongNetwork]);
 
   return { errorLoading };
 };

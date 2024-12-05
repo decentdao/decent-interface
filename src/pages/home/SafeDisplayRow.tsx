@@ -3,13 +3,11 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
-import { useSwitchChain } from 'wagmi';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { createAccountSubstring } from '../../hooks/utils/useGetAccountName';
 import { useGetSafeName } from '../../hooks/utils/useGetSafeName';
-import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
 interface SafeDisplayRowProps {
@@ -27,16 +25,7 @@ export function SafeDisplayRow({
   showAddress,
   name,
 }: SafeDisplayRowProps) {
-  const { addressPrefix } = useNetworkConfigStore();
   const navigate = useNavigate();
-
-  const { switchChain } = useSwitchChain({
-    mutation: {
-      onSuccess: () => {
-        navigate(DAO_ROUTES.dao.relative(network, address));
-      },
-    },
-  });
 
   const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
   const [safeName, setSafeName] = useState(name);
@@ -54,11 +43,7 @@ export function SafeDisplayRow({
 
   const onClickNav = () => {
     if (onClick) onClick();
-    if (addressPrefix !== network) {
-      switchChain({ chainId: getChainIdFromPrefix(network) });
-    } else {
-      navigate(DAO_ROUTES.dao.relative(network, address));
-    }
+    navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
   const nameColor = showAddress ? 'neutral-7' : 'white-0';
