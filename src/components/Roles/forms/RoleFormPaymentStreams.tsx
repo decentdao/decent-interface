@@ -79,6 +79,7 @@ export function RoleFormPaymentStreams() {
         <Box>
           {sortedPayments.length === 0 && (
             <Flex
+              bg="neutral-2"
               padding="1.5rem"
               border="1px solid"
               borderColor="neutral-3"
@@ -117,7 +118,7 @@ export function RoleFormPaymentStreams() {
             {t('addPayment')}
           </Button>
           <RoleFormPaymentRenderer />
-          <Divider my="1rem" />
+          {!!sortedPayments.length && <Divider my="1rem" />}
           <Box mt="0.5rem">
             {sortedPayments.map(payment => {
               // @note don't render if form isn't valid
