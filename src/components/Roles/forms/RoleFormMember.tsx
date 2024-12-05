@@ -245,6 +245,7 @@ function RoleFormMemberTermToggle() {
       padding="1.5rem"
       border="1px solid"
       borderColor="neutral-3"
+      bg="neutral-2"
       borderRadius="0.25rem"
       mt="1.5rem"
     >
@@ -318,8 +319,7 @@ export function RoleFormMember() {
   return (
     <Box>
       <Box
-        px={{ base: '1rem', md: 0 }}
-        py="1rem"
+        p="1.5rem"
         bg="neutral-2"
         boxShadow={{
           base: DETAILS_BOX_SHADOW,
