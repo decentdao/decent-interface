@@ -56,7 +56,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const snapshotENSDisabled = isEdit && !!subgraphInfo?.daoSnapshotENS;
 
   props.onGovernanceTypeChange(values.essentials.governance);
-  const handleGovernanceChange = (value: string) => {
+  const handleGovernanceChange = (value: GovernanceType) => {
     if (value === GovernanceType.AZORIUS_ERC20) {
       setFieldValue('azorius.votingStrategyType', VotingStrategyType.LINEAR_ERC20);
     } else if (value === GovernanceType.AZORIUS_ERC721) {
@@ -64,7 +64,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
     }
 
     setFieldValue('essentials.governance', value);
-    props.onGovernanceTypeChange(value as GovernanceType);
+    props.onGovernanceTypeChange(value);
   };
 
   const { createOptions } = useNetworkConfig();
