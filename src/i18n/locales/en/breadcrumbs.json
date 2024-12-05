@@ -9,7 +9,7 @@
   "proposalTemplates": "Proposal Templates",
   "proposalTemplate": "{{proposalTemplateTitle}}",
   "proposalTemplateNew": "Create Proposal Template",
-  "modifyGovernance": "Modify Governance",
+  "editDAO": "Edit DAO",
   "parentLink": "Parent-Safe",
   "settings": "Settings"
 }

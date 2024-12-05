@@ -74,7 +74,7 @@ export function SafeEditGovernancePage() {
         }}
         breadcrumbs={[
           {
-            terminus: t('modifyGovernance', { ns: 'breadcrumbs' }),
+            terminus: t('editDAO', { ns: 'breadcrumbs' }),
             path: '',
           },
         ]}
