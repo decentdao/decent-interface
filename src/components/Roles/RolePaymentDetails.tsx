@@ -8,12 +8,11 @@ import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW, isDemoMode } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { BigIntValuePair } from '../../types';
-import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../utils';
+import { DEFAULT_DATE_FORMAT, formatCoin } from '../../utils';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useDecentModal } from '../ui/modals/useDecentModal';
 
@@ -140,9 +139,6 @@ export function RolePaymentDetails({
   roleTerms,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
-  const {
-    treasury: { assetsFungible },
-  } = useFractal();
   const { safe } = useDaoInfoStore();
   const { address: connectedAccount } = useAccount();
   const { addressPrefix } = useNetworkConfig();
@@ -216,40 +212,23 @@ export function RolePaymentDetails({
     }
   }, [addressPrefix, navigate, safe?.address, withdraw]);
 
-  const amountPerWeek = useMemo(() => {
-    if (!payment.amount?.bigintValue) {
-      return;
-    }
-
-    const endTime = payment.endDate.getTime() / 1000;
-    const startTime = payment.startDate.getTime() / 1000;
-    const totalSeconds = Math.round(endTime - startTime); // @dev due to milliseconds we need to round it to avoid problems with BigInt
-    const amountPerSecond = payment.amount.bigintValue / BigInt(totalSeconds);
-    const secondsInWeek = BigInt(60 * 60 * 24 * 7);
-    return amountPerSecond * secondsInWeek;
-  }, [payment]);
-
-  const streamAmountUSD = useMemo(() => {
-    // @todo add price support for tokens not found in assetsFungible
-    const foundAsset = assetsFungible.find(
-      asset => getAddress(asset.tokenAddress) === payment.asset.address,
-    );
-    if (!foundAsset || foundAsset.usdPrice === undefined) {
-      return;
-    }
-    return Number(payment.amount.value) * foundAsset.usdPrice;
-  }, [payment, assetsFungible]);
-
   const isActiveStream =
     !payment.isCancelled && Date.now() < payment.endDate.getTime() && !payment.isCancelling;
 
   const activeStreamProps = useCallback(
-    (isTop: boolean) =>
-      isActiveStream
+    (section: 'top' | 'bottom') => {
+      const borderTopRadius = section === 'top' ? '0.75rem' : '0';
+      const borderBottomRadius = section === 'bottom' ? '0.75rem' : '0';
+      const borderBottom = section === 'bottom' ? '1px solid' : 'none';
+
+      return isActiveStream
         ? {
             bg: 'neutral-2',
             sx: undefined,
             boxShadow: DETAILS_BOX_SHADOW,
+            borderTopRadius,
+            borderBottomRadius,
+            py: '1rem',
           }
         : {
             sx: {
@@ -260,9 +239,13 @@ export function RolePaymentDetails({
             bg: 'none',
             boxShadow: 'none',
             border: '1px solid',
-            borderBottom: isTop ? 'none' : '1px solid',
+            borderBottom,
+            borderTopRadius,
+            borderBottomRadius,
+            py: '1rem',
             borderColor: 'neutral-4',
-          },
+          };
+    },
     [isActiveStream],
   );
 
@@ -327,35 +310,37 @@ export function RolePaymentDetails({
         transitionTimingFunction="ease-out"
       >
         <Box
-          borderTopRadius="0.75rem"
-          py="1rem"
           onClick={onClick}
           cursor={!!onClick ? 'pointer' : 'default'}
-          {...activeStreamProps(true)}
+          {...activeStreamProps('top')}
         >
           <Flex
             flexDir="column"
             mx={4}
           >
             <Flex justifyContent="space-between">
-              <Text
-                textStyle="heading-large"
-                color="white-0"
-              >
-                {payment.amount?.bigintValue
-                  ? formatCoin(
-                      payment.amount.bigintValue,
-                      false,
-                      payment.asset.decimals,
-                      payment.asset.symbol,
-                    )
-                  : undefined}
-              </Text>
+              <Flex gap={2}>
+                <Image
+                  src={payment.asset.logo}
+                  fallbackSrc="/images/coin-icon-default.svg"
+                />
+                <Text
+                  textStyle="heading-large"
+                  color="white-0"
+                >
+                  {payment.amount?.bigintValue
+                    ? formatCoin(
+                        payment.amount.bigintValue,
+                        false,
+                        payment.asset.decimals,
+                        payment.asset.symbol,
+                      )
+                    : undefined}
+                </Text>
+              </Flex>
               <Flex
-                gap={[2, 2, 6]}
+                gap={6}
                 alignItems="center"
-                justifyContent={['flex-end', 'flex-end', 'flex-end', 'unset']}
-                flexWrap="wrap"
               >
                 {(payment.isCancelled || payment.isCancelling) && (
                   <Tag
@@ -371,60 +356,13 @@ export function RolePaymentDetails({
                     {t(payment.isCancelling ? 'cancelling' : 'cancelled')}
                   </Tag>
                 )}
-                <Flex
-                  gap={2}
-                  alignItems="center"
-                  border="1px solid"
-                  borderColor="neutral-4"
-                  borderRadius="9999px"
-                  w="fit-content"
-                  className="payment-menu-asset"
-                  p="0.5rem"
-                >
-                  <Image
-                    src={payment.asset.logo}
-                    fallbackSrc="/images/coin-icon-default.svg"
-                    boxSize="1.5rem"
-                  />
-                  <Text
-                    textStyle="labels-large"
-                    color="white-0"
-                  >
-                    {payment.asset.symbol ?? t('selectLabel', { ns: 'modals' })}
-                  </Text>
-                </Flex>
+                <GreenStreamingDot isStreaming={payment.isStreaming()} />
               </Flex>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text
-                textStyle="labels-small"
-                color="neutral-7"
-              >
-                {streamAmountUSD !== undefined ? formatUSD(streamAmountUSD.toString()) : '$ ---'}
-              </Text>
-              {amountPerWeek !== undefined && (
-                <Flex
-                  alignItems="center"
-                  gap="0.5rem"
-                >
-                  <GreenStreamingDot isStreaming={payment.isStreaming()} />
-                  <Text
-                    textStyle="labels-small"
-                    color="white-0"
-                  >
-                    {`${formatCoin(amountPerWeek, true, payment.asset.decimals, payment.asset.symbol)} / ${t('week')}`}
-                  </Text>
-                </Flex>
-              )}
             </Flex>
           </Flex>
         </Box>
 
-        <Box
-          {...activeStreamProps(false)}
-          borderBottomRadius="0.75rem"
-          py="1rem"
-        >
+        <Box {...activeStreamProps('bottom')}>
           <Grid
             mx={4}
             templateAreas='"starting dividerOne cliff dividerTwo ending"'
