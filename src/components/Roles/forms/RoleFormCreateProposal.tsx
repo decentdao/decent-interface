@@ -1,5 +1,4 @@
-import { Box, Button, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
-import { SquaresFour } from '@phosphor-icons/react';
+import { Box, Button, Flex, FormControl, Show, Text } from '@chakra-ui/react';
 import { Field, FieldInputProps, FormikProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,14 +16,13 @@ import {
 import { SendAssetsAction } from '../../ProposalBuilder/ProposalActionCard';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
-import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { AddActions } from '../../ui/modals/AddActions';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
 
-export default function RoleFormCreateProposal({ close }: { close: () => void }) {
+export function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerEditingRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
 
@@ -71,8 +69,8 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         const wearer =
           roleHat.isTermed && !!termedNominee
             ? termedNominee
-            : !!roleHat?.wearer
-              ? getAddress(roleHat.wearer)
+            : !!roleHat?.resolvedWearer
+              ? roleHat.resolvedWearer
               : zeroAddress;
 
         return {
@@ -134,13 +132,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   };
 
   return (
-    <Box maxW="736px">
+    <Box w="full">
       <Flex
         flexDir="column"
         gap="1rem"
         p="1rem"
         bg="neutral-2"
-        maxW="736px"
         boxShadow={CARD_SHADOW}
         borderRadius="0.5rem"
       >
@@ -153,21 +150,20 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               field: FieldInputProps<string>;
               form: FormikProps<RoleFormValues>;
             }) => (
-              <LabelWrapper label={t('proposalTitle', { ns: 'proposal' })}>
-                <InputComponent
-                  value={field.value}
-                  onChange={e => {
-                    setFieldValue('proposalMetadata.title', e.target.value);
-                    setFieldTouched('proposalMetadata.title', true);
-                  }}
-                  testId={field.name}
-                  placeholder="Proposal Title"
-                  isRequired={false}
-                  gridContainerProps={{
-                    gridTemplateColumns: { base: '1fr', md: '1fr' },
-                  }}
-                />
-              </LabelWrapper>
+              <InputComponent
+                value={field.value}
+                label={t('proposalTitle', { ns: 'proposal' })}
+                onChange={e => {
+                  setFieldValue('proposalMetadata.title', e.target.value);
+                  setFieldTouched('proposalMetadata.title', true);
+                }}
+                testId={field.name}
+                placeholder="Proposal Title"
+                isRequired
+                gridContainerProps={{
+                  gridTemplateColumns: { base: '1fr', md: '1fr' },
+                }}
+              />
             )}
           </Field>
         </FormControl>
@@ -180,20 +176,19 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               field: FieldInputProps<string>;
               form: FormikProps<RoleFormValues>;
             }) => (
-              <LabelWrapper label={t('proposalDescription', { ns: 'proposal' })}>
-                <TextareaComponent
-                  value={field.value}
-                  onChange={e => {
-                    setFieldValue('proposalMetadata.description', e.target.value);
-                    setFieldTouched('proposalMetadata.description', true);
-                  }}
-                  isRequired={false}
-                  placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
-                  gridContainerProps={{
-                    gridTemplateColumns: { base: '1fr', md: '1fr' },
-                  }}
-                />
-              </LabelWrapper>
+              <TextareaComponent
+                value={field.value}
+                label={t('proposalDescription', { ns: 'proposal' })}
+                onChange={e => {
+                  setFieldValue('proposalMetadata.description', e.target.value);
+                  setFieldTouched('proposalMetadata.description', true);
+                }}
+                isRequired
+                placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
+                gridContainerProps={{
+                  gridTemplateColumns: { base: '1fr', md: '1fr' },
+                }}
+              />
             )}
           </Field>
         </FormControl>
@@ -219,17 +214,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
       </Flex>
 
       <Flex
-        mt={4}
+        mt={6}
         mb={2}
         alignItems="center"
       >
-        <Icon
-          as={SquaresFour}
-          w="1.5rem"
-          h="1.5rem"
-        />
         <Text
-          textStyle="heading-small"
+          textStyle="body-base"
           ml={2}
         >
           {t('actions', { ns: 'actions' })}
@@ -276,7 +266,11 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         </Button>
         <Button
           onClick={submitForm}
-          isDisabled={isSubmitting}
+          isDisabled={
+            isSubmitting ||
+            !values.proposalMetadata.title.trim() ||
+            !values.proposalMetadata.description.trim()
+          }
         >
           {t('submitProposal')}
         </Button>
