@@ -11,8 +11,6 @@ import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import RoleFormInfo from './RoleFormInfo';
 import { RoleFormMember } from './RoleFormMember';
-import RoleFormPaymentStream from './RoleFormPaymentStream';
-import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 
@@ -57,16 +55,6 @@ export function RoleFormTabs({
 
   const safeAddress = safe?.address;
   if (!safeAddress) return null;
-
-  if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
-    if (values.roleEditing?.isTermed) {
-      return (
-        <RoleFormPaymentStreamTermed paymentIndex={values.roleEditing?.roleEditingPaymentIndex} />
-      );
-    } else {
-      return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
-    }
-  }
 
   return (
     <>

@@ -369,6 +369,8 @@ export default function RoleFormPaymentStreamTermed({ paymentIndex }: { paymentI
       <Box
         bg="neutral-2"
         borderRadius="0.5rem"
+        p="1.5rem"
+        mt={4}
       >
         <ShadowedBox>
           <SectionTitle
