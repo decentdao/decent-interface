@@ -28,7 +28,10 @@ function Step({ index, stepNumber, label }: { index: number; stepNumber: number;
         bg={stepNumber === index ? 'lilac-0' : 'neutral-6'}
         borderRadius="full"
       ></Box>
-      <Text mx="0.25rem">
+      <Text
+        mx="0.25rem"
+        mt="0.5rem"
+      >
         {index}. {label}
       </Text>
     </Box>
@@ -119,13 +122,13 @@ export function StepWrapper({
               label = t('titleGetStarted', { ns: 'daoCreate' });
               break;
             case CreatorSteps.ERC20_DETAILS:
-              label = t('titleConfigureGovernance', { ns: 'daoCreate' });
+              label = t('titleConfigureERC20', { ns: 'daoCreate' });
               break;
             case CreatorSteps.ERC721_DETAILS:
-              label = t('titleConfigureGovernance', { ns: 'daoCreate' });
+              label = t('titleConfigureERC721', { ns: 'daoCreate' });
               break;
             case CreatorSteps.MULTISIG_DETAILS:
-              label = t('titleConfigureGovernance', { ns: 'daoCreate' });
+              label = t('titleConfigureMultisig', { ns: 'daoCreate' });
               break;
             case CreatorSteps.AZORIUS_DETAILS:
               label = t('titleGovConfig', { ns: 'daoCreate' });
