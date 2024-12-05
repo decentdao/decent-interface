@@ -31,6 +31,7 @@ function Step({ index, stepNumber, label }: { index: number; stepNumber: number;
       <Text
         mx="0.25rem"
         mt="0.5rem"
+        color={stepNumber === index ? 'white-0' : 'neutral-6'}
       >
         {index}. {label}
       </Text>
