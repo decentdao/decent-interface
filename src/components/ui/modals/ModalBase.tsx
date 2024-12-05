@@ -59,9 +59,8 @@ export function ModalBase({
       ) : (
         <ModalContent
           bg="neutral-2"
-          borderWidth="1px"
           borderRadius="0.5rem"
-          borderColor="neutral-4"
+          boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
           padding="1.5rem"
           containerProps={
             zIndex
