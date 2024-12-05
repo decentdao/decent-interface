@@ -1,6 +1,6 @@
 import { Button, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import { useFormikContext } from 'formik';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Blocker, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
@@ -11,8 +11,6 @@ import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import RoleFormInfo from './RoleFormInfo';
 import { RoleFormMember } from './RoleFormMember';
-import { RoleFormPaymentStream } from './RoleFormPaymentStream';
-import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 
@@ -55,28 +53,12 @@ export function RoleFormTabs({
     }
   }, [setFieldValue, values.hats, values.roleEditing, hatId]);
 
-  const [tabIndex, setTabIndex] = useState(0);
-
   const safeAddress = safe?.address;
   if (!safeAddress) return null;
 
-  if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
-    if (values.roleEditing?.isTermed) {
-      return (
-        <RoleFormPaymentStreamTermed paymentIndex={values.roleEditing?.roleEditingPaymentIndex} />
-      );
-    } else {
-      return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
-    }
-  }
-
   return (
     <>
-      <Tabs
-        index={tabIndex}
-        onChange={setTabIndex}
-        variant="twoTone"
-      >
+      <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
           <Tab>{t('member')}</Tab>
@@ -112,7 +94,6 @@ export function RoleFormTabs({
               } else if (existingRoleHat !== undefined) {
                 setFieldValue(`hats.${hatIndex}`, {
                   ...existingRoleHat,
-                  resolvedWearer: existingRoleHat.wearerAddress,
                   roleTerms: existingRoleHat.roleTerms.allTerms,
                 });
               }

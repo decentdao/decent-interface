@@ -13,6 +13,24 @@ import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from '../RolePaymentDetails';
+import { RoleFormPaymentStream } from './RoleFormPaymentStream';
+import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
+
+export function RoleFormPaymentRenderer() {
+  const { values } = useFormikContext<RoleFormValues>();
+
+  if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
+    if (values.roleEditing?.isTermed) {
+      return (
+        <RoleFormPaymentStreamTermed paymentIndex={values.roleEditing.roleEditingPaymentIndex} />
+      );
+    } else {
+      return <RoleFormPaymentStream formIndex={values.roleEditing.roleEditingPaymentIndex} />;
+    }
+  }
+
+  return null;
+}
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
@@ -61,6 +79,7 @@ export function RoleFormPaymentStreams() {
         <Box>
           {sortedPayments.length === 0 && (
             <Flex
+              bg="neutral-2"
               padding="1.5rem"
               border="1px solid"
               borderColor="neutral-3"
@@ -98,7 +117,8 @@ export function RoleFormPaymentStreams() {
           >
             {t('addPayment')}
           </Button>
-          <Divider my="1rem" />
+          <RoleFormPaymentRenderer />
+          {!!sortedPayments.length && <Divider my="1rem" />}
           <Box mt="0.5rem">
             {sortedPayments.map(payment => {
               // @note don't render if form isn't valid
