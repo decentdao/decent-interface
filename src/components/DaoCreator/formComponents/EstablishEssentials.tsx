@@ -55,6 +55,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
   // If in governance edit mode and snapshot URL is already set, disable the field
   const snapshotENSDisabled = isEdit && !!subgraphInfo?.daoSnapshotENS;
 
+  props.onGovernanceTypeChange(values.essentials.governance);
   const handleGovernanceChange = (value: string) => {
     if (value === GovernanceType.AZORIUS_ERC20) {
       setFieldValue('azorius.votingStrategyType', VotingStrategyType.LINEAR_ERC20);
@@ -63,6 +64,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
     }
 
     setFieldValue('essentials.governance', value);
+    props.onGovernanceTypeChange(value as GovernanceType);
   };
 
   const { createOptions } = useNetworkConfig();
@@ -128,9 +130,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descAzoriusErc20Gov')}
                   testId="choose-azorius"
                   value={GovernanceType.AZORIUS_ERC20}
-                  onClick={() => {
-                    props.onGovernanceTypeChange(GovernanceType.AZORIUS_ERC20);
-                  }}
                 />
               )}
               {createOptions.includes(GovernanceType.AZORIUS_ERC721) && (
@@ -139,9 +138,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descAzoriusErc721Gov')}
                   testId="choose-azorius-erc721"
                   value={GovernanceType.AZORIUS_ERC721}
-                  onClick={() => {
-                    props.onGovernanceTypeChange(GovernanceType.AZORIUS_ERC721);
-                  }}
                 />
               )}
               {createOptions.includes(GovernanceType.MULTISIG) && (
@@ -150,9 +146,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
                   description={t('descMultisigGov')}
                   testId="choose-multisig"
                   value={GovernanceType.MULTISIG}
-                  onClick={() => {
-                    props.onGovernanceTypeChange(GovernanceType.MULTISIG);
-                  }}
                 />
               )}
             </RadioGroup>
