@@ -6,7 +6,6 @@ import { ProposalTemplate } from '../../../types';
 import AddSignerModal from '../../SafeSettings/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../SafeSettings/Signers/modals/RemoveSignerModal';
 import DraggableDrawer from '../containers/DraggableDrawer';
-import { DAOSearch } from '../menus/DAOSearch';
 import AddStrategyPermissionModal from './AddStrategyPermissionModal';
 import { ConfirmDeleteStrategyModal } from './ConfirmDeleteStrategyModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
@@ -15,19 +14,15 @@ import { DelegateModal } from './DelegateModal';
 import ForkProposalTemplateModal from './ForkProposalTemplateModal';
 import { ModalBase, ModalBaseSize } from './ModalBase';
 import PaymentCancelConfirmModal from './PaymentCancelConfirmModal';
-import PaymentWithdrawModal from './PaymentWithdrawModal';
+import { PaymentWithdrawModal } from './PaymentWithdrawModal';
 import ProposalTemplateModal from './ProposalTemplateModal';
 import StakeModal from './Stake';
 import { UnsavedChangesWarningContent } from './UnsavedChangesWarningContent';
-import { UnwrapToken } from './UnwrapToken';
-import { WrapToken } from './WrapToken';
 
 export enum ModalType {
   NONE,
   DELEGATE,
   STAKE,
-  WRAP_TOKEN,
-  UNWRAP_TOKEN,
   CONFIRM_URL,
   REMOVE_SIGNER,
   ADD_SIGNER,
@@ -35,7 +30,6 @@ export enum ModalType {
   CREATE_PROPOSAL_FROM_TEMPLATE,
   COPY_PROPOSAL_TEMPLATE,
   CONFIRM_MODIFY_GOVERNANCE,
-  SEARCH_SAFE,
   WARN_UNSAVED_CHANGES,
   WITHDRAW_PAYMENT,
   CONFIRM_CANCEL_PAYMENT,
@@ -50,8 +44,6 @@ export type ModalPropsTypes = {
   [ModalType.NONE]: {};
   [ModalType.DELEGATE]: {};
   [ModalType.STAKE]: {};
-  [ModalType.WRAP_TOKEN]: {};
-  [ModalType.UNWRAP_TOKEN]: {};
   [ModalType.ADD_PERMISSION]: {};
   [ModalType.CONFIRM_DELETE_STRATEGY]: {};
   [ModalType.CONFIRM_URL]: { url: string };
@@ -67,7 +59,6 @@ export type ModalPropsTypes = {
     templateIndex: number;
   };
   [ModalType.CONFIRM_MODIFY_GOVERNANCE]: {};
-  [ModalType.SEARCH_SAFE]: {};
   [ModalType.WARN_UNSAVED_CHANGES]: {
     discardChanges: () => void;
     keepEditing: () => void;
@@ -151,14 +142,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         modalTitle = t('stakeTitle');
         modalContent = <StakeModal close={closeModal} />;
         break;
-      case ModalType.WRAP_TOKEN:
-        modalTitle = t('wrapTokenTitle');
-        modalContent = <WrapToken close={closeModal} />;
-        break;
-      case ModalType.UNWRAP_TOKEN:
-        modalTitle = t('unwrapTokenTitle');
-        modalContent = <UnwrapToken close={closeModal} />;
-        break;
       case ModalType.CONFIRM_URL:
         modalTitle = t('confirmUrlTitle');
         hasWarning = true;
@@ -213,10 +196,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         hasWarning = true;
         modalTitle = t('confirmModifyGovernanceTitle');
         modalContent = <ConfirmModifyGovernanceModal close={closeModal} />;
-        break;
-      case ModalType.SEARCH_SAFE:
-        isSearchInput = true;
-        modalContent = <DAOSearch closeDrawer={closeModal} />;
         break;
       case ModalType.WARN_UNSAVED_CHANGES:
         modalContent = (

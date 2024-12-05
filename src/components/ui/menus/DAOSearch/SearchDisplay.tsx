@@ -14,16 +14,9 @@ interface ISearchDisplay {
   errorMessage: string | undefined;
   address: Address | undefined;
   onClickView: Function;
-  closeDrawer?: () => void;
 }
 
-export function SearchDisplay({
-  loading,
-  errorMessage,
-  address,
-  closeDrawer,
-  onClickView,
-}: ISearchDisplay) {
+export function SearchDisplay({ loading, errorMessage, address, onClickView }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const node = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
@@ -95,7 +88,6 @@ export function SearchDisplay({
             network={addressPrefix}
             onClick={() => {
               onClickView();
-              if (closeDrawer) closeDrawer();
             }}
             showAddress
           />

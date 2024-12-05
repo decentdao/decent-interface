@@ -19,7 +19,6 @@ type ContractType = {
   isModuleAzorius: boolean;
   isModuleFractal: boolean;
   isVotesErc20: boolean;
-  isVotesErc20Wrapper: boolean;
 };
 
 const defaultContractType: ContractType = {
@@ -34,7 +33,6 @@ const defaultContractType: ContractType = {
   isModuleAzorius: false,
   isModuleFractal: false,
   isVotesErc20: false,
-  isVotesErc20Wrapper: false,
   isLinearVotingErc20WithHatsProposalCreation: false,
   isLinearVotingErc721WithHatsProposalCreation: false,
 };
@@ -218,11 +216,6 @@ const contractTests: ContractFunctionTest[] = [
     functionNames: ['decimals', 'name', 'owner', 'symbol', 'totalSupply'],
     revertFunctionNames: ['underlying'],
     resultKey: 'isVotesErc20',
-  },
-  {
-    abi: abis.VotesERC20Wrapper,
-    functionNames: ['decimals', 'name', 'owner', 'symbol', 'totalSupply', 'underlying'],
-    resultKey: 'isVotesErc20Wrapper',
   },
 ];
 

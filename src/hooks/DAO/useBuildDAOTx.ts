@@ -18,7 +18,6 @@ const useBuildDAOTx = () => {
   const {
     contracts: {
       compatibilityFallbackHandler,
-      votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
       gnosisSafeProxyFactory,
@@ -69,7 +68,6 @@ const useBuildDAOTx = () => {
         isAzorius,
         daoData,
         compatibilityFallbackHandler,
-        votesErc20WrapperMasterCopy,
         votesErc20MasterCopy,
         keyValuePairs,
         gnosisSafeProxyFactory,
@@ -128,7 +126,6 @@ const useBuildDAOTx = () => {
       user.address,
       publicClient,
       compatibilityFallbackHandler,
-      votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
       gnosisSafeProxyFactory,

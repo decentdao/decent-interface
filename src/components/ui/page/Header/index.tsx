@@ -10,7 +10,7 @@ import {
   Show,
   useDisclosure,
 } from '@chakra-ui/react';
-import { List, MagnifyingGlass } from '@phosphor-icons/react';
+import { List } from '@phosphor-icons/react';
 import { RefObject, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -24,10 +24,7 @@ import {
 } from '../../../../constants/common';
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { AccountDisplay } from '../../menus/AccountDisplay';
-import { DAOSearch } from '../../menus/DAOSearch';
 import { SafesMenu } from '../../menus/SafesMenu';
-import { ModalType } from '../../modals/ModalProvider';
-import { useDecentModal } from '../../modals/useDecentModal';
 import { Footer } from '../Footer';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
@@ -123,7 +120,6 @@ function HeaderLogo() {
 }
 
 function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivElement | null> }) {
-  const searchSafe = useDecentModal(ModalType.SEARCH_SAFE);
   const HEADER_HEIGHT = useHeaderHeight();
 
   return (
@@ -136,22 +132,8 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       maxW="100vw"
       borderBottom="1px"
       borderBottomColor="neutral-3"
-      // Doesn't seem to work either way arghhh
-      box-shadow={{
-        base: SEXY_BOX_SHADOW_T_T,
-        md: '0px',
-      }}
     >
       <HeaderLogo />
-      <Show above="md">
-        <Box
-          w="full"
-          mr="1rem"
-        >
-          <DAOSearch />
-        </Box>
-      </Show>
-
       <Flex
         w="full"
         h={HEADER_HEIGHT}
@@ -159,23 +141,6 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
         alignItems="center"
         gap={{ base: '2rem', md: '1rem' }}
       >
-        <Hide above="md">
-          <IconButton
-            variant="tertiary"
-            aria-label="Search Safe"
-            onClick={searchSafe}
-            size="icon-lg"
-            icon={
-              <Icon
-                as={MagnifyingGlass}
-                boxSize="1.5rem"
-                color="white-0"
-                aria-hidden
-              />
-            }
-            cursor="pointer"
-          />
-        </Hide>
         <SafesMenu />
         <AccountDisplay containerRef={headerContainerRef} />
       </Flex>

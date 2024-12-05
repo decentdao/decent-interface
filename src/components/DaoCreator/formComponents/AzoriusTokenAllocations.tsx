@@ -40,7 +40,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
             <Grid
               gridTemplateColumns="1fr 35% 2rem"
               columnGap={4}
-              rowGap={2}
+              rowGap={8}
               data-testid="tokenVoting-tokenAllocations"
             >
               <Text>{t('titleAddress')}</Text>
@@ -80,6 +80,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                 );
               })}
             </Grid>
+
             <Text
               color="neutral-7"
               textStyle="labels-large"

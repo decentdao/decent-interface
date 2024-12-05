@@ -1,12 +1,11 @@
-import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
-import { Info } from '@phosphor-icons/react';
+import { Box, Flex, Input, RadioGroup } from '@chakra-ui/react';
+import { useFormikContext } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
-import { ICreationStepProps, TokenCreationType } from '../../../types';
-import SupportTooltip from '../../ui/badges/SupportTooltip';
+import { CreatorFormState, ICreationStepProps, TokenCreationType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -30,23 +29,17 @@ function TokenConfigDisplay(props: ICreationStepProps) {
 }
 
 export function AzoriusTokenDetails(props: ICreationStepProps) {
-  const {
-    transactionPending,
-    isSubDAO,
-    setFieldValue,
-    values,
-    errors,
-    handleChange,
-    isSubmitting,
-    mode,
-  } = props;
+  const { transactionPending, isSubDAO, setFieldValue, errors, handleChange, isSubmitting, mode } =
+    props;
 
   const { t } = useTranslation('daoCreate');
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
 
+  const { values, touched, setTouched } = useFormikContext<CreatorFormState>();
+
   const { checkVotesToken } = usePrepareFormData();
-  const [isImportedVotesToken, setIsImportedVotesToken] = useState<boolean>();
+  const [isImportedVotesToken, setIsValidERC20VotesToken] = useState<boolean>();
 
   useStepRedirect({ values });
   const updateImportFields = useCallback(async () => {
@@ -81,17 +74,13 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         },
         true,
       );
-      if (!isVotesToken) {
-        setFieldValue('erc20Token.tokenName', 'Wrapped ' + name, true);
-        setFieldValue('erc20Token.tokenSymbol', 'W' + symbol, true);
-        setIsImportedVotesToken(false);
-      } else {
-        setIsImportedVotesToken(true);
+      if (isVotesToken) {
+        setIsValidERC20VotesToken(true);
         setFieldValue('erc20Token.tokenName', name, true);
         setFieldValue('erc20Token.tokenSymbol', symbol, true);
       }
     } else {
-      setIsImportedVotesToken(undefined);
+      setIsValidERC20VotesToken(undefined);
     }
   }, [
     checkVotesToken,
@@ -106,10 +95,15 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     updateImportFields();
   }, [updateImportFields]);
 
-  const tokenImportAddressErrorMessage =
-    values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress
-      ? errors.erc20Token.tokenImportAddress
-      : undefined;
+  let tokenErrorMsg = '';
+
+  if (touched.erc20Token?.tokenImportAddress) {
+    console.log(errors?.erc20Token?.tokenImportAddress);
+
+    tokenErrorMsg =
+      errors?.erc20Token?.tokenImportAddress ||
+      (!isImportedVotesToken ? t('errorNotVotingToken') : '');
+  }
 
   return (
     <>
@@ -162,35 +156,25 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           </RadioGroup>
           {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
             <>
-              <LabelWrapper errorMessage={tokenImportAddressErrorMessage}>
+              <LabelWrapper errorMessage={tokenErrorMsg}>
                 <Input
                   name="erc20Token.tokenImportAddress"
-                  onChange={handleChange}
+                  onChange={e => {
+                    setTouched({
+                      erc20Token: {
+                        tokenImportAddress: true,
+                      },
+                      ...touched,
+                    });
+
+                    handleChange(e);
+                  }}
                   value={values.erc20Token.tokenImportAddress}
                   placeholder={createAccountSubstring(zeroAddress)}
-                  isInvalid={!!tokenImportAddressErrorMessage}
+                  isInvalid={!!tokenErrorMsg}
                   isRequired
                 />
               </LabelWrapper>
-              {isImportedVotesToken === false && !errors.erc20Token?.tokenImportAddress && (
-                <Flex
-                  gap={4}
-                  alignItems="center"
-                >
-                  <SupportTooltip
-                    IconComponent={Info}
-                    label={t('warningExistingTokenTooltip')}
-                    color="neutral-7"
-                  />
-                  <Text
-                    color="neutral-7"
-                    textStyle="labels-large"
-                    whiteSpace="pre-wrap"
-                  >
-                    {t('warningExistingToken')}
-                  </Text>
-                </Flex>
-              )}
             </>
           )}
         </Flex>

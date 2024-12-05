@@ -135,12 +135,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
       azoriusTxBuilder.buildRemoveMultiSendOwnerTx(),
     ]);
 
-    // build token wrapper if token is imported and not votes token (votes token contracts is already deployed)
-    if (data.isTokenImported && !data.isVotesToken && data.tokenImportAddress) {
-      txs.push(azoriusTxBuilder.buildCreateTokenWrapperTx());
-    }
     // build token if token is not imported
-    if (!data.isTokenImported && data.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
+    if (data.isVotesToken && data.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       txs.push(azoriusTxBuilder.buildCreateTokenTx());
     }
 

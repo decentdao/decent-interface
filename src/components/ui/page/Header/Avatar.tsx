@@ -39,6 +39,7 @@ function URLAvatar({ url, size }: { size: AvatarSize; url: string }) {
         borderRadius="full"
         src={src}
         alt="avatar"
+        flexShrink={0}
       />
     </Box>
   );

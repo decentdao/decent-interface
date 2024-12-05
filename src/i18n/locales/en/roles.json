@@ -81,7 +81,6 @@
   "emptyRolesAssets": "No assets available for payments.",
   "week": "Week",
   "withdrawTo": "Withdraw to",
-  "withdrawPaymentTitle": "Does everything look right?",
   "roleInfoErrorPaymentAmountRequired": "Amount is required.",
   "roleInfoErrorPaymentInvalidAmount": "Invalid amount.",
   "roleInfoErrorPaymentInsufficientAmount": "Not enough balance.",

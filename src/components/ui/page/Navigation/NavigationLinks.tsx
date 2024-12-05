@@ -14,7 +14,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       mt={{ base: 0, md: 6 }}
       maxWidth={{ md: 12, '3xl': '100%' }}
       _hover={{ maxWidth: '100%' }}
-      transitionDuration="0.2s"
+      transitionDuration="300ms"
       width={{ base: 'full', md: 'auto' }}
       borderRadius={{ md: 8 }}
       borderWidth={{ md: 1 }}
@@ -60,7 +60,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       <Box
         maxWidth={{ md: 12, '3xl': '100%' }}
         _hover={{ maxWidth: '100%' }}
-        transitionDuration="0.2s"
+        transitionDuration="300ms"
         overflow={{ md: 'hidden' }}
         mt={{ md: 12 }}
         mb={{ md: 3 }}

@@ -226,7 +226,7 @@ export function DelegateModal({ close }: { close: Function }) {
             </Field>
             <Button
               type="submit"
-              marginTop="2rem"
+              marginTop="3rem"
               width="100%"
               isDisabled={
                 !!errors.address ||

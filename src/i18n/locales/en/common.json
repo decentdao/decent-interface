@@ -96,8 +96,6 @@
   "signersRequired": "Signers Required",
   "signersDescription": "The number of signers required to execute a proposal. Adding or removing a signer will require a proposal.",
   "etherscanTip": "Open in Etherscan",
-  "wrapToken": "Wrap Token",
-  "unwrapToken": "Unwrap Token",
   "max": "Max",
   "favoriteTooltip": "Toggle your favorite Safes.",
   "isMeSuffix": " (you)",

@@ -1,27 +1,23 @@
 import {
   Alert,
   Box,
-  Button,
   Flex,
   FormControl,
-  HStack,
   InputGroup,
   InputRightElement,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
   Switch,
   Text,
 } from '@chakra-ui/react';
-import { Minus, Plus, WarningCircle } from '@phosphor-icons/react';
-import { useCallback, useEffect, useMemo, useState, memo } from 'react';
+import { WarningCircle } from '@phosphor-icons/react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isDevMode } from '../../../constants/common';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import { NumberStepperInput } from '../../ui/forms/NumberStepperInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
@@ -34,38 +30,6 @@ function DayStepperInput({
   inputValue: number;
   onInputChange: (val: number) => void;
 }) {
-  const MemoizedNumberStepperInput = memo(
-    ({ value, onChange }: { value?: string | number; onChange: (val: string) => void }) => {
-      const stepperButton = (direction: 'inc' | 'dec') => (
-        <Button
-          variant="secondary"
-          borderColor="neutral-3"
-          p="0.5rem"
-          size="md"
-        >
-          {direction === 'inc' ? <Plus size="1.5rem" /> : <Minus size="1.5rem" />}
-        </Button>
-      );
-
-      return (
-        <NumberInput
-          value={value}
-          onChange={onChange}
-          min={0}
-          focusInputOnChange
-          w="100%"
-        >
-          <HStack gap="0.25rem">
-            <NumberDecrementStepper>{stepperButton('dec')}</NumberDecrementStepper>
-            <NumberInputField min={0} />
-            <NumberIncrementStepper>{stepperButton('inc')}</NumberIncrementStepper>
-          </HStack>
-        </NumberInput>
-      );
-    },
-  );
-  MemoizedNumberStepperInput.displayName = 'MemoizedNumberInput';
-
   const { t } = useTranslation('common');
 
   return (
@@ -76,7 +40,7 @@ function DayStepperInput({
         gap="0.5rem"
       >
         <Text color="neutral-7">{t('days', { ns: 'common' })}</Text>
-        <MemoizedNumberStepperInput
+        <NumberStepperInput
           value={inputValue}
           onChange={val => onInputChange(Number(val))}
         />
@@ -114,8 +78,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   useStepRedirect({ values });
 
-  const [votingPeriodDays, setVotingPeriodDays] = useState(7);
-  const [timelockPeriodDays, setTimelockPeriodDays] = useState(1);
+  const [votingPeriodDays, setVotingPeriodDays] = useState(isDevMode() ? 0.0021 : 7);
+  const [timelockPeriodDays, setTimelockPeriodDays] = useState(isDevMode() ? 0 : 1);
   const [executionPeriodDays, setExecutionPeriodDays] = useState(2);
 
   useEffect(() => {

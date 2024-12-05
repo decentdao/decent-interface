@@ -9,7 +9,6 @@ import {
   getAddress,
   getContract,
   getCreate2Address,
-  isAddress,
   keccak256,
   parseAbiParameters,
 } from 'viem';
@@ -31,7 +30,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private readonly safeContractAddress: Address;
 
   private encodedSetupTokenData: Hex | undefined;
-  private encodedSetupERC20WrapperData: Hex | undefined;
   private encodedStrategySetupData: Hex | undefined;
   private encodedSetupAzoriusData: Hex | undefined;
   private encodedSetupTokenClaimData: Hex | undefined;
@@ -44,8 +42,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public linearERC20VotingAddress: Address | undefined;
   public linearERC721VotingAddress: Address | undefined;
   public votesTokenAddress: Address | undefined;
-
-  private votesErc20WrapperMasterCopy: Address;
   private votesErc20MasterCopy: Address;
   private zodiacModuleProxyFactory: Address;
   private multiSendCallOnly: Address;
@@ -63,8 +59,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     publicClient: PublicClient,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
     safeContractAddress: Address,
-
-    votesErc20WrapperMasterCopy: Address,
     votesErc20MasterCopy: Address,
     zodiacModuleProxyFactory: Address,
     multiSendCallOnly: Address,
@@ -84,8 +78,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.claimNonce = getRandomBytes();
     this.strategyNonce = getRandomBytes();
     this.azoriusNonce = getRandomBytes();
-
-    this.votesErc20WrapperMasterCopy = votesErc20WrapperMasterCopy;
     this.votesErc20MasterCopy = votesErc20MasterCopy;
     this.zodiacModuleProxyFactory = zodiacModuleProxyFactory;
     this.multiSendCallOnly = multiSendCallOnly;
@@ -96,16 +88,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
-      if (!daoData.isTokenImported) {
-        this.setEncodedSetupTokenData();
-        this.setPredictedTokenAddress();
-      } else {
-        if (daoData.isVotesToken) {
-          this.predictedTokenAddress = daoData.tokenImportAddress as Address;
-        } else {
-          this.setEncodedSetupERC20WrapperData();
-          this.setPredictedERC20WrapperAddress();
-        }
+      if (daoData.isVotesToken) {
+        this.predictedTokenAddress = daoData.tokenImportAddress as Address;
       }
     }
   }
@@ -278,49 +262,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       0,
       false,
     );
-  }
-
-  public buildCreateTokenWrapperTx(): SafeTransaction {
-    return buildContractCall(
-      ZodiacModuleProxyFactoryAbi,
-      this.zodiacModuleProxyFactory,
-      'deployModule',
-      [this.votesErc20WrapperMasterCopy, this.encodedSetupERC20WrapperData, this.tokenNonce],
-      0,
-      false,
-    );
-  }
-
-  public setEncodedSetupERC20WrapperData() {
-    const { tokenImportAddress } = this.daoData as AzoriusERC20DAO;
-
-    if (!tokenImportAddress || !isAddress(tokenImportAddress)) {
-      throw new Error(
-        'Error encoding setup ERC-20 Wrapper data - provided token import address is not an address',
-      );
-    }
-
-    const encodedInitTokenData = encodeAbiParameters(parseAbiParameters('address'), [
-      tokenImportAddress,
-    ]);
-
-    this.encodedSetupERC20WrapperData = encodeFunctionData({
-      abi: abis.VotesERC20Wrapper,
-      functionName: 'setUp',
-      args: [encodedInitTokenData],
-    });
-  }
-
-  public setPredictedERC20WrapperAddress() {
-    const tokenByteCodeLinear = generateContractByteCodeLinear(this.votesErc20WrapperMasterCopy);
-
-    const tokenSalt = generateSalt(this.encodedSetupERC20WrapperData!, this.tokenNonce);
-
-    this.predictedTokenAddress = getCreate2Address({
-      from: this.zodiacModuleProxyFactory,
-      salt: tokenSalt,
-      bytecodeHash: keccak256(encodePacked(['bytes'], [tokenByteCodeLinear])),
-    });
   }
 
   public signatures = (): string => {
