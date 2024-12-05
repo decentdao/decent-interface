@@ -5,7 +5,7 @@ import { Address } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useAvatar from '../../../../hooks/utils/useAvatar';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
 
@@ -20,7 +20,7 @@ export interface SafeMenuItemProps {
 export function SafeMenuItem({ address, network, name }: SafeMenuItemProps) {
   const navigate = useNavigate();
 
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { switchChain } = useSwitchChain({
     mutation: {
       onSuccess: () => {

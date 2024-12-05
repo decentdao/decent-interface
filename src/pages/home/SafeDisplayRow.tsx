@@ -9,7 +9,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { createAccountSubstring } from '../../hooks/utils/useGetAccountName';
 import { useGetSafeName } from '../../hooks/utils/useGetSafeName';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
 interface SafeDisplayRowProps {
@@ -27,7 +27,7 @@ export function SafeDisplayRow({
   showAddress,
   name,
 }: SafeDisplayRowProps) {
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const navigate = useNavigate();
 
   const { switchChain } = useSwitchChain({

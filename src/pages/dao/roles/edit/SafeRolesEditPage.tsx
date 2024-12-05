@@ -20,7 +20,7 @@ import { useRolesSchema } from '../../../../hooks/schemas/roles/useRolesSchema';
 import useCreateRoles from '../../../../hooks/utils/useCreateRoles';
 import { useNavigationBlocker } from '../../../../hooks/utils/useNavigationBlocker';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues } from '../../../../types/roles';
@@ -32,7 +32,7 @@ export function SafeRolesEditPage() {
 
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const { safe } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   const { rolesSchema } = useRolesSchema();
   const { hatsTree } = useRolesStore();

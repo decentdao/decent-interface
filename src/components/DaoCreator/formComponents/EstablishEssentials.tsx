@@ -3,7 +3,7 @@ import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
@@ -65,7 +65,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
     setFieldValue('essentials.governance', value);
   };
 
-  const { createOptions } = useNetworkConfig();
+  const { createOptions } = useNetworkConfigStore();
 
   const [snapshotENSInput, setSnapshotENSInput] = useState('');
 

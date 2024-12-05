@@ -4,7 +4,7 @@ import { Address, getAddress, isAddress } from 'viem';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { useDecentModules } from './useDecentModules';
 
@@ -20,7 +20,7 @@ export const useFractalNode = ({
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
-  const { subgraph } = useNetworkConfig();
+  const { subgraph } = useNetworkConfigStore();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
     context: {
       subgraphSpace: subgraph.space,

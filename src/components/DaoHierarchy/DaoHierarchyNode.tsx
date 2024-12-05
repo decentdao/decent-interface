@@ -15,7 +15,7 @@ import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { setValue, getValue } from '../../hooks/utils/cache/useLocalStorage';
 import { useAddressContractType } from '../../hooks/utils/useAddressContractType';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { DaoHierarchyInfo, DaoHierarchyStrategyType, DecentModule } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
@@ -43,7 +43,7 @@ export function DaoHierarchyNode({
   const safeApi = useSafeAPI();
   const [hierarchyNode, setHierarchyNode] = useState<DaoHierarchyInfo>();
   const [hasErrorLoading, setErrorLoading] = useState<boolean>(false);
-  const { addressPrefix, subgraph } = useNetworkConfig();
+  const { addressPrefix, subgraph } = useNetworkConfigStore();
   const chainId = useChainId();
   const publicClient = usePublicClient();
 

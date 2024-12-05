@@ -9,7 +9,7 @@ import { useAccount, usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW, isDemoMode } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { BigIntValuePair } from '../../types';
@@ -145,7 +145,7 @@ export function RolePaymentDetails({
   } = useFractal();
   const { safe } = useDaoInfoStore();
   const { address: connectedAccount } = useAccount();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { refreshWithdrawableAmount } = useRolesStore();
   const navigate = useNavigate();
   const publicClient = usePublicClient();

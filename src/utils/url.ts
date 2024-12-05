@@ -1,5 +1,5 @@
 import { normalize } from 'viem/ens';
-import { supportedNetworks } from '../providers/NetworkConfig/NetworkConfigProvider';
+import { supportedNetworks } from '../providers/NetworkConfig/useNetworkConfigStore';
 export const isValidUrl = (urlString: string) => {
   try {
     const url = new URL(urlString);

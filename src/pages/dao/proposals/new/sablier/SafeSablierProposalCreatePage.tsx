@@ -71,7 +71,7 @@ import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitPropos
 import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair, CreateProposalSteps } from '../../../../../types';
 import { scrollToBottom } from '../../../../../utils/ui';
@@ -763,7 +763,7 @@ export function SafeSablierProposalCreatePage() {
   const {
     addressPrefix,
     contracts: { sablierV2Batch, sablierV2LockupTranched },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const navigate = useNavigate();
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const [title, setTitle] = useState('');

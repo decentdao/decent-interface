@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
@@ -16,7 +16,7 @@ import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
  */
 export function DAOInfoCard() {
   const node = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   // for non Fractal Safes
   const displayedAddress = node.safe?.address;
   const { displayName } = useGetAccountName(displayedAddress);

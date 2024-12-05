@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useSwitchChain } from 'wagmi';
 import {
   supportedNetworks,
-  useNetworkConfig,
-} from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+  useNetworkConfigStore,
+} from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { OptionMenu } from '../OptionMenu';
 
 /**
@@ -18,7 +18,7 @@ export function NetworkSelector({
   containerRef: RefObject<HTMLDivElement | null>;
 }) {
   const { t } = useTranslation('menu');
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
   const { switchChain } = useSwitchChain();
   const networksOptions = supportedNetworks.map(network => ({
     optionKey: network.chain.name,

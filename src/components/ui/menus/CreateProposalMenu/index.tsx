@@ -17,13 +17,13 @@ import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { EaseOutComponent } from '../../utils/EaseOutComponent';
 
 export function CreateProposalMenu({ safeAddress }: { safeAddress: Address }) {
   const { t } = useTranslation('proposal');
 
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   const navigate = useNavigate();
 

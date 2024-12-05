@@ -31,7 +31,7 @@ import {
 } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
-import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
 import {
@@ -133,7 +133,7 @@ export function SafeRoleEditDetailsPage() {
   const { t } = useTranslation(['roles']);
   const { safe } = useDaoInfoStore();
   const { getPayment } = useRolesStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const navigate = useNavigate();
   const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();

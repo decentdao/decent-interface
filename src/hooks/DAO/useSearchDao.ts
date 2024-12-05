@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useIsSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
 
@@ -11,7 +11,7 @@ export const useSearchDao = () => {
   const { address, isValid, isLoading: isAddressLoading } = useAddress(searchString);
   const { isSafe, isSafeLoading } = useIsSafe(address);
   const { t } = useTranslation('dashboard');
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
 
   const isLoading = isAddressLoading === true || isSafeLoading === true;
 

@@ -13,7 +13,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import useDeployAzorius from '../../../../hooks/DAO/useDeployAzorius';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
@@ -33,7 +33,7 @@ export function SafeEditGovernancePage() {
   } = useFractal();
   const user = useAccount();
   const { safe, subgraphInfo } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { t } = useTranslation(['daoEdit', 'common', 'breadcrumbs']);
   const navigate = useNavigate();
   const isMultisig = type === GovernanceType.MULTISIG;
