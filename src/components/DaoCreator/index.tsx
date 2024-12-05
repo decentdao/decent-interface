@@ -100,6 +100,8 @@ function DaoCreator({
               onGovernanceTypeChange={(governanceType: GovernanceType) => {
                 if (mode === DAOCreateMode.ROOTDAO) {
                   setTotalSteps(governanceType === GovernanceType.MULTISIG ? 2 : 3);
+                } else if (mode === DAOCreateMode.SUBDAO) {
+                  setTotalSteps(governanceType === GovernanceType.MULTISIG ? 3 : 4);
                 } else {
                   // SubDAO and Edit mode have the same number of steps because the only way to
                   // "Edit" a DAO is to go from Multisig -> Azorius, not the other way around.
