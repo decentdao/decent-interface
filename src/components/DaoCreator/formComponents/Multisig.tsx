@@ -39,7 +39,7 @@ export function Multisig(props: ICreationStepProps) {
         isFormSubmitting={!!isSubmitting || transactionPending}
         totalSteps={props.totalSteps}
         stepNumber={2}
-        titleKey="titleMultisigSafeConfig"
+        // titleKey="titleMultisigSafeConfig"
       >
         <Flex
           flexDirection="column"

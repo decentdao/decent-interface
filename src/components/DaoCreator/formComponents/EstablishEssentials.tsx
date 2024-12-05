@@ -91,7 +91,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
         isFormSubmitting={!!isSubmitting || transactionPending}
         totalSteps={props.totalSteps}
         stepNumber={1}
-        titleKey="titleEssentials"
+        // titleKey="titleEssentials"
       >
         <InputComponent
           label={t('labelDAOName')}

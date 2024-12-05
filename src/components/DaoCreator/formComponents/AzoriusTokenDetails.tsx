@@ -113,7 +113,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         isFormSubmitting={!!isSubmitting || transactionPending}
         totalSteps={props.totalSteps}
         stepNumber={2}
-        titleKey="titleAzoriusConfig"
+        // titleKey="titleAzoriusConfig"
       >
         <Flex
           flexDirection="column"

@@ -10,7 +10,6 @@ import PageHeader from '../ui/page/Header/PageHeader';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
 
 interface IStepWrapper {
-  titleKey: string;
   isSubDAO?: boolean;
   isFormSubmitting?: boolean;
   shouldWrapChildren?: boolean;
@@ -32,7 +31,6 @@ function Step({ index, stepNumber }: { index: number; stepNumber: number }) {
 }
 
 export function StepWrapper({
-  titleKey,
   isSubDAO,
   isFormSubmitting,
   children,
@@ -43,10 +41,26 @@ export function StepWrapper({
 }: IStepWrapper) {
   const { safe } = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
-  const { t } = useTranslation(['daoCreate']);
+  const { t } = useTranslation(['breadcrumbs']);
   const navigate = useNavigate();
 
   const isEdit = mode === DAOCreateMode.EDIT;
+
+  let title = '';
+  switch (mode) {
+    case DAOCreateMode.ROOTDAO:
+      title = t('createNewDAO');
+      break;
+    case DAOCreateMode.SUBDAO:
+      title = t('createSubDAO');
+      break;
+    case DAOCreateMode.EDIT:
+      title = t('editDAO');
+      break;
+    default:
+      throw new Error('Invalid DAO create mode');
+  }
+
   return (
     <Box>
       {isEdit ? (
@@ -59,17 +73,17 @@ export function StepWrapper({
               textStyle="heading-large"
               color="white-0"
             >
-              {t(titleKey)}
+              {title}
             </Text>
           </Flex>
         </Box>
       ) : (
         <PageHeader
-          title={t(titleKey)}
+          title={title}
           hasDAOLink={!!isSubDAO}
           breadcrumbs={[
             {
-              terminus: t(!isSubDAO ? 'createNewDAO' : 'labelCreateSubDAOProposal'),
+              terminus: title,
               path: '',
             },
           ]}

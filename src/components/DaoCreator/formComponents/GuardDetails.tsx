@@ -91,7 +91,7 @@ function GuardDetails(props: ICreationStepProps) {
         isFormSubmitting={!!isSubmitting || transactionPending}
         totalSteps={props.totalSteps}
         stepNumber={3}
-        titleKey="titleGuardConfig"
+        // titleKey="titleGuardConfig"
       >
         <Flex
           flexDirection="column"

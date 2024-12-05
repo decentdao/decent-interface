@@ -103,7 +103,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
     <>
       <StepWrapper
         mode={mode}
-        titleKey="titleGovConfig"
+        // titleKey="titleGovConfig"
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
         totalSteps={props.totalSteps}
