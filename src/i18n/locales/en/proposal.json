@@ -143,6 +143,6 @@
   "pendingProposalNotice": "Pending proposal still processing",
   "metadataFailedParsePlaceholder": "Unknown - Failed to parse metadata",
   "multisigNonceDuplicateErrorMessage": "Transaction with the same nonce already exists",
-  "createFromScratch": "Create from scratch",
+  "createFromScratch": "Start from scratch",
   "browseTemplates": "Browse templates"
 }

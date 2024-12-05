@@ -91,7 +91,6 @@
   "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule.",
   "cancelPayment": "Cancel Payment",
   "cancelled": "Canceled",
-  "cancelling": "Cancelling",
   "cancelPaymentInfoMessage": "These values can't be edited. To update them, please cancel this payment and create a new one.",
   "cancellingPaymentInfoMessage": "This payment is marked for cancelling and thus can not be edited.",
   "confirmCancelPaymentTitle": "Are you sure you want to cancel this payment?",
