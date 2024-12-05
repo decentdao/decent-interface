@@ -1,7 +1,7 @@
 {
   "buttonCreate": "Create DAO",
   "addNFTButton": "Import another token",
-  "labelCreateSubDAOProposal": "Create a child Safe",
+  "labelCreateSubDAOProposal": "Create a SubDAO",
   "errorMinSigners": "Number of owners must be greater than 0.",
   "errorLowSignerThreshold": "Threshold must be greater than 0",
   "errorHighSignerThreshold": "Threshold must be less than number of owners.",
@@ -76,7 +76,7 @@
   "labelDAOName": "Name",
   "daoNamePlaceholder": "Name",
   "helperDAOName": "What is your DAO called?",
-  "labelDeploySubDAO": "Create a child Safe proposal",
+  "labelDeploySubDAO": "Create a SubDAO proposal",
   "labelDeployAzorius": "Create Azorius deployment proposal",
   "titleAllocations": "Allocations",
   "titleProposers": "Whitelisted Proposers",
