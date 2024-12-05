@@ -2,6 +2,7 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Divider, Flex, Grid, GridItem, Show, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Assets } from '../../../components/DAOTreasury/components/Assets';
 import {
   PaginationButton,
@@ -12,17 +13,24 @@ import { TitledInfoBox } from '../../../components/ui/containers/TitledInfoBox';
 import { ModalBase } from '../../../components/ui/modals/ModalBase';
 import { SendAssetsData, SendAssetsModal } from '../../../components/ui/modals/SendAssetsModal';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
-import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
+import { DAO_ROUTES } from '../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useProposalActionsStore } from '../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
-import { prepareSendAssetsProposalData } from '../../../utils/dao/prepareSendAssetsProposalData';
+import { ProposalActionType } from '../../../types';
+import {
+  isNativeAsset,
+  prepareSendAssetsActionData,
+} from '../../../utils/dao/prepareSendAssetsActionData';
 
 export function SafeTreasuryPage() {
   useEffect(() => {
     amplitude.track(analyticsEvents.TreasuryPageOpened);
   }, []);
+  const { safe } = useDaoInfoStore();
   const {
     treasury: { assetsFungible, transfers },
   } = useFractal();
@@ -31,8 +39,9 @@ export function SafeTreasuryPage() {
   const { t } = useTranslation(['treasury', 'modals']);
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { submitProposal } = useSubmitProposal();
-
+  const { addAction } = useProposalActionsStore();
+  const navigate = useNavigate();
+  const { addressPrefix } = useNetworkConfig();
   const hasAnyBalanceOfAnyFungibleTokens =
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
@@ -42,20 +51,36 @@ export function SafeTreasuryPage() {
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
   const sendAssetsAction = async (sendAssetsData: SendAssetsData) => {
-    const proposalData = prepareSendAssetsProposalData({
+    if (!safe?.address) {
+      return;
+    }
+    const isNative = isNativeAsset(sendAssetsData.asset);
+    const transactionData = prepareSendAssetsActionData({
       transferAmount: sendAssetsData.transferAmount,
       asset: sendAssetsData.asset,
       destinationAddress: sendAssetsData.destinationAddress,
-      t,
     });
-
-    await submitProposal({
-      proposalData,
-      nonce: sendAssetsData.nonceInput,
-      pendingToastMessage: t('sendAssetsPendingToastMessage', { ns: 'modals' }),
-      successToastMessage: t('sendAssetsSuccessToastMessage', { ns: 'modals' }),
-      failedToastMessage: t('sendAssetsFailureToastMessage', { ns: 'modals' }),
+    addAction({
+      actionType: ProposalActionType.TRANSFER,
+      content: <></>,
+      transactions: [
+        {
+          targetAddress: transactionData.calldata,
+          ethValue: {
+            bigintValue: transactionData.value,
+            value: transactionData.value.toString(),
+          },
+          functionName: isNative ? '' : 'transfer',
+          parameters: isNative
+            ? []
+            : [
+                { signature: 'address', value: sendAssetsData.destinationAddress },
+                { signature: 'uint256', value: sendAssetsData.transferAmount.toString() },
+              ],
+        },
+      ],
     });
+    navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safe.address));
 
     onClose();
   };
