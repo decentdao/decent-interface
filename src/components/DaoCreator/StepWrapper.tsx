@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { CreatorSteps } from '../../types';
 import PageHeader from '../ui/page/Header/PageHeader';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
 
@@ -15,18 +16,22 @@ interface IStepWrapper {
   shouldWrapChildren?: boolean;
   children: ReactNode;
   mode: DAOCreateMode;
-  totalSteps: number;
+  allSteps: CreatorSteps[];
   stepNumber: number;
 }
 
-function Step({ index, stepNumber }: { index: number; stepNumber: number }) {
+function Step({ index, stepNumber, label }: { index: number; stepNumber: number; label: string }) {
   return (
-    <Box
-      width="100%"
-      height="4px"
-      bg={stepNumber === index ? 'lilac-0' : 'neutral-6'}
-      borderRadius="full"
-    ></Box>
+    <Box width="100%">
+      <Box
+        height="4px"
+        bg={stepNumber === index ? 'lilac-0' : 'neutral-6'}
+        borderRadius="full"
+      ></Box>
+      <Text mx="0.25rem">
+        {index}. {label}
+      </Text>
+    </Box>
   );
 }
 
@@ -35,7 +40,7 @@ export function StepWrapper({
   isFormSubmitting,
   children,
   mode,
-  totalSteps,
+  allSteps,
   stepNumber,
   shouldWrapChildren = true,
 }: IStepWrapper) {
@@ -107,13 +112,39 @@ export function StepWrapper({
         mb="2rem"
         gap="0.25rem"
       >
-        {Array.from({ length: totalSteps }, (_, index) => (
-          <Step
-            key={index}
-            index={index + 1}
-            stepNumber={stepNumber}
-          />
-        ))}
+        {allSteps.map((step, index) => {
+          let label = '';
+          switch (step) {
+            case CreatorSteps.ESSENTIALS:
+              label = t('titleGetStarted', { ns: 'daoCreate' });
+              break;
+            case CreatorSteps.ERC20_DETAILS:
+              label = t('titleConfigureGovernance', { ns: 'daoCreate' });
+              break;
+            case CreatorSteps.ERC721_DETAILS:
+              label = t('titleConfigureGovernance', { ns: 'daoCreate' });
+              break;
+            case CreatorSteps.MULTISIG_DETAILS:
+              label = t('titleConfigureGovernance', { ns: 'daoCreate' });
+              break;
+            case CreatorSteps.AZORIUS_DETAILS:
+              label = t('titleGovConfig', { ns: 'daoCreate' });
+              break;
+            case CreatorSteps.FREEZE_DETAILS:
+              label = t('titleGuardConfig', { ns: 'daoCreate' });
+              break;
+            default:
+              throw new Error('Invalid step');
+          }
+          return (
+            <Step
+              key={index}
+              index={index + 1}
+              stepNumber={stepNumber}
+              label={label}
+            />
+          );
+        })}
       </Flex>
       {shouldWrapChildren ? (
         <Box

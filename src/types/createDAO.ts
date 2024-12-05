@@ -53,8 +53,6 @@ export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 
   isSubDAO?: boolean;
   mode: DAOCreateMode;
   steps: CreatorSteps[];
-  totalSteps: number;
-  onGovernanceTypeChange: (governanceType: GovernanceType) => void;
 }
 
 export interface CreatorFormState<T = BigIntValuePair> {

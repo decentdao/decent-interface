@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
-import { useState } from 'react';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
 import {
   AzoriusERC20DAO,
@@ -37,8 +36,6 @@ function DaoCreator({
 
   const { prepareMultisigFormData, prepareAzoriusERC20FormData, prepareAzoriusERC721FormData } =
     usePrepareFormData();
-
-  const [totalSteps, setTotalSteps] = useState(0);
 
   return (
     <Box>
@@ -96,18 +93,6 @@ function DaoCreator({
               transactionPending={pending}
               isSubDAO={isSubDAO}
               mode={mode}
-              totalSteps={totalSteps}
-              onGovernanceTypeChange={(governanceType: GovernanceType) => {
-                if (mode === DAOCreateMode.ROOTDAO) {
-                  setTotalSteps(governanceType === GovernanceType.MULTISIG ? 2 : 3);
-                } else if (mode === DAOCreateMode.SUBDAO) {
-                  setTotalSteps(governanceType === GovernanceType.MULTISIG ? 3 : 4);
-                } else {
-                  // SubDAO and Edit mode have the same number of steps because the only way to
-                  // "Edit" a DAO is to go from Multisig -> Azorius, not the other way around.
-                  setTotalSteps(3);
-                }
-              }}
               {...rest}
             />
           </form>
