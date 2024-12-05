@@ -7,14 +7,11 @@ import './assets/css/sentry.css';
 import './assets/css/Toast.css';
 import './insights';
 import { runMigrations } from './hooks/utils/cache/runMigrations';
-import { useSetNetworkConfig } from './providers/NetworkConfig/NetworkConfigProvider';
 import { useNetworkConfigStore } from './providers/NetworkConfig/useNetworkConfigStore';
 import Providers from './providers/Providers';
 import { router } from './router';
 
 function DecentRouterProvider() {
-  useSetNetworkConfig();
-
   const { addressPrefix } = useNetworkConfigStore();
   const urlParams = new URLSearchParams(window.location.search);
   const addressWithPrefix = urlParams.get('dao');
