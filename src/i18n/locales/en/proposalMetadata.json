@@ -1,5 +1,5 @@
 {
-  "createChildSafe": "Create a child Safe",
+  "createChildSafe": "Create a SubDAO",
   "clawbackProposal": "Clawback Proposal",
   "clawbackDescription": "Transfer all funds from the targeted child Safe to the parent Safe ",
   "createProposalTemplateTitle": "Create Proposal Template",

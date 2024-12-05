@@ -89,7 +89,8 @@ function GuardDetails(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
-        titleKey="titleGuardConfig"
+        allSteps={props.steps}
+        stepNumber={governanceFormType === GovernanceType.MULTISIG ? 3 : 4}
       >
         <Flex
           flexDirection="column"
