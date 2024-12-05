@@ -353,7 +353,7 @@ export function RolePaymentDetails({
                     height={6}
                     borderRadius="lg"
                   >
-                    {t(payment.isCancelling ? 'cancelling' : 'cancelled')}
+                    {t('cancelled')}
                   </Tag>
                 )}
                 <GreenStreamingDot isStreaming={payment.isStreaming()} />
