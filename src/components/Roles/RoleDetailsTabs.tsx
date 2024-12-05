@@ -63,17 +63,20 @@ function RolesDetailsPayments({
         variant="darker"
         my={4}
       />
-      {sortedPayments.map((payment, index) => (
-        <RolePaymentDetails
-          key={index}
-          payment={payment}
-          roleHatSmartAccountAddress={roleHatSmartAccountAddress}
-          roleHatId={roleHatId}
-          roleTerms={roleTerms}
-          roleHatWearerAddress={roleHatWearerAddress}
-          showWithdraw
-        />
-      ))}
+      {sortedPayments.map(payment => {
+        const thisPaymentIndex = payments?.findIndex(p => p.streamId === payment.streamId);
+        return (
+          <RolePaymentDetails
+            key={thisPaymentIndex}
+            payment={payment}
+            roleHatSmartAccountAddress={roleHatSmartAccountAddress}
+            roleHatId={roleHatId}
+            roleTerms={roleTerms}
+            roleHatWearerAddress={roleHatWearerAddress}
+            showWithdraw
+          />
+        );
+      })}
     </>
   );
 }

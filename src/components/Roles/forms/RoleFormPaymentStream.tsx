@@ -108,7 +108,7 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
   );
 }
 
-export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
+export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const { getPayment } = useRolesStore();
@@ -145,6 +145,29 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
     onSubmit: handleConfirmCancelPayment,
   });
 
+  function PaymentCancelHint() {
+    return (
+      <Alert
+        status="info"
+        my="1.5rem"
+        gap="1rem"
+      >
+        <Box
+          width="1.5rem"
+          height="1.5rem"
+        >
+          <Info size="24" />
+        </Box>
+        <Text
+          textStyle="body-base-strong"
+          whiteSpace="pre-wrap"
+        >
+          {t(payment?.isCancelling ? 'cancellingPaymentInfoMessage' : 'cancelPaymentInfoMessage')}
+        </Text>
+      </Alert>
+    );
+  }
+
   return (
     <>
       <Box
@@ -176,20 +199,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         />
         {canBeCancelled && (
           <Show above="md">
-            <Alert
-              status="info"
-              mt="2rem"
-              mb="2.5rem"
-              gap="1rem"
-            >
-              <Box
-                width="1.5rem"
-                height="1.5rem"
-              >
-                <Info size="24" />
-              </Box>
-              <Text whiteSpace="pre-wrap">{t('cancelPaymentInfoMessage')}</Text>
-            </Alert>
+            <PaymentCancelHint />
           </Show>
         )}
         {(canBeCancelled || !streamId) && (
@@ -199,12 +209,13 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
                 isDisabled={!!roleEditingPaymentsErrors}
                 onClick={() => {
                   setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+                  setFieldValue(`roleEditing.payments.${formIndex}.isValidatedAndSaved`, true);
                 }}
               >
                 {t('save')}
               </Button>
             )}
-            {isDevMode() && (
+            {isDevMode() && !canBeCancelled && (
               <Button
                 onClick={() => {
                   if (payment === undefined) {
@@ -242,22 +253,9 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
           </Flex>
         )}
       </Box>
+
       <Show below="md">
-        <Alert
-          status="info"
-          my="1.5rem"
-          gap="1rem"
-        >
-          <Box
-            width="1.5rem"
-            height="1.5rem"
-          >
-            <Info size="24" />
-          </Box>
-          <Text whiteSpace="pre-wrap">
-            {t(payment?.isCancelling ? 'cancellingPaymentInfoMessage' : 'cancelPaymentInfoMessage')}
-          </Text>
-        </Alert>
+        <PaymentCancelHint />
         {canBeCancelled && (
           <Button
             color="red-1"
