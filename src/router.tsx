@@ -83,8 +83,11 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.roles.path,
-              element: <SafeRolesPage />,
               children: [
+                {
+                  index: true,
+                  element: <SafeRolesPage />,
+                },
                 {
                   path: 'details',
                   element: <SafeRoleDetailsPage />,
