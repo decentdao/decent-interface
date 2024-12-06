@@ -48,19 +48,12 @@ export function DAOInfoCard() {
           alignItems="center"
           columnGap="0.5rem"
           justifyContent="space-between"
-          mt="0.5rem"
           flexGrow={1}
         >
           <Flex
             alignItems="center"
             columnGap="0.5rem"
           >
-            {/* FAVORITE ICON */}
-            <FavoriteIcon
-              isFavorite={isFavorite(displayedAddress)}
-              toggleFavoriteCallback={() => toggleFavorite(displayedAddress, daoName)}
-            />
-
             {/* PARENT TAG */}
             {!!node.subgraphInfo && node.subgraphInfo.childAddresses.length > 0 && (
               <Link
@@ -78,8 +71,18 @@ export function DAOInfoCard() {
               </Link>
             )}
           </Flex>
-          {/* SETTINGS MENU BUTTON */}
-          <ManageDAOMenu />
+          <Flex
+            alignItems="center"
+            gap={4}
+          >
+            {/* FAVORITE ICON */}
+            <FavoriteIcon
+              isFavorite={isFavorite(displayedAddress)}
+              toggleFavoriteCallback={() => toggleFavorite(displayedAddress, daoName)}
+            />
+            {/* SETTINGS MENU BUTTON */}
+            <ManageDAOMenu />
+          </Flex>
         </Flex>
         {/* DAO NAME AND ACTIONS */}
 
