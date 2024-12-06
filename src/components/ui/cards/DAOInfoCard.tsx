@@ -1,10 +1,11 @@
-import { Box, Center, Flex, Link, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, Image, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
+import { getNetworkIcon } from '../../../utils/url';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
@@ -54,6 +55,7 @@ export function DAOInfoCard() {
             alignItems="center"
             columnGap="0.5rem"
           >
+            <Image src={getNetworkIcon(addressPrefix)} />
             {/* PARENT TAG */}
             {!!node.subgraphInfo && node.subgraphInfo.childAddresses.length > 0 && (
               <Link
