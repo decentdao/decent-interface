@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { NetworkConfig } from '../../types/network';
 import { networks } from './networks';
-import { sepoliaConfig } from './networks/sepolia';
+import { mainnetConfig } from './networks/mainnet';
 
 interface NetworkConfigStore extends NetworkConfig {
   getConfigByChainId: (chainId?: number) => NetworkConfig;
@@ -25,7 +25,7 @@ export const getNetworkConfig = (chainId?: number): NetworkConfig => {
 
 // Create the Zustand store
 export const useNetworkConfigStore = create<NetworkConfigStore>(set => ({
-  ...sepoliaConfig,
+  ...mainnetConfig,
   getConfigByChainId: getNetworkConfig,
   setCurrentConfig: (config: NetworkConfig) => set({ ...config }),
 }));
