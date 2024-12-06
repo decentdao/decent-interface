@@ -10,7 +10,7 @@ import useAvatar from '../../hooks/utils/useAvatar';
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   paymentSorterByActiveStatus,
@@ -79,7 +79,7 @@ export default function RolesDetails({
 }) {
   const { safe } = useDaoInfoStore();
   const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const permissionsContainerRef = useRef<HTMLDivElement>(null);
 
   const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
