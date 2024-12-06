@@ -1,5 +1,5 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { Box, Button, Flex, Show } from '@chakra-ui/react';
+import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
@@ -9,7 +9,10 @@ import { Hex, toHex } from 'viem';
 import { RoleCardEdit } from '../../../../components/Roles/RoleCard';
 import { RoleCardLoading } from '../../../../components/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../components/Roles/RolesTable';
+import DraggableDrawer from '../../../../components/ui/containers/DraggableDrawer';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
+import { ModalBase } from '../../../../components/ui/modals/ModalBase';
+import { UnsavedChangesWarningContent } from '../../../../components/ui/modals/UnsavedChangesWarningContent';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { getRandomBytes } from '../../../../helpers';
@@ -51,6 +54,36 @@ export function SafeRolesEditPage() {
 
   return (
     <>
+      {blocker.state === 'blocked' && (
+        <>
+          <Hide above="md">
+            <DraggableDrawer
+              isOpen
+              onClose={() => {}}
+              onOpen={() => {}}
+              headerContent={null}
+              initialHeight="23rem"
+              closeOnOverlayClick={false}
+            >
+              <UnsavedChangesWarningContent
+                onDiscard={blocker.proceed}
+                onKeepEditing={blocker.reset}
+              />
+            </DraggableDrawer>
+          </Hide>
+          <Hide below="md">
+            <ModalBase
+              isOpen
+              onClose={() => {}}
+            >
+              <UnsavedChangesWarningContent
+                onDiscard={blocker.proceed}
+                onKeepEditing={blocker.reset}
+              />
+            </ModalBase>
+          </Hide>
+        </>
+      )}
       <Box>
         <PageHeader
           title={t('roles')}

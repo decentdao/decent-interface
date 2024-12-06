@@ -23,11 +23,9 @@ import { useTranslation } from 'react-i18next';
 import { DecentHourGlass } from '../../../assets/theme/custom/icons/DecentHourGlass';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { RoleFormValues } from '../../../types/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
-import { AddressInput } from '../../ui/forms/EthAddressInput';
-import LabelWrapper from '../../ui/forms/LabelWrapper';
+import { InputComponent } from '../../ui/forms/InputComponent';
 import { ModalBase } from '../../ui/modals/ModalBase';
 import RoleFormTerms from './RoleFormTerms';
 
@@ -38,14 +36,13 @@ function RoleMemberWearerInput() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
   useEffect(() => {
     if (isValidWearerAddress) {
       setFieldValue('roleEditing.resolvedWearer', resolvedWearerAddress);
     }
   }, [isValidWearerAddress, resolvedWearerAddress, setFieldValue]);
 
-  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer, false);
   return (
     <FormControl>
       <Field name="roleEditing.wearer">
@@ -58,24 +55,21 @@ function RoleMemberWearerInput() {
           form: FormikProps<RoleFormValues>;
           meta: FieldMetaProps<string>;
         }) => (
-          <LabelWrapper
+          <InputComponent
             label={t('member')}
-            errorMessage={meta.touched && meta.error ? meta.error : undefined}
             isRequired
-            labelColor="neutral-7"
-          >
-            <AddressInput
-              value={displayName ?? field.value}
-              onBlur={() => {
-                setFieldTouched('roleEditing.wearer', true);
-              }}
-              onChange={e => {
-                const inputWearer = e.target.value;
-                setRoleWearerString(inputWearer);
-                setFieldValue('roleEditing.wearer', inputWearer);
-              }}
-            />
-          </LabelWrapper>
+            value={field.value}
+            errorMessage={meta.touched && meta.error ? meta.error : undefined}
+            onBlur={() => {
+              setFieldTouched('roleEditing.wearer', true);
+            }}
+            onChange={e => {
+              const inputWearer = e.target.value;
+              setRoleWearerString(inputWearer);
+              setFieldValue('roleEditing.wearer', inputWearer);
+            }}
+            testId="role-wearer"
+          />
         )}
       </Field>
     </FormControl>
