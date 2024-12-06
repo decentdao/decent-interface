@@ -53,7 +53,7 @@ import {
   SablierPaymentFormValues,
 } from '../../types/roles';
 import { SENTINEL_MODULE } from '../../utils/address';
-import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
+import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsActionData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import {

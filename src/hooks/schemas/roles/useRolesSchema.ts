@@ -3,13 +3,27 @@ import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import * as Yup from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  RoleFormValues,
-  RoleHatFormValue,
-  SablierPayment,
-  SablierPaymentFormValues,
-} from '../../../types/roles';
+import { RoleFormValues, RoleHatFormValue, SablierPaymentFormValues } from '../../../types/roles';
 import { useValidationAddress } from '../common/useValidationAddress';
+
+// @todo: needs typing
+const getPaymentValidationContextData = (cxt: any) => {
+  // @dev finds the parent asset address from the formik context `from` array
+  // @dev @todo When Payments form is first open these values become undefined, not sure why
+  const currentPayment = cxt.from[1]?.value;
+
+  const currentRoleHat = cxt.from[2]?.value;
+  const formContext = cxt.from[3]?.value;
+
+  if (!currentPayment || !currentRoleHat || !formContext || !currentPayment.asset) return {};
+  const parentAssetAddress = getAddress(currentPayment.asset.address);
+
+  return {
+    currentRoleHat,
+    parentAssetAddress,
+    formContextHats: formContext.hats as RoleHatFormValue[],
+  };
+};
 
 export const useRolesSchema = () => {
   const { t } = useTranslation(['roles']);
@@ -18,7 +32,7 @@ export const useRolesSchema = () => {
   } = useFractal();
   const { addressValidationTest } = useValidationAddress();
 
-  const bigIntValidationSchema = Yup.object().shape({
+  const paymentValidationSchema = Yup.object().shape({
     value: Yup.string().required(t('roleInfoErrorPaymentAmountRequired')),
     bigintValue: Yup.mixed<bigint>()
       .nullable()
@@ -27,13 +41,28 @@ export const useRolesSchema = () => {
         message: t('roleInfoErrorPaymentInvalidAmount'),
         test: (value, cxt) => {
           if (!value || !cxt.from) return false;
-          // @dev finds the parent asset address from the formik context `from` array
-          // @dev @todo When Payments form is first open these values become undefined, not sure why
-          const currentPayment = cxt.from[1]?.value;
-          const currentRoleHat = cxt.from[2]?.value;
-          const formContext = cxt.from[3]?.value;
-          if (!currentPayment || !currentRoleHat || !formContext) return false;
-          const parentAssetAddress = currentPayment.asset?.address;
+
+          const { parentAssetAddress } = getPaymentValidationContextData(cxt);
+
+          if (!parentAssetAddress) return false;
+          const asset = assetsFungible.find(
+            _asset => getAddress(_asset.tokenAddress) === parentAssetAddress,
+          );
+
+          if (!asset) return false;
+
+          return true;
+        },
+      })
+      .test({
+        name: 'Insufficient amount',
+        message: t('roleInfoErrorPaymentInsufficientAmount'),
+        test: (value, cxt) => {
+          if (!value || !cxt.from) return false;
+          const { parentAssetAddress, currentRoleHat, formContextHats } =
+            getPaymentValidationContextData(cxt);
+
+          if (!parentAssetAddress) return false;
 
           const currentPaymentIndex = currentRoleHat.roleEditingPaymentIndex;
           // get all current role's payments excluding this one.
@@ -43,9 +72,10 @@ export const useRolesSchema = () => {
             (_payment: SablierPaymentFormValues, index: number) =>
               index !== currentPaymentIndex && !_payment.streamId,
           );
-          const allHatPayments: SablierPaymentFormValues[] = formContext.hats
-            .filter((hat: RoleHatFormValue) => hat.id === currentRoleHat.id)
-            .map((hat: RoleHatFormValue) => hat.payments ?? [])
+
+          const allHatPayments: SablierPaymentFormValues[] = formContextHats
+            .filter(hat => hat.id === currentRoleHat.id)
+            .map(hat => hat.payments ?? [])
             .flat();
 
           const totalPendingAmounts = [
@@ -53,7 +83,6 @@ export const useRolesSchema = () => {
             ...allCurrentRolePayments,
           ].reduce((prev, curr) => (curr.amount?.bigintValue ?? 0n) + prev, 0n);
 
-          if (!parentAssetAddress) return false;
           const asset = assetsFungible.find(
             _asset => getAddress(_asset.tokenAddress) === getAddress(parentAssetAddress),
           );
@@ -77,12 +106,13 @@ export const useRolesSchema = () => {
           .default(undefined)
           .nullable()
           .when({
-            is: (payment: SablierPayment) => payment !== undefined,
+            is: (payment: SablierPaymentFormValues) =>
+              payment !== undefined && !payment.isValidatedAndSaved,
             then: _paymentSchema =>
               _paymentSchema
                 .shape({
                   asset: assetValidationSchema,
-                  amount: bigIntValidationSchema,
+                  amount: paymentValidationSchema,
                   startDate: Yup.date().required(
                     t('roleInfoErrorPaymentFixedDateStartDateRequired'),
                   ),
@@ -110,7 +140,7 @@ export const useRolesSchema = () => {
                 }),
           }),
       ),
-    [assetValidationSchema, bigIntValidationSchema, t],
+    [assetValidationSchema, paymentValidationSchema, t],
   );
 
   const rolesSchema = useMemo(

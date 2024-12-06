@@ -55,7 +55,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
   // If in governance edit mode and snapshot URL is already set, disable the field
   const snapshotENSDisabled = isEdit && !!subgraphInfo?.daoSnapshotENS;
 
-  const handleGovernanceChange = (value: string) => {
+  const handleGovernanceChange = (value: GovernanceType) => {
     if (value === GovernanceType.AZORIUS_ERC20) {
       setFieldValue('azorius.votingStrategyType', VotingStrategyType.LINEAR_ERC20);
     } else if (value === GovernanceType.AZORIUS_ERC721) {
@@ -87,7 +87,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
-        titleKey="titleEssentials"
+        allSteps={props.steps}
+        stepNumber={1}
       >
         <InputComponent
           label={t('labelDAOName')}

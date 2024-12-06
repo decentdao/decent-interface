@@ -39,7 +39,8 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
-        titleKey="titleNFTConfig"
+        allSteps={props.steps}
+        stepNumber={2}
         shouldWrapChildren={false}
       >
         <Grid

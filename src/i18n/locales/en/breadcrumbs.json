@@ -1,7 +1,9 @@
 {
+  "createNewDAO": "Create New DAO",
+  "createSubDAO": "Create SubDAO",
   "headerTitle": "{{daoName}} {{subject}}",
   "proposals": "All Proposals",
-  "proposalNew": "New Proposal",
+  "proposalNew": "Create Proposal",
   "nodes": "Organization",
   "roles": "Roles",
   "treasury": "Treasury",
@@ -9,7 +11,7 @@
   "proposalTemplates": "Proposal Templates",
   "proposalTemplate": "{{proposalTemplateTitle}}",
   "proposalTemplateNew": "Create Proposal Template",
-  "modifyGovernance": "Modify Governance",
+  "editDAO": "Edit DAO",
   "parentLink": "Parent-Safe",
   "settings": "Settings"
 }

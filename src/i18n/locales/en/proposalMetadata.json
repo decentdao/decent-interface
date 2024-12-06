@@ -1,7 +1,5 @@
 {
-  "createChildSafe": "Create a child Safe",
-  "sendToken": "Send Token",
-  "sendEth": "Send Eth",
+  "createChildSafe": "Create a SubDAO",
   "clawbackProposal": "Clawback Proposal",
   "clawbackDescription": "Transfer all funds from the targeted child Safe to the parent Safe ",
   "createProposalTemplateTitle": "Create Proposal Template",
