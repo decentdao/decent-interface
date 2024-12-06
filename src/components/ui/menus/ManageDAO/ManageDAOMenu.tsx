@@ -214,7 +214,6 @@ export function ManageDAOMenu() {
           boxSize="1.25rem"
         />
       }
-      titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
       buttonAs={IconButton}
