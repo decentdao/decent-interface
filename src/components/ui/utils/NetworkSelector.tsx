@@ -4,10 +4,10 @@ import { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSwitchChain } from 'wagmi';
 import {
-  supportedNetworks,
   useNetworkConfigStore,
-} from '../../../../providers/NetworkConfig/useNetworkConfigStore';
-import { OptionMenu } from '../OptionMenu';
+  supportedNetworks,
+} from '../../../providers/NetworkConfig/useNetworkConfigStore';
+import { OptionMenu } from '../menus/OptionMenu';
 
 /**
  * Network display for menu
