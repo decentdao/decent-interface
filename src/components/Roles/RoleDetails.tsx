@@ -135,19 +135,23 @@ export default function RolesDetails({
                   </Box>
                 ),
                 gap: 0,
-                children: t('editRoles'),
-                onClick: () => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address)),
+                children: t('editRole'),
+                onClick: () => {
+                  navigate(
+                    DAO_ROUTES.rolesEditDetails.relative(addressPrefix, safe.address, roleHat.id),
+                  );
+                },
               }
             : undefined
         }
       />
-      <Text
-        textStyle="heading-large"
-        color="white-0"
-        my="1rem"
-      >
-        {roleHat.name}
-      </Text>
+        <Text
+          textStyle="heading-large"
+          color="white-0"
+          my="1rem"
+        >
+          {roleHat.name}
+        </Text>
       <Grid
         gridTemplateAreas={`
               "mLabel mValue"
