@@ -11,17 +11,16 @@ import {
 } from '../../../../hooks/utils/cache/cacheDefaults';
 import { setValue } from '../../../../hooks/utils/cache/useLocalStorage';
 import { getSafeName } from '../../../../hooks/utils/useGetSafeName';
+import { useDynamicWagmiConfig } from '../../../../providers/NetworkConfig/useDynamicWagmiConfig';
 import {
   getNetworkConfig,
   supportedNetworks,
 } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
-import { wagmiConfig } from '../../../../providers/NetworkConfig/web3-modal.config';
 import { getChainIdFromPrefix } from '../../../../utils/url';
 import { Layout } from '../Layout';
 
 const useUserTracking = () => {
   const { address } = useAccount();
-
   useEffect(() => {
     Sentry.setUser(address ? { id: address } : null);
     if (address) {
@@ -34,6 +33,7 @@ const useUserTracking = () => {
 
 const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
   const { favoritesList } = useAccountFavorites();
+  const wagmiConfig = useDynamicWagmiConfig();
 
   useEffect(() => {
     (async () => {
@@ -102,7 +102,7 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
         onFavoritesUpdated();
       }
     })();
-  }, [favoritesList, onFavoritesUpdated]);
+  }, [favoritesList, onFavoritesUpdated, wagmiConfig.chains]);
 };
 
 export function Global() {

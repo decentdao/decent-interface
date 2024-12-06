@@ -9,9 +9,11 @@ import { ErrorBoundary } from '../components/ui/utils/ErrorBoundary';
 import { TopErrorFallback } from '../components/ui/utils/TopErrorFallback';
 import graphQLClient from '../graphql';
 import { AppProvider } from './App/AppProvider';
-import { queryClient, wagmiConfig } from './NetworkConfig/web3-modal.config';
+import { useDynamicWagmiConfig } from './NetworkConfig/useDynamicWagmiConfig';
+import { queryClient } from './NetworkConfig/web3-modal.config';
 
 export default function Providers({ children }: { children: ReactNode }) {
+  const currentConfig = useDynamicWagmiConfig();
   return (
     <ChakraProvider
       theme={theme}
@@ -22,7 +24,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         showDialog
       >
         <ApolloProvider client={graphQLClient}>
-          <WagmiProvider config={wagmiConfig}>
+          <WagmiProvider config={currentConfig}>
             <QueryClientProvider client={queryClient}>
               <AppProvider>
                 <Toaster
