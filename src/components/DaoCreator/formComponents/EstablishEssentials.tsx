@@ -123,6 +123,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
             label={t('networks')}
             helper={t('networkDescription')}
             isRequired
+            alignLabel="flex-start"
           >
             <DropdownMenu
               items={dropdownItems}
