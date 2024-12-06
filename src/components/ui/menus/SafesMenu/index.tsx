@@ -1,14 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Hide,
-  Icon,
-  IconButton,
-  Show,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Hide, Icon, IconButton, Show, Text, useDisclosure } from '@chakra-ui/react';
 import { CaretDown, Star } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
@@ -48,30 +38,30 @@ export function SafesMenu() {
       <Show above="md">
         <OptionMenu
           trigger={
-            <Flex
+            <Button
+              variant="tertiary"
               alignItems="center"
               gap={2}
+              px={0}
             >
               <Text>{t('mySafes')}</Text>
               <Icon
                 as={CaretDown}
                 boxSize="1.5rem"
               />
-            </Flex>
+            </Button>
           }
-          options={favoritesList.map(favorite => {
-            return {
-              optionKey: `${favorite.networkPrefix}:${favorite.address}`,
-              onClick: () => {},
-              renderer: () => (
-                <SafeMenuItem
-                  name={favorite.name}
-                  address={favorite.address}
-                  network={favorite.networkPrefix}
-                />
-              ),
-            };
-          })}
+          options={favoritesList.map(favorite => ({
+            optionKey: `${favorite.networkPrefix}:${favorite.address}`,
+            onClick: () => {},
+            renderer: () => (
+              <SafeMenuItem
+                name={favorite.name}
+                address={favorite.address}
+                network={favorite.networkPrefix}
+              />
+            ),
+          }))}
           buttonAs={Button}
           buttonProps={{
             variant: 'tertiary',
