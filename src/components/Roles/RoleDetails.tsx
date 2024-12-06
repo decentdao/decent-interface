@@ -1,5 +1,5 @@
-import { Badge, Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
-import { CheckSquare, List, User } from '@phosphor-icons/react';
+import { Badge, Box, Button, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { ArrowLeft, CheckSquare, List, User } from '@phosphor-icons/react';
 import { RefObject, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -145,6 +145,7 @@ export default function RolesDetails({
             : undefined
         }
       />
+      <Flex justifyContent="space-between">
         <Text
           textStyle="heading-large"
           color="white-0"
@@ -152,6 +153,15 @@ export default function RolesDetails({
         >
           {roleHat.name}
         </Text>
+        <Button
+          variant="tertiary"
+          width="min-content"
+          color="lilac-0"
+          pr={2}
+          leftIcon={<ArrowLeft />}
+          onClick={() => navigate(DAO_ROUTES.roles.relative(addressPrefix, safe.address))}
+        />
+      </Flex>
       <Grid
         gridTemplateAreas={`
               "mLabel mValue"
