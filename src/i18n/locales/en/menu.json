@@ -2,7 +2,6 @@
   "connect": "Connect",
   "connectWallet": "Connect Wallet",
   "disconnect": "Disconnect",
-  "network": "Network",
   "wallet": "Wallet",
   "titleManageDAO": "Manage Safe",
   "titleViewDAODetails": "View Safe Details",

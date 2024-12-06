@@ -1,14 +1,20 @@
-import { Box, Input, RadioGroup } from '@chakra-ui/react';
+import { Box, Flex, Icon, Image, Input, RadioGroup } from '@chakra-ui/react';
+import { CheckCircle } from '@phosphor-icons/react';
 import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
-import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
+import {
+  supportedNetworks,
+  useNetworkConfigStore,
+} from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../../types';
+import { getNetworkIcon } from '../../../utils/url';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
+import { DropdownMenu } from '../../ui/menus/DropdownMenu';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
@@ -65,7 +71,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
     setFieldValue('essentials.governance', value);
   };
 
-  const { createOptions } = useNetworkConfigStore();
+  const { createOptions, setCurrentConfig, chain, getConfigByChainId } = useNetworkConfigStore();
 
   const [snapshotENSInput, setSnapshotENSInput] = useState('');
 
@@ -80,6 +86,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
   useEffect(() => {
     debounceENSInput(snapshotENSInput);
   }, [debounceENSInput, snapshotENSInput]);
+
+  const dropdownItems = supportedNetworks.map(network => ({
+    value: network.chain.id.toString(),
+    label: network.chain.name,
+    icon: getNetworkIcon(network.addressPrefix),
+    selected: chain.id === network.chain.id,
+  }));
 
   return (
     <>
@@ -102,6 +115,50 @@ export function EstablishEssentials(props: ICreationStepProps) {
           placeholder={t('daoNamePlaceholder')}
           testId="essentials-daoName"
         />
+        <Box
+          mt="2rem"
+          mb="1.5rem"
+        >
+          <LabelComponent
+            label={t('networks')}
+            helper={t('networkDescription')}
+            isRequired
+          >
+            <DropdownMenu
+              items={dropdownItems}
+              selectedItem={dropdownItems.find(item => item.selected)}
+              onSelect={item => {
+                setCurrentConfig(getConfigByChainId(Number(item.value)));
+              }}
+              title={t('networks')}
+              isDisabled={false}
+              renderItem={(item, isSelected) => {
+                return (
+                  <>
+                    <Flex
+                      alignItems="center"
+                      gap="1rem"
+                    >
+                      <Image
+                        src={item.icon}
+                        fallbackSrc="/images/coin-icon-default.svg"
+                        boxSize="2rem"
+                      />
+                      {item.label}
+                    </Flex>
+                    {isSelected && (
+                      <Icon
+                        as={CheckCircle}
+                        boxSize="1.5rem"
+                        color="lilac-0"
+                      />
+                    )}
+                  </>
+                );
+              }}
+            />
+          </LabelComponent>
+        </Box>
         <Box
           mt="2rem"
           mb="1.5rem"

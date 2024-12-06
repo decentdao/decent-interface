@@ -102,5 +102,7 @@
   "errorUnsupportedCreateOption": "Previously selected Governance option is not supported on this network.",
   "attachFractalModuleLabel": "Enable Clawback",
   "attachFractalModuleDescription": "This setting controls whether Parent Safe will be able to execute arbitrary transactions on Child Safe bypassing voting process on Child Safe.",
-  "fractalModuleAttachedDescription": "This setting can not be modified as Fractal Module already attached to the Safe."
+  "fractalModuleAttachedDescription": "This setting can not be modified as Fractal Module already attached to the Safe.",
+  "networks": "Networks",
+  "networkDescription": "What network would you like to deploy this DAO on?"
 }
