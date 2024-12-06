@@ -33,7 +33,7 @@
   "helperQuorumERC20": "The minimum percentage of total possible votes required for a proposal to pass.",
   "helperQuorumERC721": "The minimum weight of total available token voting weight required for a proposal's results to be considered official.",
   "governanceDescription": "These values can be modified later.",
-  "titleGuardConfig": "Configure Parent Controls",
+  "titleGuardConfig": "Configure Administration",
   "titleFreezeParams": "Freeze Parameters",
   "labelExecutionPeriod": "Execution Period",
   "helperExecutionPeriod": "The length of time in which a passed, unlocked proposal is executable onchain.",
