@@ -84,7 +84,7 @@ export function DropdownMenu<T>({
                 <Image
                   src={selectedItem.icon}
                   fallbackSrc="/images/coin-icon-default.svg"
-                  boxSize="2.25rem"
+                  boxSize="1.5rem"
                 />
               )}
               <Flex
@@ -92,7 +92,7 @@ export function DropdownMenu<T>({
                 gap="0.75rem"
               >
                 <Text
-                  textStyle="body-small"
+                  textStyle="labels-large"
                   color="white-0"
                 >
                   {selectedItem?.label ?? selectPlaceholder}
