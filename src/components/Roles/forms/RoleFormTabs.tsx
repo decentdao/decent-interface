@@ -1,4 +1,5 @@
 import { Button, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,6 +59,16 @@ export function RoleFormTabs({
 
   return (
     <>
+      <Flex justifyContent="flex-end">
+        <Button
+          variant="tertiary"
+          width="min-content"
+          color="lilac-0"
+          pr={2}
+          leftIcon={<ArrowLeft />}
+          onClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address))}
+        />
+      </Flex>
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>

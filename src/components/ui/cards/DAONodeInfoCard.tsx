@@ -94,7 +94,8 @@ export function DAONodeInfoCard(props: {
                 color="lilac-0"
                 whiteSpace="nowrap"
               >
-                {type}
+                {/* Convert multisig badge casing here since it's already been cached to avoid another migration */}
+                {type === 'MULTISIG' ? `${type[0]}${type.slice(1).toLocaleLowerCase()}` : type}
               </Text>
             </Box>
           ))}
