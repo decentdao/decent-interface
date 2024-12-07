@@ -36,7 +36,6 @@ export function NumberStepperInput({
       onChange={onChange}
       min={0}
       focusInputOnChange
-      w="100%"
     >
       <HStack gap="0.25rem">
         <NumberDecrementStepper>{stepperButton('dec')}</NumberDecrementStepper>
