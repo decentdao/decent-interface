@@ -39,8 +39,8 @@ function DayStepperInput({
         w="100%"
         gap="0.5rem"
       >
-        <Text color="neutral-7">{t('days', { ns: 'common' })}</Text>
         <NumberStepperInput
+          unitHint={t('days', { ns: 'common' })}
           value={inputValue}
           onChange={val => onInputChange(Number(val))}
         />
