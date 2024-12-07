@@ -4,7 +4,7 @@ import { getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FreezeGuardType, FreezeVotingType } from '../../../types';
 import { useAddressContractType } from '../../utils/useAddressContractType';
@@ -19,7 +19,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
   const safeAddress = safe?.address;
 
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
 
   const { getAddressContractType } = useAddressContractType();
 

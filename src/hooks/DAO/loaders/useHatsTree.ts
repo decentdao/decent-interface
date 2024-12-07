@@ -9,7 +9,7 @@ import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
@@ -50,7 +50,7 @@ const useHatsTree = () => {
       hatsAccount1ofNMasterCopy: hatsAccountImplementation,
       hatsElectionsEligibilityMasterCopy: hatsElectionsImplementation,
     },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const publicClient = usePublicClient();
   const apolloClient = useApolloClient();
 

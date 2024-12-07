@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useVotingStrategiesAddresses from '../../../hooks/utils/useVotingStrategiesAddresses';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useProposalActionsStore } from '../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusGovernance, CreateProposalTransaction, ProposalActionType } from '../../../types';
@@ -16,7 +16,7 @@ import { SafePermissionsStrategyAction } from '../../SafeSettings/SafePermission
 export function ConfirmDeleteStrategyModal({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const { t } = useTranslation('settings');
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { governance, governanceContracts } = useFractal();
   const { safe } = useDaoInfoStore();
   const { addAction } = useProposalActionsStore();

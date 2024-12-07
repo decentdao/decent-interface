@@ -15,7 +15,7 @@ import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, FreezeVotingType, GovernanceType } from '../../../../types';
 import { ModalType } from '../../modals/ModalProvider';
@@ -42,7 +42,7 @@ export function ManageDAOMenu() {
     },
   });
 
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   const handleNavigateToSettings = useCallback(() => {
     if (safeAddress) {

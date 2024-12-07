@@ -10,7 +10,7 @@ import { useHeaderHeight } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 
 export function SafeHierarchyPage() {
@@ -24,7 +24,7 @@ export function SafeHierarchyPage() {
 
   const HEADER_HEIGHT = useHeaderHeight();
   const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   const { canUserCreateProposal } = useCanUserCreateProposal();
 

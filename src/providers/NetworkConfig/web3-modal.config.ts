@@ -5,7 +5,7 @@ import { HttpTransport } from 'viem';
 import { http } from 'wagmi';
 import { Chain } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
-import { supportedNetworks } from './NetworkConfigProvider';
+import { supportedNetworks } from './useNetworkConfigStore';
 
 const supportedWagmiChains = supportedNetworks.map(network => network.chain);
 

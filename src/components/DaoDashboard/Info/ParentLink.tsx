@@ -3,14 +3,14 @@ import { ArrowBendLeftUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 /**
  * Displays a link to the current DAO's parent, if it has one.
  */
 export function ParentLink() {
   const { subgraphInfo } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { t } = useTranslation('breadcrumbs');
 
   if (!subgraphInfo?.parentAddress) {

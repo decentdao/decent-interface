@@ -3,7 +3,7 @@ import { Address, ChainDoesNotSupportContract, PublicClient } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { DAOQueryDocument } from '../../../.graphclient';
 import graphQLClient from '../../graphql';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { createAccountSubstring } from './useGetAccountName';
 
 export const getSafeName = async (
@@ -44,8 +44,8 @@ export const getSafeName = async (
 };
 
 export const useGetSafeName = (chainId?: number) => {
+  const { getConfigByChainId } = useNetworkConfigStore();
   const publicClient = usePublicClient({ chainId });
-  const { subgraph } = useNetworkConfig(chainId);
 
   return {
     getSafeName: useCallback(
@@ -53,9 +53,9 @@ export const useGetSafeName = (chainId?: number) => {
         if (!publicClient) {
           throw new Error('Public client not available');
         }
-        return getSafeName(publicClient, subgraph, address);
+        return getSafeName(publicClient, getConfigByChainId(chainId).subgraph, address);
       },
-      [publicClient, subgraph],
+      [publicClient, getConfigByChainId, chainId],
     ),
   };
 };

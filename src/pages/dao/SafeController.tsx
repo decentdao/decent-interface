@@ -20,17 +20,18 @@ import LoadingProblem from '../LoadingProblem';
 
 export function SafeController() {
   const { invalidQuery, wrongNetwork, addressPrefix, safeAddress } = useParseSafeAddress();
+  useAutomaticSwitchChain({ urlAddressPrefix: addressPrefix });
 
   useUpdateSafeData(safeAddress);
   usePageTitle();
   useTemporaryProposals();
-  useAutomaticSwitchChain({ addressPrefix });
 
   const { subgraphInfo } = useDaoInfoStore();
 
   const { errorLoading } = useFractalNode({
     addressPrefix,
     safeAddress,
+    wrongNetwork,
   });
 
   useGovernanceContracts();

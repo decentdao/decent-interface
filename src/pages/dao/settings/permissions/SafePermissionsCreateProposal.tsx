@@ -27,7 +27,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { getRandomBytes } from '../../../../helpers';
 import { generateContractByteCodeLinear } from '../../../../models/helpers/utils';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useProposalActionsStore } from '../../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
@@ -47,7 +47,7 @@ export function SafePermissionsCreateProposal() {
       linearVotingErc721MasterCopy,
       zodiacModuleProxyFactory,
     },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const [searchParams] = useSearchParams();
   const votingStrategyAddress = searchParams.get('votingStrategy');
   const navigate = useNavigate();

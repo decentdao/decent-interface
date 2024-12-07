@@ -9,7 +9,6 @@ import { ErrorBoundary } from '../components/ui/utils/ErrorBoundary';
 import { TopErrorFallback } from '../components/ui/utils/TopErrorFallback';
 import graphQLClient from '../graphql';
 import { AppProvider } from './App/AppProvider';
-import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
 import { queryClient, wagmiConfig } from './NetworkConfig/web3-modal.config';
 
 export default function Providers({ children }: { children: ReactNode }) {
@@ -25,19 +24,17 @@ export default function Providers({ children }: { children: ReactNode }) {
         <ApolloProvider client={graphQLClient}>
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
-              <NetworkConfigProvider>
-                <AppProvider>
-                  <Toaster
-                    position="bottom-center"
-                    richColors
-                    pauseWhenPageIsHidden
-                    theme="dark"
-                    closeButton
-                    toastOptions={{ className: 'sonner-toast' }}
-                  />
-                  {children}
-                </AppProvider>
-              </NetworkConfigProvider>
+              <AppProvider>
+                <Toaster
+                  position="bottom-center"
+                  richColors
+                  pauseWhenPageIsHidden
+                  theme="dark"
+                  closeButton
+                  toastOptions={{ className: 'sonner-toast' }}
+                />
+                {children}
+              </AppProvider>
             </QueryClientProvider>
           </WagmiProvider>
         </ApolloProvider>

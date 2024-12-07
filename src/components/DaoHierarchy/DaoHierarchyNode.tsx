@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import { Address, getContract, zeroAddress } from 'viem';
-import { useChainId, usePublicClient } from 'wagmi';
+import { usePublicClient } from 'wagmi';
 import { DAOQueryDocument } from '../../../.graphclient';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -15,7 +15,7 @@ import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { setValue, getValue } from '../../hooks/utils/cache/useLocalStorage';
 import { useAddressContractType } from '../../hooks/utils/useAddressContractType';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { DaoHierarchyInfo, DaoHierarchyStrategyType, DecentModule } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
@@ -43,8 +43,7 @@ export function DaoHierarchyNode({
   const safeApi = useSafeAPI();
   const [hierarchyNode, setHierarchyNode] = useState<DaoHierarchyInfo>();
   const [hasErrorLoading, setErrorLoading] = useState<boolean>(false);
-  const { addressPrefix, subgraph } = useNetworkConfig();
-  const chainId = useChainId();
+  const { addressPrefix, subgraph, chain } = useNetworkConfigStore();
   const publicClient = usePublicClient();
 
   const { getAddressContractType } = useAddressContractType();
@@ -168,7 +167,7 @@ export function DaoHierarchyNode({
     if (safeAddress) {
       const cachedNode = getValue({
         cacheName: CacheKeys.HIERARCHY_DAO_INFO,
-        chainId,
+        chainId: chain.id,
         daoAddress: safeAddress,
       });
       if (cachedNode) {
@@ -182,7 +181,7 @@ export function DaoHierarchyNode({
         setValue(
           {
             cacheName: CacheKeys.HIERARCHY_DAO_INFO,
-            chainId,
+            chainId: chain.id,
             daoAddress: safeAddress,
           },
           _node,
