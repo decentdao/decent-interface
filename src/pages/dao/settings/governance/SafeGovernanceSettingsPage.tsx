@@ -44,7 +44,12 @@ export function SafeGovernanceSettingsPage() {
       >
         {(isERC20Governance || isERC721Governance) && (
           <StyledBox width="100%">
-            <Text textStyle="heading-small">{t('daoSettingsGovernance')}</Text>
+            <Text
+              textStyle="heading-small"
+              mb={4}
+            >
+              {t('daoSettingsGovernance')}
+            </Text>
             <InfoGovernance showTitle={false} />
           </StyledBox>
         )}

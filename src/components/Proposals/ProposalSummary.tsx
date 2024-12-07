@@ -1,6 +1,5 @@
-import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
-import { ArrowUpRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useEffect, useMemo, useState } from 'react';
@@ -193,7 +192,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
               alignItems="center"
               justifyContent="space-between"
             >
-              {format(eventDate, DEFAULT_DATE_TIME_FORMAT)} <Icon as={ArrowUpRight} />
+              {format(eventDate, DEFAULT_DATE_TIME_FORMAT)}
             </Flex>
           </EtherscanLink>
         </Flex>

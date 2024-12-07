@@ -148,9 +148,9 @@ export function ManageDAOMenu() {
       guard.userHasVotes
     ) {
       if (type === GovernanceType.MULTISIG) {
-        return [freezeOption, modifyGovernanceOption, settingsOption];
+        return [settingsOption, freezeOption, modifyGovernanceOption];
       } else {
-        return [freezeOption, settingsOption];
+        return [settingsOption, freezeOption];
       }
     } else if (
       guard.freezeProposalCreatedTime !== null &&
@@ -163,20 +163,17 @@ export function ManageDAOMenu() {
         module => module.moduleType === FractalModuleType.FRACTAL,
       );
       if (fractalModule) {
-        return [clawBackOption, settingsOption];
+        return [settingsOption, clawBackOption];
       } else {
         return [settingsOption];
       }
     } else {
-      const optionsArr = [];
-      if (canUserCreateProposal) {
-        if (type === GovernanceType.MULTISIG) {
-          optionsArr.push(modifyGovernanceOption);
-        }
-      }
-
-      optionsArr.push(settingsOption);
-      return optionsArr;
+      return [
+        settingsOption,
+        ...(canUserCreateProposal && type === GovernanceType.MULTISIG
+          ? [modifyGovernanceOption]
+          : []),
+      ];
     }
   }, [
     guard,
@@ -190,7 +187,26 @@ export function ManageDAOMenu() {
     canUserCreateProposal,
   ]);
 
-  return (
+  return options.length === 1 ? (
+    <IconButton
+      aria-label="Manage DAO"
+      icon={
+        <Icon
+          as={GearFine}
+          boxSize="1.25rem"
+        />
+      }
+      onClick={options[0].onClick}
+      variant="tertiary"
+      p="0.25rem"
+      h="fit-content"
+      sx={{
+        span: {
+          h: '1.25rem',
+        },
+      }}
+    />
+  ) : (
     <OptionMenu
       trigger={
         <Icon
@@ -198,7 +214,6 @@ export function ManageDAOMenu() {
           boxSize="1.25rem"
         />
       }
-      titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
       buttonAs={IconButton}
