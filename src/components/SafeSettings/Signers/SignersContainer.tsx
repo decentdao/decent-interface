@@ -1,11 +1,10 @@
-import { Button, Flex, Hide, HStack, Icon, Show, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Hide, HStack, Icon, Show, Text } from '@chakra-ui/react';
 import { MinusCircle, PlusCircle } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
-import { StyledBox } from '../../ui/containers/StyledBox';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
@@ -102,7 +101,7 @@ export function SignersContainer() {
   }, [account, signers]);
 
   return (
-    <StyledBox width="100%">
+    <Box width="100%">
       <Flex justifyContent="space-between">
         <Text>{t('signers', { ns: 'common' })}</Text>
         {userIsSigner && (
@@ -131,6 +130,6 @@ export function SignersContainer() {
             threshold={safe?.threshold}
           />
         ))}
-    </StyledBox>
+    </Box>
   );
 }
