@@ -39,7 +39,7 @@ export function SafeGovernanceSettingsPage() {
       <SettingsContentBox
         display="flex"
         flexDirection="column"
-        gap="0.5rem"
+        gap="1.5rem"
       >
         {(isERC20Governance || isERC721Governance) && (
           <Box width="100%">
