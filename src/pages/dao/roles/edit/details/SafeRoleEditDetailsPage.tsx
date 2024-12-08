@@ -46,7 +46,6 @@ export function SafeRoleEditDetailsPage() {
   if (hatIndex === undefined) return null;
 
   const role = values.hats[hatIndex];
-  if (!role) return null;
 
   const goBackToRolesEdit = () => {
     backupRoleEditing.current = values.roleEditing;
@@ -101,7 +100,7 @@ export function SafeRoleEditDetailsPage() {
                   path: DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address),
                 },
                 {
-                  terminus: role.name ?? t('new'),
+                  terminus: role?.name ?? t('new'),
                   path: '',
                 },
               ]}
