@@ -1,5 +1,4 @@
-import { Flex, Text, Icon, LinkProps } from '@chakra-ui/react';
-import { ArrowUpRight } from '@phosphor-icons/react';
+import { Flex, Text, LinkProps } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { Address } from 'viem';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
@@ -36,13 +35,6 @@ export function DisplayAddress({
         >
           {children || displayAddress.displayName}
         </Text>
-        {!isTextLink && (
-          <Icon
-            as={ArrowUpRight}
-            mt="0.15rem"
-            ml="0.5rem"
-          />
-        )}
       </Flex>
     </EtherscanLink>
   );
