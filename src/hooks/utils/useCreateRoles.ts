@@ -915,6 +915,9 @@ export default function useCreateRoles() {
           throw new Error('Cannot prepare transactions for edited role without smart address');
         }
         const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
+        if (!newPredictedHatSmartAccount) {
+          throw new Error('Cannot predict smart account');
+        }
         const newStreamTxData = createBatchLinearStreamCreationTx(
           newStreamsOnHat.map(stream => ({ ...stream, recipient: newPredictedHatSmartAccount })),
         );
