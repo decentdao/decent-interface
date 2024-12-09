@@ -188,9 +188,8 @@ export function PaginationCount({ shownTransactions }: { shownTransactions: numb
         type="address"
         value={safe.address}
         p={0}
+        isTextLink
         textStyle="labels-large"
-        outline="unset"
-        outlineOffset="unset"
         borderWidth={0}
       >
         {t('transactionsTotalCount', { count: totalTransfers })}

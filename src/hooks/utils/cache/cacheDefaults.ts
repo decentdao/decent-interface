@@ -1,3 +1,4 @@
+import { TokenInfoResponse } from '@safe-global/api-kit';
 import { Address } from 'viem';
 import { AzoriusProposal, DaoHierarchyInfo } from '../../../types';
 
@@ -34,52 +35,60 @@ export enum CacheKeys {
   MIGRATION = 'Migration',
   IPFS_HASH = 'IPFS Hash',
   HIERARCHY_DAO_INFO = 'Hierarchy DAO Info',
+  TOKEN_INFO = 'Token Info',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
 }
 
-export type CacheKey = {
+type CacheKey = {
   cacheName: CacheKeys;
   version: number;
 };
 
-export interface FavoritesCacheKey extends CacheKey {
+interface FavoritesCacheKey extends CacheKey {
   cacheName: CacheKeys.FAVORITES;
 }
 
-export interface MasterCacheKey extends CacheKey {
+interface MasterCacheKey extends CacheKey {
   cacheName: CacheKeys.MASTER_COPY;
   chainId: number;
   proxyAddress: Address;
   moduleProxyFactoryAddress: Address;
 }
 
-export interface ProposalCacheKey extends CacheKey {
+interface ProposalCacheKey extends CacheKey {
   cacheName: CacheKeys.PROPOSAL_CACHE;
   proposalId: string;
   contractAddress: Address;
 }
 
-export interface AverageBlockTimeCacheKey extends CacheKey {
+interface AverageBlockTimeCacheKey extends CacheKey {
   cacheName: CacheKeys.AVERAGE_BLOCK_TIME;
   chainId: number;
 }
 
-export interface IPFSHashCacheKey extends CacheKey {
+interface IPFSHashCacheKey extends CacheKey {
   cacheName: CacheKeys.IPFS_HASH;
   hash: string;
   chainId: number;
 }
-export interface HierarchyDAOInfoCacheKey extends CacheKey {
+interface HierarchyDAOInfoCacheKey extends CacheKey {
   cacheName: CacheKeys.HIERARCHY_DAO_INFO;
   chainId: number;
   daoAddress: Address;
 }
 
+interface TokenInfoCacheKey extends CacheKey {
+  cacheName: CacheKeys.TOKEN_INFO;
+  chainId: number;
+  tokenAddress: Address;
+}
+
 export type CacheKeyType =
   | FavoritesCacheKey
   | HierarchyDAOInfoCacheKey
+  | TokenInfoCacheKey
   | MasterCacheKey
   | ProposalCacheKey
   | AverageBlockTimeCacheKey
@@ -105,6 +114,7 @@ type CacheKeyToValueMap = {
   [CacheKeys.MIGRATION]: number;
   [CacheKeys.IPFS_HASH]: string;
   [CacheKeys.HIERARCHY_DAO_INFO]: DaoHierarchyInfo;
+  [CacheKeys.TOKEN_INFO]: TokenInfoResponse;
 };
 
 export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }
@@ -123,6 +133,7 @@ export const CACHE_VERSIONS: { [key: string]: number } = Object.freeze({
   [CacheKeys.PROPOSAL_CACHE]: 1,
   [CacheKeys.AVERAGE_BLOCK_TIME]: 1,
   [CacheKeys.HIERARCHY_DAO_INFO]: 1,
+  [CacheKeys.TOKEN_INFO]: 1,
 });
 
 /**

@@ -142,11 +142,12 @@ export function Multisig(props: ICreationStepProps) {
             }
             isRequired
           >
-            {/* @todo replace with stepper input */}
-            <NumberStepperInput
-              onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
-              value={values.multisig.signatureThreshold}
-            />
+            <Flex w="200px">
+              <NumberStepperInput
+                onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
+                value={values.multisig.signatureThreshold}
+              />
+            </Flex>
           </LabelComponent>
         </Flex>
       </StepWrapper>

@@ -319,8 +319,12 @@ export function RolePaymentDetails({
             mx={4}
           >
             <Flex justifyContent="space-between">
-              <Flex gap={2}>
+              <Flex
+                alignItems="center"
+                gap={2}
+              >
                 <Image
+                  h="2rem"
                   src={payment.asset.logo}
                   fallbackSrc="/images/coin-icon-default.svg"
                 />

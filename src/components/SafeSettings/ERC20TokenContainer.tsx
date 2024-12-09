@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../types';
 import { formatCoin } from '../../utils';
-import { StyledBox } from '../ui/containers/StyledBox';
 import { DisplayAddress } from '../ui/links/DisplayAddress';
 import { BarLoader } from '../ui/loaders/BarLoader';
 
@@ -15,13 +14,17 @@ export function ERC20TokenContainer() {
   const { votesToken } = azoriusGovernance;
 
   return (
-    <StyledBox width="100%">
+    <Box width="100%">
       <Text textStyle="heading-small">{t('governanceTokenTitle')}</Text>
       {votesToken ? (
         <Flex
           justifyContent="space-between"
           flexWrap={{ base: 'wrap', md: 'nowrap' }}
           mt={4}
+          p="1.5rem"
+          borderWidth="0.06rem"
+          borderColor="neutral-3"
+          borderRadius="0.75rem"
         >
           {/* TOKEN NAME */}
           <Box w={{ base: 'full', sm: 'auto' }}>
@@ -76,6 +79,6 @@ export function ERC20TokenContainer() {
           <BarLoader />
         </Flex>
       )}
-    </StyledBox>
+    </Box>
   );
 }
