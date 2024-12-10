@@ -117,12 +117,11 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
         const filteredStreamIds = streamIdsToHatIdsMap
           .filter(ids => ids.hatId === BigInt(roleHat.id))
           .map(ids => ids.streamId);
+
         return {
           ...roleHat,
           payments: roleHat.isTermed
-            ? roleHat.payments?.filter(payment => {
-                return filteredStreamIds.includes(payment.streamId);
-              })
+            ? roleHat.payments?.filter(payment => filteredStreamIds.includes(payment.streamId))
             : roleHat.payments,
         };
       }),

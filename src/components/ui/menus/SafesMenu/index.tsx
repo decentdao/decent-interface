@@ -51,17 +51,29 @@ export function SafesMenu() {
               />
             </Button>
           }
-          options={favoritesList.map(favorite => ({
-            optionKey: `${favorite.networkPrefix}:${favorite.address}`,
-            onClick: () => {},
-            renderer: () => (
-              <SafeMenuItem
-                name={favorite.name}
-                address={favorite.address}
-                network={favorite.networkPrefix}
-              />
-            ),
-          }))}
+          options={
+            !favoritesList.length
+              ? [
+                  {
+                    optionKey: 'empty-favorites',
+                    onClick: () => {},
+                    renderer: () => (
+                      <Text padding="1rem">{t('emptyFavorites', { ns: 'dashboard' })}</Text>
+                    ),
+                  },
+                ]
+              : favoritesList.map(favorite => ({
+                  optionKey: `${favorite.networkPrefix}:${favorite.address}`,
+                  onClick: () => {},
+                  renderer: () => (
+                    <SafeMenuItem
+                      name={favorite.name}
+                      address={favorite.address}
+                      network={favorite.networkPrefix}
+                    />
+                  ),
+                }))
+          }
           buttonAs={Button}
           buttonProps={{
             variant: 'tertiary',
