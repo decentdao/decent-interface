@@ -207,7 +207,7 @@ const useHatsTree = () => {
           const logo =
             getValue({
               cacheName: CacheKeys.TOKEN_INFO,
-              tokenAddress: lockupLinearStream.asset.address,
+              tokenAddress: getAddress(lockupLinearStream.asset.address),
             })?.logoUri || '';
 
           return {
