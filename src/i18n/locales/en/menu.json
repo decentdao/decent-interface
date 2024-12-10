@@ -3,8 +3,6 @@
   "connectWallet": "Connect Wallet",
   "disconnect": "Disconnect",
   "wallet": "Wallet",
-  "titleManageDAO": "Manage Safe",
-  "titleViewDAODetails": "View Safe Details",
   "titleManageProposalTemplate": "Manage Template",
   "optionCreateSubDAO": "Create SubDAO",
   "optionInitiateFreeze": "Initiate a Freeze",

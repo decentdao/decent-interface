@@ -10,27 +10,23 @@ import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLin
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
-import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { SablierPayment } from '../../../types/roles';
 import { convertStreamIdToBigInt } from '../../streams/useCreateSablierStream';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
-import { useParseSafeAddress } from '../useParseSafeAddress';
 
 const hatsSubgraphClient = new HatsSubgraphClient({});
 
 const useHatsTree = () => {
   const { t } = useTranslation('roles');
-  const { safeAddress } = useParseSafeAddress();
   const {
     governanceContracts: {
       linearVotingErc20WithHatsWhitelistingAddress,
       linearVotingErc721WithHatsWhitelistingAddress,
     },
   } = useFractal();
-  const { safe } = useDaoInfoStore();
   const {
     hatsTreeId,
     contextChainId,
@@ -297,10 +293,10 @@ const useHatsTree = () => {
   }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched]);
 
   useEffect(() => {
-    if (safeAddress && safe?.address && safeAddress !== safe.address && hatsTree) {
+    if (!hatsTreeId && !!hatsTree) {
       resetHatsStore();
     }
-  }, [resetHatsStore, safeAddress, safe?.address, hatsTree]);
+  }, [resetHatsStore, hatsTree, hatsTreeId]);
 };
 
 export { useHatsTree };

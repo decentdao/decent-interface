@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, MenuItem, Spacer, Text } from '@chakra-ui/react';
+import { Button, Flex, Image, MenuItem, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
@@ -28,38 +28,36 @@ export function SafeMenuItem({ address, network, name }: SafeMenuItemProps) {
   };
 
   return (
-    <Box px="0.25rem">
-      <MenuItem
-        as={Button}
-        variant="tertiary"
-        w="full"
-        h="3rem"
-        onClick={onClickNav}
-        noOfLines={1}
-        display="flex"
-        alignItems="center"
-        justifyContent="flex-start"
-        rounded="0.75rem"
-        gap={2}
-      >
-        <Avatar
-          address={address}
-          url={avatarURL}
-        />
-        <Flex flexDir="column">
-          <Text
-            color={name ? 'white-0' : 'neutral-6'}
-            textStyle="body-large"
-          >
-            {name || t('loadingFavorite')}
-          </Text>
-        </Flex>
+    <MenuItem
+      as={Button}
+      variant="tertiary"
+      w="full"
+      h="3rem"
+      onClick={onClickNav}
+      noOfLines={1}
+      display="flex"
+      alignItems="center"
+      justifyContent="flex-start"
+      rounded="0.75rem"
+      gap={2}
+    >
+      <Avatar
+        address={address}
+        url={avatarURL}
+      />
+      <Flex flexDir="column">
+        <Text
+          color={name ? 'white-0' : 'neutral-6'}
+          textStyle="body-large"
+        >
+          {name || t('loadingFavorite')}
+        </Text>
+      </Flex>
 
-        <Spacer />
+      <Spacer />
 
-        {/* Network Icon */}
-        <Image src={getNetworkIcon(network)} />
-      </MenuItem>
-    </Box>
+      {/* Network Icon */}
+      <Image src={getNetworkIcon(network)} />
+    </MenuItem>
   );
 }
