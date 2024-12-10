@@ -1,5 +1,6 @@
 #sentry-feedback {
   z-index: 1;
+  --font-family: 'DM Sans';
   --background: var(--colors-neutral-2);
   --actor-hover-background: var(--colors-neutral-3);
   --actor-border: '1px solid var(--colors-neutral-4)';
