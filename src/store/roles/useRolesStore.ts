@@ -2,8 +2,6 @@ import { getContract, Hex, PublicClient } from 'viem';
 import { create } from 'zustand';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
-import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
-import { getValue } from '../../hooks/utils/cache/useLocalStorage';
 import { DecentRoleHat, RolesStore } from '../../types/roles';
 import { initialHatsStore, sanitize } from './rolesStoreUtils';
 
@@ -119,22 +117,12 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
         const filteredStreamIds = streamIdsToHatIdsMap
           .filter(ids => ids.hatId === BigInt(roleHat.id))
           .map(ids => ids.streamId);
+
         return {
           ...roleHat,
-          payments: (roleHat.isTermed
-            ? roleHat.payments?.filter(payment => {
-                return filteredStreamIds.includes(payment.streamId);
-              })
-            : roleHat.payments
-          )?.map(p => ({
-            ...p,
-            asset: {
-              ...p.asset,
-              logo:
-                getValue({ cacheName: CacheKeys.TOKEN_INFO, tokenAddress: p.asset.address })
-                  ?.logoUri || '',
-            },
-          })),
+          payments: roleHat.isTermed
+            ? roleHat.payments?.filter(payment => filteredStreamIds.includes(payment.streamId))
+            : roleHat.payments,
         };
       }),
     };
