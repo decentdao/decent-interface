@@ -3,6 +3,7 @@ export interface IOption {
   count?: number;
   onClick: () => void;
   isSelected?: boolean;
+  renderer?: () => JSX.Element;
 }
 
 export interface IOptionsList {
@@ -10,6 +11,6 @@ export interface IOptionsList {
   closeOnSelect?: boolean;
   showOptionCount?: boolean;
   showOptionSelected?: boolean;
-  namespace: string;
+  namespace?: string;
   titleKey?: string;
 }
