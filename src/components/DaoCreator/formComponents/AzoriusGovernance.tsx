@@ -37,7 +37,7 @@ function DayStepperInput({
       <Flex
         flexDirection="column"
         gap="0.5rem"
-        w="250"
+        w="250px"
       >
         <NumberStepperInput
           unitHint={t('days', { ns: 'common' })}
