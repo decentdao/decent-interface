@@ -4,7 +4,7 @@
   "errorLowSignerThreshold": "Threshold must be greater than 0",
   "errorHighSignerThreshold": "Threshold must be less than number of owners.",
   "labelSigThreshold": "Threshold",
-  "helperSigThreshold": "The number of owners required to approve a transaction on this multisig",
+  "helperSigThreshold": "The number of owners required to approve a transaction on this multisig.",
   "titleSignerAddresses": "Owners",
   "subTitleSignerAddresses": "These addresses will be able to approve or reject transactions on this multisig.",
   "titleGetStarted": "Get Started",
