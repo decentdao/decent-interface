@@ -44,7 +44,7 @@ export function SafeController() {
   useAzoriusListeners();
 
   useKeyValuePairs();
-  useHatsTree();
+  useHatsTree({ safeAddress });
 
   // the order of the if blocks of these next three error states matters
   if (invalidQuery) {
