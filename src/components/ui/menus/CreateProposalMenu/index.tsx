@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { OptionMenu } from '../OptionMenu';
 
 export function CreateProposalMenu({ safeAddress }: { safeAddress: Address }) {
   const { t } = useTranslation('proposal');
 
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   const navigate = useNavigate();
 

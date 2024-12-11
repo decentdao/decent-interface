@@ -14,7 +14,7 @@ import { getSafeName } from '../../../../hooks/utils/useGetSafeName';
 import {
   getNetworkConfig,
   supportedNetworks,
-} from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+} from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { wagmiConfig } from '../../../../providers/NetworkConfig/web3-modal.config';
 import { getChainIdFromPrefix } from '../../../../utils/url';
 import { Layout } from '../Layout';

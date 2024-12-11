@@ -2,11 +2,9 @@ import { Button, Flex, Image, MenuItem, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
-import { useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useAvatar from '../../../../hooks/utils/useAvatar';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
+import { getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
 
 export interface SafeMenuItemProps {
@@ -20,26 +18,13 @@ export interface SafeMenuItemProps {
 export function SafeMenuItem({ address, network, name }: SafeMenuItemProps) {
   const navigate = useNavigate();
 
-  const { addressPrefix } = useNetworkConfig();
-  const { switchChain } = useSwitchChain({
-    mutation: {
-      onSuccess: () => {
-        navigate(DAO_ROUTES.dao.relative(network, address));
-      },
-    },
-  });
-
   // if by chance the safe name is an ENS name, let's attempt to get the avatar for that
   const avatarURL = useAvatar(name);
 
   const { t } = useTranslation('dashboard');
 
   const onClickNav = () => {
-    if (addressPrefix !== network) {
-      switchChain({ chainId: getChainIdFromPrefix(network) });
-    } else {
-      navigate(DAO_ROUTES.dao.relative(network, address));
-    }
+    navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
   return (

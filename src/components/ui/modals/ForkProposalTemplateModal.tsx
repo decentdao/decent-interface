@@ -8,7 +8,7 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
 import { validateAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { InputComponent } from '../forms/InputComponent';
@@ -32,7 +32,7 @@ export default function ForkProposalTemplateModal({
   const { t } = useTranslation('proposalTemplate');
   const navigate = useNavigate();
   const publicClient = usePublicClient();
-  const { chain, addressPrefix } = useNetworkConfig();
+  const { chain, addressPrefix } = useNetworkConfigStore();
   const { subgraphInfo } = useDaoInfoStore();
 
   const { isSafe, isSafeLoading } = useIsSafe(targetDAOAddress);

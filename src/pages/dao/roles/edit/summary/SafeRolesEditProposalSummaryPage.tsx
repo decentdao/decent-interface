@@ -7,7 +7,7 @@ import { RoleFormCreateProposal } from '../../../../../components/Roles/forms/Ro
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { CONTENT_MAXW } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
-import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { RoleFormValues } from '../../../../../types/roles';
 
@@ -15,7 +15,7 @@ export function SafeRolesEditProposalSummaryPage() {
   const navigate = useNavigate();
   const { safe } = useDaoInfoStore();
   const { t } = useTranslation(['roles', 'breadcrumbs']);
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { values } = useFormikContext<RoleFormValues>();
 
   const safeAddress = safe?.address;

@@ -5,10 +5,10 @@ import {
   StetoscopeIllustrationDesktop,
 } from '../components/ui/icons/Icons';
 import { CONTENT_MAXW } from '../constants/common';
-import { useNetworkConfig } from '../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../providers/NetworkConfig/useNetworkConfigStore';
 
 function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQueryParam' }) {
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
   const { t } = useTranslation('common');
 
   return (

@@ -34,7 +34,7 @@ export function AccountDisplay({ containerRef }: AccountDisplayProps) {
       </Button>
 
       <Portal containerRef={containerRef}>
-        <WalletMenu containerRef={containerRef} />
+        <WalletMenu />
       </Portal>
     </Menu>
   );

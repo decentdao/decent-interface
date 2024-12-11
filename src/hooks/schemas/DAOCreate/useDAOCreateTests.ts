@@ -4,7 +4,7 @@ import { isAddress, erc20Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { validateENSName } from '../../../utils/url';
 import { validateAddress } from '../common/useValidationAddress';
@@ -22,7 +22,7 @@ export function useDAOCreateTests() {
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
   const { t } = useTranslation(['daoCreate', 'common']);
   const publicClient = usePublicClient();
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
 
   const minValueValidation = useMemo(
     () => (minValue: number) => {

@@ -13,7 +13,7 @@ import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 
@@ -23,7 +23,7 @@ export function SafeRolesPage() {
   }, []);
 
   const { hatsTree } = useRolesStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { t } = useTranslation(['roles']);
   const { safe } = useDaoInfoStore();
   const navigate = useNavigate();

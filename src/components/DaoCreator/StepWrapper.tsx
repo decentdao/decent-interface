@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { CreatorSteps } from '../../types';
 import PageHeader from '../ui/page/Header/PageHeader';
@@ -49,7 +49,7 @@ export function StepWrapper({
   shouldWrapChildren = true,
 }: IStepWrapper) {
   const { safe } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { t } = useTranslation(['breadcrumbs']);
   const navigate = useNavigate();
 

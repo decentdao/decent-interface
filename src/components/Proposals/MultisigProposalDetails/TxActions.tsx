@@ -14,7 +14,7 @@ import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { MultisigProposal, FractalProposalState } from '../../../types';
 import { DecentTooltip } from '../../ui/DecentTooltip';
@@ -42,7 +42,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     }
   }, [proposal.state]);
 
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
