@@ -24,7 +24,10 @@ export const useGovernanceContracts = () => {
   const safeAddress = safe?.address;
 
   const loadGovernanceContracts = useCallback(async () => {
-    const azoriusModule = getAzoriusModuleFromModules(modules ?? []);
+    if (!modules) {
+      return;
+    }
+    const azoriusModule = getAzoriusModuleFromModules(modules);
 
     const votingStrategies = await getVotingStrategies();
 
@@ -131,7 +134,11 @@ export const useGovernanceContracts = () => {
   }, [action, modules, getVotingStrategies, publicClient, getAddressContractType]);
 
   useEffect(() => {
-    if (currentValidAddress.current !== safeAddress && modules !== null) {
+    if (
+      safeAddress !== undefined &&
+      currentValidAddress.current !== safeAddress &&
+      modules !== null
+    ) {
       loadGovernanceContracts();
       currentValidAddress.current = safeAddress;
     }
