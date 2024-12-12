@@ -11,12 +11,12 @@ const useSharedAccountFavorites = () => {
   );
   return {
     favoritesList,
-    setFavoritesList
+    setFavoritesList,
   };
 };
 
 export const useAccountFavorites = () => {
-  const { favoritesList, setFavoritesList } = useBetween(useSharedAccountFavorites)
+  const { favoritesList, setFavoritesList } = useBetween(useSharedAccountFavorites);
   const { addressPrefix } = useNetworkConfig();
 
   const toggleFavorite = (address: Address, name: string) => {
