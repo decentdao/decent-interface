@@ -25,9 +25,9 @@ export const useAutomaticSwitchChain = ({
       return;
     }
     const chainId = getChainIdFromPrefix(urlAddressPrefix);
-    setCurrentConfig(getConfigByChainId(chainId));
     if (addressPrefix !== urlAddressPrefix && urlAddressPrefix !== undefined) {
       switchChain({ chainId });
     }
+    setTimeout(() => setCurrentConfig(getConfigByChainId(chainId)), 300);
   }, [addressPrefix, setCurrentConfig, getConfigByChainId, urlAddressPrefix, switchChain]);
 };
