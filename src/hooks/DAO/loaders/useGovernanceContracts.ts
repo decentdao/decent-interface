@@ -25,7 +25,7 @@ export const useGovernanceContracts = () => {
 
   const loadGovernanceContracts = useCallback(async () => {
     if (!modules) {
-      return;
+      throw new Error('DAO modules not ready');
     }
     const azoriusModule = getAzoriusModuleFromModules(modules);
 
