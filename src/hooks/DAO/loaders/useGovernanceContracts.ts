@@ -29,7 +29,6 @@ export const useGovernanceContracts = () => {
       const azoriusModule = getAzoriusModuleFromModules(daoModules);
 
       const votingStrategies = await getVotingStrategies();
-
       if (!azoriusModule || !votingStrategies) {
         action.dispatch({
           type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES,
@@ -78,9 +77,8 @@ export const useGovernanceContracts = () => {
           });
 
           try {
-            const lockedTokenAddress = await possibleLockRelease.read.token();
+            votesTokenAddress = await possibleLockRelease.read.token();
             lockReleaseAddress = govTokenAddress;
-            votesTokenAddress = lockedTokenAddress;
           } catch {
             throw new Error('Unknown governance token type');
           }
