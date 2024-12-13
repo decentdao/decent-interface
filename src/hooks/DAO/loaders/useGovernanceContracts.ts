@@ -46,7 +46,6 @@ export const useGovernanceContracts = () => {
       let linearVotingErc20WithHatsWhitelistingAddress: Address | undefined;
       let linearVotingErc721WithHatsWhitelistingAddress: Address | undefined;
       let votesTokenAddress: Address | undefined;
-      let underlyingTokenAddress: Address | undefined;
       let lockReleaseAddress: Address | undefined;
 
       const setGovTokenAddress = async (erc20VotingStrategyAddress: Address) => {
@@ -122,7 +121,6 @@ export const useGovernanceContracts = () => {
             linearVotingErc721Address,
             linearVotingErc721WithHatsWhitelistingAddress,
             votesTokenAddress,
-            underlyingTokenAddress,
             lockReleaseAddress,
             moduleAzoriusAddress: azoriusModule.moduleAddress,
           },

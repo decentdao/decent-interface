@@ -216,7 +216,6 @@ export interface FractalGovernanceContracts {
   moduleAzoriusAddress?: Address;
   votesTokenAddress?: Address;
   lockReleaseAddress?: Address;
-  underlyingTokenAddress?: Address;
   isLoaded: boolean;
 }
 

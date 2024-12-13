@@ -152,15 +152,17 @@ export function SafePermissionsSettingsPage() {
                   </Text>
                 </Box>
               </Flex>
-              <IconButton
-                variant="secondary"
-                size="icon-md"
-                icon={<PencilWithLineIcon />}
-                aria-label={t('edit')}
-                opacity={0}
-                color="neutral-6"
-                border="none"
-              />
+              {canUserCreateProposal && (
+                <IconButton
+                  variant="secondary"
+                  size="icon-md"
+                  icon={<PencilWithLineIcon />}
+                  aria-label={t('edit')}
+                  opacity={0}
+                  color="neutral-6"
+                  border="none"
+                />
+              )}
             </Flex>
           </Card>
         )}

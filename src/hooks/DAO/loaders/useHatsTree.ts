@@ -200,6 +200,12 @@ const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
             ? secondsTimestampToDate(lockupLinearStream.cliffTime)
             : undefined;
 
+          const logo =
+            getValue({
+              cacheName: CacheKeys.TOKEN_INFO,
+              tokenAddress: getAddress(lockupLinearStream.asset.address),
+            })?.logoUri || '';
+
           return {
             streamId: lockupLinearStream.id,
             contractAddress: lockupLinearStream.contract.address,
@@ -209,7 +215,7 @@ const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
               name: lockupLinearStream.asset.name,
               symbol: lockupLinearStream.asset.symbol,
               decimals: lockupLinearStream.asset.decimals,
-              logo: '', // @todo - how do we get logo?
+              logo,
             },
             amount: {
               bigintValue: BigInt(lockupLinearStream.depositAmount),

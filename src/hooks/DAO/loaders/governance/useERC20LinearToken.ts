@@ -1,5 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { getContract } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -10,24 +10,12 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
   const tokenAccount = useRef<string>();
 
   const {
-    governanceContracts: { votesTokenAddress, underlyingTokenAddress },
+    governanceContracts: { votesTokenAddress },
     action,
   } = useFractal();
   const user = useAccount();
   const account = user.address;
   const publicClient = usePublicClient();
-
-  const underlyingTokenContract = useMemo(() => {
-    if (!underlyingTokenAddress || !publicClient) {
-      return;
-    }
-
-    return getContract({
-      abi: abis.VotesERC20,
-      address: underlyingTokenAddress,
-      client: publicClient,
-    });
-  }, [publicClient, underlyingTokenAddress]);
 
   const loadERC20Token = useCallback(async () => {
     if (!votesTokenAddress || !publicClient) {
@@ -56,26 +44,6 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     isTokenLoaded.current = true;
     action.dispatch({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
   }, [action, publicClient, votesTokenAddress]);
-
-  const loadUnderlyingERC20Token = useCallback(async () => {
-    if (!underlyingTokenContract) {
-      return;
-    }
-
-    const [tokenName, tokenSymbol] = await Promise.all([
-      underlyingTokenContract.read.name(),
-      underlyingTokenContract.read.symbol(),
-    ]);
-    const tokenData = {
-      name: tokenName,
-      symbol: tokenSymbol,
-      address: underlyingTokenContract.address,
-    };
-    action.dispatch({
-      type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA,
-      payload: tokenData,
-    });
-  }, [underlyingTokenContract, action]);
 
   const loadERC20TokenAccountData = useCallback(async () => {
     if (!account || !votesTokenAddress || !publicClient) {
@@ -209,5 +177,5 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     };
   }, [account, loadERC20TokenAccountData, onMount, publicClient, votesTokenAddress]);
 
-  return { loadERC20Token, loadUnderlyingERC20Token, loadERC20TokenAccountData };
+  return { loadERC20Token, loadERC20TokenAccountData };
 };
