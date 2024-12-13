@@ -29,7 +29,9 @@ export enum ProposalBuilderMode {
   // UI / UX for this globally is in flux.
   PROPOSAL_WITH_ACTIONS = 'PROPOSAL_WITH_ACTIONS',
   PROPOSAL = 'PROPOSAL',
+  PROPOSAL_FROM_TEMPLATE = 'PROPOSAL_FROM_TEMPLATE',
   TEMPLATE = 'TEMPLATE',
+  SABLIER = 'SABLIER',
 }
 export type CreateProposalForm = {
   transactions: CreateProposalTransaction[];
