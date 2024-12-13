@@ -8,7 +8,6 @@ import {
   useDisclosure,
   useOutsideClick,
   Portal,
-  Flex,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -152,19 +151,14 @@ export function DAOSearch() {
             position="absolute"
           >
             {safeFoundNetworkPrefixes.map(networkPrefix => (
-              <Flex
-                gap={2}
-                flexDir="column"
+              <SearchDisplay
                 key={networkPrefix}
-              >
-                <SearchDisplay
-                  loading={isLoading}
-                  errorMessage={errorMessage}
-                  address={address}
-                  networkPrefix={networkPrefix}
-                  onClickView={resetSearch}
-                />
-              </Flex>
+                loading={isLoading}
+                errorMessage={errorMessage}
+                address={address}
+                networkPrefix={networkPrefix}
+                onClickView={resetSearch}
+              />
             ))}
           </Box>
         </Popover>
