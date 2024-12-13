@@ -136,7 +136,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     ]);
 
     // build token if token is not imported
-    if (data.isVotesToken && data.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
+    if (!data.isTokenImported && data.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       txs.push(azoriusTxBuilder.buildCreateTokenTx());
     }
 
