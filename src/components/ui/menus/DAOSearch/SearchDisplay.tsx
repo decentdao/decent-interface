@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { SafeDisplayRow } from '../../../../pages/home/SafeDisplayRow';
-import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { MySafesErrorFallback } from '../../utils/MySafesErrorFallback';
@@ -14,12 +13,18 @@ interface ISearchDisplay {
   errorMessage: string | undefined;
   address: Address | undefined;
   onClickView: Function;
+  networkPrefix: string;
 }
 
-export function SearchDisplay({ loading, errorMessage, address, onClickView }: ISearchDisplay) {
+export function SearchDisplay({
+  loading,
+  errorMessage,
+  address,
+  onClickView,
+  networkPrefix,
+}: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const node = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfigStore();
 
   const isCurrentSafe = useMemo(
     () => !!node && !!node?.safe?.address && node.safe.address === address,
@@ -85,7 +90,7 @@ export function SearchDisplay({ loading, errorMessage, address, onClickView }: I
           <SafeDisplayRow
             name={undefined}
             address={address}
-            network={addressPrefix}
+            network={networkPrefix}
             onClick={() => {
               onClickView();
             }}

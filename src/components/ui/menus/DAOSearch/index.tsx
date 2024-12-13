@@ -8,6 +8,7 @@ import {
   useDisclosure,
   useOutsideClick,
   Portal,
+  Flex,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -21,7 +22,8 @@ export function DAOSearch() {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState<string>('');
   const [typing, setTyping] = useState<boolean>(false);
-  const { errorMessage, isLoading, address, setSearchString } = useSearchDao();
+  const { errorMessage, isLoading, address, setSearchString, safeFoundNetworkPrefixes } =
+    useSearchDao();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const ref = useRef<HTMLInputElement>(null);
@@ -149,12 +151,21 @@ export function DAOSearch() {
             w="full"
             position="absolute"
           >
-            <SearchDisplay
-              loading={isLoading}
-              errorMessage={errorMessage}
-              address={address}
-              onClickView={resetSearch}
-            />
+            {safeFoundNetworkPrefixes.map(networkPrefix => (
+              <Flex
+                gap={2}
+                flexDir="column"
+                key={networkPrefix}
+              >
+                <SearchDisplay
+                  loading={isLoading}
+                  errorMessage={errorMessage}
+                  address={address}
+                  networkPrefix={networkPrefix}
+                  onClickView={resetSearch}
+                />
+              </Flex>
+            ))}
           </Box>
         </Popover>
       </Box>
