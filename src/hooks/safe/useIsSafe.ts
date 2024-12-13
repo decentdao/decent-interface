@@ -1,7 +1,6 @@
-import SafeApiKit from '@safe-global/api-kit';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isAddress } from 'viem';
-import { supportedNetworks } from '../../providers/NetworkConfig/useNetworkConfigStore';
+import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 
 /**
  * A hook which determines whether the provided Ethereum address is a Safe
@@ -16,43 +15,25 @@ import { supportedNetworks } from '../../providers/NetworkConfig/useNetworkConfi
  */
 export const useIsSafe = (address: string | undefined) => {
   const [isSafeLoading, setSafeLoading] = useState<boolean>(false);
-  const [isSafe, setIsSafe] = useState<boolean | undefined>(undefined);
-  const [safeFoundNetworkPrefixes, setNetworkPrefixes] = useState<string[]>([]);
-
-  const findSafes = useCallback(async (_address: string) => {
-    const networkPrefixes = []; // address prefixes
-    for await (const network of supportedNetworks) {
-      const safeAPI = new SafeApiKit({ chainId: BigInt(network.chain.id) });
-      safeAPI.getSafeCreationInfo(_address);
-      try {
-        await safeAPI.getSafeCreationInfo(_address);
-        networkPrefixes.push(network.addressPrefix);
-      } catch (e) {
-        // Safe not found
-        continue;
-      }
-    }
-    return [networkPrefixes, networkPrefixes.length > 0] as const; // [networks, isSafe]
-  }, []);
+  const [isSafe, setIsSafe] = useState<boolean | undefined>();
+  const safeAPI = useSafeAPI();
 
   useEffect(() => {
     setSafeLoading(true);
     setIsSafe(undefined);
 
-    if (!address || !isAddress(address)) {
+    if (!address || !isAddress(address) || !safeAPI) {
       setIsSafe(false);
       setSafeLoading(false);
       return;
     }
 
-    findSafes(address)
-      .then(([_safeFoundNetworkPrefixes, _isSafe]) => {
-        setNetworkPrefixes(_safeFoundNetworkPrefixes);
-        setIsSafe(_isSafe);
-      })
+    safeAPI
+      .getSafeCreationInfo(address)
+      .then(() => setIsSafe(true))
       .catch(() => setIsSafe(false))
       .finally(() => setSafeLoading(false));
-  }, [address, findSafes]);
+  }, [address, safeAPI]);
 
-  return { isSafe, isSafeLoading, safeFoundNetworkPrefixes };
+  return { isSafe, isSafeLoading };
 };
