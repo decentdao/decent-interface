@@ -19,7 +19,7 @@ import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
 const hatsSubgraphClient = new HatsSubgraphClient({});
 
-const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
+const useHatsTree = () => {
   const { t } = useTranslation('roles');
   const {
     governanceContracts: {
@@ -34,7 +34,6 @@ const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
     streamsFetched,
     setHatsTree,
     updateRolesWithStreams,
-    resetHatsStore,
   } = useRolesStore();
 
   const ipfsClient = useIPFSClient();
@@ -200,6 +199,12 @@ const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
             ? secondsTimestampToDate(lockupLinearStream.cliffTime)
             : undefined;
 
+          const logo =
+            getValue({
+              cacheName: CacheKeys.TOKEN_INFO,
+              tokenAddress: getAddress(lockupLinearStream.asset.address),
+            })?.logoUri || '';
+
           return {
             streamId: lockupLinearStream.id,
             contractAddress: lockupLinearStream.contract.address,
@@ -209,7 +214,7 @@ const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
               name: lockupLinearStream.asset.name,
               symbol: lockupLinearStream.asset.symbol,
               decimals: lockupLinearStream.asset.decimals,
-              logo: '', // @todo - how do we get logo?
+              logo,
             },
             amount: {
               bigintValue: BigInt(lockupLinearStream.depositAmount),
@@ -291,12 +296,6 @@ const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
 
     getHatsStreams();
   }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched]);
-
-  useEffect(() => {
-    if (safeAddress === undefined) {
-      resetHatsStore();
-    }
-  }, [resetHatsStore, safeAddress]);
 };
 
 export { useHatsTree };

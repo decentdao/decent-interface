@@ -1,13 +1,22 @@
 import { useState } from 'react';
+import { useBetween } from 'use-between';
 import { Address } from 'viem';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { CacheKeys, CacheExpiry, FavoritesCacheValue } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
-export const useAccountFavorites = () => {
+const useSharedAccountFavorites = () => {
   const [favoritesList, setFavoritesList] = useState<FavoritesCacheValue[]>(
     getValue({ cacheName: CacheKeys.FAVORITES }) || [],
   );
+  return {
+    favoritesList,
+    setFavoritesList,
+  };
+};
+
+export const useAccountFavorites = () => {
+  const { favoritesList, setFavoritesList } = useBetween(useSharedAccountFavorites);
   const { addressPrefix } = useNetworkConfigStore();
 
   const toggleFavorite = (address: Address, name: string) => {
