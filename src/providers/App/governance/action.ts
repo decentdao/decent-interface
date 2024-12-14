@@ -6,7 +6,6 @@ import {
   FractalProposalState,
   VotesData,
   VotingStrategy,
-  UnderlyingTokenData,
   GovernanceType,
   ERC721TokenData,
 } from '../../../types';
@@ -30,7 +29,6 @@ export enum FractalGovernanceAction {
   SET_TOKEN_ACCOUNT_DATA = 'SET_TOKEN_ACCOUNT_DATA',
   SET_CLAIMING_CONTRACT = 'SET_CLAIMING_CONTRACT',
   RESET_TOKEN_ACCOUNT_DATA = 'RESET_TOKEN_ACCOUNT_DATA',
-  SET_UNDERLYING_TOKEN_DATA = 'SET_UNDERLYING_TOKEN_DATA',
   PENDING_PROPOSAL_ADD = 'PENDING_PROPOSAL_ADD',
 }
 
@@ -87,10 +85,6 @@ export type FractalGovernanceActions =
   | {
       type: FractalGovernanceAction.SET_TOKEN_DATA;
       payload: ERC20TokenData;
-    }
-  | {
-      type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA;
-      payload: UnderlyingTokenData;
     }
   | {
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
