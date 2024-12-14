@@ -97,7 +97,7 @@ const useKeyValuePairs = () => {
     chain,
     contracts: { keyValuePairs, sablierV2LockupLinear },
   } = useNetworkConfig();
-  const { setHatKeyValuePairData } = useRolesStore();
+  const { setHatKeyValuePairData, resetHatsStore } = useRolesStore();
 
   const safeAddress = node.safe?.address;
 
@@ -159,6 +159,14 @@ const useKeyValuePairs = () => {
     setHatKeyValuePairData,
     sablierV2LockupLinear,
   ]);
+
+  useEffect(() => {
+    if (!safeAddress) {
+      return;
+    }
+
+    resetHatsStore();
+  }, [resetHatsStore, safeAddress]);
 };
 
 export { useKeyValuePairs };
