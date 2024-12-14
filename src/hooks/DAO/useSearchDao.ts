@@ -9,6 +9,7 @@ type ResolvedAddressWithPrefix = {
   chainId: number;
 };
 export const useSearchDao = () => {
+  const { t } = useTranslation('dashboard');
   const { resolveAddressMultiChain, isLoading: isAddressLoading } = useResolveAddressMultiChain();
   const [searchString, setSearchString] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -49,8 +50,6 @@ export const useSearchDao = () => {
     },
     [findSafes, resolveAddressMultiChain],
   );
-
-  const { t } = useTranslation('dashboard');
 
   useEffect(() => {
     setErrorMessage(undefined);
