@@ -49,8 +49,6 @@ export function SafeController() {
   // the order of the if blocks of these next three error states matters
   if (invalidQuery) {
     return <LoadingProblem type="badQueryParam" />;
-  } else if (wrongNetwork) {
-    return <LoadingProblem type="wrongNetwork" />;
   } else if (errorLoading) {
     return <LoadingProblem type="invalidSafe" />;
   }
