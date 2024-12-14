@@ -1,39 +1,70 @@
-import { useState, useEffect } from 'react';
+import SafeApiKit from '@safe-global/api-kit';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
-import { useIsSafe } from '../safe/useIsSafe';
-import useAddress from '../utils/useAddress';
+import { Address } from 'viem';
+import { useResolveAddressMultiChain } from '../utils/useResolveAddressMultiChain';
 
+type ResolvedAddressWithPrefix = {
+  address: Address;
+  chainId: number;
+};
 export const useSearchDao = () => {
+  const { resolveAddressMultiChain, isLoading: isAddressLoading } = useResolveAddressMultiChain();
   const [searchString, setSearchString] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>();
-  // This hook needs to search all supoorted chains for the address
 
-  const { address, isValid, isLoading: isAddressLoading } = useAddress(searchString);
-  const { isSafe, isSafeLoading, safeFoundNetworkPrefixes } = useIsSafe(address);
+  const [isSafeLookupLoading, setIsSafeLookupLoading] = useState<boolean>(false);
+  const [resolvedAddressesWithPrefix, setSafeResolvedAddressesWithPrefix] = useState<
+    ResolvedAddressWithPrefix[]
+  >([]);
+
+  const findSafes = useCallback(
+    async (resolvedAddressesWithChainId: { address: Address; chainId: number }[]) => {
+      setIsSafeLookupLoading(true);
+      for await (const resolved of resolvedAddressesWithChainId) {
+        const safeAPI = new SafeApiKit({ chainId: BigInt(resolved.chainId) });
+        safeAPI.getSafeCreationInfo(resolved.address);
+        try {
+          await safeAPI.getSafeCreationInfo(resolved.address);
+
+          setSafeResolvedAddressesWithPrefix(prevState => [...prevState, resolved]);
+        } catch (e) {
+          // Safe not found
+          continue;
+        }
+      }
+      setIsSafeLookupLoading(false);
+    },
+    [],
+  );
+
+  const resolveInput = useCallback(
+    async (input: string) => {
+      const { resolved, isValid } = await resolveAddressMultiChain(input);
+      if (isValid) {
+        await findSafes(resolved);
+      } else {
+        setErrorMessage('Invalid search');
+      }
+    },
+    [findSafes, resolveAddressMultiChain],
+  );
+
   const { t } = useTranslation('dashboard');
-  const { chain } = useNetworkConfigStore();
-
-  const isLoading = isAddressLoading === true || isSafeLoading === true;
 
   useEffect(() => {
     setErrorMessage(undefined);
-
-    if (searchString === '' || isLoading || isSafe || isValid === undefined) {
+    setSafeResolvedAddressesWithPrefix([]);
+    if (searchString === '') {
       return;
     }
-    if (isValid === true) {
-      setErrorMessage(t('errorFailedSearch'));
-    } else {
-      setErrorMessage(t('errorInvalidSearch'));
-    }
-  }, [chain.name, isLoading, isSafe, isValid, searchString, t]);
+    resolveInput(searchString).catch(() => setErrorMessage(t('errorInvalidSearch')));
+  }, [resolveInput, searchString, t]);
 
   return {
-    safeFoundNetworkPrefixes,
+    resolvedAddressesWithPrefix,
     errorMessage,
-    isLoading,
-    address,
+    isLoading: isAddressLoading || isSafeLookupLoading,
     setSearchString,
     searchString,
   };

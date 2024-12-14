@@ -21,8 +21,7 @@ export function DAOSearch() {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState<string>('');
   const [typing, setTyping] = useState<boolean>(false);
-  const { errorMessage, isLoading, address, setSearchString, safeFoundNetworkPrefixes } =
-    useSearchDao();
+  const { errorMessage, isLoading, setSearchString, resolvedAddressesWithPrefix } = useSearchDao();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const ref = useRef<HTMLInputElement>(null);
@@ -65,9 +64,8 @@ export function DAOSearch() {
   const showResults = useMemo(() => {
     if (typing) return false;
     if (isLoading) return true;
-    const hasMessage = errorMessage !== undefined || address !== undefined;
-    return hasMessage;
-  }, [address, errorMessage, typing, isLoading]);
+    return errorMessage === undefined;
+  }, [errorMessage, typing, isLoading]);
 
   useEffect(() => {
     if (localInput) {
@@ -150,13 +148,13 @@ export function DAOSearch() {
             w="full"
             position="absolute"
           >
-            {safeFoundNetworkPrefixes.map(networkPrefix => (
+            {resolvedAddressesWithPrefix.map(resolved => (
               <SearchDisplay
-                key={networkPrefix}
+                key={resolved.address}
                 loading={isLoading}
                 errorMessage={errorMessage}
-                address={address}
-                networkPrefix={networkPrefix}
+                address={resolved.address}
+                chainId={resolved.chainId}
                 onClickView={resetSearch}
               />
             ))}
