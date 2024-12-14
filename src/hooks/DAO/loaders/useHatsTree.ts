@@ -19,7 +19,7 @@ import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
 const hatsSubgraphClient = new HatsSubgraphClient({});
 
-const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
+const useHatsTree = () => {
   const { t } = useTranslation('roles');
   const {
     governanceContracts: {
@@ -34,7 +34,6 @@ const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
     streamsFetched,
     setHatsTree,
     updateRolesWithStreams,
-    resetHatsStore,
   } = useRolesStore();
 
   const ipfsClient = useIPFSClient();
@@ -297,12 +296,6 @@ const useHatsTree = ({ safeAddress }: { safeAddress: Address | undefined }) => {
 
     getHatsStreams();
   }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched]);
-
-  useEffect(() => {
-    if (safeAddress === undefined) {
-      resetHatsStore();
-    }
-  }, [resetHatsStore, safeAddress]);
 };
 
 export { useHatsTree };
