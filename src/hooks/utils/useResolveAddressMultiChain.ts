@@ -45,13 +45,18 @@ export const useResolveAddressMultiChain = () => {
         setIsLoading(false);
         return returnedResult;
       }
+      const mainnet = supportedNetworks.find(network => network.chain.id === 1);
+      if (!mainnet) {
+        throw new Error('Mainnet not found');
+      }
+
+      const mainnetPublicClient = createPublicClient({
+        chain: mainnet.chain,
+        transport: http(mainnet.rpcEndpoint),
+      });
       for (const network of supportedNetworks) {
-        const client = createPublicClient({
-          chain: network.chain,
-          transport: http(network.rpcEndpoint),
-        });
         try {
-          const resolvedAddress = await client.getEnsAddress({ name: normalizedName });
+          const resolvedAddress = await mainnetPublicClient.getEnsAddress({ name: normalizedName });
           if (resolvedAddress) {
             returnedResult.resolved.push({
               address: resolvedAddress,
