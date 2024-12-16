@@ -2,7 +2,8 @@ import SafeApiKit from '@safe-global/api-kit';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
-import { useResolveAddressMultiChain } from '../utils/useResolveAddressMultiChain';
+import { supportedNetworks } from '../../providers/NetworkConfig/useNetworkConfigStore';
+import { useResolveENSName } from '../utils/useResolveENSName';
 
 type ResolvedAddressWithPrefix = {
   address: Address;
@@ -10,7 +11,7 @@ type ResolvedAddressWithPrefix = {
 };
 export const useSearchDao = () => {
   const { t } = useTranslation('dashboard');
-  const { resolveAddressMultiChain, isLoading: isAddressLoading } = useResolveAddressMultiChain();
+  const { resolveAddressMultiChain, isLoading: isAddressLoading } = useResolveENSName();
   const [searchString, setSearchString] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -41,9 +42,14 @@ export const useSearchDao = () => {
 
   const resolveInput = useCallback(
     async (input: string) => {
-      const { resolved, isValid } = await resolveAddressMultiChain(input);
+      const { resolvedAddress, isValid } = await resolveAddressMultiChain(input);
       if (isValid) {
-        await findSafes(resolved);
+        await findSafes(
+          supportedNetworks.map(network => ({
+            address: resolvedAddress,
+            chainId: network.chain.id,
+          })),
+        );
       } else {
         setErrorMessage('Invalid search');
       }
