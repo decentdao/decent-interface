@@ -1,25 +1,27 @@
 import { useCallback } from 'react';
-import { Address, ChainDoesNotSupportContract, PublicClient } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { Address, http, createPublicClient } from 'viem';
 import { DAOQueryDocument } from '../../../.graphclient';
 import graphQLClient from '../../graphql';
-import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
+import {
+  supportedNetworks,
+  useNetworkConfigStore,
+} from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { createAccountSubstring } from './useGetAccountName';
 
 export const getSafeName = async (
-  publicClient: PublicClient,
   subgraph: { space: number; slug: string; version: string },
   address: Address,
 ) => {
-  const ensName = await publicClient.getEnsName({ address }).catch((error: Error) => {
-    if (error.name === ChainDoesNotSupportContract.name) {
-      // Sliently fail, this is fine.
-      // https://github.com/wevm/viem/discussions/781
-    } else {
-      throw error;
-    }
-  });
+  const mainnet = supportedNetworks.find(network => network.chain.id === 1);
+  if (!mainnet) {
+    throw new Error('Mainnet not found');
+  }
 
+  const mainnetPublicClient = createPublicClient({
+    chain: mainnet.chain,
+    transport: http(mainnet.rpcEndpoint),
+  });
+  const ensName = await mainnetPublicClient.getEnsName({ address });
   if (ensName) {
     return ensName;
   }
@@ -45,17 +47,13 @@ export const getSafeName = async (
 
 export const useGetSafeName = (chainId?: number) => {
   const { getConfigByChainId } = useNetworkConfigStore();
-  const publicClient = usePublicClient({ chainId });
 
   return {
     getSafeName: useCallback(
       (address: Address) => {
-        if (!publicClient) {
-          throw new Error('Public client not available');
-        }
-        return getSafeName(publicClient, getConfigByChainId(chainId).subgraph, address);
+        return getSafeName(getConfigByChainId(chainId).subgraph, address);
       },
-      [publicClient, getConfigByChainId, chainId],
+      [chainId, getConfigByChainId],
     ),
   };
 };
