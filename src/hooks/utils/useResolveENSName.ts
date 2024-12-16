@@ -47,15 +47,12 @@ export const useResolveENSName = () => {
       chain: mainnet.chain,
       transport: http(mainnet.rpcEndpoint),
     });
-    try {
-      const resolvedAddress = await mainnetPublicClient.getEnsAddress({ name: normalizedName });
-      if (resolvedAddress) {
-        returnedResult.resolvedAddress = resolvedAddress;
-        returnedResult.isValid = true;
-      }
-    } catch {
-      // do nothing
+    const resolvedAddress = await mainnetPublicClient.getEnsAddress({ name: normalizedName });
+    if (resolvedAddress) {
+      returnedResult.resolvedAddress = resolvedAddress;
+      returnedResult.isValid = true;
     }
+
     setIsLoading(false);
     return returnedResult;
   }, []);
