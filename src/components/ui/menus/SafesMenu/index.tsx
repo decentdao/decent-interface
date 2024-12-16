@@ -44,7 +44,7 @@ export function SafesMenu() {
               gap={2}
               px={0}
             >
-              <Text>{t('mySafes')}</Text>
+              <Text color="white-0">{t('mySafes')}</Text>
               <Icon
                 as={CaretDown}
                 boxSize="1.5rem"
