@@ -11,7 +11,7 @@ type ResolvedAddressWithPrefix = {
 };
 export const useSearchDao = () => {
   const { t } = useTranslation('dashboard');
-  const { resolveAddressMultiChain, isLoading: isAddressLoading } = useResolveENSName();
+  const { resolveENSName, isLoading: isAddressLoading } = useResolveENSName();
   const [searchString, setSearchString] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -42,7 +42,7 @@ export const useSearchDao = () => {
 
   const resolveInput = useCallback(
     async (input: string) => {
-      const { resolvedAddress, isValid } = await resolveAddressMultiChain(input);
+      const { resolvedAddress, isValid } = await resolveENSName(input);
       if (isValid) {
         await findSafes(
           supportedNetworks.map(network => ({
@@ -54,7 +54,7 @@ export const useSearchDao = () => {
         setErrorMessage('Invalid search');
       }
     },
-    [findSafes, resolveAddressMultiChain],
+    [findSafes, resolveENSName],
   );
 
   useEffect(() => {
