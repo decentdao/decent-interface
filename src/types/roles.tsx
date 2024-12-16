@@ -73,6 +73,7 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
   isStreaming: () => boolean;
   isCancellable: () => boolean;
   isCancelling?: boolean;
+  isValidatedAndSaved?: boolean;
 }
 
 export interface RoleProps {
@@ -181,9 +182,10 @@ export interface EditedRole {
 export interface RoleHatFormValue
   extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments' | 'roleTerms'>> {
   id: Hex;
+  // The user-input field that could either be an address or an ENS name.
   wearer?: string;
   // Not a user-input field.
-  // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+  // `resolvedWearer` is dynamically set from the resolved address of `wearer`, in case it's an ENS name.
   resolvedWearer?: Address;
   payments?: SablierPaymentFormValues[];
   // form specific state
@@ -243,7 +245,11 @@ export interface RolesStoreData {
 export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
   getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
-  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
+  setHatKeyValuePairData: (args: {
+    contextChainId: number | null;
+    hatsTreeId?: number | null;
+    streamIdsToHatIds: { hatId: BigInt; streamId: string }[];
+  }) => void;
   setHatsTree: (params: {
     hatsTree: Tree | null | undefined;
     chainId: bigint;

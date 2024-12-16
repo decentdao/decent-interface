@@ -6,7 +6,6 @@ import DraggableDrawer, {
 import { ErrorBoundary } from '../../components/ui/utils/ErrorBoundary';
 import { MySafesErrorFallback } from '../../components/ui/utils/MySafesErrorFallback';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
-import { decodePrefixedAddress } from '../../utils/address';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
 export function AllSafesDrawer({ isOpen, onClose, onOpen }: DrawerControllingProps) {
@@ -18,7 +17,7 @@ export function AllSafesDrawer({ isOpen, onClose, onOpen }: DrawerControllingPro
       headerContent={
         <Text
           color="neutral-7"
-          textStyle="button-small"
+          textStyle="labels-large"
         >
           {t('mySafes')}
         </Text>
@@ -28,10 +27,12 @@ export function AllSafesDrawer({ isOpen, onClose, onOpen }: DrawerControllingPro
       onOpen={onOpen}
     >
       <ErrorBoundary fallback={MySafesErrorFallback}>
-        {favoritesList.map((favorite: string) => (
+        {favoritesList.map(favorite => (
           <SafeDisplayRow
-            key={favorite}
-            {...decodePrefixedAddress(favorite)}
+            key={`${favorite.networkPrefix}:${favorite.address}`}
+            network={favorite.networkPrefix}
+            address={favorite.address}
+            name={favorite.name}
             onClick={onClose}
           />
         ))}

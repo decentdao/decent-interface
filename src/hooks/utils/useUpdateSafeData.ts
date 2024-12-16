@@ -8,8 +8,7 @@ export const useUpdateSafeData = (safeAddress?: Address) => {
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
-
-  const { setSafeInfo } = useDaoInfoStore();
+  const { setSafeInfo, setDecentModules } = useDaoInfoStore();
 
   useEffect(() => {
     if (!safeAPI || !safeAddress) {
@@ -26,5 +25,5 @@ export const useUpdateSafeData = (safeAddress?: Address) => {
       })();
       prevPathname.current = location.pathname;
     }
-  }, [safeAddress, safeAPI, location, setSafeInfo]);
+  }, [safeAddress, safeAPI, location, setSafeInfo, setDecentModules]);
 };

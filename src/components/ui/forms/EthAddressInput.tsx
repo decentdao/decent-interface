@@ -15,7 +15,7 @@ export function AddressInput({ value, onChange, ...rest }: InputProps) {
     () =>
       debounce((event: ChangeEvent<HTMLInputElement>) => {
         if (onChange) onChange(event);
-      }, 300),
+      }, 500),
     [onChange],
   );
 

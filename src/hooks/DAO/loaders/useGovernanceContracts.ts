@@ -19,12 +19,12 @@ export const useGovernanceContracts = () => {
   const { getAddressContractType } = useAddressContractType();
 
   const { getVotingStrategies } = useVotingStrategyAddress();
-  const { fractalModules, isModulesLoaded, safe } = node;
+  const { modules, safe } = node;
 
   const safeAddress = safe?.address;
 
   const loadGovernanceContracts = useCallback(async () => {
-    const azoriusModule = getAzoriusModuleFromModules(fractalModules);
+    const azoriusModule = getAzoriusModuleFromModules(modules ?? []);
 
     const votingStrategies = await getVotingStrategies();
 
@@ -45,7 +45,6 @@ export const useGovernanceContracts = () => {
     let linearVotingErc20WithHatsWhitelistingAddress: Address | undefined;
     let linearVotingErc721WithHatsWhitelistingAddress: Address | undefined;
     let votesTokenAddress: Address | undefined;
-    let underlyingTokenAddress: Address | undefined;
     let lockReleaseAddress: Address | undefined;
 
     const setGovTokenAddress = async (erc20VotingStrategyAddress: Address) => {
@@ -61,21 +60,12 @@ export const useGovernanceContracts = () => {
       const govTokenAddress = await ozLinearVotingContract.read.governanceToken();
       // govTokenAddress might be either
       // - a valid VotesERC20 contract
-      // - a valid VotesERC20Wrapper contract
       // - a valid LockRelease contract
       // - or none of these which is against business logic
 
-      const { isVotesErc20, isVotesErc20Wrapper } = await getAddressContractType(govTokenAddress);
+      const { isVotesErc20 } = await getAddressContractType(govTokenAddress);
 
       if (isVotesErc20) {
-        votesTokenAddress = govTokenAddress;
-      } else if (isVotesErc20Wrapper) {
-        const wrapperContract = getContract({
-          abi: abis.VotesERC20Wrapper,
-          address: govTokenAddress,
-          client: publicClient,
-        });
-        underlyingTokenAddress = await wrapperContract.read.underlying();
         votesTokenAddress = govTokenAddress;
       } else {
         const possibleLockRelease = getContract({
@@ -131,21 +121,20 @@ export const useGovernanceContracts = () => {
           linearVotingErc721Address,
           linearVotingErc721WithHatsWhitelistingAddress,
           votesTokenAddress,
-          underlyingTokenAddress,
           lockReleaseAddress,
           moduleAzoriusAddress: azoriusModule.moduleAddress,
         },
       });
     }
-  }, [action, fractalModules, getVotingStrategies, publicClient, getAddressContractType]);
+  }, [action, modules, getVotingStrategies, publicClient, getAddressContractType]);
 
   useEffect(() => {
-    if (currentValidAddress.current !== safeAddress && isModulesLoaded) {
+    if (currentValidAddress.current !== safeAddress && modules !== null) {
       loadGovernanceContracts();
       currentValidAddress.current = safeAddress;
     }
     if (!safeAddress) {
       currentValidAddress.current = null;
     }
-  }, [isModulesLoaded, loadGovernanceContracts, safeAddress]);
+  }, [modules, loadGovernanceContracts, safeAddress]);
 };

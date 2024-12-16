@@ -1,9 +1,9 @@
 import { Box, Flex, Icon, Show, Text } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import Avatar from '../../page/Header/Avatar';
 
 function ConnectWalletButton() {
@@ -25,9 +25,7 @@ function ConnectWalletButton() {
 }
 
 function WalletMenuButton() {
-  const {
-    readOnly: { user },
-  } = useFractal();
+  const user = useAccount();
   const account = user.address;
   const { displayName: accountDisplayName } = useGetAccountName(account);
   const avatarURL = useAvatar(accountDisplayName);
@@ -50,7 +48,7 @@ function WalletMenuButton() {
       </Box>
       <Show above="md">
         <Text
-          textStyle={{ base: 'label-small', md: 'button-base' }}
+          textStyle={{ base: 'labels-small', md: 'body-large' }}
           mb="1px"
         >
           {accountDisplayName}
@@ -65,9 +63,6 @@ function WalletMenuButton() {
 }
 
 export function AccountMenuButton() {
-  const {
-    readOnly: { user },
-  } = useFractal();
-
+  const user = useAccount();
   return user.address ? <WalletMenuButton /> : <ConnectWalletButton />;
 }

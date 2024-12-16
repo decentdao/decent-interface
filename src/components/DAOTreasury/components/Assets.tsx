@@ -51,7 +51,7 @@ export function Assets() {
   return (
     <Box mt={{ base: '1rem', lg: 0 }}>
       <Text
-        textStyle="label-small"
+        textStyle="labels-small"
         color="neutral-7"
         px={{ base: '1rem', lg: '1.5rem' }}
       >
@@ -87,7 +87,6 @@ export function Assets() {
                       <AccordionButton
                         onClick={() => toggleAccordionItem(0)}
                         p="0.25rem"
-                        textStyle="body-base"
                         color="white-0"
                         ml="0.75rem"
                       >
@@ -138,7 +137,6 @@ export function Assets() {
                       <AccordionButton
                         onClick={() => toggleAccordionItem(hasCoins ? 1 : 0)}
                         p="0.25rem"
-                        textStyle="body-base"
                         color="white-0"
                         ml="0.75rem"
                       >
@@ -189,7 +187,6 @@ export function Assets() {
                       <AccordionButton
                         onClick={() => toggleAccordionItem(nftAccordionItemsIndex)}
                         p="0.25rem"
-                        textStyle="body-base"
                         color="white-0"
                         ml="0.75rem"
                       >

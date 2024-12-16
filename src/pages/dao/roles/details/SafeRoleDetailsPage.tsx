@@ -1,16 +1,11 @@
-import { Show } from '@chakra-ui/react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import RolesDetailsDrawer from '../../../../components/Roles/RolesDetailsDrawer';
-import RolesDetailsDrawerMobile from '../../../../components/Roles/RolesDetailsDrawerMobile';
-import { DAO_ROUTES } from '../../../../constants/routes';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useSearchParams } from 'react-router-dom';
+import RolesDetails from '../../../../components/Roles/RoleDetails';
+
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 
 export function SafeRoleDetailsPage() {
   const { safe } = useDaoInfoStore();
-  const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfig();
 
   const { hatsTree } = useRolesStore();
   const [searchParams] = useSearchParams();
@@ -21,31 +16,6 @@ export function SafeRoleDetailsPage() {
   // @todo add logic for loading
   // @todo add redirect for hat not found
   if (!roleHat || !safeAddress) return null;
-  const handleDrawerClose = () => {
-    navigate(DAO_ROUTES.roles.relative(addressPrefix, safeAddress), { replace: true });
-  };
 
-  const handleEditRoleClick = () => {
-    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, safeAddress, roleHat.id), {
-      replace: true,
-    });
-  };
-  return (
-    <>
-      <Show below="md">
-        <RolesDetailsDrawerMobile
-          roleHat={{ ...roleHat, wearer: roleHat.wearerAddress }}
-          onClose={handleDrawerClose}
-          onEdit={handleEditRoleClick}
-        />
-      </Show>
-      <Show above="md">
-        <RolesDetailsDrawer
-          roleHat={{ ...roleHat, wearer: roleHat.wearerAddress }}
-          onClose={handleDrawerClose}
-          onEdit={handleEditRoleClick}
-        />
-      </Show>
-    </>
-  );
+  return <RolesDetails roleHat={{ ...roleHat, wearer: roleHat.wearerAddress }} />;
 }

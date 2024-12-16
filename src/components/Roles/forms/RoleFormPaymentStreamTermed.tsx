@@ -160,7 +160,7 @@ function TermSelection({
       justifyContent="space-between"
     >
       <Text
-        textStyle="input-text"
+        textStyle="body-small"
         color="white-0"
       >
         {t('termNumber', { number: selectedTermNumber })}
@@ -171,7 +171,7 @@ function TermSelection({
       >
         <Icon as={Calendar} />
         <Text
-          textStyle="label-small"
+          textStyle="labels-small"
           color={defaultDateColor}
         >
           {format(selectedTermEndDate, DEFAULT_DATE_TIME_FORMAT_NO_TZ)}
@@ -287,7 +287,7 @@ function TermSelectorMenu({ paymentIndex }: { paymentIndex: number }) {
                       <Text
                         mb="1.5rem"
                         px={8}
-                        textStyle="display-lg"
+                        textStyle="heading-small"
                         color="white-0"
                       >
                         {t('selectTerm')}
@@ -369,6 +369,8 @@ export default function RoleFormPaymentStreamTermed({ paymentIndex }: { paymentI
       <Box
         bg="neutral-2"
         borderRadius="0.5rem"
+        p="1.5rem"
+        mt={4}
       >
         <ShadowedBox>
           <SectionTitle

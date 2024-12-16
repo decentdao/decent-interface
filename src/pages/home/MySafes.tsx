@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from '../../components/ui/utils/ErrorBoundary';
 import { MySafesErrorFallback } from '../../components/ui/utils/MySafesErrorFallback';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
-import { decodePrefixedAddress } from '../../utils/address';
 import { AllSafesDrawer } from './AllSafesDrawer';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
@@ -27,11 +26,8 @@ export function MySafes() {
           {/* SAFES CONTENT */}
           {favoritesList.length === 0 ? (
             <Flex
-              direction={{ base: 'column', md: 'row' }}
-              columnGap="0.5rem"
               justifyContent="center"
               p="1rem"
-              maxW="100%"
               my="0.5rem"
               bg="neutral-2"
               borderRadius="0.5rem"
@@ -42,19 +38,15 @@ export function MySafes() {
               >
                 {t('emptyFavorites', { ns: 'dashboard' })}
               </Text>
-              <Text
-                color="white-alpha-16"
-                align="center"
-              >
-                {t('emptyFavoritesSubtext', { ns: 'dashboard' })}
-              </Text>
             </Flex>
           ) : (
             <Box>
               {favoritesToShow.map(favorite => (
                 <SafeDisplayRow
-                  key={favorite}
-                  {...decodePrefixedAddress(favorite)}
+                  key={`${favorite.networkPrefix}:${favorite.address}`}
+                  network={favorite.networkPrefix}
+                  address={favorite.address}
+                  name={favorite.name}
                 />
               ))}
             </Box>

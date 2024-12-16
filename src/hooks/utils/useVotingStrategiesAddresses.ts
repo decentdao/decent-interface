@@ -5,9 +5,9 @@ import { usePublicClient } from 'wagmi';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { FractalModuleData } from '../../types';
+import { DecentModule } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
-import { useFractalModules } from '../DAO/loaders/useFractalModules';
+import { useDecentModules } from '../DAO/loaders/useDecentModules';
 import { useAddressContractType } from './useAddressContractType';
 
 const useVotingStrategiesAddresses = () => {
@@ -15,11 +15,11 @@ const useVotingStrategiesAddresses = () => {
   const publicClient = usePublicClient();
   const safeAPI = useSafeAPI();
   const { getAddressContractType } = useAddressContractType();
-  const lookupModules = useFractalModules();
+  const lookupModules = useDecentModules();
 
   const getVotingStrategies = useCallback(
     async (safeAddress?: Address) => {
-      let azoriusModule: FractalModuleData | undefined;
+      let azoriusModule: DecentModule | undefined;
 
       if (safeAddress) {
         if (!safeAPI) {
@@ -29,7 +29,10 @@ const useVotingStrategiesAddresses = () => {
         const safeModules = await lookupModules(safeInfo.modules);
         azoriusModule = getAzoriusModuleFromModules(safeModules);
       } else {
-        azoriusModule = getAzoriusModuleFromModules(node.fractalModules);
+        if (!node.modules) {
+          throw new Error('DAO modules not ready');
+        }
+        azoriusModule = getAzoriusModuleFromModules(node.modules);
       }
 
       if (!azoriusModule || !publicClient) {
@@ -59,7 +62,7 @@ const useVotingStrategiesAddresses = () => {
       );
       return result;
     },
-    [lookupModules, getAddressContractType, node.fractalModules, publicClient, safeAPI],
+    [lookupModules, getAddressContractType, node.modules, publicClient, safeAPI],
   );
 
   return { getVotingStrategies };

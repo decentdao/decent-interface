@@ -11,6 +11,7 @@ import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
+import Divider from '../../../../components/ui/utils/Divider';
 import { NEUTRAL_2_84 } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
@@ -88,17 +89,6 @@ export function SafePermissionsSettingsPage() {
         display="flex"
         bg={{ base: 'transparent', md: NEUTRAL_2_84 }}
       >
-        {canUserCreateProposal && (
-          <Button
-            variant="secondary"
-            size="sm"
-            leftIcon={<Plus />}
-            width="max-content"
-            onClick={openAddPermissionModal}
-          >
-            {t('addPermission')}
-          </Button>
-        )}
         {!isLoaded ? (
           <Card
             my="0.5rem"
@@ -152,7 +142,7 @@ export function SafePermissionsSettingsPage() {
                 <Box>
                   <Text>{t('permissionCreateProposalsTitle')}</Text>
                   <Text
-                    textStyle="button-small"
+                    textStyle="labels-large"
                     color="neutral-7"
                   >
                     {t('permissionsCreateProposalsDescription', {
@@ -162,17 +152,35 @@ export function SafePermissionsSettingsPage() {
                   </Text>
                 </Box>
               </Flex>
-              <IconButton
-                variant="secondary"
-                size="icon-md"
-                icon={<PencilWithLineIcon />}
-                aria-label={t('edit')}
-                opacity={0}
-                color="neutral-6"
-                border="none"
-              />
+              {canUserCreateProposal && (
+                <IconButton
+                  variant="secondary"
+                  size="icon-md"
+                  icon={<PencilWithLineIcon />}
+                  aria-label={t('edit')}
+                  opacity={0}
+                  color="neutral-6"
+                  border="none"
+                />
+              )}
             </Flex>
           </Card>
+        )}
+
+        {canUserCreateProposal && (
+          <Flex flexDir="column">
+            <Divider mb={4} />
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={<Plus />}
+              width="max-content"
+              onClick={openAddPermissionModal}
+              alignSelf="flex-end"
+            >
+              {t('addPermission')}
+            </Button>
+          </Flex>
         )}
       </SettingsContentBox>
       <Outlet />

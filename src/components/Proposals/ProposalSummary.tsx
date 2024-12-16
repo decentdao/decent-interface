@@ -1,12 +1,11 @@
-import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
-import { ArrowUpRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { TOOLTIP_MAXW } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -33,12 +32,8 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     proposer,
     transactionHash,
   } = proposal;
-  const {
-    governance,
-    readOnly: {
-      user: { address },
-    },
-  } = useFractal();
+  const { governance } = useFractal();
+  const { address } = useAccount();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
@@ -136,7 +131,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
       justifyContent="flex-end"
       alignItems="flex-start"
       variant="text"
-      textStyle="body-base"
       color="celery-0"
       _active={{ color: 'celery--2' }}
       onClick={toggleShowVotingPower}
@@ -155,7 +149,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
         my: 0,
       }}
     >
-      <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
+      <Text textStyle="heading-small">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider
           variant="darker"
@@ -183,7 +177,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
           alignItems="center"
         >
           <Text
-            textStyle="body-base"
             color="neutral-7"
             w="full"
           >
@@ -199,7 +192,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
               alignItems="center"
               justifyContent="space-between"
             >
-              {format(eventDate, DEFAULT_DATE_TIME_FORMAT)} <Icon as={ArrowUpRight} />
+              {format(eventDate, DEFAULT_DATE_TIME_FORMAT)}
             </Flex>
           </EtherscanLink>
         </Flex>
@@ -210,7 +203,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
           alignItems="center"
         >
           <Text
-            textStyle="body-base"
             color="neutral-7"
             w="full"
           >
@@ -236,7 +228,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
             flexWrap="wrap"
           >
             <Text
-              textStyle="body-base"
               color="neutral-7"
               w="full"
             >

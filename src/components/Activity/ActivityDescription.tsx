@@ -34,7 +34,6 @@ export function ActivityDescription({
         <Box
           mt={2}
           textColor={showFullDescription ? 'white-0' : 'neutral-7'}
-          textStyle="body-base"
         >
           <Markdown
             content={description}

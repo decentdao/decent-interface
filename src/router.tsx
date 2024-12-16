@@ -1,7 +1,7 @@
 import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
-import Layout from './components/ui/page/Layout';
+import { Global } from './components/ui/page/Global';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
 import { SafeCreatePage } from './pages/create/SafeCreatePage';
@@ -12,13 +12,13 @@ import { SafeHierarchyPage } from './pages/dao/hierarchy/SafeHierarchyPage';
 import { SafeSubDaoCreatePage } from './pages/dao/new/SafeSubDaoCreatePage';
 import { SafeProposalTemplatesPage } from './pages/dao/proposal-templates/SafeProposalTemplatesPage';
 import { SafeCreateProposalTemplatePage } from './pages/dao/proposal-templates/new/SafeCreateProposalTemplatePage';
-import { SafeProposalsPage } from './pages/dao/proposals/SafeProposalsPage';
 import { SafeProposalDetailsPage } from './pages/dao/proposals/[proposalId]';
 import { SafeProposalWithActionsCreatePage } from './pages/dao/proposals/actions/new/SafeProposalWithActionsCreatePage';
 import { SafeProposalCreatePage } from './pages/dao/proposals/new/SafeProposalCreatePage';
 import { SafeSablierProposalCreatePage } from './pages/dao/proposals/new/sablier/SafeSablierProposalCreatePage';
 import { SafeRolesPage } from './pages/dao/roles/SafeRolesPage';
 import { SafeRoleDetailsPage } from './pages/dao/roles/details/SafeRoleDetailsPage';
+import SafeRolesEditFormikPageWrapper from './pages/dao/roles/edit/SafeRolesEditFormikPageWrapper';
 import { SafeRolesEditPage } from './pages/dao/roles/edit/SafeRolesEditPage';
 import { SafeRoleEditDetailsPage } from './pages/dao/roles/edit/details/SafeRoleEditDetailsPage';
 import { SafeRolesEditProposalSummaryPage } from './pages/dao/roles/edit/summary/SafeRolesEditProposalSummaryPage';
@@ -40,7 +40,7 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
         // within underlying modals. Otherwise - trying to invoke routing-related hooks would lead to crash.
         // Not the best place to have this provider here but also more reasonalbe than putting that into <Layout />
         <ModalProvider>
-          <Layout />
+          <Global />
         </ModalProvider>
       ),
       children: [
@@ -83,8 +83,11 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.roles.path,
-              element: <SafeRolesPage />,
               children: [
+                {
+                  index: true,
+                  element: <SafeRolesPage />,
+                },
                 {
                   path: 'details',
                   element: <SafeRoleDetailsPage />,
@@ -93,8 +96,12 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             },
             {
               path: DAO_ROUTES.rolesEdit.path,
-              element: <SafeRolesEditPage />,
+              element: <SafeRolesEditFormikPageWrapper />,
               children: [
+                {
+                  index: true,
+                  element: <SafeRolesEditPage />,
+                },
                 {
                   path: 'details',
                   element: <SafeRoleEditDetailsPage />,
@@ -145,7 +152,12 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
               children: [
                 {
                   index: true,
-                  element: <SafeProposalsPage />,
+                  loader: () =>
+                    redirect(
+                      daoAddress
+                        ? DAO_ROUTES.dao.relative(addressPrefix, daoAddress)
+                        : BASE_ROUTES.landing,
+                    ),
                 },
                 {
                   path: ':proposalId',

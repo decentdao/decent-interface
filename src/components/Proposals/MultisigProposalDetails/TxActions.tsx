@@ -2,8 +2,8 @@ import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, getContract, isHex } from 'viem';
-import { useWalletClient } from 'wagmi';
+import { getAddress, getContract, isHex, zeroAddress } from 'viem';
+import { useAccount, useWalletClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { Check } from '../../../assets/theme/custom/icons/Check';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
@@ -24,8 +24,8 @@ import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const {
     guardContracts: { freezeGuardContractAddress },
-    readOnly: { user },
   } = useFractal();
+  const userAccount = useAccount();
   const safeAPI = useSafeAPI();
   const { safe } = useDaoInfoStore();
 
@@ -50,7 +50,9 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const { data: walletClient } = useWalletClient();
 
-  if (user.votingWeight === 0n) return null;
+  const isOwner = safe?.owners?.includes(userAccount.address ?? zeroAddress);
+
+  if (!isOwner) return null;
 
   if (!proposal.transaction) return null;
 
@@ -240,8 +242,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     }
   };
 
-  const hasSigned = !!proposal.confirmations?.find(confirm => confirm.owner === user.address);
-  const isOwner = safe?.owners?.includes(user.address || '');
+  const hasSigned = !!proposal.confirmations?.find(
+    confirm => confirm.owner === userAccount.address,
+  );
+
   const isPending = asyncRequestPending || contractCallPending;
   if (
     (proposal.state === FractalProposalState.ACTIVE && (hasSigned || !isOwner)) ||

@@ -6,16 +6,16 @@ import { Address, encodeFunctionData, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
-import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin } from '../../../utils';
+import { getNetworkIcon } from '../../../utils/url';
 import Avatar, { AvatarSize } from '../page/Header/Avatar';
 
-export default function PaymentWithdrawModal({
+export function PaymentWithdrawModal({
   paymentAssetLogo,
   paymentAssetSymbol,
   paymentAssetDecimals,
@@ -44,7 +44,7 @@ export default function PaymentWithdrawModal({
   const { displayName: accountDisplayName } = useGetAccountName(withdrawInformation.recipient);
   const avatarURL = useAvatar(accountDisplayName);
   const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
-  const { chain } = useNetworkConfig();
+  const { chain, addressPrefix } = useNetworkConfig();
 
   const handleWithdraw = useCallback(async () => {
     if (
@@ -110,64 +110,32 @@ export default function PaymentWithdrawModal({
 
   return (
     <Flex
+      flexDirection="column"
       gap="1.5rem"
-      flexWrap="wrap"
       px={{ base: '1rem', md: 0 }}
     >
-      <Text
-        textAlign="center"
-        px="1.5rem"
-        textStyle="display-lg"
-        w="full"
-      >
-        {t('withdrawPaymentTitle')}
-      </Text>
-      <Flex
-        gap="1rem"
-        flexWrap="wrap"
-      >
-        <Flex
-          w="full"
-          py="1rem"
-          gap="1rem"
-          borderRadius="0.5rem"
-          boxShadow={SEXY_BOX_SHADOW_T_T}
-          bg="neutral-2"
-          justifyContent="center"
+      {/* AVAILABLE */}
+      <Flex alignItems="center">
+        <Text
+          color="neutral-7"
+          flex={3}
         >
-          <Flex
-            gap="0.5rem"
-            px="1rem"
-            alignItems="center"
-            flex="1"
-            justifyContent="center"
-          >
-            <Image
-              src={paymentAssetLogo}
-              fallbackSrc="/images/coin-icon-default.svg"
-              alt={paymentAssetSymbol}
-              w="2rem"
-              h="2rem"
-            />
-            <Text textStyle="label-large">{paymentAssetSymbol}</Text>
-          </Flex>
-          <Flex
-            px="1rem"
-            flexWrap="wrap"
-            alignItems="center"
-            flex="1"
-          >
-            <Text
-              textStyle="label-small"
-              color="neutral-7"
-              w="full"
-            >
-              {t('available')}
-            </Text>
-            <Text
-              textStyle="display-4xl"
-              w="full"
-            >
+          {t('available')}
+        </Text>
+        <Flex
+          alignItems="center"
+          gap={{ base: '0.25rem', md: '0.5rem' }}
+          flex={5}
+        >
+          <Image
+            src={paymentAssetLogo}
+            fallbackSrc="/images/coin-icon-default.svg"
+            alt={paymentAssetSymbol}
+            w="1.5rem"
+            h="1.5rem"
+          />
+          <Flex gap="0.25rem">
+            <Text w="full">
               {formatCoin(
                 withdrawInformation.withdrawableAmount,
                 true,
@@ -176,73 +144,82 @@ export default function PaymentWithdrawModal({
                 false,
               )}
             </Text>
-          </Flex>
-        </Flex>
-        <Flex
-          gap="1rem"
-          flexWrap="wrap"
-        >
-          <Flex
-            gap="0.5rem"
-            flexWrap="wrap"
-            w="full"
-          >
-            <Text
-              textStyle="label-small"
-              color="neutral-7"
-              w="100px"
-            >
-              {t('withdrawTo')}
-            </Text>
-            <Flex
-              alignItems="center"
-              gap={{ base: '0.25rem', md: '0.5rem' }}
-            >
-              <Box>
-                <Avatar
-                  address={withdrawInformation.recipient}
-                  url={avatarURL}
-                  size={iconSize}
-                />
-              </Box>
-              <Text textStyle="label-base">{withdrawInformation.recipient}</Text>
-            </Flex>
-          </Flex>
-          <Flex
-            gap="0.5rem"
-            flexWrap="wrap"
-            w="full"
-          >
-            <Text
-              textStyle="label-small"
-              color="neutral-7"
-              w="100px"
-            >
-              {t('network', { ns: 'menu' })}
-            </Text>
-            <Text>{chain.name}</Text>
+            <Text w="full">{paymentAssetSymbol}</Text>
           </Flex>
         </Flex>
       </Flex>
-      <Flex
-        gap="0.75rem"
-        w="full"
-      >
-        <Button
-          isDisabled={pendingTransaction}
-          variant="secondary"
-          onClick={onClose}
-          flex="1"
+
+      {/* RECIPIENT */}
+      <Flex mt="0.25rem">
+        <Text
+          color="neutral-7"
+          flex={3}
+          mt="-0.25rem"
         >
-          {t('cancel', { ns: 'common' })}
-        </Button>
+          {t('withdrawTo')}
+        </Text>
+
+        <Flex
+          gap={{ base: '0.25rem', md: '0.5rem' }}
+          flex={5}
+        >
+          <Avatar
+            address={withdrawInformation.recipient}
+            url={avatarURL}
+            size={iconSize}
+          />
+          <Text
+            mt="-0.25rem"
+            overflowWrap="anywhere"
+            whiteSpace="normal"
+            w="full"
+          >
+            {withdrawInformation.recipient}
+          </Text>
+        </Flex>
+      </Flex>
+
+      {/* NETWORK */}
+      <Flex>
+        <Text
+          color="neutral-7"
+          flex={3}
+        >
+          {t('network', { ns: 'menu' })}
+        </Text>
+        <Flex
+          alignItems="center"
+          gap={{ base: '0.25rem', md: '0.5rem' }}
+          flex={5}
+        >
+          <Box flexShrink={0}>
+            {/* Network Icon */}
+            <Flex gap="0.5rem">
+              <Image src={getNetworkIcon(addressPrefix)} />
+            </Flex>
+          </Box>
+          <Text>{chain.name}</Text>
+        </Flex>
+      </Flex>
+
+      <Flex
+        flexDirection="column"
+        gap="0.75rem"
+        mt="1.5rem"
+      >
         <Button
           isDisabled={pendingTransaction}
           onClick={handleWithdraw}
           leftIcon={<Download />}
-          flex="1"
         >
           {t('withdraw')}
+        </Button>
+        <Button
+          isDisabled={pendingTransaction}
+          variant="secondary"
+          onClick={onClose}
+        >
+          {t('cancel', { ns: 'common' })}
         </Button>
       </Flex>
     </Flex>

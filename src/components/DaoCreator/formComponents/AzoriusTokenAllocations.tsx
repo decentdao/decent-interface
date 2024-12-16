@@ -40,7 +40,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
             <Grid
               gridTemplateColumns="1fr 35% 2rem"
               columnGap={4}
-              rowGap={2}
+              rowGap={8}
               data-testid="tokenVoting-tokenAllocations"
             >
               <Text>{t('titleAddress')}</Text>
@@ -80,9 +80,10 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                 );
               })}
             </Grid>
+
             <Text
               color="neutral-7"
-              textStyle="helper-text-base"
+              textStyle="labels-large"
             >
               {t('helperAllocations')}
             </Text>
@@ -109,7 +110,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                       <>
                         <AccordionButton
                           p={0}
-                          textStyle="display-lg"
+                          textStyle="heading-small"
                           color="lilac-0"
                         >
                           {isExpanded ? <CaretDown /> : <CaretRight />}

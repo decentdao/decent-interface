@@ -44,12 +44,7 @@ export function RadioWithText({
           ml="0.25rem"
         >
           <HStack>
-            <Text
-              textStyle="body-base"
-              color={disabled ? 'neutral-5' : 'white-0'}
-            >
-              {label}
-            </Text>
+            <Text color={disabled ? 'neutral-5' : 'white-0'}>{label}</Text>
             {tooltip && (
               <SupportTooltip
                 label={tooltip}
@@ -59,12 +54,7 @@ export function RadioWithText({
               />
             )}
           </HStack>
-          <Text
-            textStyle="body-base"
-            color={disabled ? 'neutral-5' : 'neutral-7'}
-          >
-            {description}
-          </Text>
+          <Text color={disabled ? 'neutral-5' : 'neutral-7'}>{description}</Text>
         </Box>
       </Radio>
     </Box>

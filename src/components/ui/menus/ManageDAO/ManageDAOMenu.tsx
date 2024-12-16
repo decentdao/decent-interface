@@ -28,15 +28,18 @@ export function ManageDAOMenu() {
     guard,
     guardContracts,
   } = useFractal();
-  const node = useDaoInfoStore();
+  const dao = useDaoInfoStore();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = node.safe?.address;
+  const safeAddress = dao.safe?.address;
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress ?? null, null, false);
   const { handleClawBack } = useClawBack({
-    parentAddress: node.nodeHierarchy.parentAddress,
-    childSafeInfo: node,
+    parentAddress: dao.subgraphInfo?.parentAddress ?? null,
+    childSafeInfo: {
+      daoAddress: dao.safe?.address,
+      modules: dao.modules,
+    },
   });
 
   const { addressPrefix } = useNetworkConfig();
@@ -85,39 +88,38 @@ export function ManageDAOMenu() {
           });
           return contract.write.castFreezeVote();
         } else if (freezeVotingType === FreezeVotingType.ERC721) {
-          getUserERC721VotingTokens(node.nodeHierarchy.parentAddress, null).then(tokensInfo => {
-            if (!guardContracts.freezeVotingContractAddress) {
-              throw new Error('freeze voting contract address not set');
-            }
-            if (!walletClient) {
-              throw new Error('wallet client not set');
-            }
-            const freezeERC721VotingContract = getContract({
-              abi: abis.ERC721FreezeVoting,
-              address: guardContracts.freezeVotingContractAddress,
-              client: walletClient,
-            });
-            return freezeERC721VotingContract.write.castFreezeVote([
-              tokensInfo.totalVotingTokenAddresses,
-              tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
-            ]);
-          });
+          getUserERC721VotingTokens(dao.subgraphInfo?.parentAddress ?? null, null).then(
+            tokensInfo => {
+              if (!guardContracts.freezeVotingContractAddress) {
+                throw new Error('freeze voting contract address not set');
+              }
+              if (!walletClient) {
+                throw new Error('wallet client not set');
+              }
+              const freezeERC721VotingContract = getContract({
+                abi: abis.ERC721FreezeVoting,
+                address: guardContracts.freezeVotingContractAddress,
+                client: walletClient,
+              });
+              return freezeERC721VotingContract.write.castFreezeVote([
+                tokensInfo.totalVotingTokenAddresses,
+                tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
+              ]);
+            },
+          );
         }
       },
     }),
-    [getUserERC721VotingTokens, guardContracts, node.nodeHierarchy.parentAddress, walletClient],
+    [
+      dao.subgraphInfo?.parentAddress,
+      getUserERC721VotingTokens,
+      guardContracts.freezeVotingContractAddress,
+      guardContracts.freezeVotingType,
+      walletClient,
+    ],
   );
 
   const options = useMemo(() => {
-    const createSubDAOOption = {
-      optionKey: 'optionCreateSubDAO',
-
-      onClick: () => {
-        if (safeAddress) {
-          navigate(DAO_ROUTES.newSubDao.relative(addressPrefix, safeAddress));
-        }
-      },
-    };
     const clawBackOption = {
       optionKey: 'optionInitiateClawback',
       onClick: handleClawBack,
@@ -146,9 +148,9 @@ export function ManageDAOMenu() {
       guard.userHasVotes
     ) {
       if (type === GovernanceType.MULTISIG) {
-        return [createSubDAOOption, freezeOption, modifyGovernanceOption, settingsOption];
+        return [settingsOption, freezeOption, modifyGovernanceOption];
       } else {
-        return [createSubDAOOption, freezeOption, settingsOption];
+        return [settingsOption, freezeOption];
       }
     } else if (
       guard.freezeProposalCreatedTime !== null &&
@@ -157,41 +159,54 @@ export function ManageDAOMenu() {
       guard.isFrozen &&
       guard.userHasVotes
     ) {
-      const fractalModule = node.fractalModules.find(
+      const fractalModule = (dao.modules ?? []).find(
         module => module.moduleType === FractalModuleType.FRACTAL,
       );
       if (fractalModule) {
-        return [clawBackOption, settingsOption];
+        return [settingsOption, clawBackOption];
       } else {
         return [settingsOption];
       }
     } else {
-      const optionsArr = [];
-      if (canUserCreateProposal) {
-        optionsArr.push(createSubDAOOption);
-        if (type === GovernanceType.MULTISIG) {
-          optionsArr.push(modifyGovernanceOption);
-        }
-      }
-      optionsArr.push(settingsOption);
-      return optionsArr;
+      return [
+        settingsOption,
+        ...(canUserCreateProposal && type === GovernanceType.MULTISIG
+          ? [modifyGovernanceOption]
+          : []),
+      ];
     }
   }, [
     guard,
     currentTime,
-    navigate,
-    safeAddress,
     type,
     handleClawBack,
-    canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
-    addressPrefix,
     freezeOption,
-    node.fractalModules,
+    dao.modules,
+    canUserCreateProposal,
   ]);
 
-  return (
+  return options.length === 1 ? (
+    <IconButton
+      aria-label="Manage DAO"
+      icon={
+        <Icon
+          as={GearFine}
+          boxSize="1.25rem"
+        />
+      }
+      onClick={options[0].onClick}
+      variant="tertiary"
+      p="0.25rem"
+      h="fit-content"
+      sx={{
+        span: {
+          h: '1.25rem',
+        },
+      }}
+    />
+  ) : (
     <OptionMenu
       trigger={
         <Icon
@@ -199,7 +214,6 @@ export function ManageDAOMenu() {
           boxSize="1.25rem"
         />
       }
-      titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
       buttonAs={IconButton}

@@ -1,10 +1,10 @@
 import { Box, Button, Flex, MenuItem, Text } from '@chakra-ui/react';
 import { CopySimple } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import Avatar from '../../page/Header/Avatar';
 
 /**
@@ -12,9 +12,7 @@ import Avatar from '../../page/Header/Avatar';
  * Allows for copying of address
  */
 export function ConnectedWalletMenuItem() {
-  const {
-    readOnly: { user },
-  } = useFractal();
+  const user = useAccount();
   const account = user.address;
   const { displayName: accountDisplayName } = useGetAccountName(account);
   const avatarURL = useAvatar(accountDisplayName);
@@ -33,7 +31,7 @@ export function ConnectedWalletMenuItem() {
     >
       <Text
         px="0.5rem"
-        textStyle="helper-text-small"
+        textStyle="labels-small"
         color="neutral-7"
       >
         {t('wallet')}

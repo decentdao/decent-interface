@@ -19,13 +19,6 @@ export const initialState = {
   governanceContracts: initialGovernanceContractsState,
   guardContracts: initialGuardContractsState,
   guard: initialGuardState,
-  readOnly: {
-    dao: null,
-    user: {
-      address: undefined,
-      votingWeight: 0n,
-    },
-  },
 };
 
 export const combinedReducer = (state: Fractal, action: FractalActions) => {
@@ -42,6 +35,5 @@ export const combinedReducer = (state: Fractal, action: FractalActions) => {
     ),
     guardContracts: guardContractReducer(state.guardContracts, action as GuardContractActions),
     guard: guardReducer(state.guard, action as FractalGuardActions),
-    readOnly: state.readOnly,
   };
 };

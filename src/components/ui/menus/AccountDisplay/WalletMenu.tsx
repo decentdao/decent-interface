@@ -3,18 +3,15 @@ import { Link, Plugs } from '@phosphor-icons/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import Divider from '../../utils/Divider';
 import { ConnectedWalletMenuItem } from './ConnectedWalletMenuItem';
 import { MenuItemButton } from './MenuItemButton';
 import { NetworkSelector } from './NetworkSelector';
 
 export function WalletMenu({ containerRef }: { containerRef: RefObject<HTMLDivElement | null> }) {
-  const {
-    readOnly: { user },
-  } = useFractal();
+  const user = useAccount();
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
   const { t } = useTranslation('menu');
@@ -28,7 +25,7 @@ export function WalletMenu({ containerRef }: { containerRef: RefObject<HTMLDivEl
       backdropBlur="10px"
       border="1px solid"
       borderColor="neutral-3"
-      zIndex={1}
+      zIndex="popover"
       py="0.25rem"
     >
       {user.address && (

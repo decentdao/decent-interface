@@ -3,7 +3,6 @@ import { MouseEvent, ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { DecentTooltip } from '../../DecentTooltip';
-import { EaseOutComponent } from '../../utils/EaseOutComponent';
 import { OptionsList } from './OptionsList';
 import { IOption, IOptionsList } from './types';
 
@@ -42,7 +41,7 @@ export function OptionMenu({
       borderColor="neutral-3"
       borderRadius="0.78rem"
       mr={menuListMr || ['auto', '1rem']}
-      zIndex={1000}
+      zIndex="popover"
     >
       <Box
         borderRadius="0.75rem"
@@ -50,17 +49,15 @@ export function OptionMenu({
         backdropFilter="auto"
         backdropBlur="10px"
       >
-        <EaseOutComponent>
-          {children}
-          <OptionsList
-            options={options}
-            showOptionSelected={showOptionSelected}
-            closeOnSelect={closeOnSelect}
-            showOptionCount={showOptionCount}
-            namespace={namespace}
-            titleKey={titleKey}
-          />
-        </EaseOutComponent>
+        {children}
+        <OptionsList
+          options={options}
+          showOptionSelected={showOptionSelected}
+          closeOnSelect={closeOnSelect}
+          showOptionCount={showOptionCount}
+          namespace={namespace}
+          titleKey={titleKey}
+        />
       </Box>
     </MenuList>
   );

@@ -65,7 +65,7 @@ function ProposalAuthor({ activity }: { activity: FractalProposal }) {
       gap={2}
       alignItems="center"
       color="neutral-7"
-      textStyle="label-base"
+      textStyle="labels-large"
     >
       <Avatar
         size="sm"
@@ -98,7 +98,7 @@ export function ProposalTitle({
   const titleText = proposalIdText + ' ' + proposaltitleText;
   return (
     <Box
-      textStyle="display-lg"
+      textStyle="heading-small"
       color="white-0"
       pr="1.5rem"
     >
@@ -109,7 +109,7 @@ export function ProposalTitle({
       >
         <Text
           as="span"
-          textStyle="display-xl"
+          textStyle="heading-medium"
           maxW="100%"
         >
           {titleText}

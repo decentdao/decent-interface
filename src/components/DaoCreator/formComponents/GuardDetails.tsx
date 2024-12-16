@@ -28,10 +28,7 @@ import useStepRedirect from '../hooks/useStepRedirect';
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode, errors } = props;
 
-  const {
-    governance,
-    readOnly: { dao },
-  } = useFractal();
+  const { governance } = useFractal();
   const { safe } = useDaoInfoStore();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
@@ -47,11 +44,11 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    if (showCustomNonce === undefined && !dao?.isAzorius && isSubDAO && safe) {
+    if (showCustomNonce === undefined && !governance.isAzorius && isSubDAO && safe) {
       setFieldValue('multisig.customNonce', safe.nextNonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, type, setFieldValue, safe, dao, showCustomNonce]);
+  }, [isSubDAO, type, setFieldValue, safe, governance.isAzorius, showCustomNonce]);
 
   const { totalParentVotingWeight, parentVotingQuorum } = useParentSafeVotingWeight();
 
@@ -92,7 +89,8 @@ function GuardDetails(props: ICreationStepProps) {
         mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
-        titleKey="titleGuardConfig"
+        allSteps={props.steps}
+        stepNumber={governanceFormType === GovernanceType.MULTISIG ? 3 : 4}
       >
         <Flex
           flexDirection="column"
@@ -100,7 +98,6 @@ function GuardDetails(props: ICreationStepProps) {
         >
           {governanceFormType === GovernanceType.MULTISIG && (
             <>
-              <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
               <LabelComponent
                 label={t('labelTimelockPeriod')}
                 helper={t('helperTimelockPeriod')}
@@ -116,13 +113,6 @@ function GuardDetails(props: ICreationStepProps) {
                   />
                   <InputRightElement mr="4">{minutes}</InputRightElement>
                 </InputGroup>
-                <Text
-                  textStyle="helper-text-base"
-                  color="neutral-7"
-                  mt="0.5rem"
-                >
-                  {t('exampleTimelockPeriod')}
-                </Text>
               </LabelComponent>
               <LabelComponent
                 label={t('labelExecutionPeriod')}
@@ -139,13 +129,6 @@ function GuardDetails(props: ICreationStepProps) {
                   />
                   <InputRightElement mr="4">{minutes}</InputRightElement>
                 </InputGroup>
-                <Text
-                  textStyle="helper-text-base"
-                  color="neutral-7"
-                  mt="0.5rem"
-                >
-                  {t('exampleExecutionPeriod')}
-                </Text>
               </LabelComponent>
             </>
           )}
@@ -189,7 +172,7 @@ function GuardDetails(props: ICreationStepProps) {
               <InputRightElement mr="4">{minutes}</InputRightElement>
             </InputGroup>
             <Text
-              textStyle="helper-text-base"
+              textStyle="labels-large"
               color="neutral-7"
               mt="0.5rem"
             >
@@ -213,7 +196,7 @@ function GuardDetails(props: ICreationStepProps) {
               <InputRightElement mr="4">{minutes}</InputRightElement>
             </InputGroup>
             <Text
-              textStyle="helper-text-base"
+              textStyle="labels-large"
               color="neutral-7"
               mt="0.5rem"
             >
@@ -230,12 +213,7 @@ function GuardDetails(props: ICreationStepProps) {
             >
               <Info size="24" />
             </Box>
-            <Text
-              textStyle="body-base-strong"
-              whiteSpace="pre-wrap"
-            >
-              {t('freezeGuardDescription')}
-            </Text>
+            <Text whiteSpace="pre-wrap">{t('freezeGuardDescription')}</Text>
           </Alert>
         </Flex>
       </StepWrapper>

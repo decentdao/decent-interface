@@ -1,7 +1,7 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, GetContractReturnType, PublicClient, erc721Abi, getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
@@ -31,8 +31,8 @@ export default function useUserERC721VotingTokens(
   const {
     governanceContracts: { linearVotingErc721Address },
     governance,
-    readOnly: { user },
   } = useFractal();
+  const user = useAccount();
   const { safe } = useDaoInfoStore();
   const safeAPI = useSafeAPI();
   const publicClient = usePublicClient();

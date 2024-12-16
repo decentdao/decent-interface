@@ -2,7 +2,6 @@ import { Box, MenuList } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
-import { decodePrefixedAddress } from '../../../../utils/address';
 import Divider from '../../utils/Divider';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { MySafesErrorFallback } from '../../utils/MySafesErrorFallback';
@@ -31,8 +30,12 @@ export function SafesList() {
             <Box p="1rem 1rem">{t('emptyFavorites')}</Box>
           ) : (
             favoritesList.map((favorite, i) => (
-              <Box key={favorite}>
-                <SafeMenuItem {...decodePrefixedAddress(favorite)} />
+              <Box key={`${favorite.networkPrefix}:${favorite.address}`}>
+                <SafeMenuItem
+                  network={favorite.networkPrefix}
+                  address={favorite.address}
+                  name={favorite.name}
+                />
                 {favoritesList.length - 1 !== i && <Divider my="0.25rem" />}
               </Box>
             ))

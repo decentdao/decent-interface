@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Address } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -18,7 +18,6 @@ const useBuildDAOTx = () => {
   const {
     contracts: {
       compatibilityFallbackHandler,
-      votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
       gnosisSafeProxyFactory,
@@ -39,10 +38,10 @@ const useBuildDAOTx = () => {
   } = useNetworkConfig();
 
   const {
-    readOnly: { user, dao },
     governance,
     governanceContracts: { linearVotingErc721Address },
   } = useFractal();
+  const user = useAccount();
   const publicClient = usePublicClient();
 
   const buildDao = useCallback(
@@ -69,7 +68,6 @@ const useBuildDAOTx = () => {
         isAzorius,
         daoData,
         compatibilityFallbackHandler,
-        votesErc20WrapperMasterCopy,
         votesErc20MasterCopy,
         keyValuePairs,
         gnosisSafeProxyFactory,
@@ -95,7 +93,7 @@ const useBuildDAOTx = () => {
       let parentStrategyAddress: Address | undefined;
 
       const azoriusGovernance = governance as AzoriusGovernance;
-      if (dao && dao.isAzorius && azoriusGovernance.votingStrategy) {
+      if (governance.isAzorius && azoriusGovernance.votingStrategy) {
         parentStrategyType = azoriusGovernance.votingStrategy.strategyType;
         if (parentStrategyType === VotingStrategyType.LINEAR_ERC721 && linearVotingErc721Address) {
           parentStrategyAddress = linearVotingErc721Address;
@@ -128,7 +126,6 @@ const useBuildDAOTx = () => {
       user.address,
       publicClient,
       compatibilityFallbackHandler,
-      votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
       gnosisSafeProxyFactory,
@@ -145,7 +142,6 @@ const useBuildDAOTx = () => {
       linearVotingErc20MasterCopy,
       linearVotingErc721MasterCopy,
       moduleAzoriusMasterCopy,
-      dao,
       governance,
       linearVotingErc721Address,
     ],

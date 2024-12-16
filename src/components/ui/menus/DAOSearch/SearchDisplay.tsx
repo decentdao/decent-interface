@@ -14,16 +14,9 @@ interface ISearchDisplay {
   errorMessage: string | undefined;
   address: Address | undefined;
   onClickView: Function;
-  closeDrawer?: () => void;
 }
 
-export function SearchDisplay({
-  loading,
-  errorMessage,
-  address,
-  closeDrawer,
-  onClickView,
-}: ISearchDisplay) {
+export function SearchDisplay({ loading, errorMessage, address, onClickView }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const node = useDaoInfoStore();
   const { addressPrefix } = useNetworkConfig();
@@ -64,7 +57,7 @@ export function SearchDisplay({
           boxSize="1.5rem"
         />
         <Text
-          textStyle="display-lg"
+          textStyle="heading-small"
           color="red-1"
         >
           {errorMessage}
@@ -82,7 +75,7 @@ export function SearchDisplay({
       >
         <ErrorBoundary fallback={MySafesErrorFallback}>
           <Text
-            textStyle="button-small"
+            textStyle="labels-large"
             color="neutral-7"
             py="1rem"
             px="0.5rem"
@@ -90,11 +83,11 @@ export function SearchDisplay({
             {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
           </Text>
           <SafeDisplayRow
+            name={undefined}
             address={address}
             network={addressPrefix}
             onClick={() => {
               onClickView();
-              if (closeDrawer) closeDrawer();
             }}
             showAddress
           />

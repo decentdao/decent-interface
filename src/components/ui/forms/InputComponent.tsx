@@ -27,6 +27,7 @@ interface BaseProps {
   inputContainerProps?: GridItemProps;
   maxLength?: number;
   helperSlot?: 'start' | 'end';
+  alignLabel?: 'flex-start' | 'center';
 }
 
 interface InputProps extends Omit<BaseProps, 'children'> {
@@ -60,6 +61,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
     inputContainerProps,
     disabled,
     helperSlot = 'start',
+    alignLabel,
   } = props;
 
   const isStringLabel = typeof label === 'string';
@@ -72,13 +74,17 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
       cursor={disabled ? 'not-allowed' : 'default'}
       {...gridContainerProps}
     >
-      <GridItem alignSelf="center">
+      <GridItem
+        pb="0.5rem"
+        alignSelf={alignLabel ?? 'center'}
+        mt={alignLabel === 'flex-start' ? '0.75rem' : 0}
+      >
         {isStringLabel ? (
           <HStack
             pb={1}
-            textStyle="body-base"
+            spacing={0}
           >
-            <Text color={disabled ? 'white-0' : 'neutral-7'}>{label}</Text>
+            <Text>{label}</Text>
             {isRequired && <Text color="lilac-0">*</Text>}
           </HStack>
         ) : (
@@ -95,6 +101,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
           {children}
         </LabelWrapper>
       </GridItem>
+
       {helperSlot === 'end' && (
         <GridItem>
           <Text color="neutral-7">{helper}</Text>

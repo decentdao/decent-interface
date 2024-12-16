@@ -17,7 +17,6 @@ export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
   const {
     governance,
     guardContracts: { freezeGuardType, freezeGuardContractAddress },
-    readOnly: { dao },
   } = useFractal();
   const { safe } = useDaoInfoStore();
   const publicClient = usePublicClient();
@@ -25,7 +24,7 @@ export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
 
-  const governanceAzorius = dao?.isAzorius ? (governance as AzoriusGovernance) : null;
+  const governanceAzorius = governance.isAzorius ? (governance as AzoriusGovernance) : null;
 
   useEffect(() => {
     const setTimelockInfo = async () => {
@@ -102,7 +101,7 @@ export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
           mb="0.5rem"
         >
           <Bank size="1.5rem" />
-          <Text textStyle="display-lg">{t('titleGovernance')}</Text>
+          <Text textStyle="heading-small">{t('titleGovernance')}</Text>
         </Flex>
       )}
 

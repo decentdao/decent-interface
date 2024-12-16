@@ -1,4 +1,5 @@
 import { Button, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +12,6 @@ import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import RoleFormInfo from './RoleFormInfo';
 import { RoleFormMember } from './RoleFormMember';
-import RoleFormPaymentStream from './RoleFormPaymentStream';
-import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 
@@ -58,18 +57,18 @@ export function RoleFormTabs({
   const safeAddress = safe?.address;
   if (!safeAddress) return null;
 
-  if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
-    if (values.roleEditing?.isTermed) {
-      return (
-        <RoleFormPaymentStreamTermed paymentIndex={values.roleEditing?.roleEditingPaymentIndex} />
-      );
-    } else {
-      return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
-    }
-  }
-
   return (
     <>
+      <Flex justifyContent="flex-end">
+        <Button
+          variant="tertiary"
+          width="min-content"
+          color="lilac-0"
+          pr={2}
+          leftIcon={<ArrowLeft />}
+          onClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address))}
+        />
+      </Flex>
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>

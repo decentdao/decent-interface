@@ -1,4 +1,4 @@
-import { Show, Text } from '@chakra-ui/react';
+import { Box, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { InfoGovernance } from '../../../../components/DaoDashboard/Info/InfoGovernance';
@@ -6,7 +6,6 @@ import { ERC20TokenContainer } from '../../../../components/SafeSettings/ERC20To
 import { ERC721TokensContainer } from '../../../../components/SafeSettings/ERC721TokensContainer';
 import { SettingsContentBox } from '../../../../components/SafeSettings/SettingsContentBox';
 import { SignersContainer } from '../../../../components/SafeSettings/Signers/SignersContainer';
-import { StyledBox } from '../../../../components/ui/containers/StyledBox';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -22,12 +21,8 @@ export function SafeGovernanceSettingsPage() {
   } = useFractal();
   const { safe } = useDaoInfoStore();
 
-  const isERC20Governance =
-    type === GovernanceType.AZORIUS_ERC20 ||
-    type === GovernanceType.AZORIUS_ERC20_HATS_WHITELISTING;
-  const isERC721Governance =
-    type === GovernanceType.AZORIUS_ERC721 ||
-    type === GovernanceType.AZORIUS_ERC721_HATS_WHITELISTING;
+  const isERC20Governance = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721Governance = type === GovernanceType.AZORIUS_ERC721;
   const isMultisigGovernance = type === GovernanceType.MULTISIG;
 
   return (
@@ -44,13 +39,26 @@ export function SafeGovernanceSettingsPage() {
       <SettingsContentBox
         display="flex"
         flexDirection="column"
-        gap="3rem"
+        gap="1.5rem"
       >
         {(isERC20Governance || isERC721Governance) && (
-          <StyledBox width="100%">
-            <Text textStyle="display-lg">{t('daoSettingsGovernance')}</Text>
-            <InfoGovernance showTitle={false} />
-          </StyledBox>
+          <Box width="100%">
+            <Text
+              textStyle="heading-small"
+              mb={4}
+            >
+              {t('daoSettingsGovernance')}
+            </Text>
+            <Box
+              p="1.5rem"
+              borderWidth="0.06rem"
+              borderColor="neutral-3"
+              borderRadius="0.75rem"
+              mx={0}
+            >
+              <InfoGovernance showTitle={false} />
+            </Box>
+          </Box>
         )}
         {isERC20Governance ? (
           <ERC20TokenContainer />

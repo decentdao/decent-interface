@@ -10,21 +10,21 @@ import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
+import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   FractalModuleType,
-  DaoInfo,
   ProposalExecuteData,
   SubDAO,
   VotingStrategyType,
-  WithError,
 } from '../../types';
 import { useAddressContractType } from '../utils/useAddressContractType';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
-import { useLoadDAONode } from './loaders/useLoadDAONode';
+import { DecentModule } from './../../types/fractal';
+import { useDecentModules } from './loaders/useDecentModules';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 const useDeployAzorius = () => {
@@ -33,7 +33,6 @@ const useDeployAzorius = () => {
   const {
     contracts: {
       compatibilityFallbackHandler,
-      votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
       gnosisSafeProxyFactory,
@@ -53,17 +52,31 @@ const useDeployAzorius = () => {
     },
     addressPrefix,
   } = useNetworkConfig();
-  const {
-    safe,
-    nodeHierarchy: { parentAddress },
-  } = useDaoInfoStore();
+  const { safe, subgraphInfo } = useDaoInfoStore();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const publicClient = usePublicClient();
-  const { loadDao } = useLoadDAONode();
+  const safeApi = useSafeAPI();
+  const lookupModules = useDecentModules();
+
+  const getParentDAOModules = useCallback(
+    async (address: Address) => {
+      try {
+        if (!safeApi) {
+          throw new Error('Safe API not ready');
+        }
+        const safeInfo = await safeApi.getSafeData(address);
+        const modules = await lookupModules(safeInfo.modules);
+        return modules;
+      } catch {
+        return;
+      }
+    },
+    [lookupModules, safeApi],
+  );
   const safeAddress = safe?.address;
 
   const deployAzorius = useCallback(
@@ -80,21 +93,19 @@ const useDeployAzorius = () => {
         return;
       }
 
-      let parentTokenAddress: Address | undefined;
       let parentStrategyAddress: Address | undefined;
       let parentStrategyType: VotingStrategyType | undefined;
       let attachFractalModule = false;
-      let parentNode: DaoInfo | undefined;
+      let parentModules: DecentModule[];
 
-      if (parentAddress) {
-        const loadedParentNode = await loadDao(parentAddress);
-        const loadingParentNodeError = (loadedParentNode as WithError).error;
-        if (loadingParentNodeError) {
-          toast.error(t(loadingParentNodeError));
+      if (subgraphInfo?.parentAddress) {
+        const loadedParentModule = await getParentDAOModules(subgraphInfo.parentAddress);
+        if (!loadedParentModule) {
+          toast.error(t('errorLoadingParentNode'));
           return;
         } else {
-          parentNode = loadedParentNode as DaoInfo;
-          const parentAzoriusModule = parentNode.fractalModules.find(
+          parentModules = loadedParentModule;
+          const parentAzoriusModule = parentModules.find(
             fractalModule => fractalModule.moduleType === FractalModuleType.AZORIUS,
           );
           if (parentAzoriusModule) {
@@ -110,19 +121,13 @@ const useDeployAzorius = () => {
 
             const masterCopyData = await getAddressContractType(parentStrategyAddress);
             if (masterCopyData.isLinearVotingErc20) {
-              const votingStrategyContract = getContract({
-                abi: abis.LinearERC20Voting,
-                client: publicClient,
-                address: parentStrategyAddress,
-              });
-              parentTokenAddress = await votingStrategyContract.read.governanceToken();
               parentStrategyType = VotingStrategyType.LINEAR_ERC20;
             } else if (masterCopyData.isLinearVotingErc721) {
               parentStrategyType = VotingStrategyType.LINEAR_ERC721;
             }
           }
 
-          const parentFractalModule = parentNode.fractalModules.find(
+          const parentFractalModule = parentModules.find(
             fractalModule => fractalModule.moduleType === FractalModuleType.FRACTAL,
           );
           if (!parentFractalModule) {
@@ -137,7 +142,6 @@ const useDeployAzorius = () => {
         true,
         daoData,
         compatibilityFallbackHandler,
-        votesErc20WrapperMasterCopy,
         votesErc20MasterCopy,
         keyValuePairs,
         gnosisSafeProxyFactory,
@@ -154,8 +158,7 @@ const useDeployAzorius = () => {
         linearVotingErc20MasterCopy,
         linearVotingErc721MasterCopy,
         moduleAzoriusMasterCopy,
-        parentAddress || undefined,
-        parentTokenAddress,
+        subgraphInfo?.parentAddress ?? undefined,
       );
 
       txBuilderFactory.setSafeContract(safeAddress);
@@ -216,9 +219,8 @@ const useDeployAzorius = () => {
       canUserCreateProposal,
       safe,
       publicClient,
-      parentAddress,
+      subgraphInfo?.parentAddress,
       compatibilityFallbackHandler,
-      votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,
       keyValuePairs,
       gnosisSafeProxyFactory,
@@ -237,10 +239,10 @@ const useDeployAzorius = () => {
       moduleAzoriusMasterCopy,
       submitProposal,
       t,
-      loadDao,
+      getParentDAOModules,
+      getAddressContractType,
       navigate,
       addressPrefix,
-      getAddressContractType,
     ],
   );
 

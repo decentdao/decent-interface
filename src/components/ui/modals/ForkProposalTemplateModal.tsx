@@ -33,7 +33,7 @@ export default function ForkProposalTemplateModal({
   const navigate = useNavigate();
   const publicClient = usePublicClient();
   const { chain, addressPrefix } = useNetworkConfig();
-  const { proposalTemplatesHash } = useDaoInfoStore();
+  const { subgraphInfo } = useDaoInfoStore();
 
   const { isSafe, isSafeLoading } = useIsSafe(targetDAOAddress);
   const { getCanUserCreateProposal } = useCanUserCreateProposal();
@@ -74,11 +74,14 @@ export default function ForkProposalTemplateModal({
   }, [getCanUserCreateProposal, inputValue, isSafe, isSafeLoading, chain, publicClient, t]);
 
   const handleSubmit = () => {
+    if (!subgraphInfo?.proposalTemplatesHash) {
+      throw new Error('No proposal templates hash found');
+    }
     navigate(
       `${DAO_ROUTES.proposalTemplateNew.relative(
         addressPrefix,
         targetDAOAddress,
-      )}&templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,
+      )}&templatesHash=${subgraphInfo?.proposalTemplatesHash}&templateIndex=${templateIndex}`,
     );
     onClose();
   };

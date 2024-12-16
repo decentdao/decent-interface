@@ -1,50 +1,134 @@
-import { Link, LinkProps } from '@chakra-ui/react';
+import { Flex, Link, LinkProps } from '@chakra-ui/react';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import { Ref } from 'react';
+
+type StyleVariants = 'grey' | 'green' | 'black' | 'lilac';
 
 export default function ExternalLink({
   children,
   internalRef,
   isTextLink,
+  styleVariant = 'green',
   ...rest
-}: LinkProps & { isTextLink?: boolean; internalRef?: Ref<any> }) {
+}: LinkProps & {
+  styleVariant?: StyleVariants;
+  isTextLink?: boolean;
+  internalRef?: Ref<any>;
+}) {
   const textLinkStyles = {
-    hover: {
-      textDecoration: 'underline',
+    green: {
+      hover: {
+        textDecoration: 'underline',
+      },
+      active: {
+        color: 'celery--2',
+      },
     },
-    active: {
-      color: 'celery--2',
+    grey: {
+      hover: {
+        textDecoration: 'underline',
+      },
+      active: {
+        color: 'neutral-6',
+      },
+    },
+    black: {
+      hover: {
+        textDecoration: 'underline',
+      },
+      active: {
+        color: 'black',
+      },
+    },
+    lilac: {
+      hover: {
+        textDecoration: 'underline',
+      },
+      active: {
+        color: 'lilac--3',
+      },
     },
   };
 
   const pillLinkStyles = {
-    hover: {
-      bg: 'celery--6',
-      borderColor: 'celery--6',
+    green: {
+      hover: {
+        bg: 'celery--6',
+        borderColor: 'celery--6',
+      },
+      active: {
+        bg: 'celery--5',
+        borderColor: 'celery--5',
+        borderWidth: '1px',
+      },
     },
-    active: {
-      bg: 'celery--5',
-      borderColor: 'celery--5',
-      borderWidth: '1px',
+    grey: {
+      hover: {
+        bg: 'neutral-2',
+      },
+      active: {
+        bg: 'neutral-5',
+        borderColor: 'neutral-5',
+        borderWidth: '1px',
+      },
     },
+    black: {
+      hover: {
+        bg: 'black',
+        borderColor: 'black',
+      },
+      active: {
+        bg: 'black',
+        borderColor: 'black',
+        borderWidth: '1px',
+      },
+    },
+    lilac: {
+      hover: {
+        bg: 'lilac-3',
+        borderColor: 'lilac-3',
+      },
+      active: {
+        bg: 'lilac--3',
+        borderColor: 'lilac--3',
+        borderWidth: '1px',
+      },
+    },
+  };
+
+  const linkColor = {
+    green: 'celery-0',
+    grey: 'neutral-6',
+    black: 'black',
+    lilac: 'lilac--3',
   };
 
   return (
     <Link
-      color="celery-0"
       padding="0.25rem 0.75rem"
+      color={linkColor[styleVariant]}
       gap="0.25rem"
-      borderRadius="625rem"
       borderColor="transparent"
       borderWidth="1px"
-      _hover={isTextLink ? textLinkStyles.hover : pillLinkStyles.hover}
-      _active={isTextLink ? textLinkStyles.active : pillLinkStyles.active}
+      borderRadius="625rem"
+      w="fit-content"
+      _hover={isTextLink ? textLinkStyles[styleVariant].hover : pillLinkStyles[styleVariant].hover}
+      _active={
+        isTextLink ? textLinkStyles[styleVariant].active : pillLinkStyles[styleVariant].active
+      }
       target="_blank"
       rel="noreferrer"
       textDecoration="none"
       ref={internalRef}
       {...rest}
     >
-      {children}
+      <Flex
+        gap="0.25rem"
+        alignItems="center"
+      >
+        {children}
+        {isTextLink && <ArrowUpRight />}
+      </Flex>
     </Link>
   );
 }

@@ -1,6 +1,7 @@
 import { Box, Center, Flex, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
+import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
@@ -19,6 +20,7 @@ export function DAOInfoCard() {
   // for non Fractal Safes
   const displayedAddress = node.safe?.address;
   const { displayName } = useGetAccountName(displayedAddress);
+  const { toggleFavorite, isFavorite } = useAccountFavorites();
 
   // node hasn't loaded yet
   if (!node || !displayedAddress) {
@@ -33,6 +35,8 @@ export function DAOInfoCard() {
       </Flex>
     );
   }
+
+  const daoName = node.subgraphInfo?.daoName || displayName;
 
   return (
     <Box>
@@ -52,10 +56,13 @@ export function DAOInfoCard() {
             columnGap="0.5rem"
           >
             {/* FAVORITE ICON */}
-            <FavoriteIcon safeAddress={displayedAddress} />
+            <FavoriteIcon
+              isFavorite={isFavorite(displayedAddress)}
+              toggleFavoriteCallback={() => toggleFavorite(displayedAddress, daoName)}
+            />
 
             {/* PARENT TAG */}
-            {node.nodeHierarchy.childNodes.length > 0 && (
+            {!!node.subgraphInfo && node.subgraphInfo.childAddresses.length > 0 && (
               <Link
                 to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
                 as={RouterLink}
@@ -65,7 +72,7 @@ export function DAOInfoCard() {
                 color="lilac-0"
                 borderRadius="625rem"
                 p="0.25rem 0.75rem"
-                textStyle="button-base"
+                textStyle="body-large"
               >
                 Parent
               </Link>
@@ -82,10 +89,10 @@ export function DAOInfoCard() {
         >
           {/* DAO NAME */}
           <Text
-            textStyle="display-4xl"
+            textStyle="heading-large"
             data-testid="DAOInfo-name"
           >
-            {node.daoName || displayName}
+            {daoName}
           </Text>
         </Flex>
 
@@ -93,7 +100,9 @@ export function DAOInfoCard() {
         <AddressCopier address={displayedAddress} />
 
         {/* SNAPSHOT ICON LINK */}
-        {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
+        {node.subgraphInfo?.daoSnapshotENS && (
+          <SnapshotButton snapshotENS={node.subgraphInfo.daoSnapshotENS} />
+        )}
       </Flex>
     </Box>
   );

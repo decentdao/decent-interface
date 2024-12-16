@@ -141,7 +141,7 @@ export function Badge({ labelKey, children, size }: IBadge) {
           h="0.5rem"
         />
         <Text
-          textStyle="label-base"
+          textStyle="labels-large"
           lineHeight="1"
         >
           {children || t(labelKey)}

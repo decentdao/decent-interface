@@ -27,7 +27,7 @@ export function SafeGeneralSettingsPage() {
 
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { daoName, daoSnapshotENS, safe } = useDaoInfoStore();
+  const { subgraphInfo, safe } = useDaoInfoStore();
   const {
     addressPrefix,
     contracts: { keyValuePairs },
@@ -36,19 +36,26 @@ export function SafeGeneralSettingsPage() {
   const safeAddress = safe?.address;
 
   useEffect(() => {
-    if (daoName && safeAddress && createAccountSubstring(safeAddress) !== daoName) {
-      setName(daoName);
+    if (
+      subgraphInfo?.daoName &&
+      safeAddress &&
+      createAccountSubstring(safeAddress) !== subgraphInfo?.daoName
+    ) {
+      setName(subgraphInfo.daoName);
     }
 
-    if (daoSnapshotENS) {
-      setSnapshotENS(daoSnapshotENS);
+    if (subgraphInfo?.daoSnapshotENS) {
+      setSnapshotENS(subgraphInfo?.daoSnapshotENS);
     }
-  }, [daoName, daoSnapshotENS, safeAddress]);
+  }, [subgraphInfo?.daoName, subgraphInfo?.daoSnapshotENS, safeAddress]);
 
   const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
     const lowerCasedValue = e.target.value.toLowerCase();
     setSnapshotENS(lowerCasedValue);
-    if (validateENSName(lowerCasedValue) || (e.target.value === '' && daoSnapshotENS)) {
+    if (
+      validateENSName(lowerCasedValue) ||
+      (e.target.value === '' && subgraphInfo?.daoSnapshotENS)
+    ) {
       setSnapshotENSValid(true);
     } else {
       setSnapshotENSValid(false);
@@ -61,10 +68,33 @@ export function SafeGeneralSettingsPage() {
     }
   };
 
-  const handleEditDAOName = () => {
+  const nameChanged = name !== subgraphInfo?.daoName;
+  const snapshotChanged = snapshotENSValid && snapshotENS !== subgraphInfo?.daoSnapshotENS;
+
+  const handleEditGeneralGovernance = () => {
+    const changeTitles = [];
+    if (nameChanged) {
+      changeTitles.push(t('updatesSafeName', { ns: 'proposalMetadata' }));
+    }
+    if (snapshotChanged) {
+      changeTitles.push(t('updateSnapshotSpace', { ns: 'proposalMetadata' }));
+    }
+    const title = changeTitles.join(` ${t('and', { ns: 'common' })} `);
+
+    const keyArgs = [];
+    const valueArgs = [];
+    if (nameChanged) {
+      keyArgs.push('daoName');
+      valueArgs.push(name);
+    }
+    if (snapshotChanged) {
+      keyArgs.push('snapshotENS');
+      valueArgs.push(snapshotENS);
+    }
+
     const proposalData: ProposalExecuteData = {
       metaData: {
-        title: t('updatesSafeName', { ns: 'proposalMetadata' }),
+        title,
         description: '',
         documentationUrl: '',
       },
@@ -74,37 +104,9 @@ export function SafeGeneralSettingsPage() {
         encodeFunctionData({
           abi: abis.KeyValuePairs,
           functionName: 'updateValues',
-          args: [['daoName'], [name]],
+          args: [keyArgs, valueArgs],
         }),
       ],
-    };
-
-    submitProposal({
-      proposalData,
-      nonce: safe?.nextNonce,
-      pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
-      successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
-      failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-      successCallback: submitProposalSuccessCallback,
-    });
-  };
-
-  const handleEditDAOSnapshotENS = () => {
-    const encodedUpdateValues = encodeFunctionData({
-      abi: abis.KeyValuePairs,
-      functionName: 'updateValues',
-      args: [['snapshotENS'], [snapshotENS]],
-    });
-
-    const proposalData: ProposalExecuteData = {
-      metaData: {
-        title: t('updateSnapshotSpace', { ns: 'proposalMetadata' }),
-        description: '',
-        documentationUrl: '',
-      },
-      targets: [keyValuePairs],
-      values: [0n],
-      calldatas: [encodedUpdateValues],
     };
 
     submitProposal({
@@ -134,19 +136,7 @@ export function SafeGeneralSettingsPage() {
             flexDir="column"
             gap="1rem"
           >
-            <Flex justifyContent="space-between">
-              <Text textStyle="display-lg">{t('daoMetadataName')}</Text>
-              {canUserCreateProposal && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  isDisabled={name === daoName}
-                  onClick={handleEditDAOName}
-                >
-                  {t('proposeChanges')}
-                </Button>
-              )}
-            </Flex>
+            <Text textStyle="heading-small">{t('daoMetadataName')}</Text>
             <InputComponent
               isRequired={false}
               onChange={e => setName(e.target.value)}
@@ -164,28 +154,21 @@ export function SafeGeneralSettingsPage() {
                 width: '100%',
               }}
             />
-            <Divider
-              my="1rem"
-              w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
-              mx={{ base: '-0.75rem', md: '-1.5rem' }}
-            />
           </Flex>
+          <Divider
+            my="1rem"
+            w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+            mx={{ base: '-0.75rem', md: '-1.5rem' }}
+          />
           <Flex
             flexDir="column"
             gap="1rem"
-            mt="1rem"
           >
-            <Flex justifyContent="space-between">
-              <Text textStyle="display-lg">{t('daoMetadataSnapshot')}</Text>
-              <Button
-                variant="secondary"
-                size="sm"
-                isDisabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
-                onClick={handleEditDAOSnapshotENS}
-              >
-                {t('proposeChanges')}
-              </Button>
-            </Flex>
+            <Text textStyle="heading-small">
+              {subgraphInfo?.daoSnapshotENS
+                ? t('daoMetadataSnapshot')
+                : t('daoMetadataConnectSnapshot')}
+            </Text>
             <InputComponent
               isRequired={false}
               onChange={handleSnapshotENSChange}
@@ -204,6 +187,24 @@ export function SafeGeneralSettingsPage() {
               }}
             />
           </Flex>
+          {canUserCreateProposal && (
+            <>
+              <Divider
+                my="1rem"
+                w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+                mx={{ base: '-0.75rem', md: '-1.5rem' }}
+              />
+              <Button
+                variant="secondary"
+                size="sm"
+                marginLeft="auto"
+                isDisabled={!nameChanged && !snapshotChanged}
+                onClick={handleEditGeneralGovernance}
+              >
+                {t('proposeChanges')}
+              </Button>
+            </>
+          )}
         </SettingsContentBox>
       ) : (
         <Flex

@@ -204,6 +204,12 @@ const useHatsTree = () => {
             ? secondsTimestampToDate(lockupLinearStream.cliffTime)
             : undefined;
 
+          const logo =
+            getValue({
+              cacheName: CacheKeys.TOKEN_INFO,
+              tokenAddress: getAddress(lockupLinearStream.asset.address),
+            })?.logoUri || '';
+
           return {
             streamId: lockupLinearStream.id,
             contractAddress: lockupLinearStream.contract.address,
@@ -213,7 +219,7 @@ const useHatsTree = () => {
               name: lockupLinearStream.asset.name,
               symbol: lockupLinearStream.asset.symbol,
               decimals: lockupLinearStream.asset.decimals,
-              logo: '', // @todo - how do we get logo?
+              logo,
             },
             amount: {
               bigintValue: BigInt(lockupLinearStream.depositAmount),
@@ -271,10 +277,10 @@ const useHatsTree = () => {
               return hat;
             }
             const payments: SablierPayment[] = [];
-            // @todo - update Datepicker to choose more precise dates (Date.now())
             if (hat.isTermed) {
-              const recipients = hat.roleTerms.allTerms.map(term => term.nominee);
-              const uniqueRecipients = [...new Set(recipients)];
+              const uniqueRecipients = [
+                ...new Set(hat.roleTerms.allTerms.map(term => term.nominee)),
+              ];
               for (const recipient of uniqueRecipients) {
                 payments.push(...(await getPaymentStreams(recipient)));
               }

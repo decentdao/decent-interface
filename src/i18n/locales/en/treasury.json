@@ -1,6 +1,6 @@
 {
   "titleTreasury": "{{daoName}} Treasury",
-  "buttonSendAssets": "Send Assets",
+  "buttonSendAssets": "Request Payment",
   "titleTransactions": "Transactions",
   "titleAssets": "Assets",
   "subtitleTreasuryBalance": "Total Treasury Balance",

@@ -23,11 +23,9 @@ import { useTranslation } from 'react-i18next';
 import { DecentHourGlass } from '../../../assets/theme/custom/icons/DecentHourGlass';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { RoleFormValues } from '../../../types/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
-import { AddressInput } from '../../ui/forms/EthAddressInput';
-import LabelWrapper from '../../ui/forms/LabelWrapper';
+import { InputComponent } from '../../ui/forms/InputComponent';
 import { ModalBase } from '../../ui/modals/ModalBase';
 import RoleFormTerms from './RoleFormTerms';
 
@@ -38,14 +36,13 @@ function RoleMemberWearerInput() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
   useEffect(() => {
     if (isValidWearerAddress) {
       setFieldValue('roleEditing.resolvedWearer', resolvedWearerAddress);
     }
   }, [isValidWearerAddress, resolvedWearerAddress, setFieldValue]);
 
-  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer, false);
   return (
     <FormControl>
       <Field name="roleEditing.wearer">
@@ -58,24 +55,21 @@ function RoleMemberWearerInput() {
           form: FormikProps<RoleFormValues>;
           meta: FieldMetaProps<string>;
         }) => (
-          <LabelWrapper
+          <InputComponent
             label={t('member')}
-            errorMessage={meta.touched && meta.error ? meta.error : undefined}
             isRequired
-            labelColor="neutral-7"
-          >
-            <AddressInput
-              value={displayName ?? field.value}
-              onBlur={() => {
-                setFieldTouched('roleEditing.wearer', true);
-              }}
-              onChange={e => {
-                const inputWearer = e.target.value;
-                setRoleWearerString(inputWearer);
-                setFieldValue('roleEditing.wearer', inputWearer);
-              }}
-            />
-          </LabelWrapper>
+            value={field.value}
+            errorMessage={meta.touched && meta.error ? meta.error : undefined}
+            onBlur={() => {
+              setFieldTouched('roleEditing.wearer', true);
+            }}
+            onChange={e => {
+              const inputWearer = e.target.value;
+              setRoleWearerString(inputWearer);
+              setFieldValue('roleEditing.wearer', inputWearer);
+            }}
+            testId="role-wearer"
+          />
         )}
       </Field>
     </FormControl>
@@ -104,7 +98,7 @@ function RoleMemberConfirmationScreen({
           w="auto"
         />
         <Text
-          textStyle="display-2xl"
+          textStyle="heading-large"
           textAlign="center"
         >
           {t('addTermLengthTitle')}
@@ -121,12 +115,7 @@ function RoleMemberConfirmationScreen({
               as={ClockCountdown}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-1')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-1')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -136,12 +125,7 @@ function RoleMemberConfirmationScreen({
               weight="fill"
             />
 
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-2')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-2')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -150,12 +134,7 @@ function RoleMemberConfirmationScreen({
               as={ReceiptX}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-3')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-3')}</Text>
           </Flex>
           <Flex gap={4}>
             <Icon
@@ -164,12 +143,7 @@ function RoleMemberConfirmationScreen({
               as={HandCoins}
               weight="fill"
             />
-            <Text
-              textStyle="body-base"
-              color="neutral-7"
-            >
-              {t('termedRoleConfirmation-4')}
-            </Text>
+            <Text color="neutral-7">{t('termedRoleConfirmation-4')}</Text>
           </Flex>
         </Flex>
         <Flex
@@ -182,7 +156,7 @@ function RoleMemberConfirmationScreen({
             as={Warning}
             weight="fill"
           />
-          <Text textStyle="helper-text-base">{t('termedRoleConfirmation-warning')}</Text>
+          <Text textStyle="labels-large">{t('termedRoleConfirmation-warning')}</Text>
         </Flex>
         <Flex
           gap={4}
@@ -265,6 +239,7 @@ function RoleFormMemberTermToggle() {
       padding="1.5rem"
       border="1px solid"
       borderColor="neutral-3"
+      bg="neutral-2"
       borderRadius="0.25rem"
       mt="1.5rem"
     >
@@ -280,7 +255,7 @@ function RoleFormMemberTermToggle() {
                   alignItems="center"
                   gap={2}
                 >
-                  <Text textStyle="label-large">{t('addTermLengths')}</Text>
+                  <Text textStyle="body-small">{t('addTermLengths')}</Text>
                   <Icon
                     size="1rem"
                     as={WarningDiamond}
@@ -288,7 +263,7 @@ function RoleFormMemberTermToggle() {
                   />
                 </Flex>
                 <Text
-                  textStyle="label-small"
+                  textStyle="labels-small"
                   color="neutral-7"
                 >
                   {t('addTermLengthSubTitle')}
@@ -338,8 +313,7 @@ export function RoleFormMember() {
   return (
     <Box>
       <Box
-        px={{ base: '1rem', md: 0 }}
-        py="1rem"
+        p="1.5rem"
         bg="neutral-2"
         boxShadow={{
           base: DETAILS_BOX_SHADOW,

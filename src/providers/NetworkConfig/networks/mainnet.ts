@@ -59,7 +59,6 @@ export const mainnetConfig: NetworkConfig = {
     zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
-    linearVotingErc20WrappedMasterCopy: getAddress(a.LinearERC20WrappedVoting),
     linearVotingErc20HatsWhitelistingMasterCopy: getAddress(
       a.LinearERC20VotingWithHatsProposalCreation,
     ),
@@ -79,7 +78,6 @@ export const mainnetConfig: NetworkConfig = {
     freezeVotingMultisigMasterCopy: getAddress(a.MultisigFreezeVoting),
 
     votesErc20MasterCopy: getAddress(a.VotesERC20),
-    votesErc20WrapperMasterCopy: getAddress(a.VotesERC20Wrapper),
 
     claimErc20MasterCopy: getAddress(a.ERC20Claim),
 

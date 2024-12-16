@@ -53,7 +53,7 @@ import {
   SablierPaymentFormValues,
 } from '../../types/roles';
 import { SENTINEL_MODULE } from '../../utils/address';
-import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
+import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsActionData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import {
@@ -91,7 +91,7 @@ export default function useCreateRoles() {
       moduleAzoriusAddress,
     },
   } = useFractal();
-  const { safe, daoName } = useDaoInfoStore();
+  const { safe, subgraphInfo } = useDaoInfoStore();
   const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
     addressPrefix,
@@ -521,7 +521,7 @@ export default function useCreateRoles() {
       const topHat = {
         details: await uploadHatDescription(
           hatsDetailsBuilder({
-            name: daoName || safeAddress,
+            name: subgraphInfo?.daoName || safeAddress,
             description: '',
           }),
           ipfsClient,
@@ -577,7 +577,7 @@ export default function useCreateRoles() {
       safeAddress,
       getEnableDisableDecentHatsModuleData,
       decentHatsCreationModule,
-      daoName,
+      subgraphInfo?.daoName,
       ipfsClient,
       hatsElectionsEligibilityMasterCopy,
       createHatStructsForNewTreeFromRolesFormValues,
@@ -639,6 +639,7 @@ export default function useCreateRoles() {
             hats: [hatStruct],
             topHatId: BigInt(hatsTree.topHat.id),
             topHatAccount: hatsTree.topHat.smartAddress,
+            keyValuePairs,
           },
         ],
       });
@@ -670,6 +671,7 @@ export default function useCreateRoles() {
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsElectionsEligibilityMasterCopy,
+      keyValuePairs,
     ],
   );
 

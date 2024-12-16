@@ -124,6 +124,42 @@ export enum FractalProposalState {
   CLOSED = 'stateClosed',
 }
 
+export type GnosisSafe = {
+  // replaces SafeInfoResponseWithGuard and SafeWithNextNonce
+  address: Address;
+  owners: Address[];
+  nonce: number;
+  nextNonce: number;
+  threshold: number;
+  modulesAddresses: Address[];
+  guard: Address | null;
+};
+
+export interface DAOSubgraph {
+  // replaces Part of DaoInfo
+  daoName: string | null;
+  parentAddress: Address | null;
+  childAddresses: Address[];
+  daoSnapshotENS: string | null;
+  proposalTemplatesHash: string | null;
+}
+
+// @todo should we add other Decent Module types here?
+export enum DecentModuleType {
+  // replaces FractalModuleType
+  AZORIUS, // Token Module
+  FRACTAL, // CHILD GOVERNANCE MODULE
+  UNKNOWN, // NON-DECENT MODULE
+}
+
+// @todo better typing here, SUBGRAPH has DAO type name,
+export interface IDAO {
+  // replaces DaoInfo
+  safe: GnosisSafe | null;
+  subgraphInfo: DAOSubgraph | null;
+  modules: DecentModule[] | null;
+}
+
 export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
   proposalId: string;
@@ -151,7 +187,6 @@ export interface ITokenAccount {
 export interface FractalStore extends Fractal {
   action: {
     dispatch: Dispatch<FractalActions>;
-    loadReadOnlyValues: () => Promise<void>;
     resetSafeState: () => Promise<void>;
   };
 }
@@ -171,7 +206,6 @@ export interface Fractal {
   treasury: DecentTreasury;
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
-  readOnly: ReadOnlyState;
 }
 
 export interface FractalGovernanceContracts {
@@ -182,29 +216,39 @@ export interface FractalGovernanceContracts {
   moduleAzoriusAddress?: Address;
   votesTokenAddress?: Address;
   lockReleaseAddress?: Address;
-  underlyingTokenAddress?: Address;
   isLoaded: boolean;
 }
 
-export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address; nextNonce: number };
+export type SafeWithNextNonce = SafeInfoResponseWithGuard & { nextNonce: number };
 
-export interface DaoInfo {
+// @dev Information retreived from subgraph
+interface SubgraphDAOInfo {
   daoName: string | null;
-  safe: SafeWithNextNonce | null;
-  fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
-  isModulesLoaded?: boolean;
   isHierarchyLoaded?: boolean;
   daoSnapshotENS?: string;
   proposalTemplatesHash?: string;
 }
 
-export interface Node
-  extends Omit<DaoInfo, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
-  address: Address;
+// @dev Information retreived from Safe
+export interface DaoInfo extends SubgraphDAOInfo {
+  safe: SafeWithNextNonce | null;
+  fractalModules: DecentModule[];
+  isModulesLoaded?: boolean;
+}
+export type DaoHierarchyStrategyType = 'ERC-20' | 'ERC-721' | 'MULTISIG';
+export interface DaoHierarchyInfo {
+  safeAddress: Address;
+  daoName: string | null;
+  daoSnapshotENS: string | null;
+  parentAddress: Address | null;
+  childAddresses: Address[];
+  proposalTemplatesHash: string | null;
+  modules: DecentModule[];
+  votingStrategies: DaoHierarchyStrategyType[];
 }
 
-export interface FractalModuleData {
+export interface DecentModule {
   moduleAddress: Address;
   moduleType: FractalModuleType;
 }
@@ -214,6 +258,7 @@ export enum FractalModuleType {
   FRACTAL,
   UNKNOWN,
 }
+
 export interface FractalGuardContracts {
   freezeGuardContractAddress?: Address;
   freezeVotingContractAddress?: Address;
@@ -263,6 +308,7 @@ export interface Governance {
   pendingProposals: string[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContractAddress?: Address;
+  isAzorius: boolean;
 }
 
 export interface VotingStrategyAzorius extends VotingStrategy {
@@ -280,9 +326,7 @@ export interface VotingStrategy<Type = BIFormattedPair> {
 export enum GovernanceType {
   MULTISIG = 'labelMultisigGov',
   AZORIUS_ERC20 = 'labelAzoriusErc20Gov',
-  AZORIUS_ERC20_HATS_WHITELISTING = 'labelAzoriusErc20HatsWhitelistingGov',
   AZORIUS_ERC721 = 'labelAzoriusErc721Gov',
-  AZORIUS_ERC721_HATS_WHITELISTING = 'labelAzoriusErc721HatsWhitelistingGov',
 }
 
 export enum VotingStrategyType {
@@ -294,34 +338,10 @@ export enum VotingStrategyType {
 
 export interface NodeHierarchy {
   parentAddress: Address | null;
-  childNodes: Node[];
+  childNodes: Omit<DaoInfo, 'isHierarchyLoaded' | 'isModulesLoaded' | 'fractalModules'>[];
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
-
-/**
- * Immutable state generally calculated from other stateful objects.
- * These are front end specific values that are commonly used throughout
- * the app.
- */
-export interface ReadOnlyState {
-  /** The currently connected DAO or null if there isn't one. */
-  dao: ReadOnlyDAO | null;
-  /** The "user", meaning the app user, wallet connected or not. */
-  user: ReadOnlyUser;
-}
-
-export interface ReadOnlyUser {
-  /** The user's wallet address, if connected.  */
-  address?: Address;
-  /** The number of delegated tokens for the connected Azorius DAO, 1 for a Multisig DAO signer */
-  votingWeight: bigint;
-}
-
-export interface ReadOnlyDAO {
-  /** Whether the connected DAO is an Azorius DAO.  */
-  isAzorius: boolean;
-}
 
 export interface TransferDisplayData {
   eventType: TokenEventType;

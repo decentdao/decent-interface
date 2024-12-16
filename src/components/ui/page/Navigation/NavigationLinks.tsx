@@ -1,17 +1,7 @@
 import { Box, Flex, Hide } from '@chakra-ui/react';
-import {
-  BookOpen,
-  Coins,
-  GitFork,
-  House,
-  Question,
-  Scroll,
-  SquaresFour,
-  UsersThree,
-} from '@phosphor-icons/react';
-import { WarpcastIcon } from '../../../../assets/theme/custom/icons/WarpcastIcon';
+import { BookOpen, Coins, GitFork, House, Question, UsersThree } from '@phosphor-icons/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { URL_CHAT, URL_DOCS, URL_FAQ } from '../../../../constants/url';
+import { URL_DOCS, URL_FAQ } from '../../../../constants/url';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import Divider from '../../utils/Divider';
@@ -24,7 +14,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       mt={{ base: 0, md: 6 }}
       maxWidth={{ md: 12, '3xl': '100%' }}
       _hover={{ maxWidth: '100%' }}
-      transitionDuration="0.2s"
+      transitionDuration="300ms"
       width={{ base: 'full', md: 'auto' }}
       borderRadius={{ md: 8 }}
       borderWidth={{ md: 1 }}
@@ -37,14 +27,6 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         labelKey="faq"
         testId="navigationExternal-faq"
         NavigationIcon={Question}
-        scope="external"
-        closeDrawer={closeDrawer}
-      />
-      <NavigationLink
-        href={URL_CHAT}
-        labelKey="chat"
-        testId="navigationExternal-chat"
-        NavigationIcon={WarpcastIcon}
         scope="external"
         closeDrawer={closeDrawer}
       />
@@ -78,7 +60,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       <Box
         maxWidth={{ md: 12, '3xl': '100%' }}
         _hover={{ maxWidth: '100%' }}
-        transitionDuration="0.2s"
+        transitionDuration="300ms"
         overflow={{ md: 'hidden' }}
         mt={{ md: 12 }}
         mb={{ md: 3 }}
@@ -91,8 +73,8 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       >
         <NavigationLink
           href={DAO_ROUTES.dao.relative(addressPrefix, safeAddress)}
-          labelKey="dashboard"
-          testId="navigation-dashboardLink"
+          labelKey="home"
+          testId="navigation-homeLink"
           NavigationIcon={House}
           scope="internal"
           closeDrawer={closeDrawer}
@@ -106,22 +88,6 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.hierarchy.relative(addressPrefix, safeAddress)}
-          labelKey="nodes"
-          testId="navigation-hierarchyLink"
-          NavigationIcon={GitFork}
-          scope="internal"
-          closeDrawer={closeDrawer}
-        />
-        <NavigationLink
-          href={DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)}
-          labelKey="proposals"
-          testId="navigation-proposalsLink"
-          NavigationIcon={Scroll}
-          scope="internal"
-          closeDrawer={closeDrawer}
-        />
-        <NavigationLink
           href={DAO_ROUTES.treasury.relative(addressPrefix, safeAddress)}
           labelKey="treasury"
           testId="navigation-treasuryLink"
@@ -130,10 +96,10 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress)}
-          labelKey="proposalTemplates"
-          testId="navigation-proposalTemplatesLink"
-          NavigationIcon={SquaresFour}
+          href={DAO_ROUTES.hierarchy.relative(addressPrefix, safeAddress)}
+          labelKey="nodes"
+          testId="navigation-hierarchyLink"
+          NavigationIcon={GitFork}
           scope="internal"
           closeDrawer={closeDrawer}
         />

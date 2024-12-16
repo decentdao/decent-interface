@@ -1,41 +1,54 @@
+import { getAddress } from 'viem';
 import { create } from 'zustand';
-import { FractalModuleData, DaoInfo, Node, SafeWithNextNonce } from '../../types';
+import { DAOSubgraph, DecentModule, IDAO, SafeWithNextNonce } from '../../types';
 
-export const initialDaoInfoStore: DaoInfo = {
-  daoName: null,
+export const initialDaoInfoStore: IDAO = {
   safe: null,
-  fractalModules: [],
-  nodeHierarchy: {
-    parentAddress: null,
-    childNodes: [],
-  },
-  isHierarchyLoaded: false,
-  isModulesLoaded: false,
+  subgraphInfo: null,
+  modules: null,
 };
-
-export interface DaoInfoStore extends DaoInfo {
-  setSafeInfo: (safeWithNonce: SafeWithNextNonce) => void;
-  setDaoInfo: (daoInfo: Node | { daoName: string }) => void;
-  setFractalModules: (fractalModules: FractalModuleData[]) => void;
+export interface DaoInfoStore extends IDAO {
+  setSafeInfo: (safe: SafeWithNextNonce) => void;
+  setDaoInfo: (daoInfo: DAOSubgraph) => void;
+  setDecentModules: (modules: DecentModule[]) => void;
   updateDaoName: (newDaoName: string) => void;
   resetDaoInfoStore: () => void;
 }
 
 export const useDaoInfoStore = create<DaoInfoStore>()(set => ({
   ...initialDaoInfoStore,
-  setSafeInfo: (safeWithNonce: SafeWithNextNonce) => {
-    set({ safe: safeWithNonce });
+  setSafeInfo: (safe: SafeWithNextNonce) => {
+    const { address, owners, nonce, nextNonce, threshold, modules, guard } = safe;
+    set({
+      safe: {
+        owners: owners.map(getAddress),
+        modulesAddresses: modules.map(getAddress),
+        guard: getAddress(guard),
+        address: getAddress(address),
+        nextNonce,
+        threshold,
+        nonce,
+      },
+    });
   },
 
   // called by subgraph data flow
-  setDaoInfo: (daoInfo: Node | { daoName: string }) => {
-    set({ ...daoInfo, isHierarchyLoaded: true });
+  setDaoInfo: (subgraphInfo: DAOSubgraph) => {
+    set({ subgraphInfo });
   },
-  setFractalModules: (fractalModules: FractalModuleData[]) => {
-    set({ fractalModules, isModulesLoaded: true });
+
+  setDecentModules: (modules: DecentModule[]) => {
+    set({ modules });
   },
   updateDaoName: (newDaoName: string) => {
-    set({ daoName: newDaoName });
+    set(state => {
+      if (!state.subgraphInfo) {
+        throw new Error('Subgraph info is not set');
+      }
+      return {
+        subgraphInfo: { ...state.subgraphInfo, daoName: newDaoName },
+      };
+    });
   },
   resetDaoInfoStore: () => set(initialDaoInfoStore),
 }));

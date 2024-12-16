@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useMemo } from 'react';
@@ -11,7 +11,26 @@ import {
 import { RoleFormValues, SablierPaymentFormValues } from '../../../types/roles';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
+import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from '../RolePaymentDetails';
+import { RoleFormPaymentStream } from './RoleFormPaymentStream';
+import RoleFormPaymentStreamTermed from './RoleFormPaymentStreamTermed';
+
+export function RoleFormPaymentRenderer() {
+  const { values } = useFormikContext<RoleFormValues>();
+
+  if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
+    if (values.roleEditing?.isTermed) {
+      return (
+        <RoleFormPaymentStreamTermed paymentIndex={values.roleEditing.roleEditingPaymentIndex} />
+      );
+    } else {
+      return <RoleFormPaymentStream formIndex={values.roleEditing.roleEditingPaymentIndex} />;
+    }
+  }
+
+  return null;
+}
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
@@ -69,6 +88,7 @@ export function RoleFormPaymentStreams() {
                 isStreaming: () => false,
                 isCancellable: () => false,
                 isCancelling: false,
+                isValidatedAndSaved: false,
               });
               await validateForm();
               setFieldValue('roleEditing.roleEditingPaymentIndex', (payments ?? []).length);
@@ -76,24 +96,48 @@ export function RoleFormPaymentStreams() {
           >
             {t('addPayment')}
           </Button>
+          {sortedPayments.length === 0 && (
+            <Flex
+              bg="neutral-2"
+              padding="1.5rem"
+              border="1px solid"
+              borderColor="neutral-3"
+              borderRadius="0.25rem"
+              my="1.5rem"
+              justifyContent="space-between"
+            >
+              <Flex flexDir="column">
+                <Text textStyle="label-large">{t('noPaymentsTitle')}</Text>
+                <Text
+                  textStyle="label-small"
+                  color="neutral-7"
+                >
+                  {t('noPaymentsSubTitle')}
+                </Text>
+              </Flex>
+            </Flex>
+          )}
+          <RoleFormPaymentRenderer />
+          {!!sortedPayments.length && <Divider my="1rem" />}
           <Box mt="0.5rem">
-            {sortedPayments.map((payment, index) => {
+            {sortedPayments.map(payment => {
               // @note don't render if form isn't valid
               if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
                 return null;
 
               const canBeCancelled = payment.isCancellable();
+              const thisPaymentIndex = payments?.findIndex(p => p.streamId === payment.streamId);
               return (
                 <RolePaymentDetails
-                  key={index}
+                  key={thisPaymentIndex}
                   showCancel={canBeCancelled || !payment.isCancelling}
                   onClick={
                     canBeCancelled
-                      ? () => setFieldValue('roleEditing.roleEditingPaymentIndex', index)
+                      ? () => setFieldValue('roleEditing.roleEditingPaymentIndex', thisPaymentIndex)
                       : undefined
                   }
                   onCancel={() => {
-                    setFieldValue(`roleEditing.payments.${index}`, {
+                    setFieldValue(`roleEditing.payments.${thisPaymentIndex}`, {
                       ...payment,
                       isCancelling: true,
                     });

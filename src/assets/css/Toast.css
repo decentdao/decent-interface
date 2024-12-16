@@ -45,7 +45,7 @@
   font-size: 14px;
   letter-spacing: 0.14px;
   line-height: 20px;
-  font-family: 'DM Sans Variable';
+  font-family: 'DM Sans';
 }
 
 .sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='info'],
