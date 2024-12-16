@@ -1,24 +1,21 @@
 import { useState, useCallback } from 'react';
-import { Address, createPublicClient, http, isAddress, getAddress } from 'viem';
+import { Address, createPublicClient, http, isAddress, getAddress, zeroAddress } from 'viem';
 import { normalize } from 'viem/ens';
 import { supportedNetworks } from '../../providers/NetworkConfig/useNetworkConfigStore';
 
-type ResolveAddressReturnType = {
-  resolved: {
-    address: Address;
-    chainId: number;
-  }[];
+type ResolveENSNameReturnType = {
+  resolvedAddress: Address;
   isValid: boolean;
 };
-export const useResolveAddressMultiChain = () => {
+export const useResolveENSName = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const resolveAddressMultiChain = useCallback(
-    async (input: string): Promise<ResolveAddressReturnType> => {
+    async (input: string): Promise<ResolveENSNameReturnType> => {
       setIsLoading(true);
 
-      const returnedResult: ResolveAddressReturnType = {
-        resolved: [],
+      const returnedResult: ResolveENSNameReturnType = {
+        resolvedAddress: zeroAddress,
         isValid: false,
       };
 
@@ -29,10 +26,7 @@ export const useResolveAddressMultiChain = () => {
       if (isAddress(input)) {
         // @dev if its a valid address, its valid on all networks
         returnedResult.isValid = true;
-        returnedResult.resolved = supportedNetworks.map(network => ({
-          address: getAddress(input),
-          chainId: network.chain.id,
-        }));
+        returnedResult.resolvedAddress = getAddress(input);
         setIsLoading(false);
         return returnedResult;
       }
@@ -54,19 +48,14 @@ export const useResolveAddressMultiChain = () => {
         chain: mainnet.chain,
         transport: http(mainnet.rpcEndpoint),
       });
-      for (const network of supportedNetworks) {
-        try {
-          const resolvedAddress = await mainnetPublicClient.getEnsAddress({ name: normalizedName });
-          if (resolvedAddress) {
-            returnedResult.resolved.push({
-              address: resolvedAddress,
-              chainId: network.chain.id,
-            });
-            returnedResult.isValid = true;
-          }
-        } catch {
-          // do nothing
+      try {
+        const resolvedAddress = await mainnetPublicClient.getEnsAddress({ name: normalizedName });
+        if (resolvedAddress) {
+          returnedResult.resolvedAddress = resolvedAddress;
+          returnedResult.isValid = true;
         }
+      } catch {
+        // do nothing
       }
       setIsLoading(false);
       return returnedResult;
