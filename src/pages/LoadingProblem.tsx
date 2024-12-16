@@ -7,7 +7,7 @@ import {
 import { CONTENT_MAXW } from '../constants/common';
 import { useNetworkConfigStore } from '../providers/NetworkConfig/useNetworkConfigStore';
 
-function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQueryParam' }) {
+function LoadingProblem({ type }: { type: 'invalidSafe' | 'badQueryParam' }) {
   const { chain } = useNetworkConfigStore();
   const { t } = useTranslation('common');
 

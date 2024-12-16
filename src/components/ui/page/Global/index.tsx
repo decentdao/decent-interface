@@ -21,7 +21,6 @@ import { Layout } from '../Layout';
 
 const useUserTracking = () => {
   const { address } = useAccount();
-
   useEffect(() => {
     Sentry.setUser(address ? { id: address } : null);
     if (address) {
