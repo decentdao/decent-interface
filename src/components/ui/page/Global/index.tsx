@@ -1,7 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import * as Sentry from '@sentry/react';
 import { useEffect, useState } from 'react';
-import { createPublicClient, http, PublicClient } from 'viem';
 import { useAccount } from 'wagmi';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import {
@@ -36,8 +35,6 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
 
   useEffect(() => {
     (async () => {
-      const publicClientsByChain = new Map<number, PublicClient>();
-
       const favoriteNames = await Promise.all(
         favoritesList.map(async favorite => {
           const favoriteChain = wagmiConfig.chains.find(
@@ -54,22 +51,9 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
             return;
           }
 
-          let favoritePublicClient = publicClientsByChain.get(favoriteChain.id);
-
-          if (!favoritePublicClient) {
-            favoritePublicClient = createPublicClient({
-              chain: favoriteChain,
-              transport: http(favoriteNetwork.rpcEndpoint),
-            });
-            publicClientsByChain.set(favoriteChain.id, favoritePublicClient);
-          }
-
           const networkConfig = getNetworkConfig(favoriteChain.id);
 
-          return Promise.all([
-            favorite,
-            getSafeName(favoritePublicClient, networkConfig.subgraph, favorite.address),
-          ]);
+          return Promise.all([favorite, getSafeName(networkConfig.subgraph, favorite.address)]);
         }),
       );
 
