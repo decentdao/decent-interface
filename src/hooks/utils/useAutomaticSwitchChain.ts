@@ -9,7 +9,7 @@ export const useAutomaticSwitchChain = ({
   urlAddressPrefix: string | undefined;
 }) => {
   const { setCurrentConfig, getConfigByChainId, addressPrefix } = useNetworkConfigStore();
-  const { isFetched } = useWalletClient();
+  const { isFetchedAfterMount } = useWalletClient();
   const { switchChain } = useSwitchChain({
     mutation: {
       onError: () => {
@@ -26,7 +26,11 @@ export const useAutomaticSwitchChain = ({
       return;
     }
     const chainId = getChainIdFromPrefix(urlAddressPrefix);
-    if (addressPrefix !== urlAddressPrefix && urlAddressPrefix !== undefined && isFetched) {
+    if (
+      addressPrefix !== urlAddressPrefix &&
+      urlAddressPrefix !== undefined &&
+      isFetchedAfterMount
+    ) {
       switchChain({ chainId });
     }
     setTimeout(() => setCurrentConfig(getConfigByChainId(chainId)), 300);
@@ -36,6 +40,6 @@ export const useAutomaticSwitchChain = ({
     getConfigByChainId,
     urlAddressPrefix,
     switchChain,
-    isFetched,
+    isFetchedAfterMount,
   ]);
 };
