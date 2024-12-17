@@ -4,7 +4,7 @@ import { Address, PublicClient, getAddress, isAddress } from 'viem';
 import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
 import { validateENSName } from '../../../utils/url';
@@ -73,7 +73,7 @@ export const useValidationAddress = () => {
 
   const { t } = useTranslation(['daoCreate', 'common', 'modals']);
   const { safe } = useDaoInfoStore();
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
 
   const publicClient = usePublicClient();
 

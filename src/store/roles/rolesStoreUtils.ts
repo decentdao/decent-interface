@@ -134,7 +134,7 @@ export const predictAccountAddress = async (params: {
     tokenId,
   ]);
   if (!(await publicClient.getBytecode({ address: predictedAddress }))) {
-    throw new DecentHatsError('Predicted address is not a contract');
+    return;
   }
   return predictedAddress;
 };
@@ -288,6 +288,10 @@ export const sanitize = async (
     publicClient,
   });
 
+  if (!topHatSmartAddress) {
+    throw new DecentHatsError('Top Hat smart address is not valid');
+  }
+
   const whitelistingVotingContract = whitelistingVotingStrategy
     ? getContract({
         abi: abis.LinearERC20VotingWithHatsProposalCreation,
@@ -320,6 +324,9 @@ export const sanitize = async (
     tokenId: BigInt(rawAdminHat.id),
     publicClient,
   });
+  if (!adminHatSmartAddress) {
+    throw new DecentHatsError('Admin Hat smart address is not valid');
+  }
 
   const adminHat: DecentAdminHat = {
     id: rawAdminHat.id,

@@ -7,7 +7,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair } from '../../../types';
 import { ProposalTemplate } from '../../../types/proposalBuilder';
@@ -26,7 +26,7 @@ export default function ProposalTemplateModal({
   onClose,
 }: IProposalTemplateModalProps) {
   const { safe } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nextNonce);

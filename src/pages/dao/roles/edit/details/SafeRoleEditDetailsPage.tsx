@@ -9,7 +9,7 @@ import { RoleFormTabs } from '../../../../../components/Roles/forms/RoleFormTabs
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
-import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import {
   EditBadgeStatus,
@@ -21,7 +21,7 @@ import {
 export function SafeRoleEditDetailsPage() {
   const { t } = useTranslation(['roles']);
   const { safe } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const navigate = useNavigate();
   const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();

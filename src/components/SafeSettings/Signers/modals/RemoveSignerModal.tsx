@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { useEnsName } from 'wagmi';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { SENTINEL_MODULE } from '../../../../utils/address';
 import SupportTooltip from '../../../ui/badges/SupportTooltip';
@@ -32,7 +32,7 @@ function RemoveSignerModal({
   const [threshold, setThreshold] = useState<number>(defaultNewThreshold);
 
   const [nonce, setNonce] = useState<number | undefined>(safe!.nextNonce);
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
   const { data: ensName } = useEnsName({
     address: selectedSigner,
     chainId: chain.id,

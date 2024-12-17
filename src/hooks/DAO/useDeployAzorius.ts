@@ -11,7 +11,7 @@ import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
@@ -51,7 +51,7 @@ const useDeployAzorius = () => {
       freezeVotingMultisigMasterCopy,
     },
     addressPrefix,
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const { safe, subgraphInfo } = useDaoInfoStore();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);

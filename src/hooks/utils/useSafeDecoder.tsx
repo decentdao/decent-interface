@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useCallback } from 'react';
 import { Address, encodePacked, keccak256 } from 'viem';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { DecodedTransaction, DecodedTxParam } from '../../types';
 import { buildSafeApiUrl, parseMultiSendTransactions } from '../../utils';
 import { CacheKeys } from './cache/cacheDefaults';
@@ -10,7 +10,7 @@ import { DBObjectKeys, useIndexedDB } from './cache/useLocalDB';
  * Handles decoding and caching transactions via the Safe API.
  */
 export const useSafeDecoder = () => {
-  const { safeBaseURL } = useNetworkConfig();
+  const { safeBaseURL } = useNetworkConfigStore();
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
   const decode = useCallback(
     async (value: string, to: Address, data?: string): Promise<DecodedTransaction[]> => {

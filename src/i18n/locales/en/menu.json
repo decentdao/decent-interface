@@ -2,7 +2,6 @@
   "connect": "Connect",
   "connectWallet": "Connect Wallet",
   "disconnect": "Disconnect",
-  "network": "Network",
   "wallet": "Wallet",
   "titleManageProposalTemplate": "Manage Template",
   "optionCreateSubDAO": "Create SubDAO",

@@ -16,14 +16,14 @@ import { NEUTRAL_2_84 } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusGovernance } from '../../../../types';
 
 export function SafePermissionsSettingsPage() {
   const { t } = useTranslation(['settings', 'common']);
   const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const {
     governance,
     governanceContracts: { isLoaded, linearVotingErc20Address },

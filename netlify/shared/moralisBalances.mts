@@ -3,7 +3,7 @@ import type { Store } from '@netlify/blobs';
 import Moralis from 'moralis';
 import { isAddress } from 'viem';
 import type { Address } from 'viem';
-import { moralisSupportedChainIds } from '../../src/providers/NetworkConfig/NetworkConfigProvider';
+import { moralisSupportedChainIds } from '../../src/providers/NetworkConfig/useNetworkConfigStore';
 
 export interface BalanceDataWithMetadata<T> {
   data: T[];

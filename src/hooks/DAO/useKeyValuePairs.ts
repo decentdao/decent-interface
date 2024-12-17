@@ -1,11 +1,10 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { Address, GetContractEventsReturnType, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 
@@ -97,16 +96,13 @@ const useKeyValuePairs = () => {
   const {
     chain,
     contracts: { keyValuePairs, sablierV2LockupLinear },
-  } = useNetworkConfig();
-  const { setHatKeyValuePairData } = useRolesStore();
-  const [searchParams] = useSearchParams();
+  } = useNetworkConfigStore();
+  const { setHatKeyValuePairData, resetHatsStore } = useRolesStore();
 
   const safeAddress = node.safe?.address;
 
   useEffect(() => {
-    const safeParam = searchParams.get('dao');
-
-    if (!publicClient || !safeAddress || safeAddress !== safeParam?.split(':')[1]) {
+    if (!safeAddress || !publicClient) {
       return;
     }
 
@@ -160,10 +156,17 @@ const useKeyValuePairs = () => {
     keyValuePairs,
     safeAddress,
     publicClient,
-    searchParams,
     setHatKeyValuePairData,
     sablierV2LockupLinear,
   ]);
+
+  useEffect(() => {
+    if (!safeAddress) {
+      return;
+    }
+
+    resetHatsStore();
+  }, [resetHatsStore, safeAddress]);
 };
 
 export { useKeyValuePairs };

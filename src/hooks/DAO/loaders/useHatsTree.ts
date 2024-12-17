@@ -9,28 +9,24 @@ import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { SablierPayment } from '../../../types/roles';
 import { convertStreamIdToBigInt } from '../../streams/useCreateSablierStream';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
-import { useParseSafeAddress } from '../useParseSafeAddress';
 
 const hatsSubgraphClient = new HatsSubgraphClient({});
 
 const useHatsTree = () => {
   const { t } = useTranslation('roles');
-  const { safeAddress } = useParseSafeAddress();
   const {
     governanceContracts: {
       linearVotingErc20WithHatsWhitelistingAddress,
       linearVotingErc721WithHatsWhitelistingAddress,
     },
   } = useFractal();
-  const { safe } = useDaoInfoStore();
   const {
     hatsTreeId,
     contextChainId,
@@ -38,7 +34,6 @@ const useHatsTree = () => {
     streamsFetched,
     setHatsTree,
     updateRolesWithStreams,
-    resetHatsStore,
   } = useRolesStore();
 
   const ipfsClient = useIPFSClient();
@@ -50,7 +45,7 @@ const useHatsTree = () => {
       hatsAccount1ofNMasterCopy: hatsAccountImplementation,
       hatsElectionsEligibilityMasterCopy: hatsElectionsImplementation,
     },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const publicClient = usePublicClient();
   const apolloClient = useApolloClient();
 
@@ -301,12 +296,6 @@ const useHatsTree = () => {
 
     getHatsStreams();
   }, [hatsTree, updateRolesWithStreams, getPaymentStreams, streamsFetched]);
-
-  useEffect(() => {
-    if (safeAddress && safe?.address && safeAddress !== safe.address && hatsTree) {
-      resetHatsStore();
-    }
-  }, [resetHatsStore, safeAddress, safe?.address, hatsTree]);
 };
 
 export { useHatsTree };
