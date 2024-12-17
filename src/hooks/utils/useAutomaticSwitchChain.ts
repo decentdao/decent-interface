@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSwitchChain } from 'wagmi';
+import { useSwitchChain, useWalletClient } from 'wagmi';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { getChainIdFromPrefix } from '../../utils/url';
 
@@ -9,6 +9,7 @@ export const useAutomaticSwitchChain = ({
   urlAddressPrefix: string | undefined;
 }) => {
   const { setCurrentConfig, getConfigByChainId, addressPrefix } = useNetworkConfigStore();
+  const { isFetched } = useWalletClient();
   const { switchChain } = useSwitchChain({
     mutation: {
       onError: () => {
@@ -25,9 +26,16 @@ export const useAutomaticSwitchChain = ({
       return;
     }
     const chainId = getChainIdFromPrefix(urlAddressPrefix);
-    if (addressPrefix !== urlAddressPrefix && urlAddressPrefix !== undefined) {
+    if (addressPrefix !== urlAddressPrefix && urlAddressPrefix !== undefined && isFetched) {
       switchChain({ chainId });
     }
     setTimeout(() => setCurrentConfig(getConfigByChainId(chainId)), 300);
-  }, [addressPrefix, setCurrentConfig, getConfigByChainId, urlAddressPrefix, switchChain]);
+  }, [
+    addressPrefix,
+    setCurrentConfig,
+    getConfigByChainId,
+    urlAddressPrefix,
+    switchChain,
+    isFetched,
+  ]);
 };
