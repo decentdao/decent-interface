@@ -12,7 +12,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import {
   TokenEventType,
@@ -33,7 +33,7 @@ export const useDecentTreasury = () => {
   const safeAPI = useSafeAPI();
   const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
-  const { chain, nativeTokenIcon } = useNetworkConfig();
+  const { chain, nativeTokenIcon } = useNetworkConfigStore();
   const safeAddress = safe?.address;
 
   const publicClient = usePublicClient();

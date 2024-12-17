@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Address, GetContractEventsReturnType, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 
@@ -96,7 +96,7 @@ const useKeyValuePairs = () => {
   const {
     chain,
     contracts: { keyValuePairs, sablierV2LockupLinear },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const { setHatKeyValuePairData, resetHatsStore } = useRolesStore();
 
   const safeAddress = node.safe?.address;

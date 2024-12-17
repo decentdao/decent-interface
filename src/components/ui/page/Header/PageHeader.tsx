@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { CONTENT_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import AddressCopier from '../../links/AddressCopier';
 import Divider from '../../utils/Divider';
@@ -34,7 +34,7 @@ function PageHeader({
 }: PageHeaderProps) {
   const { safe, subgraphInfo } = useDaoInfoStore();
 
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const safeAddress = safe?.address;
 
   const [links, setLinks] = useState([...breadcrumbs]);

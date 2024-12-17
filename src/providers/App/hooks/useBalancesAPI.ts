@@ -2,13 +2,13 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { DefiBalance, NFTBalance, TokenBalance } from '../../../types';
-import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../NetworkConfig/useNetworkConfigStore';
 
 export default function useBalancesAPI() {
   const {
     chain,
     moralis: { deFiSupported },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const { t } = useTranslation('treasury');
 
   const getTokenBalances = useCallback(

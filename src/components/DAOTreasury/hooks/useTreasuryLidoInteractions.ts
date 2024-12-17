@@ -5,7 +5,7 @@ import LidoWithdrawalQueueAbi from '../../../assets/abi/LidoWithdrawalQueueAbi';
 import useLidoStaking from '../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 
@@ -16,7 +16,7 @@ export default function useTreasuryLidoInteractions() {
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { staking } = useNetworkConfig();
+  const { staking } = useNetworkConfigStore();
   const publicClient = usePublicClient();
 
   // --- Lido Stake button setup ---

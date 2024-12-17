@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Blocker, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../../../types/roles';
@@ -27,7 +27,7 @@ export function RoleFormTabs({
   const { hatsTree } = useRolesStore();
   const { safe } = useDaoInfoStore();
   const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue, errors, setTouched } = useFormikContext<RoleFormValues>();

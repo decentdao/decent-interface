@@ -7,7 +7,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposalTemplate';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { ProposalTemplate } from '../../types/proposalBuilder';
 import ContentBox from '../ui/containers/ContentBox';
@@ -29,7 +29,7 @@ export default function ProposalTemplateCard({
   const { t } = useTranslation('proposalTemplate');
   const { safe } = useDaoInfoStore();
 
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
   const { submitProposal } = useSubmitProposal();

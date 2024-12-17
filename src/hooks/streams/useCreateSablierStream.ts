@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } from 'viem';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { PreparedNewStreamData } from '../../types/roles';
 import { SENTINEL_MODULE } from '../../utils/address';
@@ -19,7 +19,7 @@ export function convertStreamIdToBigInt(streamId: string) {
 export default function useCreateSablierStream() {
   const {
     contracts: { sablierV2LockupLinear, sablierV2Batch, decentSablierStreamManagementModule },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const { safe } = useDaoInfoStore();
 
   const safeAddress = safe?.address;

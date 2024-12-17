@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { isAddress } from 'viem';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { validPrefixes } from '../../providers/NetworkConfig/networks';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 
 export const useParseSafeAddress = () => {
   const [searchParams] = useSearchParams();
@@ -10,7 +10,7 @@ export const useParseSafeAddress = () => {
   const queryAddressPrefix = queryPrefixAndAddress?.[0];
   const queryDaoAddress = queryPrefixAndAddress?.[1];
 
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   if (
     queryAddressPrefix === undefined ||
