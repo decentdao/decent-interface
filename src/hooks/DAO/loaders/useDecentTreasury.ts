@@ -170,7 +170,7 @@ export const useDecentTreasury = () => {
       // make unique
       .filter((value, index, self) => self.indexOf(value) === index)
       // turn them into Address type
-      .map(getAddress);
+      .map(address => getAddress(address));
 
     const transfersTokenInfo = await Promise.all(
       tokenAddressesOfTransfers.map(async address => {
