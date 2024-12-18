@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { PublicClient } from 'viem';
@@ -8,6 +8,7 @@ import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
@@ -150,22 +151,26 @@ const useHatsTree = () => {
       t,
     ],
   );
-
+  const node = useDaoInfoStore();
+  const safeAddress = node.safe?.address;
+  const loadKey = useRef<string | null | undefined>(undefined);
   useEffect(() => {
+    const key = safeAddress && hatsTreeId ? `${safeAddress}:${hatsTreeId}` : null;
     if (
-      hatsTreeId === undefined ||
-      hatsTreeId === null ||
-      publicClient === undefined ||
-      contextChainId === null
+      !!hatsTreeId &&
+      !!contextChainId &&
+      !!publicClient &&
+      key !== null &&
+      key !== loadKey.current
     ) {
-      return;
+      getHatsTree({
+        hatsTreeId,
+        contextChainId,
+        publicClient,
+      });
     }
-    getHatsTree({
-      hatsTreeId,
-      contextChainId,
-      publicClient,
-    });
-  }, [contextChainId, getHatsTree, hatsTreeId, publicClient]);
+    loadKey.current = key;
+  }, [contextChainId, getHatsTree, hatsTreeId, publicClient, safeAddress]);
 };
 
 export { useHatsTree };
