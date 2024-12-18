@@ -151,6 +151,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
               selectedItem={dropdownItems.find(item => item.selected)}
               onSelect={item => {
                 setCurrentConfig(getConfigByChainId(Number(item.value)));
+                switchChain({ chainId: Number(item.value) });
               }}
               title={t('networks')}
               isDisabled={false}
