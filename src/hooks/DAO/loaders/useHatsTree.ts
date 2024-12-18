@@ -165,23 +165,7 @@ const useHatsTree = () => {
       contextChainId,
       publicClient,
     });
-  }, [
-    contextChainId,
-    erc6551Registry,
-    hatsAccountImplementation,
-    hatsElectionsImplementation,
-    hatsProtocol,
-    hatsTreeId,
-    ipfsClient,
-    publicClient,
-    setHatsTree,
-    t,
-    linearVotingErc20WithHatsWhitelistingAddress,
-    linearVotingErc721WithHatsWhitelistingAddress,
-    apolloClient,
-    sablierSubgraph,
-    getHatsTree,
-  ]);
+  }, [contextChainId, getHatsTree, hatsTreeId, publicClient]);
 };
 
 export { useHatsTree };
