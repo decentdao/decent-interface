@@ -1,3 +1,4 @@
+import { ApolloClient } from '@apollo/client';
 import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient } from 'viem';
 import { SendAssetsData } from '../components/ui/modals/SendAssetsModal';
@@ -258,6 +259,11 @@ export interface RolesStore extends RolesStoreData {
     hatsAccountImplementation: Address;
     hatsElectionsImplementation: Address;
     publicClient: PublicClient;
+    apolloClient: ApolloClient<object>;
+    sablierSubgraph?: {
+      space: number;
+      slug: string;
+    };
     whitelistingVotingStrategy?: Address;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
