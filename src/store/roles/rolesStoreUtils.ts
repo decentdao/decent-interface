@@ -13,9 +13,9 @@ import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { getValue } from '../../hooks/utils/cache/useLocalStorage';
 import {
   DecentAdminHat,
-  DecentHat,
   DecentRoleHat,
   DecentRoleHatTerms,
+  DecentTopHat,
   DecentTree,
   RolesStoreData,
   SablierPayment,
@@ -416,13 +416,12 @@ export const sanitize = async (
     whitelistedHatsIds = [...(await whitelistingVotingContract.read.getWhitelistedHatIds())];
   }
 
-  const topHat: DecentHat = {
+  const topHat: DecentTopHat = {
     id: rawTopHat.id,
     prettyId: rawTopHat.prettyId ?? '',
     name: topHatMetadata.name,
     description: topHatMetadata.description,
     smartAddress: topHatSmartAddress,
-    canCreateProposals: false, // @dev - we don't care about it since topHat is not displayed
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
@@ -446,7 +445,6 @@ export const sanitize = async (
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
-    canCreateProposals: false, // @dev - we don't care about it since adminHat is not displayed
     wearer: rawAdminHat.wearers?.length ? rawAdminHat.wearers[0].id : undefined,
   };
 
