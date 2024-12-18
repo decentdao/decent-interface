@@ -108,6 +108,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
     },
   });
 
+  useEffect(() => {
+    if (chain.id !== walletChainID) {
+      const chainId = getChainIdFromPrefix(addressPrefix);
+      switchChain({ chainId });
+    }
+  });
+
   return (
     <>
       <StepWrapper
