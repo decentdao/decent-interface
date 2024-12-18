@@ -39,11 +39,11 @@ const useHatsTree = () => {
   const apolloClient = useApolloClient();
 
   const getHatsTree = useCallback(
-    async (props: { hatsTreeId: number; contextChainId: number; publicClient: PublicClient }) => {
+    async (params: { hatsTreeId: number; contextChainId: number; publicClient: PublicClient }) => {
       try {
         const tree = await hatsSubgraphClient.getTree({
-          chainId: props.contextChainId,
-          treeId: props.hatsTreeId,
+          chainId: params.contextChainId,
+          treeId: params.hatsTreeId,
           props: {
             hats: {
               props: {
@@ -71,7 +71,7 @@ const useHatsTree = () => {
             const cacheKey = {
               cacheName: CacheKeys.IPFS_HASH,
               hash,
-              chainId: props.contextChainId,
+              chainId: params.contextChainId,
             } as const;
 
             const cachedDetails = getValue(cacheKey);
@@ -96,12 +96,12 @@ const useHatsTree = () => {
         try {
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
-            chainId: BigInt(props.contextChainId),
+            chainId: BigInt(params.contextChainId),
             hatsProtocol,
             erc6551Registry,
             hatsAccountImplementation,
             hatsElectionsImplementation,
-            publicClient: props.publicClient,
+            publicClient: params.publicClient,
             whitelistingVotingStrategy:
               linearVotingErc20WithHatsWhitelistingAddress ||
               linearVotingErc721WithHatsWhitelistingAddress,
@@ -116,12 +116,12 @@ const useHatsTree = () => {
       } catch (e) {
         setHatsTree({
           hatsTree: null,
-          chainId: BigInt(props.contextChainId),
+          chainId: BigInt(params.contextChainId),
           hatsProtocol,
           erc6551Registry,
           hatsAccountImplementation,
           hatsElectionsImplementation,
-          publicClient: props.publicClient,
+          publicClient: params.publicClient,
           apolloClient,
           sablierSubgraph,
         });
@@ -130,8 +130,8 @@ const useHatsTree = () => {
         console.error(e, {
           message,
           args: {
-            network: props.contextChainId,
-            hatsTreeId: props.hatsTreeId,
+            network: params.contextChainId,
+            hatsTreeId: params.hatsTreeId,
           },
         });
       }
