@@ -14,7 +14,7 @@ import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnaps
 import { useGetMetadata } from '../../../../hooks/DAO/proposal/useGetMetadata';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { AzoriusProposal, SnapshotProposal } from '../../../../types';
 
@@ -29,7 +29,7 @@ export function SafeProposalDetailsPage() {
     governance: { proposals, loadingProposals, allProposalsLoaded, isAzorius },
   } = useFractal();
   const { safe } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { proposalId } = useParams();
 
   // Either the proposals have not even started loading yet, or not all proposals have been loaded, so this could be one of them

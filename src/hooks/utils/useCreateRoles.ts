@@ -35,7 +35,7 @@ import { getRandomBytes } from '../../helpers';
 import { generateContractByteCodeLinear } from '../../models/helpers/utils';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import {
@@ -110,7 +110,7 @@ export default function useCreateRoles() {
       decentAutonomousAdminV1MasterCopy,
       hatsElectionsEligibilityMasterCopy,
     },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
 
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
 
@@ -915,6 +915,9 @@ export default function useCreateRoles() {
           throw new Error('Cannot prepare transactions for edited role without smart address');
         }
         const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
+        if (!newPredictedHatSmartAccount) {
+          throw new Error('Cannot predict smart account');
+        }
         const newStreamTxData = createBatchLinearStreamCreationTx(
           newStreamsOnHat.map(stream => ({ ...stream, recipient: newPredictedHatSmartAccount })),
         );

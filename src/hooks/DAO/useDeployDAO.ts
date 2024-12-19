@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Address, getContract, isHex } from 'viem';
 import { useWalletClient } from 'wagmi';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
@@ -17,7 +17,7 @@ const useDeployDAO = () => {
   const {
     addressPrefix,
     contracts: { multiSendCallOnly },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
 
   const { data: walletClient } = useWalletClient();
 

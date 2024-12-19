@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { TokenEventType, TransferDisplayData, TransferType } from '../../../types';
 import { DecentTooltip } from '../../ui/DecentTooltip';
@@ -14,7 +14,7 @@ import { BarLoader } from '../../ui/loaders/BarLoader';
 
 function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
   const { t } = useTranslation(['treasury', 'common']);
-  const { etherscanBaseURL } = useNetworkConfig();
+  const { etherscanBaseURL } = useNetworkConfigStore();
 
   return (
     <Box

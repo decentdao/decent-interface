@@ -2,7 +2,7 @@
   "emptyFavorites": "You haven't added any DAOs yet.",
   "loadingFavorite": "Loading DAO Name",
   "errorInvalidSearch": "Oops! This Ethereum address is invalid.",
-  "errorFailedSearch": "Sorry, this address is not a DAO on {{chain}}.",
+  "errorFailedSearch": "Sorry, this address is not a DAO on any supported chain.",
   "searchDAOPlaceholder": "Enter Address or ENS Name",
   "titleGovernance": "Governance",
   "titleType": "Type",

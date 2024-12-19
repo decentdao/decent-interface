@@ -18,15 +18,14 @@ export function AccountDisplay({ containerRef }: AccountDisplayProps) {
         as={MenuButton}
         variant="tertiary"
         data-testid="header-accountMenu"
-        padding="0.25rem"
+        paddingY="0.25rem"
+        paddingX="1rem"
+        paddingInline="0.75rem"
         color="white-0"
-        border="1px solid transparent"
         borderRadius="0.5rem"
         _hover={{ color: 'white-0', bg: 'neutral-3' }}
         _active={{
           color: 'white-0',
-          border: '1px solid',
-          borderColor: 'neutral-4',
           bg: 'neutral-3',
         }}
       >
@@ -34,7 +33,7 @@ export function AccountDisplay({ containerRef }: AccountDisplayProps) {
       </Button>
 
       <Portal containerRef={containerRef}>
-        <WalletMenu containerRef={containerRef} />
+        <WalletMenu />
       </Portal>
     </Menu>
   );

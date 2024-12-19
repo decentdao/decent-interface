@@ -101,6 +101,8 @@
   "tooltipNftVoting": "NFT Voting allows a group of ERC-721 (NFT) holders to propose and vote on transactions. Multiple NFT addresses can be used. <1>Learn more</1>",
   "errorUnsupportedCreateOption": "Previously selected Governance option is not supported on this network.",
   "attachFractalModuleLabel": "Enable Clawback",
+  "networks": "Networks",
+  "networkDescription": "What network would you like to deploy this DAO on?",
   "attachFractalModuleDescription": "This setting controls whether Parent DAO will be able to execute arbitrary transactions on Child DAO bypassing voting process on Child DAO.",
   "fractalModuleAttachedDescription": "This setting can not be modified as Fractal Module already attached to the DAO."
 }

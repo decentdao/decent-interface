@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { encodeFunctionData, isHex } from 'viem';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusERC20DAO,
@@ -28,7 +28,7 @@ export const useCreateSubDAOProposal = () => {
   const { safe } = useDaoInfoStore();
   const {
     contracts: { multiSendCallOnly, keyValuePairs },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const azoriusGovernance = governance as AzoriusGovernance;
 
   const safeAddress = safe?.address;

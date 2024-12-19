@@ -43,6 +43,7 @@ export function SafesMenu() {
               alignItems="center"
               gap={2}
               px={0}
+              color="white-0"
             >
               <Text>{t('mySafes')}</Text>
               <Icon

@@ -1,17 +1,24 @@
+import { ApolloClient } from '@apollo/client';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { HatsModulesClient } from '@hatsprotocol/modules-sdk';
 import { Hat, Tree } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
+import { Address, Hex, PublicClient, formatUnits, getAddress, getContract } from 'viem';
+import { StreamsQueryDocument } from '../../../.graphclient';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
+import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
+import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
+import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
+import { getValue } from '../../hooks/utils/cache/useLocalStorage';
 import {
   DecentAdminHat,
-  DecentHat,
   DecentRoleHat,
   DecentRoleHatTerms,
+  DecentTopHat,
   DecentTree,
   RolesStoreData,
+  SablierPayment,
 } from '../../types/roles';
 
 export class DecentHatsError extends Error {
@@ -134,7 +141,7 @@ export const predictAccountAddress = async (params: {
     tokenId,
   ]);
   if (!(await publicClient.getBytecode({ address: predictedAddress }))) {
-    throw new DecentHatsError('Predicted address is not a contract');
+    return;
   }
   return predictedAddress;
 };
@@ -258,6 +265,106 @@ const getRoleHatTerms = async (
   };
 };
 
+const getPaymentStreams = async (
+  paymentRecipient: Address,
+  publicClient: PublicClient,
+  apolloClient: ApolloClient<object>,
+  sablierSubgraph: {
+    space: number;
+    slug: string;
+  },
+): Promise<SablierPayment[]> => {
+  if (!sablierSubgraph || !publicClient) {
+    return [];
+  }
+  const streamQueryResult = await apolloClient.query({
+    query: StreamsQueryDocument,
+    variables: { recipientAddress: paymentRecipient },
+    context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
+  });
+
+  if (!streamQueryResult.error) {
+    if (!streamQueryResult.data.streams.length) {
+      return [];
+    }
+    const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
+    const lockupLinearStreams = streamQueryResult.data.streams.filter(
+      stream => stream.category === 'LockupLinear',
+    );
+    const formattedLinearStreams = lockupLinearStreams.map(lockupLinearStream => {
+      const parsedAmount = formatUnits(
+        BigInt(lockupLinearStream.depositAmount),
+        lockupLinearStream.asset.decimals,
+      );
+
+      const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
+      const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
+      const cliffDate = lockupLinearStream.cliff
+        ? secondsTimestampToDate(lockupLinearStream.cliffTime)
+        : undefined;
+
+      const logo =
+        getValue({
+          cacheName: CacheKeys.TOKEN_INFO,
+          tokenAddress: getAddress(lockupLinearStream.asset.address),
+        })?.logoUri || '';
+
+      return {
+        streamId: lockupLinearStream.id,
+        contractAddress: lockupLinearStream.contract.address,
+        recipient: getAddress(lockupLinearStream.recipient),
+        asset: {
+          address: getAddress(lockupLinearStream.asset.address),
+          name: lockupLinearStream.asset.name,
+          symbol: lockupLinearStream.asset.symbol,
+          decimals: lockupLinearStream.asset.decimals,
+          logo,
+        },
+        amount: {
+          bigintValue: BigInt(lockupLinearStream.depositAmount),
+          value: parsedAmount,
+        },
+        isCancelled: lockupLinearStream.canceled,
+        startDate,
+        endDate,
+        cliffDate,
+        isStreaming: () => {
+          const start = !lockupLinearStream.cliff
+            ? startDate.getTime()
+            : cliffDate !== undefined
+              ? cliffDate.getTime()
+              : undefined;
+          const end = endDate ? endDate.getTime() : undefined;
+          const cancelled = lockupLinearStream.canceled;
+          const now = new Date().getTime();
+
+          return !cancelled && !!start && !!end && start <= now && end > now;
+        },
+        isCancellable: () =>
+          !lockupLinearStream.canceled && !!endDate && endDate.getTime() > Date.now(),
+      };
+    });
+
+    const streamsWithCurrentWithdrawableAmounts: SablierPayment[] = await Promise.all(
+      formattedLinearStreams.map(async stream => {
+        const streamContract = getContract({
+          abi: SablierV2LockupLinearAbi,
+          address: stream.contractAddress,
+          client: publicClient,
+        });
+        const bigintStreamId = convertStreamIdToBigInt(stream.streamId);
+
+        const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
+          bigintStreamId,
+        ]);
+        return { ...stream, withdrawableAmount: newWithdrawableAmount };
+      }),
+    );
+    return streamsWithCurrentWithdrawableAmounts;
+  }
+  return [];
+};
+
 export const sanitize = async (
   hatsTree: undefined | null | Tree,
   hatsAccountImplementation: Address,
@@ -266,6 +373,11 @@ export const sanitize = async (
   hats: Address,
   chainId: bigint,
   publicClient: PublicClient,
+  apolloClient: ApolloClient<object>,
+  sablierSubgraph?: {
+    space: number;
+    slug: string;
+  },
   whitelistingVotingStrategy?: Address,
 ): Promise<undefined | null | DecentTree> => {
   if (hatsTree === undefined || hatsTree === null) {
@@ -288,6 +400,10 @@ export const sanitize = async (
     publicClient,
   });
 
+  if (!topHatSmartAddress) {
+    throw new DecentHatsError('Top Hat smart address is not valid');
+  }
+
   const whitelistingVotingContract = whitelistingVotingStrategy
     ? getContract({
         abi: abis.LinearERC20VotingWithHatsProposalCreation,
@@ -300,13 +416,12 @@ export const sanitize = async (
     whitelistedHatsIds = [...(await whitelistingVotingContract.read.getWhitelistedHatIds())];
   }
 
-  const topHat: DecentHat = {
+  const topHat: DecentTopHat = {
     id: rawTopHat.id,
     prettyId: rawTopHat.prettyId ?? '',
     name: topHatMetadata.name,
     description: topHatMetadata.description,
     smartAddress: topHatSmartAddress,
-    canCreateProposals: false, // @dev - we don't care about it since topHat is not displayed
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
@@ -320,6 +435,9 @@ export const sanitize = async (
     tokenId: BigInt(rawAdminHat.id),
     publicClient,
   });
+  if (!adminHatSmartAddress) {
+    throw new DecentHatsError('Admin Hat smart address is not valid');
+  }
 
   const adminHat: DecentAdminHat = {
     id: rawAdminHat.id,
@@ -327,7 +445,6 @@ export const sanitize = async (
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
-    canCreateProposals: false, // @dev - we don't care about it since adminHat is not displayed
     wearer: rawAdminHat.wearers?.length ? rawAdminHat.wearers[0].id : undefined,
   };
 
@@ -371,6 +488,32 @@ export const sanitize = async (
       canCreateProposals = whitelistedHatsIds.includes(tokenId);
     }
 
+    const payments: SablierPayment[] = [];
+    if (sablierSubgraph !== undefined) {
+      if (isTermed) {
+        const uniqueRecipients = [...new Set(roleTerms.allTerms.map(term => term.nominee))];
+        for (const recipient of uniqueRecipients) {
+          payments.push(
+            ...(await getPaymentStreams(recipient, publicClient, apolloClient, sablierSubgraph)),
+          );
+        }
+      } else {
+        if (!roleHatSmartAccountAddress) {
+          throw new Error('Smart account address not found');
+        }
+        payments.push(
+          ...(await getPaymentStreams(
+            roleHatSmartAccountAddress,
+            publicClient,
+            apolloClient,
+            sablierSubgraph,
+          )),
+        );
+      }
+    } else {
+      // @todo - fallback if sablier subgraph is not supported on network
+    }
+
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
@@ -382,6 +525,7 @@ export const sanitize = async (
       roleTerms,
       isTermed,
       canCreateProposals,
+      payments,
     });
   }
 

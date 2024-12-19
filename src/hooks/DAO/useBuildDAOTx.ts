@@ -3,7 +3,7 @@ import { Address } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
@@ -35,7 +35,7 @@ const useBuildDAOTx = () => {
       freezeVotingErc721MasterCopy,
       freezeVotingMultisigMasterCopy,
     },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
 
   const {
     governance,

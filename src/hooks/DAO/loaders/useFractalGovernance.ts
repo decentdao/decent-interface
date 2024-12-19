@@ -4,7 +4,7 @@ import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ProposalTemplate } from '../../../types';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
@@ -38,7 +38,7 @@ export const useFractalGovernance = () => {
 
   const ONE_MINUTE = 60 * 1000;
 
-  const { subgraph } = useNetworkConfig();
+  const { subgraph } = useNetworkConfigStore();
 
   useQuery(DAOQueryDocument, {
     variables: { safeAddress },
