@@ -153,23 +153,33 @@ const useHatsTree = () => {
   );
   const node = useDaoInfoStore();
   const safeAddress = node.safe?.address;
-  const loadKey = useRef<string | null | undefined>(undefined);
+  const daoHatTreeloadKey = useRef<string | null>();
   useEffect(() => {
     const key = safeAddress && hatsTreeId ? `${safeAddress}:${hatsTreeId}` : null;
+
+    const previousSafeAddress = daoHatTreeloadKey.current?.split(':')[0];
+    const previousHatsTreeId = daoHatTreeloadKey.current?.split(':')[1];
+
     if (
       !!hatsTreeId &&
       !!contextChainId &&
       !!publicClient &&
       key !== null &&
-      key !== loadKey.current
+      key !== daoHatTreeloadKey.current &&
+      previousHatsTreeId !== `${hatsTreeId}` // don't try to load hats tree if this new DAO is stuck with the same hats tree id as the previous DAO
     ) {
       getHatsTree({
         hatsTreeId,
         contextChainId,
         publicClient,
       });
+
+      console.log('setting loadKey.current', key);
+      daoHatTreeloadKey.current = key;
+    } else if (!!safeAddress && safeAddress !== previousSafeAddress) {
+      // If the safe address changes, reset the load key
+      daoHatTreeloadKey.current = key;
     }
-    loadKey.current = key;
   }, [contextChainId, getHatsTree, hatsTreeId, publicClient, safeAddress]);
 };
 
