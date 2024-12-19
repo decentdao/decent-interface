@@ -161,11 +161,9 @@ const useKeyValuePairs = () => {
   ]);
 
   useEffect(() => {
-    if (!safeAddress) {
-      return;
+    if (safeAddress === undefined) {
+      resetHatsStore();
     }
-
-    resetHatsStore();
   }, [resetHatsStore, safeAddress]);
 };
 

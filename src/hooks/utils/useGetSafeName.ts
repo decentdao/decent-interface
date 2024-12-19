@@ -36,7 +36,7 @@ export const getSafeName = async (
         subgraphVersion: subgraph.version,
       },
     })
-  ).data?.daos[0].name;
+  ).data?.daos[0]?.name;
 
   if (subgraphName) {
     return subgraphName;
