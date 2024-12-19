@@ -98,8 +98,6 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   let tokenErrorMsg = '';
 
   if (touched.erc20Token?.tokenImportAddress) {
-    console.log(errors?.erc20Token?.tokenImportAddress);
-
     tokenErrorMsg =
       errors?.erc20Token?.tokenImportAddress ||
       (!isImportedVotesToken ? t('errorNotVotingToken') : '');

@@ -174,7 +174,6 @@ const useHatsTree = () => {
         publicClient,
       });
 
-      console.log('setting loadKey.current', key);
       daoHatTreeloadKey.current = key;
     } else if (!!safeAddress && safeAddress !== previousSafeAddress) {
       // If the safe address changes, reset the load key
