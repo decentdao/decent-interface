@@ -108,6 +108,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
     },
   });
 
+  useEffect(() => {
+    if (chain.id !== walletChainID) {
+      const chainId = getChainIdFromPrefix(addressPrefix);
+      switchChain({ chainId });
+    }
+  }, [chain.id, walletChainID, addressPrefix, switchChain]);
+
   return (
     <>
       <StepWrapper
@@ -144,6 +151,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
               selectedItem={dropdownItems.find(item => item.selected)}
               onSelect={item => {
                 setCurrentConfig(getConfigByChainId(Number(item.value)));
+                switchChain({ chainId: Number(item.value) });
               }}
               title={t('networks')}
               isDisabled={false}
