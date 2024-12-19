@@ -113,7 +113,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       const chainId = getChainIdFromPrefix(addressPrefix);
       switchChain({ chainId });
     }
-  });
+  }, [chain.id, walletChainID, addressPrefix, switchChain]);
 
   return (
     <>
