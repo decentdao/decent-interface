@@ -2,7 +2,6 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Divider, Flex, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { Assets } from '../../../components/DAOTreasury/components/Assets';
 import {
   PaginationButton,
@@ -10,39 +9,25 @@ import {
   Transactions,
 } from '../../../components/DAOTreasury/components/Transactions';
 import { TitledInfoBox } from '../../../components/ui/containers/TitledInfoBox';
-import { ModalType } from '../../../components/ui/modals/ModalProvider';
-import { SendAssetsData } from '../../../components/ui/modals/SendAssetsModal';
-import { useDecentModal } from '../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
-import { DAO_ROUTES } from '../../../constants/routes';
+import useSendAssetsActionModal from '../../../hooks/DAO/useSendAssetsActionModal';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
-import { useProposalActionsStore } from '../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
-import { ProposalActionType } from '../../../types';
-import {
-  isNativeAsset,
-  prepareSendAssetsActionData,
-} from '../../../utils/dao/prepareSendAssetsActionData';
 
 export function SafeTreasuryPage() {
   useEffect(() => {
     amplitude.track(analyticsEvents.TreasuryPageOpened);
   }, []);
-  const { safe } = useDaoInfoStore();
   const {
-    governance: { isAzorius },
     treasury: { assetsFungible, transfers },
   } = useFractal();
   const { subgraphInfo } = useDaoInfoStore();
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation(['treasury', 'modals']);
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { addAction } = useProposalActionsStore();
-  const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfigStore();
+
   const hasAnyBalanceOfAnyFungibleTokens =
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
@@ -50,44 +35,7 @@ export function SafeTreasuryPage() {
 
   const totalTransfers = transfers?.length || 0;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
-  const sendAssetsAction = async (sendAssetsData: SendAssetsData) => {
-    if (!safe?.address) {
-      return;
-    }
-    const isNative = isNativeAsset(sendAssetsData.asset);
-    const transactionData = prepareSendAssetsActionData({
-      transferAmount: sendAssetsData.transferAmount,
-      asset: sendAssetsData.asset,
-      destinationAddress: sendAssetsData.destinationAddress,
-    });
-    addAction({
-      actionType: ProposalActionType.TRANSFER,
-      content: <></>,
-      transactions: [
-        {
-          targetAddress: transactionData.calldata,
-          ethValue: {
-            bigintValue: transactionData.value,
-            value: transactionData.value.toString(),
-          },
-          functionName: isNative ? '' : 'transfer',
-          parameters: isNative
-            ? []
-            : [
-                { signature: 'address', value: sendAssetsData.destinationAddress },
-                { signature: 'uint256', value: sendAssetsData.transferAmount.toString() },
-              ],
-        },
-      ],
-    });
-    navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safe.address));
-  };
-
-  const openSendAssetsModal = useDecentModal(ModalType.SEND_ASSETS, {
-    onSubmit: sendAssetsAction,
-    submitButtonText: t('submitProposal', { ns: 'modals' }),
-    showNonceInput: !isAzorius,
-  });
+  const { openSendAssetsModal } = useSendAssetsActionModal();
 
   return (
     <Box>

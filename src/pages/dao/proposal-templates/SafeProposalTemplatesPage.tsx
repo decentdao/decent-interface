@@ -8,12 +8,10 @@ import ExampleTemplateCard from '../../../components/ProposalTemplates/ExampleTe
 import ProposalTemplateCard from '../../../components/ProposalTemplates/ProposalTemplateCard';
 import NoDataCard from '../../../components/ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import { ModalType } from '../../../components/ui/modals/ModalProvider';
-import { SendAssetsData } from '../../../components/ui/modals/SendAssetsModal';
-import { useDecentModal } from '../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import Divider from '../../../components/ui/utils/Divider';
 import { DAO_ROUTES } from '../../../constants/routes';
+import useSendAssetsActionModal from '../../../hooks/DAO/useSendAssetsActionModal';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -27,7 +25,7 @@ export function SafeProposalTemplatesPage() {
 
   const { t } = useTranslation();
   const {
-    governance: { proposalTemplates, isAzorius },
+    governance: { proposalTemplates },
   } = useFractal();
   const { safe } = useDaoInfoStore();
   const { canUserCreateProposal } = useCanUserCreateProposal();
@@ -35,13 +33,7 @@ export function SafeProposalTemplatesPage() {
   const navigate = useNavigate();
 
   const safeAddress = safe?.address;
-  const openSendAssetsModal = useDecentModal(ModalType.SEND_ASSETS, {
-    onSubmit: (sendAssetData: SendAssetsData) => {
-      console.log(sendAssetData);
-    },
-    submitButtonText: t('submitProposal', { ns: 'modals' }),
-    showNonceInput: !isAzorius,
-  });
+  const { openSendAssetsModal } = useSendAssetsActionModal();
 
   const EXAMPLE_TEMPLATES = useMemo(() => {
     if (!safeAddress) return [];
