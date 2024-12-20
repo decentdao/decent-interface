@@ -12,7 +12,7 @@ import useAvatar from '../../hooks/utils/useAvatar';
 import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useTransaction } from '../../hooks/utils/useTransaction';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { RoleFormTermStatus } from '../../types/roles';
 import { DEFAULT_DATE_TIME_FORMAT_NO_TZ } from '../../utils';
@@ -284,7 +284,7 @@ export default function RoleTerm({
   const { t } = useTranslation(['roles']);
   const {
     contracts: { hatsProtocol },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
 
   const roleHat = useMemo(() => {
     if (!hatId) return undefined;

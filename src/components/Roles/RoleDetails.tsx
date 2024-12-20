@@ -1,5 +1,5 @@
-import { Badge, Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
-import { CheckSquare, List, User } from '@phosphor-icons/react';
+import { Badge, Box, Button, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { ArrowLeft, CheckSquare, List, User } from '@phosphor-icons/react';
 import { RefObject, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ import useAvatar from '../../hooks/utils/useAvatar';
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import {
   paymentSorterByActiveStatus,
@@ -79,7 +79,7 @@ export default function RolesDetails({
 }) {
   const { safe } = useDaoInfoStore();
   const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const permissionsContainerRef = useRef<HTMLDivElement>(null);
 
   const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
@@ -135,19 +135,33 @@ export default function RolesDetails({
                   </Box>
                 ),
                 gap: 0,
-                children: t('editRoles'),
-                onClick: () => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address)),
+                children: t('editRole'),
+                onClick: () => {
+                  navigate(
+                    DAO_ROUTES.rolesEditDetails.relative(addressPrefix, safe.address, roleHat.id),
+                  );
+                },
               }
             : undefined
         }
       />
-      <Text
-        textStyle="heading-large"
-        color="white-0"
-        my="1rem"
-      >
-        {roleHat.name}
-      </Text>
+      <Flex justifyContent="space-between">
+        <Text
+          textStyle="heading-large"
+          color="white-0"
+          my="1rem"
+        >
+          {roleHat.name}
+        </Text>
+        <Button
+          variant="tertiary"
+          width="min-content"
+          color="lilac-0"
+          pr={2}
+          leftIcon={<ArrowLeft />}
+          onClick={() => navigate(DAO_ROUTES.roles.relative(addressPrefix, safe.address))}
+        />
+      </Flex>
       <Grid
         gridTemplateAreas={`
               "mLabel mValue"

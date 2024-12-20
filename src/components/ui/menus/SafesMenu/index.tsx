@@ -1,22 +1,10 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Hide,
-  Icon,
-  IconButton,
-  Menu,
-  MenuButton,
-  Show,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Hide, Icon, IconButton, Show, Text, useDisclosure } from '@chakra-ui/react';
 import { CaretDown, Star } from '@phosphor-icons/react';
-import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import { AllSafesDrawer } from '../../../../pages/home/AllSafesDrawer';
-import { EaseOutComponent } from '../../utils/EaseOutComponent';
-import { SafesList } from './SafesList';
+import { OptionMenu } from '../OptionMenu';
+import { SafeMenuItem } from './SafeMenuItem';
 
 export function SafesMenu() {
   const { t } = useTranslation('home');
@@ -25,6 +13,8 @@ export function SafesMenu() {
     onOpen: onSafesDrawerOpen,
     onClose: onSafesDrawerClose,
   } = useDisclosure();
+
+  const { favoritesList } = useAccountFavorites();
 
   return (
     <Box>
@@ -46,47 +36,61 @@ export function SafesMenu() {
       </Hide>
 
       <Show above="md">
-        <Menu
-          placement="bottom-end"
-          offset={[0, 4]}
-        >
-          {({ isOpen }) => (
-            <Fragment>
-              <MenuButton
-                as={Button}
-                variant="tertiary"
-                data-testid="header-favoritesMenuButton"
-                p="0.75rem"
-                color="white-0"
-                border="1px solid transparent"
-                borderRadius="0.5rem"
-                _hover={{ color: 'white-0', bg: 'neutral-3' }}
-                _active={{
-                  color: 'white-0',
-                  border: '1px solid',
-                  borderColor: 'neutral-4',
-                  bg: 'neutral-3',
-                }}
-              >
-                <Flex
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Text>{t('mySafes')}</Text>
-                  <Icon
-                    as={CaretDown}
-                    boxSize="1.5rem"
-                  />
-                </Flex>
-              </MenuButton>
-              {isOpen && (
-                <EaseOutComponent>
-                  <SafesList />
-                </EaseOutComponent>
-              )}
-            </Fragment>
-          )}
-        </Menu>
+        <OptionMenu
+          trigger={
+            <Button
+              variant="tertiary"
+              alignItems="center"
+              gap={2}
+              px={0}
+              color="white-0"
+            >
+              <Text>{t('mySafes')}</Text>
+              <Icon
+                as={CaretDown}
+                boxSize="1.5rem"
+              />
+            </Button>
+          }
+          options={
+            !favoritesList.length
+              ? [
+                  {
+                    optionKey: 'empty-favorites',
+                    onClick: () => {},
+                    renderer: () => (
+                      <Text padding="1rem">{t('emptyFavorites', { ns: 'dashboard' })}</Text>
+                    ),
+                  },
+                ]
+              : favoritesList.map(favorite => ({
+                  optionKey: `${favorite.networkPrefix}:${favorite.address}`,
+                  onClick: () => {},
+                  renderer: () => (
+                    <SafeMenuItem
+                      name={favorite.name}
+                      address={favorite.address}
+                      network={favorite.networkPrefix}
+                    />
+                  ),
+                }))
+          }
+          buttonAs={Button}
+          buttonProps={{
+            variant: 'tertiary',
+            color: 'white-0',
+            _hover: { color: 'white-0', bg: 'neutral-3' },
+            _active: {
+              color: 'white-0',
+              bg: 'neutral-3',
+            },
+            paddingX: '0.75rem',
+            paddingY: '0.25rem',
+          }}
+          closeOnSelect={false}
+          showOptionSelected
+          showOptionCount
+        />
       </Show>
 
       <AllSafesDrawer

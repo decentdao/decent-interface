@@ -36,11 +36,11 @@ function DayStepperInput({
     <InputGroup>
       <Flex
         flexDirection="column"
-        w="100%"
         gap="0.5rem"
+        w="250px"
       >
-        <Text color="neutral-7">{t('days', { ns: 'common' })}</Text>
         <NumberStepperInput
+          unitHint={t('days', { ns: 'common' })}
           value={inputValue}
           onChange={val => onInputChange(Number(val))}
         />

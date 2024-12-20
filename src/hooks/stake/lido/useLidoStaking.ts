@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { encodeFunctionData } from 'viem';
 import LidoStEthAbi from '../../../assets/abi/LidoStEthAbi';
 import LidoWithdrawalQueueAbi from '../../../assets/abi/LidoWithdrawalQueueAbi';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { ProposalExecuteData } from '../../../types';
 import useSubmitProposal from '../../DAO/proposal/useSubmitProposal';
@@ -12,7 +12,7 @@ export default function useLidoStaking() {
   const { safe } = useDaoInfoStore();
   const {
     staking: { lido },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation('proposal');
 

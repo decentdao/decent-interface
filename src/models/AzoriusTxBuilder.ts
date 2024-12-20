@@ -88,8 +88,13 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
-      if (daoData.isVotesToken) {
-        this.predictedTokenAddress = daoData.tokenImportAddress as Address;
+      if (!daoData.isTokenImported) {
+        this.setEncodedSetupTokenData();
+        this.setPredictedTokenAddress();
+      } else {
+        if (daoData.isVotesToken) {
+          this.predictedTokenAddress = daoData.tokenImportAddress as Address;
+        }
       }
     }
   }

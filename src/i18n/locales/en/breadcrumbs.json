@@ -12,6 +12,6 @@
   "proposalTemplate": "{{proposalTemplateTitle}}",
   "proposalTemplateNew": "Create Proposal Template",
   "editDAO": "Edit DAO",
-  "parentLink": "Parent-Safe",
+  "parentLink": "Parent DAO",
   "settings": "Settings"
 }

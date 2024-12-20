@@ -12,7 +12,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import {
   TokenEventType,
@@ -22,6 +22,8 @@ import {
 } from '../../../types';
 import { formatCoin } from '../../../utils';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
+import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
+import { setValue } from '../../utils/cache/useLocalStorage';
 
 export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
@@ -31,7 +33,7 @@ export const useDecentTreasury = () => {
   const safeAPI = useSafeAPI();
   const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
-  const { chain, nativeTokenIcon } = useNetworkConfig();
+  const { chain, nativeTokenIcon } = useNetworkConfigStore();
   const safeAddress = safe?.address;
 
   const publicClient = usePublicClient();
@@ -172,8 +174,10 @@ export const useDecentTreasury = () => {
 
     const transfersTokenInfo = await Promise.all(
       tokenAddressesOfTransfers.map(async address => {
+        let tokenInfo: TokenInfoResponse;
+
         try {
-          return await safeAPI.getToken(address);
+          tokenInfo = await safeAPI.getToken(address);
         } catch (e) {
           const fallbackTokenData = tokenBalances?.find(
             tokenBalanceData => getAddress(tokenBalanceData.tokenAddress) === address,
@@ -198,7 +202,7 @@ export const useDecentTreasury = () => {
             };
           }
 
-          return {
+          tokenInfo = {
             address,
             name: fallbackTokenData.name,
             symbol: fallbackTokenData.symbol,
@@ -206,6 +210,13 @@ export const useDecentTreasury = () => {
             logoUri: fallbackTokenData.logo,
           };
         }
+
+        setValue(
+          { cacheName: CacheKeys.TOKEN_INFO, tokenAddress: address },
+          tokenInfo,
+          CacheExpiry.NEVER,
+        );
+        return tokenInfo;
       }),
     );
 

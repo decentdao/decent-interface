@@ -6,7 +6,7 @@ import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { ProposalExecuteData } from '../../../types';
 import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { validateENSName } from '../../../utils/url';
@@ -28,7 +28,7 @@ export default function useCreateProposalTemplate() {
 
   const {
     contracts: { keyValuePairs },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
 
   const { t } = useTranslation('proposalMetadata');
 

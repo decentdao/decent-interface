@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import {
   ChildERC20Steps,
   ChildERC721Steps,
@@ -25,7 +25,7 @@ import useStepRedirect from './hooks/useStepRedirect';
 
 function StepController(props: Omit<ICreationStepProps, 'steps'>) {
   const { t } = useTranslation('daoCreate');
-  const { createOptions } = useNetworkConfig();
+  const { createOptions } = useNetworkConfigStore();
   const location = useLocation();
 
   const { values, mode, setFieldValue } = props;

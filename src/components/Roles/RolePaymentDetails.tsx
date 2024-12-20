@@ -8,7 +8,7 @@ import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW, isDemoMode } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { BigIntValuePair } from '../../types';
@@ -141,7 +141,7 @@ export function RolePaymentDetails({
   const { t } = useTranslation(['roles']);
   const { safe } = useDaoInfoStore();
   const { address: connectedAccount } = useAccount();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { refreshWithdrawableAmount } = useRolesStore();
   const navigate = useNavigate();
   const publicClient = usePublicClient();
@@ -319,8 +319,12 @@ export function RolePaymentDetails({
             mx={4}
           >
             <Flex justifyContent="space-between">
-              <Flex gap={2}>
+              <Flex
+                alignItems="center"
+                gap={2}
+              >
                 <Image
+                  h="2rem"
                   src={payment.asset.logo}
                   fallbackSrc="/images/coin-icon-default.svg"
                 />

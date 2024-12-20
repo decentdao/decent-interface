@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { isAddress } from 'viem';
 import { useEnsAddress, usePublicClient } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { LabelComponent } from './InputComponent';
 
 export type ABIElement = {
@@ -26,7 +26,7 @@ interface IABISelector {
 
 export default function ABISelector({ target, onChange }: IABISelector) {
   const [abi, setABI] = useState<ABIElement[]>([]);
-  const { etherscanAPIUrl } = useNetworkConfig();
+  const { etherscanAPIUrl } = useNetworkConfigStore();
   const { t } = useTranslation('common');
   const { data: ensAddress } = useEnsAddress({ name: target?.toLowerCase() });
   const client = usePublicClient();

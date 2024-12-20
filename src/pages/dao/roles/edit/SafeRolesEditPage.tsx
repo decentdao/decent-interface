@@ -1,5 +1,5 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { Box, Button, Flex, Show } from '@chakra-ui/react';
+import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
@@ -9,13 +9,16 @@ import { Hex, toHex } from 'viem';
 import { RoleCardEdit } from '../../../../components/Roles/RoleCard';
 import { RoleCardLoading } from '../../../../components/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../components/Roles/RolesTable';
+import DraggableDrawer from '../../../../components/ui/containers/DraggableDrawer';
 import NoDataCard from '../../../../components/ui/containers/NoDataCard';
+import { ModalBase } from '../../../../components/ui/modals/ModalBase';
+import { UnsavedChangesWarningContent } from '../../../../components/ui/modals/UnsavedChangesWarningContent';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { getRandomBytes } from '../../../../helpers';
 import { useNavigationBlocker } from '../../../../hooks/utils/useNavigationBlocker';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { RoleFormValues } from '../../../../types/roles';
@@ -27,7 +30,7 @@ export function SafeRolesEditPage() {
 
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const { safe } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
 
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
 
@@ -51,6 +54,36 @@ export function SafeRolesEditPage() {
 
   return (
     <>
+      {blocker.state === 'blocked' && (
+        <>
+          <Hide above="md">
+            <DraggableDrawer
+              isOpen
+              onClose={() => {}}
+              onOpen={() => {}}
+              headerContent={null}
+              initialHeight="23rem"
+              closeOnOverlayClick={false}
+            >
+              <UnsavedChangesWarningContent
+                onDiscard={blocker.proceed}
+                onKeepEditing={blocker.reset}
+              />
+            </DraggableDrawer>
+          </Hide>
+          <Hide below="md">
+            <ModalBase
+              isOpen
+              onClose={() => {}}
+            >
+              <UnsavedChangesWarningContent
+                onDiscard={blocker.proceed}
+                onKeepEditing={blocker.reset}
+              />
+            </ModalBase>
+          </Hide>
+        </>
+      )}
       <Box>
         <PageHeader
           title={t('roles')}

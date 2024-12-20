@@ -10,7 +10,7 @@ import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablier
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { formatCoin } from '../../../utils';
 import { getNetworkIcon } from '../../../utils/url';
 import Avatar, { AvatarSize } from '../page/Header/Avatar';
@@ -44,7 +44,7 @@ export function PaymentWithdrawModal({
   const { displayName: accountDisplayName } = useGetAccountName(withdrawInformation.recipient);
   const avatarURL = useAvatar(accountDisplayName);
   const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
-  const { chain, addressPrefix } = useNetworkConfig();
+  const { chain, addressPrefix } = useNetworkConfigStore();
 
   const handleWithdraw = useCallback(async () => {
     if (

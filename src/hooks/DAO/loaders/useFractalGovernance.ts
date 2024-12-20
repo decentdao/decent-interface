@@ -4,7 +4,7 @@ import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ProposalTemplate } from '../../../types';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
@@ -31,14 +31,14 @@ export const useFractalGovernance = () => {
   const loadDAOProposals = useLoadDAOProposals();
   const loadERC20Strategy = useERC20LinearStrategy();
   const loadERC721Strategy = useERC721LinearStrategy();
-  const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
+  const { loadERC20Token } = useERC20LinearToken({});
   const { loadLockedVotesToken } = useLockRelease({});
   const loadERC721Tokens = useERC721Tokens();
   const ipfsClient = useIPFSClient();
 
   const ONE_MINUTE = 60 * 1000;
 
-  const { subgraph } = useNetworkConfig();
+  const { subgraph } = useNetworkConfigStore();
 
   useQuery(DAOQueryDocument, {
     variables: { safeAddress },
@@ -117,7 +117,6 @@ export const useFractalGovernance = () => {
           });
           loadERC20Strategy();
           loadERC20Token();
-          loadUnderlyingERC20Token();
           if (lockReleaseAddress) {
             loadLockedVotesToken();
           }
@@ -138,7 +137,6 @@ export const useFractalGovernance = () => {
     }
   }, [
     governanceContracts,
-    loadUnderlyingERC20Token,
     loadERC20Strategy,
     loadERC20Token,
     loadLockedVotesToken,

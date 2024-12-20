@@ -10,7 +10,7 @@ import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import {
   CreateProposalForm,
@@ -27,7 +27,7 @@ export function SafeSablierProposalCreatePage() {
   } = useFractal();
   const {
     contracts: { sablierV2Batch, sablierV2LockupTranched },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
   const { safe } = useDaoInfoStore();
 
   const prepareProposalData = useCallback(

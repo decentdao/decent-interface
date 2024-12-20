@@ -1,11 +1,12 @@
 import { Button, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Blocker, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../../../types/roles';
@@ -26,7 +27,7 @@ export function RoleFormTabs({
   const { hatsTree } = useRolesStore();
   const { safe } = useDaoInfoStore();
   const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue, errors, setTouched } = useFormikContext<RoleFormValues>();
@@ -58,6 +59,16 @@ export function RoleFormTabs({
 
   return (
     <>
+      <Flex justifyContent="flex-end">
+        <Button
+          variant="tertiary"
+          width="min-content"
+          color="lilac-0"
+          pr={2}
+          leftIcon={<ArrowLeft />}
+          onClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address))}
+        />
+      </Flex>
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
