@@ -1,5 +1,5 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { Box, Divider, Flex, Grid, GridItem, Show, useDisclosure } from '@chakra-ui/react';
+import { Box, Divider, Flex, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,9 @@ import {
   Transactions,
 } from '../../../components/DAOTreasury/components/Transactions';
 import { TitledInfoBox } from '../../../components/ui/containers/TitledInfoBox';
-import { ModalBase } from '../../../components/ui/modals/ModalBase';
-import { SendAssetsData, SendAssetsModal } from '../../../components/ui/modals/SendAssetsModal';
+import { ModalType } from '../../../components/ui/modals/ModalProvider';
+import { SendAssetsData } from '../../../components/ui/modals/SendAssetsModal';
+import { useDecentModal } from '../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
@@ -32,13 +33,13 @@ export function SafeTreasuryPage() {
   }, []);
   const { safe } = useDaoInfoStore();
   const {
+    governance: { isAzorius },
     treasury: { assetsFungible, transfers },
   } = useFractal();
   const { subgraphInfo } = useDaoInfoStore();
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation(['treasury', 'modals']);
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { addAction } = useProposalActionsStore();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfigStore();
@@ -49,7 +50,6 @@ export function SafeTreasuryPage() {
 
   const totalTransfers = transfers?.length || 0;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
-
   const sendAssetsAction = async (sendAssetsData: SendAssetsData) => {
     if (!safe?.address) {
       return;
@@ -81,9 +81,13 @@ export function SafeTreasuryPage() {
       ],
     });
     navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safe.address));
-
-    onClose();
   };
+
+  const openSendAssetsModal = useDecentModal(ModalType.SEND_ASSETS, {
+    onSubmit: sendAssetsAction,
+    submitButtonText: t('submitProposal', { ns: 'modals' }),
+    showNonceInput: !isAzorius,
+  });
 
   return (
     <Box>
@@ -104,7 +108,7 @@ export function SafeTreasuryPage() {
           showSendButton
             ? {
                 children: t('buttonSendAssets'),
-                onClick: onOpen,
+                onClick: openSendAssetsModal,
               }
             : undefined
         }
@@ -163,18 +167,6 @@ export function SafeTreasuryPage() {
           </TitledInfoBox>
         </GridItem>
       </Grid>
-      <ModalBase
-        isOpen={isOpen}
-        onClose={onClose}
-        title={t('sendAssetsTitle', { ns: 'modals' })}
-      >
-        <SendAssetsModal
-          submitButtonText={t('submitProposal', { ns: 'modals' })}
-          showNonceInput
-          close={onClose}
-          sendAssetsData={sendAssetsAction}
-        />
-      </ModalBase>
     </Box>
   );
 }

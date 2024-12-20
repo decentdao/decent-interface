@@ -32,5 +32,10 @@
   "targetDAOAddressLabel": "Safe address",
   "targetDAOAddressHelper": "Set the location that will receive this duplicated template",
   "forkTemplateSubmitButton": "Review Forked Template",
-  "showParameters": "Show All"
+  "showParameters": "Show All",
+  "preConfiguredTemplates": "Pre-configured Templates",
+  "templateTransferTitle": "Transfer",
+  "templateTransferDescription": "Transfer funds from DAO's Safe to a specified address",
+  "templateSablierTitle": "Create Sablier Stream",
+  "templateSablierDescription": "Create stream(s) to a specified address(es) with desired tranches - configurable amounts and durations"
 }
