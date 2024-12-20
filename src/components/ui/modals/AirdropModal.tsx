@@ -140,40 +140,35 @@ export function AirdropModal({
                 {/* ASSET SELECT */}
                 <Field name="selectedAsset">
                   {({ field }: FieldAttributes<FieldProps<TokenBalance>>) => (
-                    <Box
-                      width="40%"
-                      marginEnd="0.75rem"
-                    >
-                      <LabelWrapper label={t('selectLabel')}>
-                        <Select
-                          {...field}
-                          bgColor="neutral-1"
-                          borderColor="neutral-3"
-                          rounded="sm"
-                          cursor="pointer"
-                          iconSize="1.5rem"
-                          icon={<CaretDown />}
-                          onChange={e => {
-                            // New asset selected. First reset the form input amount
-                            setFieldValue('inputAmount', undefined);
-                            setFieldValue(
-                              'selectedAsset',
-                              fungibleAssetsWithBalance[Number(e.target.value)],
-                            );
-                          }}
-                          value={selectedAssetIndex}
-                        >
-                          {fungibleAssetsWithBalance.map((asset, index) => (
-                            <option
-                              key={index}
-                              value={index}
-                            >
-                              {asset.symbol}
-                            </option>
-                          ))}
-                        </Select>
-                      </LabelWrapper>
-                    </Box>
+                    <LabelWrapper label={t('selectLabel')}>
+                      <Select
+                        {...field}
+                        bgColor="neutral-1"
+                        borderColor="neutral-3"
+                        rounded="sm"
+                        cursor="pointer"
+                        iconSize="1.5rem"
+                        icon={<CaretDown />}
+                        onChange={e => {
+                          // New asset selected. First reset the form input amount
+                          setFieldValue('inputAmount', undefined);
+                          setFieldValue(
+                            'selectedAsset',
+                            fungibleAssetsWithBalance[Number(e.target.value)],
+                          );
+                        }}
+                        value={selectedAssetIndex}
+                      >
+                        {fungibleAssetsWithBalance.map((asset, index) => (
+                          <option
+                            key={index}
+                            value={index}
+                          >
+                            {asset.symbol}
+                          </option>
+                        ))}
+                      </Select>
+                    </LabelWrapper>
                   )}
                 </Field>
               </Flex>
