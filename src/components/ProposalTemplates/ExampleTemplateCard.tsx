@@ -12,7 +12,7 @@ type ExampleTemplateCardProps = {
 export default function ExampleTemplateCard({
   title,
   description,
-  onProposalTemplateClick
+  onProposalTemplateClick,
 }: ExampleTemplateCardProps) {
   const { canUserCreateProposal } = useCanUserCreateProposal();
 
