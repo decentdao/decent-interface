@@ -5,7 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { Address, encodeFunctionData, erc20Abi, getAddress, Hash, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../../../../assets/abi/SablierV2Batch';
 import { ProposalBuilder } from '../../../../../components/ProposalBuilder';
-import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
+import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
@@ -112,7 +112,7 @@ export function SafeSablierProposalCreatePage() {
 
   return (
     <ProposalBuilder
-      initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nextNonce }}
+      initialValues={{ ...DEFAULT_SABLIER_PROPOSAL, nonce: safe.nextNonce }}
       mode={ProposalBuilderMode.SABLIER}
       prepareProposalData={prepareProposalData}
     />

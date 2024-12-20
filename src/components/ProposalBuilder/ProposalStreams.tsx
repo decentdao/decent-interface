@@ -14,21 +14,8 @@ import { useTranslation } from 'react-i18next';
 import { Stream } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
-import { DEFAULT_TRANCHE, ProposalStream } from './ProposalStream';
-
-const DEFAULT_STREAM: Stream = {
-  type: 'tranched',
-  tokenAddress: '',
-  recipientAddress: '',
-  startDate: new Date(),
-  tranches: [DEFAULT_TRANCHE],
-  totalAmount: {
-    value: '0',
-    bigintValue: 0n,
-  },
-  cancelable: true,
-  transferable: false,
-};
+import { ProposalStream } from './ProposalStream';
+import { DEFAULT_STREAM } from './constants';
 
 export function ProposalStreams({
   pendingTransaction,

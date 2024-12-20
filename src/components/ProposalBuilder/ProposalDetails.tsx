@@ -25,7 +25,7 @@ export function TransactionValueContainer({ children }: PropsWithChildren<{}>) {
   );
 }
 
-export default function ProposalTemplateDetails({
+export default function ProposalDetails({
   values,
   mode,
 }: FormikProps<CreateProposalForm | CreateSablierProposalForm> & { mode: ProposalBuilderMode }) {

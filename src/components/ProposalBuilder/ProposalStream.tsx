@@ -18,25 +18,13 @@ import { useTranslation } from 'react-i18next';
 import { erc20Abi, formatUnits, getContract, isAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { Stream, Tranche } from '../../types/proposalBuilder';
+import { Stream } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
 import { BigIntInput } from '../ui/forms/BigIntInput';
 import ExampleLabel from '../ui/forms/ExampleLabel';
 import { InputComponent, LabelComponent } from '../ui/forms/InputComponent';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
-
-const SECONDS_IN_DAY = 60 * 60 * 24;
-
-export const DEFAULT_TRANCHE: Tranche = {
-  amount: {
-    value: '0',
-    bigintValue: 0n,
-  },
-  duration: {
-    value: (SECONDS_IN_DAY * 14).toString(),
-    bigintValue: BigInt(SECONDS_IN_DAY * 14),
-  },
-};
+import { DEFAULT_TRANCHE, SECONDS_IN_DAY } from './constants';
 
 export function ProposalStream({
   stream,
