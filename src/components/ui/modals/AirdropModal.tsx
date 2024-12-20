@@ -253,7 +253,11 @@ export function AirdropModal({
                             parentFormikValue={recipient.amount}
                             decimalPlaces={values.selectedAsset.decimals}
                             placeholder="0"
-                            maxValue={BigInt(values.selectedAsset.balance) - BigInt(totalAmount)}
+                            maxValue={
+                              BigInt(values.selectedAsset.balance) -
+                              BigInt(totalAmount) +
+                              BigInt(recipient.amount.bigintValue || 0n)
+                            }
                             isInvalid={overDraft}
                             errorBorderColor="red-0"
                           />

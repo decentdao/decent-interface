@@ -47,7 +47,7 @@ export function SafeProposalTemplatesPage() {
   const handleAirdropSubmit = (data: AirdropData) => {
     const totalAmount = data.recipients.reduce((acc, recipient) => acc + recipient.amount, 0n);
     addAction({
-      actionType: ProposalActionType.DISPERSE,
+      actionType: ProposalActionType.AIRDROP,
       content: <></>,
       transactions: [
         {
