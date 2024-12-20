@@ -3,7 +3,7 @@ import { CaretDown, MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress } from 'viem';
+import { Address, getAddress, isAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
@@ -91,7 +91,7 @@ export function AirdropModal({
       recipients: await Promise.all(
         values.recipients.map(async recipient => {
           let destAddress = recipient.address;
-          if (validateENSName(recipient.address) && publicClient) {
+          if (!isAddress(destAddress) && validateENSName(recipient.address) && publicClient) {
             const ensAddress = await publicClient.getEnsAddress({ name: recipient.address });
             if (ensAddress === null) {
               throw new Error('Invalid ENS name');
@@ -110,7 +110,6 @@ export function AirdropModal({
 
     close();
   };
-
   return (
     <Box>
       <Formik<AirdropFormValues>
@@ -127,9 +126,7 @@ export function AirdropModal({
             0n,
           );
           const overDraft = totalAmount > BigInt(values.selectedAsset.balance);
-
           const isSubmitDisabled = !values.recipients || totalAmount === 0n || overDraft;
-
           const selectedAssetIndex = fungibleAssetsWithBalance.findIndex(
             asset => asset.tokenAddress === values.selectedAsset.tokenAddress,
           );

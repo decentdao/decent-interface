@@ -45,6 +45,8 @@ export function SafeProposalTemplatesPage() {
   const { openSendAssetsModal } = useSendAssetsActionModal();
 
   const handleAirdropSubmit = (data: AirdropData) => {
+    if (!safeAddress) return;
+
     const totalAmount = data.recipients.reduce((acc, recipient) => acc + recipient.amount, 0n);
     addAction({
       actionType: ProposalActionType.AIRDROP,
@@ -83,6 +85,8 @@ export function SafeProposalTemplatesPage() {
         },
       ],
     });
+
+    navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safeAddress));
   };
 
   const openAirdropModal = useDecentModal(ModalType.AIRDROP, {
