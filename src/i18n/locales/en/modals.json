@@ -52,5 +52,6 @@
   "add": "Add",
   "recipientsLabel": "Recipient",
   "recipientsSublabel": "Enter the Ethereum wallet address of the recipient",
-  "airdropAmountSublabel": "Enter the amount of tokens to be airdropped to the recipient"
+  "airdropAmountSublabel": "Enter the amount of tokens to be airdropped to the recipient",
+  "addRecipient": "Add Recipient"
 }

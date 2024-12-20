@@ -33,11 +33,11 @@
   "targetDAOAddressHelper": "Set the location that will receive this duplicated template",
   "forkTemplateSubmitButton": "Review Forked Template",
   "showParameters": "Show All",
-  "preConfiguredTemplates": "Pre-configured Templates",
+  "defaultTemplates": "Default Templates",
   "templateTransferTitle": "Transfer",
-  "templateTransferDescription": "Transfer funds from DAO's Safe to a specified address",
-  "templateSablierTitle": "Create Sablier Stream",
-  "templateSablierDescription": "Create stream(s) to a specified address(es) with desired tranches - configurable amounts and durations",
-  "templateAirdropTitle": "Airdrop Tokens",
-  "templateAirdropDescription": "Airdrop tokens to a specified address(es) with desired amounts"
+  "templateTransferDescription": "Send payment to a recipient",
+  "templateSablierTitle": "Stream",
+  "templateSablierDescription": "Stream funds to a recipient over time",
+  "templateAirdropTitle": "Airdrop",
+  "templateAirdropDescription": "Send tokens to multiple recipients"
 }

@@ -87,18 +87,13 @@ export function SafeProposalTemplatesPage() {
 
   const openAirdropModal = useDecentModal(ModalType.AIRDROP, {
     onSubmit: handleAirdropSubmit,
-    submitButtonText: t('submitProposal'),
+    submitButtonText: t('submitProposal', { ns: 'modals' }),
     showNonceInput: false,
   });
 
   const EXAMPLE_TEMPLATES = useMemo(() => {
     if (!safeAddress) return [];
     return [
-      {
-        title: t('templateTransferTitle', { ns: 'proposalTemplate' }),
-        description: t('templateTransferDescription', { ns: 'proposalTemplate' }),
-        onProposalTemplateClick: openSendAssetsModal,
-      },
       {
         title: t('templateAirdropTitle', { ns: 'proposalTemplate' }),
         description: t('templateAirdropDescription', { ns: 'proposalTemplate' }),
@@ -109,6 +104,11 @@ export function SafeProposalTemplatesPage() {
         description: t('templateSablierDescription', { ns: 'proposalTemplate' }),
         onProposalTemplateClick: () =>
           navigate(DAO_ROUTES.proposalSablierNew.relative(addressPrefix, safeAddress)),
+      },
+      {
+        title: t('templateTransferTitle', { ns: 'proposalTemplate' }),
+        description: t('templateTransferDescription', { ns: 'proposalTemplate' }),
+        onProposalTemplateClick: openSendAssetsModal,
       },
     ];
   }, [t, openSendAssetsModal, navigate, safeAddress, addressPrefix, openAirdropModal]);
@@ -167,7 +167,7 @@ export function SafeProposalTemplatesPage() {
         color="white-0"
         mb="1rem"
       >
-        {t('preConfiguredTemplates', { ns: 'proposalTemplate' })}
+        {t('defaultTemplates', { ns: 'proposalTemplate' })}
       </Text>
       <Flex
         flexDirection="row"

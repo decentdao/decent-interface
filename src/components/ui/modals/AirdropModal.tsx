@@ -1,5 +1,5 @@
-import { Box, Button, Flex, HStack, Select, Text } from '@chakra-ui/react';
-import { CaretDown, Plus } from '@phosphor-icons/react';
+import { Box, Button, Flex, HStack, IconButton, Select, Text } from '@chakra-ui/react';
+import { CaretDown, MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -116,7 +116,7 @@ export function AirdropModal({
       <Formik<AirdropFormValues>
         initialValues={{
           selectedAsset: fungibleAssetsWithBalance[0],
-          recipients: [],
+          recipients: [{ address: '', amount: { bigintValue: 0n, value: '0' } }],
         }}
         onSubmit={handleAirdropSubmit}
         validationSchema={airdropValidationSchema}
@@ -150,8 +150,6 @@ export function AirdropModal({
                         iconSize="1.5rem"
                         icon={<CaretDown />}
                         onChange={e => {
-                          // New asset selected. First reset the form input amount
-                          setFieldValue('inputAmount', undefined);
                           setFieldValue(
                             'selectedAsset',
                             fungibleAssetsWithBalance[Number(e.target.value)],
@@ -203,7 +201,9 @@ export function AirdropModal({
                       <Box
                         key={index}
                         display="flex"
+                        alignItems="center"
                         gap="1rem"
+                        mb="2.5rem"
                       >
                         <LabelWrapper
                           label={t('recipientsLabel')}
@@ -212,6 +212,7 @@ export function AirdropModal({
                             field.value &&
                             field.value[index].address &&
                             errors.recipients &&
+                            errors.recipients[index] &&
                             (errors.recipients[index] as { address: string }).address
                           }
                         >
@@ -252,18 +253,44 @@ export function AirdropModal({
                             parentFormikValue={recipient.amount}
                             decimalPlaces={values.selectedAsset.decimals}
                             placeholder="0"
-                            maxValue={BigInt(values.selectedAsset.balance)}
+                            maxValue={BigInt(values.selectedAsset.balance) - BigInt(totalAmount)}
                             isInvalid={overDraft}
                             errorBorderColor="red-0"
                           />
                         </LabelWrapper>
+                        {/* Remove parameter button */}
+                        {index !== 0 || values.recipients.length !== 1 ? (
+                          <IconButton
+                            icon={<MinusCircle />}
+                            aria-label={t('removeRecipientLabel')}
+                            variant="unstyled"
+                            onClick={() =>
+                              setFieldValue(
+                                `recipients`,
+                                values.recipients.filter(
+                                  (_recipientToRemove, recipientToRemoveIndex) =>
+                                    recipientToRemoveIndex !== index,
+                                ),
+                              )
+                            }
+                            minWidth="auto"
+                            color="lilac-0"
+                            _disabled={{ opacity: 0.4, cursor: 'default' }}
+                            sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
+                          />
+                        ) : (
+                          <Box h="2.25rem" />
+                        )}
                       </Box>
                     );
                   })
                 }
               </Field>
 
-              <Box>
+              <Box
+                mt="3rem"
+                w="100%"
+              >
                 <Button
                   onClick={() =>
                     setFieldValue('recipients', [
