@@ -41,6 +41,38 @@ It is crucial to have `Netlify` functions running locally to work with anything 
 - Treasury page
 - Payments feature
 
+## Environmental feature flags
+
+### Setup
+
+During development, add a flag in .env file. It can be of any data type but usually a boolean:
+
+FEATURE_1=false
+
+In code, use following code for code branching:
+
+if (FeatureFlags.instance?.get('FEATURE_1') === true) {
+// executed with FEATURE_1=true,
+} else {
+// executed with FEATURE_1=false,
+}
+
+### Testing
+
+Change the value of the flag by adding params on home page:
+
+https://app.dev.decentdao.org?FEATURE_1=true
+
+From then, the flag holds the value from the URL param until app is refreshed
+
+### Deployment and after
+
+Deployment can ship with the flag turned off in .env file.
+
+Change the value in .env file after the feature is completed and thouroughly tested.
+
+Once code under the feature flag has been proven reliable, remove the feature flag and dead code from code base.
+
 ## Subgraph
 
 We're using `Subgraph` to index certain "metadata" events to simplify data fetching from application site.
