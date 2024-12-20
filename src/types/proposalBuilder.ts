@@ -4,6 +4,7 @@ import { BigIntValuePair } from './common';
 export enum CreateProposalSteps {
   METADATA = 'metadata',
   TRANSACTIONS = 'transactions',
+  STREAMS = 'streams',
 }
 
 export interface CreateProposalTransaction<T = BigIntValuePair> {
@@ -38,6 +39,26 @@ export type CreateProposalForm = {
   proposalMetadata: CreateProposalMetadata;
   nonce?: number;
 };
+
+export type Tranche = {
+  amount: BigIntValuePair;
+  duration: BigIntValuePair;
+};
+
+export type Stream = {
+  type: 'tranched';
+  tokenAddress: string;
+  recipientAddress: string;
+  startDate: Date;
+  tranches: Tranche[];
+  totalAmount: BigIntValuePair;
+  cancelable: boolean;
+  transferable: boolean;
+};
+
+export type CreateSablierProposalForm = {
+  streams: Stream[];
+} & CreateProposalForm;
 
 export type ProposalTemplate = {
   transactions: CreateProposalTransaction[];

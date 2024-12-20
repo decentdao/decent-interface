@@ -18,28 +18,12 @@ import { useTranslation } from 'react-i18next';
 import { erc20Abi, formatUnits, getContract, isAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { BigIntValuePair } from '../../types';
+import { Stream, Tranche } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
 import { BigIntInput } from '../ui/forms/BigIntInput';
 import ExampleLabel from '../ui/forms/ExampleLabel';
 import { InputComponent, LabelComponent } from '../ui/forms/InputComponent';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
-
-export type Tranche = {
-  amount: BigIntValuePair;
-  duration: BigIntValuePair;
-};
-
-export type Stream = {
-  type: 'tranched';
-  tokenAddress: string;
-  recipientAddress: string;
-  startDate: Date;
-  tranches: Tranche[];
-  totalAmount: BigIntValuePair;
-  cancelable: boolean;
-  transferable: boolean;
-};
 
 const SECONDS_IN_DAY = 60 * 60 * 24;
 
@@ -71,7 +55,7 @@ export function ProposalStream({
   const [tokenBalanceFormatted, setTokenBalanceFormatted] = useState('');
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
   const { safe } = useDaoInfoStore();
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['proposal', 'common']);
 
   const safeAddress = safe?.address;
 
@@ -108,8 +92,8 @@ export function ProposalStream({
         mt={6}
       >
         <InputComponent
-          label="Streamed Token Address"
-          helper={`Treasury balance: ${tokenBalanceFormatted}`}
+          label={t('streamedTokenAddress')}
+          helper={t('streamedTokenAddressHelper', { balance: tokenBalanceFormatted })}
           placeholder="0x0000"
           isRequired
           disabled={pendingTransaction}
@@ -129,8 +113,8 @@ export function ProposalStream({
           my="1rem"
         />
         <InputComponent
-          label="Recipient Address"
-          helper="Who will be recipient of this stream - only owner of this address will be able to receive tokens."
+          label={t('recipientAddress')}
+          helper={t('recipientAddressHelper')}
           placeholder="0x0000"
           isRequired
           disabled={pendingTransaction}
@@ -150,8 +134,8 @@ export function ProposalStream({
           my="1rem"
         />
         <LabelComponent
-          label="Stream Total Amount"
-          helper="The total amount of token to stream. Has to be equal to the sum of tranches amount"
+          label={t('streamTotalAmount')}
+          helper={t('streamTotalAmountHelper')}
           subLabel={
             <HStack textStyle="labels-large">
               <Text>{t('example', { ns: 'common' })}:</Text>
@@ -182,9 +166,9 @@ export function ProposalStream({
               isChecked={stream.cancelable}
               onChange={() => handleUpdateStream(index, { cancelable: !stream.cancelable })}
             />
-            <Text>Cancelable</Text>
+            <Text>{t('cancelable')}</Text>
           </Flex>
-          <Text color="neutral-7">Can this stream be cancelled by DAO in the future?</Text>
+          <Text color="neutral-7">{t('streamCancelableHelper')}</Text>
         </Box>
         <Box>
           <Flex gap="0.5rem">
@@ -197,11 +181,9 @@ export function ProposalStream({
               checked={stream.transferable}
               onChange={() => handleUpdateStream(index, { transferable: !stream.transferable })}
             />
-            <Text>Transferable</Text>
+            <Text>{t('transferable')}</Text>
           </Flex>
-          <Text color="neutral-7">
-            Can this stream be transferred by the recipient to another recipient?
-          </Text>
+          <Text color="neutral-7">{t('streamTransferableHelper')}</Text>
         </Box>
         <Divider
           variant="light"
@@ -253,7 +235,7 @@ export function ProposalStream({
                               gap={2}
                             >
                               {isExpanded ? <CaretDown /> : <CaretRight />}
-                              Tranche {trancheIndex + 1}
+                              {t('tranche', { index: trancheIndex + 1 })}
                             </Flex>
                           </Text>
                         </AccordionButton>
@@ -262,7 +244,7 @@ export function ProposalStream({
                         {trancheIndex !== 0 || stream.tranches.length !== 1 ? (
                           <IconButton
                             icon={<MinusCircle />}
-                            aria-label="Remove tranche"
+                            aria-label={t('removeTranche')}
                             variant="unstyled"
                             onClick={() =>
                               handleUpdateStream(index, {
@@ -292,7 +274,7 @@ export function ProposalStream({
                             <Box mt={4}>
                               <LabelComponent
                                 isRequired
-                                label="Tranche amount"
+                                label={t('trancheAmount')}
                                 subLabel={
                                   <HStack wordBreak="break-all">
                                     <Text>
@@ -322,12 +304,12 @@ export function ProposalStream({
                             <Box mt={4}>
                               <LabelComponent
                                 isRequired
-                                label="Tranche duration"
+                                label={t('trancheDuration')}
                                 subLabel={
                                   <VStack wordBreak="break-all">
                                     <Text>
-                                      Duration in seconds
-                                      {index === 0 && '. At least 1 second for the first trance.'}
+                                      {t('trancheDurationHelper')}
+                                      {index === 0 && '. ' + t('trancheDurationHelperFirstTranche')}
                                     </Text>
                                     <Text>
                                       {t('example', { ns: 'common' })}:{' '}
@@ -384,7 +366,7 @@ export function ProposalStream({
                           scrollToBottom(100, 'smooth');
                         }}
                         icon={Plus}
-                        text="Add tranche"
+                        text={t('addTranche')}
                       />
                     )}
                   </>
