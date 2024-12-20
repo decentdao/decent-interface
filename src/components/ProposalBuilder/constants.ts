@@ -56,5 +56,5 @@ export const DEFAULT_SABLIER_PROPOSAL = {
     description: '',
   },
   streams: [DEFAULT_STREAM],
-  transactions: []
+  transactions: [],
 };
