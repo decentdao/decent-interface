@@ -1,5 +1,5 @@
 import { Box, Button, Flex, HStack, Select, Text } from '@chakra-ui/react';
-import { CaretDown } from '@phosphor-icons/react';
+import { CaretDown, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -267,6 +267,20 @@ export function AirdropModal({
                   })
                 }
               </Field>
+
+              <Box>
+                <Button
+                  onClick={() =>
+                    setFieldValue('recipients', [
+                      ...values.recipients,
+                      { address: '', amount: { bigintValue: 0n, value: '0' } },
+                    ])
+                  }
+                  leftIcon={<Plus size="1rem" />}
+                >
+                  {t('addRecipient')}
+                </Button>
+              </Box>
 
               <Divider my="1.5rem" />
 
