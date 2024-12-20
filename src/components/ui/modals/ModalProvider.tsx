@@ -7,6 +7,7 @@ import AddSignerModal from '../../SafeSettings/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../SafeSettings/Signers/modals/RemoveSignerModal';
 import DraggableDrawer from '../containers/DraggableDrawer';
 import AddStrategyPermissionModal from './AddStrategyPermissionModal';
+import { AirdropData, AirdropModal } from './AirdropModal';
 import { ConfirmDeleteStrategyModal } from './ConfirmDeleteStrategyModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
@@ -36,6 +37,7 @@ export enum ModalType {
   CONFIRM_CANCEL_PAYMENT,
   CONFIRM_DELETE_STRATEGY,
   SEND_ASSETS,
+  AIRDROP,
 }
 
 export type CurrentModal = {
@@ -83,6 +85,11 @@ export type ModalPropsTypes = {
   };
   [ModalType.SEND_ASSETS]: {
     onSubmit: (sendAssetData: SendAssetsData) => void;
+    submitButtonText: string;
+    showNonceInput: boolean;
+  };
+  [ModalType.AIRDROP]: {
+    onSubmit: (airdropData: AirdropData) => void;
     submitButtonText: string;
     showNonceInput: boolean;
   };
@@ -257,6 +264,19 @@ export function ModalProvider({ children }: { children: ReactNode }) {
             showNonceInput={current.props.showNonceInput}
             close={closeModal}
             sendAssetsData={(data: SendAssetsData) => {
+              current.props.onSubmit(data);
+              closeModal();
+            }}
+          />
+        );
+        break;
+      case ModalType.AIRDROP:
+        modalContent = (
+          <AirdropModal
+            submitButtonText={current.props.submitButtonText}
+            showNonceInput={current.props.showNonceInput}
+            close={closeModal}
+            airdropData={(data: AirdropData) => {
               current.props.onSubmit(data);
               closeModal();
             }}

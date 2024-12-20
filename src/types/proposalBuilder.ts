@@ -69,6 +69,7 @@ export enum ProposalActionType {
   EDIT = 'edit',
   DELETE = 'delete',
   TRANSFER = 'transfer',
+  DISPERSE = 'disperse',
 }
 
 export interface ProposalActionsStoreData {

@@ -8,6 +8,9 @@ import ExampleTemplateCard from '../../../components/ProposalTemplates/ExampleTe
 import ProposalTemplateCard from '../../../components/ProposalTemplates/ProposalTemplateCard';
 import NoDataCard from '../../../components/ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
+import { AirdropData } from '../../../components/ui/modals/AirdropModal';
+import { ModalType } from '../../../components/ui/modals/ModalProvider';
+import { useDecentModal } from '../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import Divider from '../../../components/ui/utils/Divider';
 import { DAO_ROUTES } from '../../../constants/routes';
@@ -16,7 +19,9 @@ import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitP
 import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
+import { useProposalActionsStore } from '../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
+import { ProposalActionType } from '../../../types/proposalBuilder';
 
 export function SafeProposalTemplatesPage() {
   useEffect(() => {
@@ -29,11 +34,62 @@ export function SafeProposalTemplatesPage() {
   } = useFractal();
   const { safe } = useDaoInfoStore();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { addressPrefix } = useNetworkConfigStore();
+  const {
+    addressPrefix,
+    contracts: { disperse },
+  } = useNetworkConfigStore();
   const navigate = useNavigate();
+  const { addAction } = useProposalActionsStore();
 
   const safeAddress = safe?.address;
   const { openSendAssetsModal } = useSendAssetsActionModal();
+
+  const handleAirdropSubmit = (data: AirdropData) => {
+    const totalAmount = data.recipients.reduce((acc, recipient) => acc + recipient.amount, 0n);
+    addAction({
+      actionType: ProposalActionType.DISPERSE,
+      content: <></>,
+      transactions: [
+        {
+          targetAddress: data.asset.tokenAddress,
+          ethValue: {
+            bigintValue: 0n,
+            value: '0',
+          },
+          functionName: 'approve',
+          parameters: [
+            { signature: 'address', value: disperse },
+            { signature: 'uint256', value: totalAmount.toString() },
+          ],
+        },
+        {
+          targetAddress: data.asset.tokenAddress,
+          ethValue: {
+            bigintValue: 0n,
+            value: '0',
+          },
+          functionName: 'disperseToken',
+          parameters: [
+            { signature: 'address', value: data.asset.tokenAddress },
+            {
+              signature: 'address[]',
+              value: `[${data.recipients.map(recipient => recipient.address).join(',')}]`,
+            },
+            {
+              signature: 'uint256[]',
+              value: `[${data.recipients.map(recipient => recipient.amount.toString()).join(',')}]`,
+            },
+          ],
+        },
+      ],
+    });
+  };
+
+  const openAirdropModal = useDecentModal(ModalType.AIRDROP, {
+    onSubmit: handleAirdropSubmit,
+    submitButtonText: t('submitProposal'),
+    showNonceInput: false,
+  });
 
   const EXAMPLE_TEMPLATES = useMemo(() => {
     if (!safeAddress) return [];
@@ -44,13 +100,18 @@ export function SafeProposalTemplatesPage() {
         onProposalTemplateClick: openSendAssetsModal,
       },
       {
+        title: t('templateAirdropTitle', { ns: 'proposalTemplate' }),
+        description: t('templateAirdropDescription', { ns: 'proposalTemplate' }),
+        onProposalTemplateClick: openAirdropModal,
+      },
+      {
         title: t('templateSablierTitle', { ns: 'proposalTemplate' }),
         description: t('templateSablierDescription', { ns: 'proposalTemplate' }),
         onProposalTemplateClick: () =>
           navigate(DAO_ROUTES.proposalSablierNew.relative(addressPrefix, safeAddress)),
       },
     ];
-  }, [t, openSendAssetsModal, navigate, safeAddress, addressPrefix]);
+  }, [t, openSendAssetsModal, navigate, safeAddress, addressPrefix, openAirdropModal]);
 
   return (
     <div>
