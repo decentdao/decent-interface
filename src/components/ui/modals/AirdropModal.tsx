@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { Address, getAddress, isAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
-import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair, TokenBalance } from '../../../types';
@@ -57,10 +56,7 @@ export function AirdropModal({
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nextNonce);
 
-  const { addressValidationTest, isValidating } = useValidationAddress();
-
   const airdropValidationSchema = Yup.object().shape({
-    destinationAddress: Yup.string().test(addressValidationTest),
     selectedAsset: Yup.object()
       .shape({
         tokenAddress: Yup.string().required(),
@@ -318,9 +314,7 @@ export function AirdropModal({
                 marginTop="2rem"
                 width="100%"
                 type="submit"
-                isDisabled={
-                  isValidating || !!errors.recipients || !!errors.selectedAsset || isSubmitDisabled
-                }
+                isDisabled={!!errors.recipients || !!errors.selectedAsset || isSubmitDisabled}
               >
                 {submitButtonText}
               </Button>
