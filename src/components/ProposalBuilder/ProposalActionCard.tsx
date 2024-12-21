@@ -6,6 +6,7 @@ import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIc
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
+import { TokenBalance } from '../../types';
 import { CreateProposalAction, ProposalActionType } from '../../types/proposalBuilder';
 import { Card } from '../ui/cards/Card';
 import { SendAssetsData } from '../ui/modals/SendAssetsModal';
@@ -41,6 +42,57 @@ export function SendAssetsAction({
           </Text>
           <Text>{t('to').toLowerCase()}</Text>
           <Text color="lilac-0">{displayName}</Text>
+        </Flex>
+        <Button
+          color="red-0"
+          variant="tertiary"
+          size="sm"
+          onClick={() => {
+            onRemove(index);
+          }}
+        >
+          <Icon as={Trash} />
+        </Button>
+      </Flex>
+    </Card>
+  );
+}
+
+export function AirdropAction({
+  index,
+  totalAmount,
+  recipientsCount,
+  onRemove,
+  asset,
+}: {
+  index: number;
+  totalAmount: bigint;
+  recipientsCount: number;
+  onRemove: (index: number) => void;
+  asset: TokenBalance;
+}) {
+  const { t } = useTranslation('common');
+  return (
+    <Card my="0.5rem">
+      <Flex justifyContent="space-between">
+        <Flex
+          alignItems="center"
+          gap="0.5rem"
+        >
+          <Icon
+            as={ArrowsDownUp}
+            w="1.5rem"
+            h="1.5rem"
+            color="lilac-0"
+          />
+          <Text>{t('airdrop')}</Text>
+          <Text color="lilac-0">
+            {formatUnits(totalAmount, asset.decimals)} {asset.symbol}
+          </Text>
+          <Text>{t('to').toLowerCase()}</Text>
+          <Text color="lilac-0">
+            {recipientsCount} {t('recipients')}
+          </Text>
         </Flex>
         <Button
           color="red-0"
@@ -96,6 +148,31 @@ export function ProposalActionCard({
           asset: actionAsset,
           nonceInput: undefined,
         }}
+        onRemove={removeAction}
+      />
+    );
+  } else if (action.actionType === ProposalActionType.AIRDROP) {
+    const totalAmountString = action.transactions[1].parameters[2].value?.slice(1, -1);
+    const totalAmount = BigInt(
+      totalAmountString?.split(',').reduce((acc, curr) => acc + BigInt(curr), 0n) || '0',
+    );
+    const recipientsCount = action.transactions[1].parameters[1].value?.split(',').length || 0;
+
+    const actionAsset = assetsFungible.find(
+      asset => getAddress(asset.tokenAddress) === action.transactions[0].targetAddress,
+    );
+
+    if (!actionAsset) {
+      return null;
+    }
+
+    return (
+      <AirdropAction
+        key={index}
+        index={index}
+        asset={actionAsset}
+        totalAmount={totalAmount}
+        recipientsCount={recipientsCount}
         onRemove={removeAction}
       />
     );
