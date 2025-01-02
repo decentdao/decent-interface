@@ -18,6 +18,7 @@ import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { DropdownMenu } from '../../ui/menus/DropdownMenu';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import { DropdownMenuSelection, ISelection, RadioSelection } from './SelectionInput';
 
 export enum DAOCreateMode {
   ROOTDAO,
@@ -115,6 +116,47 @@ export function EstablishEssentials(props: ICreationStepProps) {
     }
   }, [chain.id, walletChainID, addressPrefix, switchChain]);
 
+  const chainOptions: ISelection = {
+    label: t('networks'),
+    description: t('networkDescription'),
+    selected: chain.id.toString(),
+    options: dropdownItems,
+    onChange: value => {
+      setCurrentConfig(getConfigByChainId(Number(value)));
+      switchChain({ chainId: Number(value) });
+    },
+  };
+
+  const governanceOptions: ISelection = {
+    label: t('labelChooseGovernance'),
+    description: t('helperChooseGovernance'),
+    selected: values.essentials.governance,
+    options: [
+      {
+        label: t('labelAzoriusErc20Gov'),
+        description: t('descAzoriusErc20Gov'),
+        testId: 'choose-azorius',
+        value: GovernanceType.AZORIUS_ERC20,
+      },
+      {
+        label: t('labelAzoriusErc721Gov'),
+        description: t('descAzoriusErc721Gov'),
+        testId: 'choose-azorius-erc721',
+        value: GovernanceType.AZORIUS_ERC721,
+      },
+      {
+        label: t('labelMultisigGov'),
+        description: t('descMultisigGov'),
+        testId: 'choose-multisig',
+        value: GovernanceType.MULTISIG,
+      },
+    ],
+    onChange: value => {
+      const governanceType = value as GovernanceType;
+      handleGovernanceChange(governanceType);
+    },
+  };
+
   return (
     <>
       <StepWrapper
@@ -136,6 +178,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
           placeholder={t('daoNamePlaceholder')}
           testId="essentials-daoName"
         />
+        <DropdownMenuSelection {...chainOptions} />
+        <RadioSelection {...governanceOptions} />
         <Box
           mt="2rem"
           mb="1.5rem"
