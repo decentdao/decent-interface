@@ -4,6 +4,7 @@ import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChainId, useSwitchChain } from 'wagmi';
+import { FeatureFlags } from '../../../helpers/featureFlags';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import {
   supportedNetworks,
@@ -18,7 +19,9 @@ import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { DropdownMenu } from '../../ui/menus/DropdownMenu';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { DropdownMenuSelection, ISelection, RadioSelection } from './SelectionInput';
+import { CreateDAOPresenter, ISelectionInput, ITextInput } from '../presenters/CreateDAOPresenter';
+import { DropdownMenuSelection, RadioSelection } from './SelectionInput';
+import { TextInput } from './TextInput';
 
 export enum DAOCreateMode {
   ROOTDAO,
@@ -116,46 +119,42 @@ export function EstablishEssentials(props: ICreationStepProps) {
     }
   }, [chain.id, walletChainID, addressPrefix, switchChain]);
 
-  const chainOptions: ISelection = {
-    label: t('networks'),
-    description: t('networkDescription'),
-    selected: chain.id.toString(),
-    options: dropdownItems,
-    onChange: value => {
-      setCurrentConfig(getConfigByChainId(Number(value)));
-      switchChain({ chainId: Number(value) });
-    },
-  };
+  // Build viewmodels for the dropdown and radio selection components
+  // We can move the code to separate presenter code later
+  //
 
-  const governanceOptions: ISelection = {
-    label: t('labelChooseGovernance'),
-    description: t('helperChooseGovernance'),
-    selected: values.essentials.governance,
-    options: [
-      {
-        label: t('labelAzoriusErc20Gov'),
-        description: t('descAzoriusErc20Gov'),
-        testId: 'choose-azorius',
-        value: GovernanceType.AZORIUS_ERC20,
-      },
-      {
-        label: t('labelAzoriusErc721Gov'),
-        description: t('descAzoriusErc721Gov'),
-        testId: 'choose-azorius-erc721',
-        value: GovernanceType.AZORIUS_ERC721,
-      },
-      {
-        label: t('labelMultisigGov'),
-        description: t('descMultisigGov'),
-        testId: 'choose-multisig',
-        value: GovernanceType.MULTISIG,
-      },
-    ],
-    onChange: value => {
-      const governanceType = value as GovernanceType;
-      handleGovernanceChange(governanceType);
+  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
+
+  const daoName: ITextInput = CreateDAOPresenter.daoname(
+    t,
+    values.essentials.daoName,
+    daoNameDisabled,
+    value => setFieldValue('essentials.daoName', value, true),
+  );
+
+  const chainOptions: ISelectionInput = CreateDAOPresenter.chainOptions(
+    t,
+    supportedNetworks,
+    chain.id,
+    chainId => {
+      setCurrentConfig(getConfigByChainId(Number(chainId)));
+      switchChain({ chainId: Number(chainId) });
     },
-  };
+  );
+
+  const governanceOptions: ISelectionInput = CreateDAOPresenter.governanceOptions(
+    t,
+    values.essentials.governance,
+    handleGovernanceChange,
+  );
+
+  const snapshot: ITextInput = CreateDAOPresenter.snapshot(
+    t,
+    values.essentials.snapshotENS,
+    snapshotENSDisabled,
+    errors?.essentials?.snapshotENS,
+    value => setFieldValue('essentials.snapshotENS', value, true),
+  );
 
   return (
     <>
@@ -166,128 +165,141 @@ export function EstablishEssentials(props: ICreationStepProps) {
         allSteps={props.steps}
         stepNumber={1}
       >
-        <InputComponent
-          label={t('labelDAOName')}
-          helper={t('helperDAOName')}
-          isRequired
-          value={values.essentials.daoName}
-          id="essentials-daoName"
-          onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
-          onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
-          disabled={daoNameDisabled}
-          placeholder={t('daoNamePlaceholder')}
-          testId="essentials-daoName"
-        />
-        <DropdownMenuSelection {...chainOptions} />
-        <RadioSelection {...governanceOptions} />
-        <Box
-          mt="2rem"
-          mb="1.5rem"
-        >
-          <LabelComponent
-            label={t('networks')}
-            helper={t('networkDescription')}
-            isRequired
-            alignLabel="flex-start"
-          >
-            <DropdownMenu
-              items={dropdownItems}
-              selectedItem={dropdownItems.find(item => item.selected)}
-              onSelect={item => {
-                setCurrentConfig(getConfigByChainId(Number(item.value)));
-                switchChain({ chainId: Number(item.value) });
-              }}
-              title={t('networks')}
-              isDisabled={false}
-              renderItem={(item, isSelected) => {
-                return (
-                  <>
-                    <Flex
-                      alignItems="center"
-                      gap="1rem"
-                    >
-                      <Image
-                        src={item.icon}
-                        fallbackSrc="/images/coin-icon-default.svg"
-                        boxSize="2rem"
-                      />
-                      {item.label}
-                    </Flex>
-                    {isSelected && (
-                      <Icon
-                        as={CheckCircle}
-                        boxSize="1.5rem"
-                        color="lilac-0"
-                      />
-                    )}
-                  </>
-                );
-              }}
+        {REUSABLE_COMPONENTS && (
+          <>
+            <TextInput {...daoName} />
+            <DropdownMenuSelection {...chainOptions} />
+            <RadioSelection {...governanceOptions} />
+            <TextInput {...snapshot} />
+          </>
+        )}
+        {!REUSABLE_COMPONENTS && (
+          <>
+            <InputComponent
+              label={t('labelDAOName')}
+              helper={t('helperDAOName')}
+              isRequired
+              value={values.essentials.daoName}
+              id="essentials-daoName"
+              onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
+              onBlur={cEvent =>
+                setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)
+              }
+              disabled={daoNameDisabled}
+              placeholder={t('daoNamePlaceholder')}
+              testId="essentials-daoName"
             />
-          </LabelComponent>
-        </Box>
-        <Box
-          mt="2rem"
-          mb="1.5rem"
-        >
-          <LabelComponent
-            label={t('labelChooseGovernance')}
-            helper={t('helperChooseGovernance')}
-            isRequired
-          >
-            <RadioGroup
-              display="flex"
-              flexDirection="column"
-              name="governance"
-              gap={4}
-              mt="-0.5rem" // RadioGroup renders empty paragraph with margin, seems like this is only feasible way to align this group
-              id="governance"
-              value={values.essentials.governance}
-              onChange={handleGovernanceChange}
+            <Box
+              mt="2rem"
+              mb="1.5rem"
             >
-              {createOptions.includes(GovernanceType.AZORIUS_ERC20) && (
-                <RadioWithText
-                  label={t('labelAzoriusErc20Gov')}
-                  description={t('descAzoriusErc20Gov')}
-                  testId="choose-azorius"
-                  value={GovernanceType.AZORIUS_ERC20}
+              <LabelComponent
+                label={t('networks')}
+                helper={t('networkDescription')}
+                isRequired
+                alignLabel="flex-start"
+              >
+                <DropdownMenu
+                  items={dropdownItems}
+                  selectedItem={dropdownItems.find(item => item.selected)}
+                  onSelect={item => {
+                    setCurrentConfig(getConfigByChainId(Number(item.value)));
+                    switchChain({ chainId: Number(item.value) });
+                  }}
+                  title={t('networks')}
+                  isDisabled={false}
+                  renderItem={(item, isSelected) => {
+                    return (
+                      <>
+                        <Flex
+                          alignItems="center"
+                          gap="1rem"
+                        >
+                          <Image
+                            src={item.icon}
+                            fallbackSrc="/images/coin-icon-default.svg"
+                            boxSize="2rem"
+                          />
+                          {item.label}
+                        </Flex>
+                        {isSelected && (
+                          <Icon
+                            as={CheckCircle}
+                            boxSize="1.5rem"
+                            color="lilac-0"
+                          />
+                        )}
+                      </>
+                    );
+                  }}
                 />
-              )}
-              {createOptions.includes(GovernanceType.AZORIUS_ERC721) && (
-                <RadioWithText
-                  label={t('labelAzoriusErc721Gov')}
-                  description={t('descAzoriusErc721Gov')}
-                  testId="choose-azorius-erc721"
-                  value={GovernanceType.AZORIUS_ERC721}
+              </LabelComponent>
+            </Box>
+            <Box
+              mt="2rem"
+              mb="1.5rem"
+            >
+              <LabelComponent
+                label={t('labelChooseGovernance')}
+                helper={t('helperChooseGovernance')}
+                isRequired
+              >
+                <RadioGroup
+                  display="flex"
+                  flexDirection="column"
+                  name="governance"
+                  gap={4}
+                  mt="-0.5rem" // RadioGroup renders empty paragraph with margin, seems like this is only feasible way to align this group
+                  id="governance"
+                  value={values.essentials.governance}
+                  onChange={handleGovernanceChange}
+                >
+                  {createOptions.includes(GovernanceType.AZORIUS_ERC20) && (
+                    <RadioWithText
+                      label={t('labelAzoriusErc20Gov')}
+                      description={t('descAzoriusErc20Gov')}
+                      testId="choose-azorius"
+                      value={GovernanceType.AZORIUS_ERC20}
+                    />
+                  )}
+                  {createOptions.includes(GovernanceType.AZORIUS_ERC721) && (
+                    <RadioWithText
+                      label={t('labelAzoriusErc721Gov')}
+                      description={t('descAzoriusErc721Gov')}
+                      testId="choose-azorius-erc721"
+                      value={GovernanceType.AZORIUS_ERC721}
+                    />
+                  )}
+                  {createOptions.includes(GovernanceType.MULTISIG) && (
+                    <RadioWithText
+                      label={t('labelMultisigGov')}
+                      description={t('descMultisigGov')}
+                      testId="choose-multisig"
+                      value={GovernanceType.MULTISIG}
+                    />
+                  )}
+                </RadioGroup>
+              </LabelComponent>
+            </Box>
+
+            <LabelComponent
+              label={t('snapshot')}
+              helper={t('snapshotHelper')}
+              isRequired={false}
+            >
+              <LabelWrapper errorMessage={errors?.essentials?.snapshotENS}>
+                <Input
+                  value={snapshotENSInput}
+                  onChange={cEvent => setSnapshotENSInput(cEvent.target.value.toLowerCase())}
+                  isDisabled={snapshotENSDisabled}
+                  data-testid="essentials-snapshotENS"
+                  placeholder="example.eth"
+                  isInvalid={!!errors?.essentials?.snapshotENS}
                 />
-              )}
-              {createOptions.includes(GovernanceType.MULTISIG) && (
-                <RadioWithText
-                  label={t('labelMultisigGov')}
-                  description={t('descMultisigGov')}
-                  testId="choose-multisig"
-                  value={GovernanceType.MULTISIG}
-                />
-              )}
-            </RadioGroup>
-          </LabelComponent>
-        </Box>
-        <LabelComponent
-          label={t('snapshot')}
-          helper={t('snapshotHelper')}
-          isRequired={false}
-        >
-          <LabelWrapper errorMessage={errors?.essentials?.snapshotENS}>
-            <Input
-              value={snapshotENSInput}
-              onChange={cEvent => setSnapshotENSInput(cEvent.target.value.toLowerCase())}
-              isDisabled={snapshotENSDisabled}
-              data-testid="essentials-snapshotENS"
-              placeholder="example.eth"
-              isInvalid={!!errors?.essentials?.snapshotENS}
-            />
-          </LabelWrapper>
-        </LabelComponent>
+              </LabelWrapper>
+            </LabelComponent>
+          </>
+        )}
       </StepWrapper>
       <StepButtons
         {...props}

@@ -3,30 +3,17 @@ import { CheckCircle } from '@phosphor-icons/react';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { DropdownMenu } from '../../ui/menus/DropdownMenu';
+import { ISelectionInput } from '../presenters/CreateDAOPresenter';
 
-export interface ISelectionOption {
-  value: string;
-  label: string;
-  description?: string;
-  icon?: string;
-  testId?: string;
-}
-
-export interface ISelection {
-  label: string;
-  description?: string;
-  selected?: string; // selected item
-  options: ISelectionOption[];
-  onChange: (value: string) => void;
-}
 
 export function DropdownMenuSelection({
   label,
   description,
   selected,
   options,
+  isDisabled = false,
   onChange,
-}: ISelection) {
+}: ISelectionInput) {
   return (
     <Box
       mt="2rem"
@@ -45,7 +32,7 @@ export function DropdownMenuSelection({
             onChange(item.value);
           }}
           title={label}
-          isDisabled={false}
+          isDisabled={isDisabled}
           renderItem={(item, isSelected) => {
             return (
               <>
@@ -76,7 +63,7 @@ export function DropdownMenuSelection({
   );
 }
 
-export function RadioSelection({ label, description, selected, options, onChange }: ISelection) {
+export function RadioSelection({ label, description, selected, options, onChange }: ISelectionInput) {
   return (
     <Box
       mt="2rem"
