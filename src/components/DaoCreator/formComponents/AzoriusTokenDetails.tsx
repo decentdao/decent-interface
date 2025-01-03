@@ -16,6 +16,10 @@ import useStepRedirect from '../hooks/useStepRedirect';
 import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
+import { FeatureFlags } from '../../../helpers/featureFlags';
+import { CreateDAOPresenter, ISelectionInput } from '../presenters/CreateDAOPresenter';
+import { HorizontalRadioSelection } from './SelectionInput';
+import { FullWidthTextInput } from './TextInput';
 
 function TokenConfigDisplay(props: ICreationStepProps) {
   switch (props.values.erc20Token.tokenCreationType) {
@@ -103,6 +107,39 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       (!isImportedVotesToken ? t('errorNotVotingToken') : '');
   }
 
+  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
+
+  const tokenOptions: ISelectionInput = CreateDAOPresenter.tokenOptions(
+    t,
+    values.erc20Token.tokenCreationType,
+    tokenCreationType => {
+      if (tokenCreationType === TokenCreationType.NEW) {
+        setFieldValue('erc20Token.tokenImportAddress', zeroAddress);
+      }
+      setFieldValue('erc20Token.tokenName', '');
+      setFieldValue('erc20Token.tokenSymbol', '');
+      setFieldValue('erc20Token.tokenSupply', '');
+      setFieldValue('erc20Token.tokenCreationType', tokenCreationType);
+    },
+  );
+
+  const tokenImportAddress = CreateDAOPresenter.tokenImportAddress(
+    t,
+    createAccountSubstring(zeroAddress),
+    values.erc20Token.tokenImportAddress,
+    tokenErrorMsg,
+    event => {
+      setTouched({
+        erc20Token: {
+          tokenImportAddress: true,
+        },
+        ...touched,
+      });
+
+      handleChange(event);
+    },
+  );
+
   return (
     <>
       <StepWrapper
@@ -112,71 +149,81 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         allSteps={props.steps}
         stepNumber={2}
       >
-        <Flex
-          flexDirection="column"
-          gap={4}
-        >
-          <ContentBoxTitle>{t('titleTokenContract')}</ContentBoxTitle>
-          <RadioGroup
-            display="flex"
-            flexDirection="row"
-            name="erc20Token.tokenCreationType"
-            gap={8}
-            ml="0.25rem"
-            id="erc20Token.tokenCreationType"
-            value={values.erc20Token.tokenCreationType}
-            onChange={value => {
-              setFieldValue('erc20Token.tokenCreationType', value);
-            }}
+        {REUSABLE_COMPONENTS && (
+          <>
+            <HorizontalRadioSelection {...tokenOptions} />
+            {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
+              <FullWidthTextInput {...tokenImportAddress} />
+            )}
+          </>
+        )}
+        {!REUSABLE_COMPONENTS && (
+          <Flex
+            flexDirection="column"
+            gap={4}
           >
-            <RadioWithText
-              label={t('radioLabelExistingToken')}
-              description={t('helperExistingToken')}
-              testId="choose-existingToken"
-              value={TokenCreationType.IMPORTED}
-              onClick={() => {
-                setFieldValue('erc20Token.tokenName', '');
-                setFieldValue('erc20Token.tokenSymbol', '');
-                setFieldValue('erc20Token.tokenSupply', '');
+            <ContentBoxTitle>{t('titleTokenContract')}</ContentBoxTitle>
+            <RadioGroup
+              display="flex"
+              flexDirection="row"
+              name="erc20Token.tokenCreationType"
+              gap={8}
+              ml="0.25rem"
+              id="erc20Token.tokenCreationType"
+              value={values.erc20Token.tokenCreationType}
+              onChange={value => {
+                setFieldValue('erc20Token.tokenCreationType', value);
               }}
-            />
-            <RadioWithText
-              label={t('radioLabelNewToken')}
-              description={t('helperNewToken')}
-              testId="choose-newToken"
-              value={TokenCreationType.NEW}
-              onClick={() => {
-                setFieldValue('erc20Token.tokenImportAddress', '');
-                setFieldValue('erc20Token.tokenName', '');
-                setFieldValue('erc20Token.tokenSymbol', '');
-                setFieldValue('erc20Token.tokenSupply', '');
-              }}
-            />
-          </RadioGroup>
-          {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
-            <>
-              <LabelWrapper errorMessage={tokenErrorMsg}>
-                <Input
-                  name="erc20Token.tokenImportAddress"
-                  onChange={e => {
-                    setTouched({
-                      erc20Token: {
-                        tokenImportAddress: true,
-                      },
-                      ...touched,
-                    });
+            >
+              <RadioWithText
+                label={t('radioLabelExistingToken')}
+                description={t('helperExistingToken')}
+                testId="choose-existingToken"
+                value={TokenCreationType.IMPORTED}
+                onClick={() => {
+                  setFieldValue('erc20Token.tokenName', '');
+                  setFieldValue('erc20Token.tokenSymbol', '');
+                  setFieldValue('erc20Token.tokenSupply', '');
+                }}
+              />
+              <RadioWithText
+                label={t('radioLabelNewToken')}
+                description={t('helperNewToken')}
+                testId="choose-newToken"
+                value={TokenCreationType.NEW}
+                onClick={() => {
+                  setFieldValue('erc20Token.tokenImportAddress', '');
+                  setFieldValue('erc20Token.tokenName', '');
+                  setFieldValue('erc20Token.tokenSymbol', '');
+                  setFieldValue('erc20Token.tokenSupply', '');
+                }}
+              />
+            </RadioGroup>
+            {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
+              <>
+                <LabelWrapper errorMessage={tokenErrorMsg}>
+                  <Input
+                    name="erc20Token.tokenImportAddress"
+                    onChange={e => {
+                      setTouched({
+                        erc20Token: {
+                          tokenImportAddress: true,
+                        },
+                        ...touched,
+                      });
 
-                    handleChange(e);
-                  }}
-                  value={values.erc20Token.tokenImportAddress}
-                  placeholder={createAccountSubstring(zeroAddress)}
-                  isInvalid={!!tokenErrorMsg}
-                  isRequired
-                />
-              </LabelWrapper>
-            </>
-          )}
-        </Flex>
+                      handleChange(e);
+                    }}
+                    value={values.erc20Token.tokenImportAddress}
+                    placeholder={createAccountSubstring(zeroAddress)}
+                    isInvalid={!!tokenErrorMsg}
+                    isRequired
+                  />
+                </LabelWrapper>
+              </>
+            )}
+          </Flex>
+        )}
       </StepWrapper>
       <Box
         mt="1.5rem"

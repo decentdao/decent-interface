@@ -1,5 +1,5 @@
 import { Input } from '@chakra-ui/react';
-import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
+import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { ITextInput } from '../presenters/CreateDAOPresenter';
 
@@ -13,7 +13,7 @@ export function TextInput({
   isDisabled = false,
   isRequired,
   testId,
-  onChange,
+  onValueChange,
 }: ITextInput) {
   return (
     <LabelComponent
@@ -25,8 +25,8 @@ export function TextInput({
         <Input
           id={id}
           value={value}
-          onChange={cEvent => onChange(cEvent.target.value)}
-          onBlur={cEvent => onChange(cEvent.target.value.trim())}
+          onChange={cEvent => onValueChange?.(cEvent.target.value)}
+          onBlur={cEvent => onValueChange?.(cEvent.target.value.trim())}
           isDisabled={isDisabled}
           data-testid={testId ?? ''}
           placeholder={placeholder}
@@ -34,5 +34,28 @@ export function TextInput({
         />
       </LabelWrapper>
     </LabelComponent>
+  );
+}
+
+export function FullWidthTextInput({
+  id,
+  placeholder,
+  error,
+  value,
+  onChange,
+}: ITextInput) {
+  return (
+    <>
+      <LabelWrapper errorMessage={error}>
+        <Input
+          name={id}
+          onChange={cEvent => onChange?.(cEvent)}
+          value={value}
+          placeholder={placeholder}
+          isInvalid={!!error}
+          isRequired
+        />
+      </LabelWrapper>
+    </>
   );
 }

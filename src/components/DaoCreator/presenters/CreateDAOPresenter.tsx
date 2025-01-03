@@ -2,15 +2,18 @@
 // Viewmodels are used to provide UI data to render reusable components.
 
 import { TFunction } from 'i18next/typescript/t';
-import { GovernanceType } from '../../../types';
+import { ChangeEvent } from 'react';
+import { GovernanceType, TokenCreationType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 import { getNetworkIcon } from '../../../utils/url';
 
 export interface IInput {
+  id: string; // id
   label: string; // label
   description?: string; // optional description
   isDisabled?: boolean; // is disabled
-  onChange: (value: string) => void; // on change callback
+  onValueChange?: (value: string) => void; // on change callback with input value
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void; // on change callback with the raw event
 }
 
 export interface ISelectionOption {
@@ -27,8 +30,7 @@ export interface ISelectionInput extends IInput {
 }
 
 export interface ITextInput extends IInput {
-  id: string; // id
-  value: string; // current value
+  value?: string; // current value
   placeholder: string; // placeholder
   error?: string; // error message
   isRequired: boolean; // is required
@@ -40,7 +42,7 @@ export const CreateDAOPresenter = {
     t: TFunction<[string, string], undefined>,
     value: string,
     isDisabled: boolean,
-    onChange: (value: string) => void,
+    onValueChange: (value: string) => void,
   ): ITextInput {
     return {
       id: 'essentials-daoName',
@@ -51,7 +53,7 @@ export const CreateDAOPresenter = {
       isDisabled: isDisabled,
       isRequired: true,
       testId: 'essentials-daoName',
-      onChange: onChange,
+      onValueChange: onValueChange,
     };
   },
 
@@ -59,7 +61,7 @@ export const CreateDAOPresenter = {
     t: TFunction<[string, string], undefined>,
     networks: NetworkConfig[],
     selected: Number,
-    onChange: (value: Number) => void,
+    onValueChange: (value: Number) => void,
   ): ISelectionInput {
     const options = networks.map(network => ({
       value: network.chain.id.toString(),
@@ -69,13 +71,14 @@ export const CreateDAOPresenter = {
     }));
 
     return {
+      id: 'chain',
       label: t('networks'),
       description: t('networkDescription'),
       selected: selected.toString(),
       options: options,
       isDisabled: false,
-      onChange: value => {
-        onChange(Number(value));
+      onValueChange: value => {
+        onValueChange(Number(value));
       },
     };
   },
@@ -83,9 +86,10 @@ export const CreateDAOPresenter = {
   governanceOptions(
     t: TFunction<[string, string], undefined>,
     selected: GovernanceType,
-    onChange: (value: GovernanceType) => void,
+    onValueChange: (value: GovernanceType) => void,
   ): ISelectionInput {
     return {
+      id: 'governance',
       label: t('labelChooseGovernance'),
       description: t('helperChooseGovernance'),
       selected: selected,
@@ -110,9 +114,9 @@ export const CreateDAOPresenter = {
         },
       ],
       isDisabled: false,
-      onChange: value => {
+      onValueChange: value => {
         const governanceType = value as GovernanceType;
-        onChange(governanceType);
+        onValueChange(governanceType);
       },
     };
   },
@@ -122,7 +126,7 @@ export const CreateDAOPresenter = {
     value: string,
     isDisabled: boolean,
     error: string | undefined,
-    onChange: (value: string) => void,
+    onValueChange: (value: string) => void,
   ): ITextInput {
     return {
       id: 'snapshot',
@@ -134,6 +138,56 @@ export const CreateDAOPresenter = {
       isDisabled: isDisabled,
       isRequired: false,
       testId: 'essentials-snapshotENS',
+      onValueChange: onValueChange,
+    };
+  },
+
+
+  tokenOptions(
+    t: TFunction<[string, string], undefined>,
+    selected: TokenCreationType,
+    onValueChange: (value: TokenCreationType) => void,
+  ): ISelectionInput {
+    return {
+      id: 'tokenContract',
+      label: t('titleTokenContract'),
+      selected: selected,
+      options: [
+        {
+          label: t('radioLabelExistingToken'),
+          description: t('helperExistingToken'),
+          testId: 'choose-existingToken',
+          value: TokenCreationType.IMPORTED,
+        },
+        {
+          label: t('radioLabelNewToken'),
+          description: t('helperNewToken'),
+          testId: 'choose-newToken',
+          value: TokenCreationType.NEW,
+        },
+      ],
+      isDisabled: false,
+      onValueChange: value => {
+        const tokenCreationType = value as TokenCreationType;
+        onValueChange(tokenCreationType);
+      },
+    };
+  },
+
+  tokenImportAddress(
+    t: TFunction<[string, string], undefined>,
+    placeholder: string,
+    value: string | undefined,
+    error: string | undefined,
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void,
+  ): ITextInput {
+    return {
+      id: 'erc20Token.tokenImportAddress',
+      label: '',
+      placeholder: placeholder,
+      error: error,
+      value: value,
+      isRequired: true,
       onChange: onChange,
     };
   },

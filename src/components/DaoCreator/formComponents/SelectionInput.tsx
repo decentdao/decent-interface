@@ -1,10 +1,10 @@
 import { Box, Flex, Icon, Image, RadioGroup } from '@chakra-ui/react';
 import { CheckCircle } from '@phosphor-icons/react';
+import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { DropdownMenu } from '../../ui/menus/DropdownMenu';
 import { ISelectionInput } from '../presenters/CreateDAOPresenter';
-
 
 export function DropdownMenuSelection({
   label,
@@ -12,7 +12,7 @@ export function DropdownMenuSelection({
   selected,
   options,
   isDisabled = false,
-  onChange,
+  onValueChange,
 }: ISelectionInput) {
   return (
     <Box
@@ -29,7 +29,7 @@ export function DropdownMenuSelection({
           items={options}
           selectedItem={options.find(item => item.value === selected)}
           onSelect={item => {
-            onChange(item.value);
+            onValueChange?.(item.value);
           }}
           title={label}
           isDisabled={isDisabled}
@@ -63,7 +63,14 @@ export function DropdownMenuSelection({
   );
 }
 
-export function RadioSelection({ label, description, selected, options, onChange }: ISelectionInput) {
+export function RadioSelection({
+  id,
+  label,
+  description,
+  selected,
+  options,
+  onValueChange,
+}: ISelectionInput) {
   return (
     <Box
       mt="2rem"
@@ -77,12 +84,14 @@ export function RadioSelection({ label, description, selected, options, onChange
         <RadioGroup
           display="flex"
           flexDirection="column"
-          name="governance"
+          name={label}
           gap={4}
           mt="-0.5rem" // RadioGroup renders empty paragraph with margin, seems like this is only feasible way to align this group
-          id="governance"
+          id={id}
           value={selected}
-          onChange={onChange}
+          onChange={value => {
+            onValueChange?.(value);
+          }}
         >
           {options.map(option => (
             <RadioWithText
@@ -96,5 +105,41 @@ export function RadioSelection({ label, description, selected, options, onChange
         </RadioGroup>
       </LabelComponent>
     </Box>
+  );
+}
+
+export function HorizontalRadioSelection({
+  id,
+  label,
+  selected,
+  options,
+  onValueChange,
+}: ISelectionInput) {
+  return (
+    <>
+      <ContentBoxTitle>{label}</ContentBoxTitle>
+      <RadioGroup
+        display="flex"
+        flexDirection="row"
+        name={label}
+        gap={8}
+        ml="0.25rem"
+        id={id}
+        value={selected}
+        onChange={value => {
+          onValueChange?.(value);
+        }}
+      >
+        {options.map(option => (
+          <RadioWithText
+            key={option.value}
+            label={option.label}
+            description={option.description ?? ''}
+            testId={option.testId ?? option.value}
+            value={option.value}
+          />
+        ))}
+      </RadioGroup>
+    </>
   );
 }
