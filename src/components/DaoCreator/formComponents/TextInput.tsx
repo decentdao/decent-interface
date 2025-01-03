@@ -37,13 +37,7 @@ export function TextInput({
   );
 }
 
-export function FullWidthTextInput({
-  id,
-  placeholder,
-  error,
-  value,
-  onChange,
-}: ITextInput) {
+export function FullWidthTextInput({ id, placeholder, error, value, onChange }: ITextInput) {
   return (
     <>
       <LabelWrapper errorMessage={error}>

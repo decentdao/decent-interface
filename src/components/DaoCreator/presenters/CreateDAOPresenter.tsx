@@ -142,7 +142,6 @@ export const CreateDAOPresenter = {
     };
   },
 
-
   tokenOptions(
     t: TFunction<[string, string], undefined>,
     selected: TokenCreationType,
