@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
+import { FeatureFlags } from '../../../helpers/featureFlags';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { CreatorFormState, ICreationStepProps, TokenCreationType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
@@ -13,13 +14,12 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { usePrepareFormData } from '../hooks/usePrepareFormData';
 import useStepRedirect from '../hooks/useStepRedirect';
-import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
-import { VotesTokenImport } from './VotesTokenImport';
-import { VotesTokenNew } from './VotesTokenNew';
-import { FeatureFlags } from '../../../helpers/featureFlags';
 import { CreateDAOPresenter, ISelectionInput } from '../presenters/CreateDAOPresenter';
+import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 import { HorizontalRadioSelection } from './SelectionInput';
 import { FullWidthTextInput } from './TextInput';
+import { VotesTokenImport } from './VotesTokenImport';
+import { VotesTokenNew } from './VotesTokenNew';
 
 function TokenConfigDisplay(props: ICreationStepProps) {
   switch (props.values.erc20Token.tokenCreationType) {
@@ -150,12 +150,16 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         stepNumber={2}
       >
         {REUSABLE_COMPONENTS && (
-          <>
+          <Flex
+            flexDirection="column"
+            gap={4}
+          >
+            <ContentBoxTitle>{t('titleTokenContract')}</ContentBoxTitle>
             <HorizontalRadioSelection {...tokenOptions} />
             {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
               <FullWidthTextInput {...tokenImportAddress} />
             )}
-          </>
+          </Flex>
         )}
         {!REUSABLE_COMPONENTS && (
           <Flex

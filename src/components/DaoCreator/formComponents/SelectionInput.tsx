@@ -1,6 +1,5 @@
 import { Box, Flex, Icon, Image, RadioGroup } from '@chakra-ui/react';
 import { CheckCircle } from '@phosphor-icons/react';
-import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { DropdownMenu } from '../../ui/menus/DropdownMenu';
@@ -116,30 +115,27 @@ export function HorizontalRadioSelection({
   onValueChange,
 }: ISelectionInput) {
   return (
-    <>
-      <ContentBoxTitle>{label}</ContentBoxTitle>
-      <RadioGroup
-        display="flex"
-        flexDirection="row"
-        name={label}
-        gap={8}
-        ml="0.25rem"
-        id={id}
-        value={selected}
-        onChange={value => {
-          onValueChange?.(value);
-        }}
-      >
-        {options.map(option => (
-          <RadioWithText
-            key={option.value}
-            label={option.label}
-            description={option.description ?? ''}
-            testId={option.testId ?? option.value}
-            value={option.value}
-          />
-        ))}
-      </RadioGroup>
-    </>
+    <RadioGroup
+      display="flex"
+      flexDirection="row"
+      name={label}
+      gap={8}
+      ml="0.25rem"
+      id={id}
+      value={selected}
+      onChange={value => {
+        onValueChange?.(value);
+      }}
+    >
+      {options.map(option => (
+        <RadioWithText
+          key={option.value}
+          label={option.label}
+          description={option.description ?? ''}
+          testId={option.testId ?? option.value}
+          value={option.value}
+        />
+      ))}
+    </RadioGroup>
   );
 }

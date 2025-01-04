@@ -1,7 +1,9 @@
 import { Input } from '@chakra-ui/react';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
-import { ITextInput } from '../presenters/CreateDAOPresenter';
+import { IBigIntTextInput, ITextInput } from '../presenters/CreateDAOPresenter';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 
 export function TextInput({
   id,
@@ -51,5 +53,36 @@ export function FullWidthTextInput({ id, placeholder, error, value, onChange }: 
         />
       </LabelWrapper>
     </>
+  );
+}
+
+export function BigIntTextInput({
+  id,
+  label,
+  description,
+  error,
+  value,
+  isRequired,
+  testId,
+  onValueChange,
+}: IBigIntTextInput) {
+  const { restrictChars } = useFormHelpers();
+  return (
+    <LabelComponent
+      label={label}
+      helper={description}
+      isRequired={isRequired}
+    >
+      <LabelWrapper errorMessage={error}>
+        <BigIntInput
+          id={id}
+          value={value}
+          onChange={valuePair => onValueChange?.(valuePair)}
+          data-testid={testId ?? ''}
+          onKeyDown={restrictChars}
+          placeholder="100,000,000"
+        />
+      </LabelWrapper>
+    </LabelComponent>
   );
 }

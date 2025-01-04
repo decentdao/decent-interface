@@ -3,7 +3,7 @@
 
 import { TFunction } from 'i18next/typescript/t';
 import { ChangeEvent } from 'react';
-import { GovernanceType, TokenCreationType } from '../../../types';
+import { BigIntValuePair, GovernanceType, TokenCreationType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 import { getNetworkIcon } from '../../../utils/url';
 
@@ -12,6 +12,9 @@ export interface IInput {
   label: string; // label
   description?: string; // optional description
   isDisabled?: boolean; // is disabled
+}
+
+export interface ITextValueChange {
   onValueChange?: (value: string) => void; // on change callback with input value
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void; // on change callback with the raw event
 }
@@ -24,17 +27,26 @@ export interface ISelectionOption {
   testId?: string; // optional test id
 }
 
-export interface ISelectionInput extends IInput {
+export interface ISelectionInput extends IInput, ITextValueChange {
   selected?: string; // selected item
   options: ISelectionOption[]; // list of options
 }
 
-export interface ITextInput extends IInput {
+export interface ITextInput extends IInput, ITextValueChange {
   value?: string; // current value
   placeholder: string; // placeholder
   error?: string; // error message
   isRequired: boolean; // is required
   testId?: string; // optional test id
+}
+
+export interface IBigIntTextInput extends IInput {
+  value?: bigint; // current value
+  placeholder: string; // placeholder
+  error?: string; // error message
+  isRequired: boolean; // is required
+  testId?: string; // optional test id
+  onValueChange?: (value: BigIntValuePair) => void; // on change callback with input value
 }
 
 export const CreateDAOPresenter = {
@@ -149,7 +161,7 @@ export const CreateDAOPresenter = {
   ): ISelectionInput {
     return {
       id: 'tokenContract',
-      label: t('titleTokenContract'),
+      label: '',
       selected: selected,
       options: [
         {
@@ -188,6 +200,70 @@ export const CreateDAOPresenter = {
       value: value,
       isRequired: true,
       onChange: onChange,
+    };
+  },
+
+  tokenNew(t: TFunction<[string, string], undefined>): ITextInput {
+    return {
+      id: 'erc20Token.tokenName',
+      label: t('labelTokenName'),
+      description: t('helperTokenName'),
+      placeholder: 'Name',
+      isRequired: true,
+    };
+  },
+
+  tokenName(
+    t: TFunction<[string, string], undefined>,
+    value: string,
+    onValueChange: (value: string) => void,
+  ): ITextInput {
+    return {
+      id: 'erc20Token.tokenName',
+      label: t('labelTokenName'),
+      description: t('helperTokenName'),
+      placeholder: 'Name',
+      value: value,
+      isDisabled: false,
+      isRequired: true,
+      testId: 'tokenVoting-tokenNameInput',
+      onValueChange: onValueChange,
+    };
+  },
+
+  tokenSymbol(
+    t: TFunction<[string, string], undefined>,
+    value: string,
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void,
+  ): ITextInput {
+    return {
+      id: 'erc20Token.tokenSymbol',
+      label: t('labelTokenSymbol'),
+      description: t('helperTokenSymbol'),
+      placeholder: 'TKN',
+      value: value,
+      isDisabled: false,
+      isRequired: true,
+      testId: 'tokenVoting-tokenSymbolInput',
+      onChange: onChange,
+    };
+  },
+
+  tokenSupply(
+    t: TFunction<[string, string], undefined>,
+    value: bigint | undefined,
+    onValueChange: (value: BigIntValuePair) => void,
+  ): IBigIntTextInput {
+    return {
+      id: 'erc20Token.tokenSymbol',
+      label: t('labelTokenSupply'),
+      description: t('helperTokenSupply'),
+      placeholder: '100,000,000',
+      value: value,
+      isDisabled: false,
+      isRequired: true,
+      testId: 'tokenVoting-tokenSupplyInput',
+      onValueChange: onValueChange,
     };
   },
 };
