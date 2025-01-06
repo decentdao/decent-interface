@@ -1,5 +1,6 @@
 import { useBreakpointValue } from '@chakra-ui/react';
 import { Hex } from 'viem';
+import { FeatureFlags } from '../helpers/featureFlags';
 
 const HEADER_HEIGHT = '4.5rem';
 const HEADER_HEIGHT_MOBILE = '3.75rem';
@@ -63,12 +64,7 @@ const features = {
 type FeatureFlag = (typeof features)[keyof typeof features];
 
 export const isFeatureEnabled = (feature: FeatureFlag) => {
-  const featureStatus = import.meta.env[`VITE_APP_FLAG_${feature}`];
-  if (featureStatus === 'ON') {
-    return true;
-  } else {
-    return false;
-  }
+  return FeatureFlags.instance?.get(`VITE_APP_FLAG_${feature}`) === 'ON';
 };
 
 export const isDevMode = () => isFeatureEnabled(features.developmentMode);
