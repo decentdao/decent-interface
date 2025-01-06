@@ -13,7 +13,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { ProposalExecuteData } from '../../../../types';
 import { validateENSName } from '../../../../utils/url';
@@ -31,7 +31,7 @@ export function SafeGeneralSettingsPage() {
   const {
     addressPrefix,
     contracts: { keyValuePairs },
-  } = useNetworkConfig();
+  } = useNetworkConfigStore();
 
   const safeAddress = safe?.address;
 

@@ -1,18 +1,16 @@
+import { ApolloClient } from '@apollo/client';
 import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient } from 'viem';
 import { SendAssetsData } from '../components/ui/modals/SendAssetsModal';
 import { BigIntValuePair } from './common';
 import { CreateProposalMetadata } from './proposalBuilder';
 
-export interface DecentHat {
+interface DecentHat {
   id: Hex;
   prettyId: string;
   name: string;
   description: string;
   smartAddress: Address;
-  eligibility?: Address;
-  payments?: SablierPayment[];
-  canCreateProposals: boolean;
 }
 
 export interface DecentTopHat extends DecentHat {}
@@ -21,7 +19,7 @@ export interface DecentAdminHat extends DecentHat {
   wearer?: Address;
 }
 
-export type RoleTerm = {
+type RoleTerm = {
   nominee: Address;
   termEndDate: Date;
   termNumber: number;
@@ -36,10 +34,12 @@ export type DecentRoleHatTerms = {
 
 export interface DecentRoleHat extends Omit<DecentHat, 'smartAddress'> {
   wearerAddress: Address;
-  eligibility?: Address;
   smartAddress?: Address;
   roleTerms: DecentRoleHatTerms;
+  canCreateProposals: boolean;
+  payments?: SablierPayment[];
   isTermed: boolean;
+  eligibility?: Address;
 }
 
 export interface DecentTree {
@@ -132,11 +132,6 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Inactive]: 'neutral-6',
 };
 
-export interface TermedParams {
-  termEndDateTs: bigint;
-  nominatedWearers: Address[];
-}
-
 export enum RoleFormTermStatus {
   ReadyToStart,
   Current,
@@ -174,6 +169,7 @@ export type EditedRoleFieldNames =
   | 'roleType'
   | 'newTerm'
   | 'canCreateProposals';
+
 export interface EditedRole {
   fieldNames: EditedRoleFieldNames[];
   status: EditBadgeStatus;
@@ -258,6 +254,11 @@ export interface RolesStore extends RolesStoreData {
     hatsAccountImplementation: Address;
     hatsElectionsImplementation: Address;
     publicClient: PublicClient;
+    apolloClient: ApolloClient<object>;
+    sablierSubgraph?: {
+      space: number;
+      slug: string;
+    };
     whitelistingVotingStrategy?: Address;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;

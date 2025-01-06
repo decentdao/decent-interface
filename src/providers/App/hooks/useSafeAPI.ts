@@ -15,7 +15,7 @@ import {
   setIndexedDBValue,
 } from '../../../hooks/utils/cache/useLocalDB';
 import { SafeWithNextNonce } from '../../../types';
-import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../NetworkConfig/useNetworkConfigStore';
 
 class EnhancedSafeApiKit extends SafeApiKit {
   readonly CHAINID: number;
@@ -103,7 +103,7 @@ class EnhancedSafeApiKit extends SafeApiKit {
 }
 
 export function useSafeAPI() {
-  const { chain } = useNetworkConfig();
+  const { chain } = useNetworkConfigStore();
 
   const safeAPI = useMemo(() => {
     return new EnhancedSafeApiKit({ chainId: BigInt(chain.id) });

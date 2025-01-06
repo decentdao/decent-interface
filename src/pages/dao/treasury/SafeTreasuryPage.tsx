@@ -17,7 +17,7 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useProposalActionsStore } from '../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { ProposalActionType } from '../../../types';
@@ -41,7 +41,7 @@ export function SafeTreasuryPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { addAction } = useProposalActionsStore();
   const navigate = useNavigate();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const hasAnyBalanceOfAnyFungibleTokens =
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 

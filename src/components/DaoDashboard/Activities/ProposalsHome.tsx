@@ -7,7 +7,7 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { useProposalsSortedAndFiltered } from '../../../hooks/DAO/proposal/useProposals';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import {
   AzoriusGovernance,
@@ -39,7 +39,7 @@ export function ProposalsHome() {
   const { governance, guardContracts } = useFractal();
   const { safe } = useDaoInfoStore();
 
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfigStore();
   const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useDecentModal(ModalType.DELEGATE);
 

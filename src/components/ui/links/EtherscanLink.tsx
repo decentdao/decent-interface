@@ -1,7 +1,7 @@
 import { Box, LinkProps } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import ModalTooltip from '../modals/ModalTooltip';
 import ExternalLink from './ExternalLink';
 
@@ -20,7 +20,7 @@ export default function EtherscanLink({
   secondaryValue,
   ...rest
 }: EtherscanLinkProps) {
-  const { etherscanBaseURL } = useNetworkConfig();
+  const { etherscanBaseURL } = useNetworkConfigStore();
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
