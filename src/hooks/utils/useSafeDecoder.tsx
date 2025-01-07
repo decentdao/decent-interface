@@ -1,6 +1,8 @@
 import axios from 'axios';
+import detectProxyTarget from 'evm-proxy-detection';
 import { useCallback } from 'react';
-import { Address, encodePacked, keccak256 } from 'viem';
+import { Address, decodeFunctionData, encodePacked, Hex, keccak256 } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { DecodedTransaction, DecodedTxParam } from '../../types';
 import { buildSafeApiUrl, parseMultiSendTransactions } from '../../utils';
@@ -10,7 +12,8 @@ import { DBObjectKeys, useIndexedDB } from './cache/useLocalDB';
  * Handles decoding and caching transactions via the Safe API.
  */
 export const useSafeDecoder = () => {
-  const { safeBaseURL } = useNetworkConfigStore();
+  const client = usePublicClient();
+  const { safeBaseURL, etherscanAPIUrl } = useNetworkConfigStore();
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
   const decode = useCallback(
     async (value: string, to: Address, data?: string): Promise<DecodedTransaction[]> => {
@@ -19,7 +22,7 @@ export const useSafeDecoder = () => {
         return [
           {
             target: to,
-            value: value,
+            value,
             function: 'n/a',
             parameterTypes: ['n/a'],
             parameterValues: ['n/a'],
@@ -35,29 +38,63 @@ export const useSafeDecoder = () => {
 
       let decoded: DecodedTransaction | DecodedTransaction[];
       try {
-        const decodedData = (
-          await axios.post(buildSafeApiUrl(safeBaseURL, '/data-decoder/'), {
-            to: to,
-            data: data,
-          })
-        ).data;
-        if (decodedData.parameters && decodedData.method === 'multiSend') {
-          const internalTransactionsMap = new Map<number, DecodedTransaction>();
-          parseMultiSendTransactions(internalTransactionsMap, decodedData.parameters);
-          decoded = [...internalTransactionsMap.values()].flat();
-        } else {
+        try {
+          const decodedData = (
+            await axios.post(buildSafeApiUrl(safeBaseURL, '/data-decoder/'), {
+              to,
+              data,
+            })
+          ).data;
+          if (decodedData.parameters && decodedData.method === 'multiSend') {
+            const internalTransactionsMap = new Map<number, DecodedTransaction>();
+            parseMultiSendTransactions(internalTransactionsMap, decodedData.parameters);
+            decoded = [...internalTransactionsMap.values()].flat();
+          } else {
+            decoded = [
+              {
+                target: to,
+                value,
+                function: decodedData.method,
+                parameterTypes: decodedData.parameters.map((param: DecodedTxParam) => param.type),
+                parameterValues: decodedData.parameters.map((param: DecodedTxParam) => param.value),
+                decodingFailed: false,
+              },
+            ];
+          }
+        } catch (e) {
+          console.error('Error decoding transaction using Safe API. Trying to decode with ABI', e);
+          if (!client) {
+            throw new Error('Client not found');
+          }
+          const requestFunc = ({ method, params }: { method: any; params: any }) =>
+            client.request({ method, params });
+          const proxy = await detectProxyTarget(to, requestFunc);
+          const response = await axios.get(
+            `${etherscanAPIUrl}&module=contract&action=getabi&address=${proxy || to}`,
+          );
+          const responseData = response.data;
+          const abi = JSON.parse(responseData.result);
+          const decodedData = decodeFunctionData({
+            abi,
+            data: data as Hex,
+          });
+          const functionAbi = abi.find((abiItem: any) => abiItem.name === decodedData.functionName);
           decoded = [
             {
               target: to,
-              value: value,
-              function: decodedData.method,
-              parameterTypes: decodedData.parameters.map((param: DecodedTxParam) => param.type),
-              parameterValues: decodedData.parameters.map((param: DecodedTxParam) => param.value),
+              value,
+              function: decodedData.functionName,
+              parameterTypes: functionAbi.inputs.map((input: any) => input.type),
+              parameterValues: decodedData.args,
               decodingFailed: false,
             },
           ];
         }
       } catch (e) {
+        console.error(
+          'Error decoding transaction using ABI. Returning empty decoded transaction',
+          e,
+        );
         return [
           {
             target: to,
@@ -77,7 +114,7 @@ export const useSafeDecoder = () => {
 
       return decoded;
     },
-    [getValue, safeBaseURL, setValue],
+    [getValue, safeBaseURL, etherscanAPIUrl, setValue, client],
   );
   return decode;
 };
