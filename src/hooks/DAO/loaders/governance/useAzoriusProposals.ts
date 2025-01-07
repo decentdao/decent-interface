@@ -234,6 +234,13 @@ export const useAzoriusProposals = () => {
 
         let proposalData;
 
+        if (
+          proposalCreatedEvent.args.proposer === undefined ||
+          proposalCreatedEvent.args.strategy === undefined
+        ) {
+          continue;
+        }
+
         if (proposalCreatedEvent.args.metadata && proposalCreatedEvent.args.transactions) {
           const metadataEvent = parseProposalMetadata(proposalCreatedEvent.args.metadata);
 
@@ -271,13 +278,6 @@ export const useAzoriusProposals = () => {
               proposalCreatedEvent.args.transactions,
             );
           }
-        }
-
-        if (
-          proposalCreatedEvent.args.proposer === undefined ||
-          proposalCreatedEvent.args.strategy === undefined
-        ) {
-          continue;
         }
 
         let strategyType: VotingStrategyType | undefined;
