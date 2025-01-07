@@ -112,13 +112,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
     },
   });
 
-  useEffect(() => {
-    if (chain.id !== walletChainID) {
-      const chainId = getChainIdFromPrefix(addressPrefix);
-      switchChain({ chainId });
-    }
-  }, [chain.id, walletChainID, addressPrefix, switchChain]);
-
   // Build viewmodels for the dropdown and radio selection components
   // We can move the code to separate presenter code later
   //
