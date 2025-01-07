@@ -38,10 +38,10 @@ export default function ABISelector({ target, onChange }: IABISelector) {
           const requestFunc = ({ method, params }: { method: any; params: any }) =>
             client.request({ method, params });
 
-          const proxy = await detectProxyTarget(ensAddress || target, requestFunc);
+          const implementationAddress = await detectProxyTarget(ensAddress || target, requestFunc);
 
           const response = await axios.get(
-            `${etherscanAPIUrl}&module=contract&action=getabi&address=${proxy || ensAddress || target}`,
+            `${etherscanAPIUrl}&module=contract&action=getabi&address=${implementationAddress || ensAddress || target}`,
           );
           const responseData = response.data;
 
