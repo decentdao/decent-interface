@@ -1,9 +1,9 @@
 import { Input } from '@chakra-ui/react';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { IBigIntTextInput, ITextInput } from '../presenters/CreateDAOPresenter';
-import { BigIntInput } from '../../ui/forms/BigIntInput';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 
 export function TextInput({
   id,
