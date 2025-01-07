@@ -216,74 +216,50 @@ export function ProposalBuilder({
                             />
                           }
                         />
-                        {(mode === ProposalBuilderMode.PROPOSAL ||
-                          mode === ProposalBuilderMode.TEMPLATE) && (
-                          <Route
-                            path={CreateProposalSteps.TRANSACTIONS}
-                            element={
-                              <>
+                        <Route
+                          path={
+                            mode === ProposalBuilderMode.SABLIER
+                              ? CreateProposalSteps.STREAMS
+                              : CreateProposalSteps.TRANSACTIONS
+                          }
+                          element={
+                            <>
+                              {mode === ProposalBuilderMode.SABLIER ? (
+                                <ProposalStreams
+                                  pendingTransaction={pendingCreateTx}
+                                  {...formikProps}
+                                  values={formikProps.values as CreateSablierProposalForm}
+                                />
+                              ) : (
                                 <ProposalTransactionsForm
                                   pendingTransaction={pendingCreateTx}
                                   safeNonce={safe?.nextNonce}
                                   mode={mode}
                                   {...formikProps}
                                 />
-                                {!isAzorius && (
-                                  <Flex
-                                    alignItems="center"
-                                    justifyContent="space-between"
-                                    marginBottom="2rem"
-                                    rounded="lg"
-                                    p="1.5rem"
-                                    bg="neutral-2"
-                                  >
-                                    <CustomNonceInput
-                                      nonce={formikProps.values.nonce}
-                                      onChange={newNonce =>
-                                        formikProps.setFieldValue('nonce', newNonce)
-                                      }
-                                      align="end"
-                                      renderTrimmed={false}
-                                    />
-                                  </Flex>
-                                )}
-                              </>
-                            }
-                          />
-                        )}
-                        {mode === ProposalBuilderMode.SABLIER && (
-                          <Route
-                            path={CreateProposalSteps.STREAMS}
-                            element={
-                              <>
-                                <ProposalStreams
-                                  pendingTransaction={pendingCreateTx}
-                                  {...formikProps}
-                                  values={formikProps.values as CreateSablierProposalForm}
-                                />
-                                {!isAzorius && (
-                                  <Flex
-                                    alignItems="center"
-                                    justifyContent="space-between"
-                                    marginBottom="2rem"
-                                    rounded="lg"
-                                    p="1.5rem"
-                                    bg="neutral-2"
-                                  >
-                                    <CustomNonceInput
-                                      nonce={formikProps.values.nonce}
-                                      onChange={newNonce =>
-                                        formikProps.setFieldValue('nonce', newNonce)
-                                      }
-                                      align="end"
-                                      renderTrimmed={false}
-                                    />
-                                  </Flex>
-                                )}
-                              </>
-                            }
-                          />
-                        )}
+                              )}
+                              {!isAzorius && (
+                                <Flex
+                                  alignItems="center"
+                                  justifyContent="space-between"
+                                  marginBottom="2rem"
+                                  rounded="lg"
+                                  p="1.5rem"
+                                  bg="neutral-2"
+                                >
+                                  <CustomNonceInput
+                                    nonce={formikProps.values.nonce}
+                                    onChange={newNonce =>
+                                      formikProps.setFieldValue('nonce', newNonce)
+                                    }
+                                    align="end"
+                                    renderTrimmed={false}
+                                  />
+                                </Flex>
+                              )}
+                            </>
+                          }
+                        />
                         <Route
                           path="*"
                           element={
