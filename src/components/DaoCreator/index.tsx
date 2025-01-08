@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useChainId, useSwitchChain } from 'wagmi';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
@@ -52,12 +52,10 @@ function DaoCreator({
     },
   });
 
-  const isAppLoadedRef = useRef(false);
   useEffect(() => {
-    if (chain.id !== walletChainID && !isSubDAO && isAppLoadedRef.current) {
+    if (chain.id !== walletChainID && !isSubDAO) {
       switchChain({ chainId: chain.id });
     }
-    isAppLoadedRef.current = true;
   }, [chain.id, walletChainID, switchChain, isSubDAO]);
 
   return (
