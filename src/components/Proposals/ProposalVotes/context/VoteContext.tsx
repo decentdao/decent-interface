@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -60,7 +61,6 @@ export function VoteContextProvider({
   const [canVoteLoading, setCanVoteLoading] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
   const [hasVotedLoading, setHasVotedLoading] = useState(false);
-  const [proposalVotesLength, setProposalVotesLength] = useState(0);
   const { governance } = useFractal();
   const userAccount = useAccount();
   const { safe } = useDaoInfoStore();
@@ -172,26 +172,26 @@ export function VoteContextProvider({
     // Prevent running this effect multiple times
     if (initialLoadRef.current) return;
     initialLoadRef.current = true;
-
     getCanVote();
-    getHasVoted();
-  }, [getCanVote, getHasVoted]);
+  }, [getCanVote]);
 
+  const loadVotingWeightRef = useRef<number>();
   useEffect(() => {
     const azoriusProposal = proposal as AzoriusProposal;
-    if (azoriusProposal.votes && proposalVotesLength !== azoriusProposal.votes.length) {
-      setProposalVotesLength(azoriusProposal.votes.length);
+    if (azoriusProposal.votes.length !== loadVotingWeightRef.current) {
+      loadVotingWeightRef.current = azoriusProposal.votes.length;
+      getHasVoted();
     }
-  }, [proposal, proposalVotesLength]);
+  }, [getHasVoted, proposal]);
 
   return (
     <VoteContext.Provider
       value={{
-        canVote,
-        canVoteLoading,
-        hasVoted,
-        hasVotedLoading,
-        getHasVoted,
+      canVote,
+      canVoteLoading,
+      hasVoted,
+      hasVotedLoading,
+      getHasVoted,
         getCanVote,
       }}
     >
