@@ -79,8 +79,6 @@ export function VoteContextProvider({
     } else if (governance.isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
       if (azoriusProposal?.votes) {
-        console.log('🚀 ~ azoriusProposal?.votes:', azoriusProposal?.votes);
-        console.log('🚀 ~ userAccount.address:', userAccount.address);
         setHasVoted(!!azoriusProposal?.votes.find(vote => vote.voter === userAccount.address));
       }
     } else {
@@ -125,7 +123,6 @@ export function VoteContextProvider({
   const getCanVote = useCallback(async () => {
     setCanVoteLoading(true);
     let newCanVote = false;
-    console.log('🚀 ~ userAccount.address:  --->', userAccount.address);
     if (userAccount.address && publicClient) {
       if (snapshotProposal) {
         const votingWeightData = await loadVotingWeight();
@@ -151,8 +148,6 @@ export function VoteContextProvider({
         newCanVote = false;
       }
     }
-    console.log('🚀 ~ newCanVote: --->', newCanVote);
-    console.log('🚀 ~ canVote: --->', canVote);
 
     if (canVote !== newCanVote) {
       setCanVote(newCanVote);
