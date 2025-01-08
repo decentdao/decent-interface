@@ -6,7 +6,11 @@ import NoDataCard from '../ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import ProposalCard from './ProposalCard/ProposalCard';
 
-export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
+interface ProposalsListProps {
+  proposals: FractalProposal[];
+}
+
+export function ProposalsList({ proposals }: ProposalsListProps) {
   const {
     governance: { type, loadingProposals, allProposalsLoaded },
   } = useFractal();
@@ -22,15 +26,15 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
           <InfoBoxLoader />
         </Box>
       ) : proposals.length > 0 ? (
-        [
-          ...proposals.map(proposal => (
+        <>
+          {proposals.map(proposal => (
             <ProposalCard
               key={proposal.proposalId}
               proposal={proposal}
             />
-          )),
-          !allProposalsLoaded && <InfoBoxLoader />,
-        ]
+          ))}
+          {!allProposalsLoaded && <InfoBoxLoader />}
+        </>
       ) : (
         <NoDataCard
           emptyText="emptyProposals"

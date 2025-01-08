@@ -1,11 +1,12 @@
 import { Box, Flex, Icon, Show, Button } from '@chakra-ui/react';
 import { CaretDown, Funnel } from '@phosphor-icons/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useProposalsSortedAndFiltered } from '../../../hooks/DAO/proposal/useProposals';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
+import { usePagination } from '../../../hooks/utils/usePagination';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
@@ -21,6 +22,7 @@ import { CreateProposalMenu } from '../../ui/menus/CreateProposalMenu';
 import { OptionMenu } from '../../ui/menus/OptionMenu';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
+import { PaginationControls } from '../../ui/utils/PaginationControls';
 import { Sort } from '../../ui/utils/Sort';
 import { ActivityFreeze } from './ActivityFreeze';
 
@@ -35,6 +37,17 @@ export function ProposalsHome() {
   const [filters, setFilters] = useState<FractalProposalState[]>([]);
 
   const { proposals, getProposalsTotal } = useProposalsSortedAndFiltered({ sortBy, filters });
+
+  const { currentPage, setCurrentPage, pageSize, setPageSize, totalPages, getPaginatedItems } =
+    usePagination({
+      totalItems: proposals.length,
+    });
+
+  // Calculate paginated proposals
+  const paginatedProposals = useMemo(
+    () => getPaginatedItems(proposals),
+    [proposals, getPaginatedItems],
+  );
 
   const { governance, guardContracts } = useFractal();
   const { safe } = useDaoInfoStore();
@@ -81,7 +94,6 @@ export function ProposalsHome() {
       FractalProposalState.ACTIVE,
       FractalProposalState.EXECUTABLE,
       FractalProposalState.EXECUTED,
-
       FractalProposalState.REJECTED,
     ];
 
@@ -91,7 +103,6 @@ export function ProposalsHome() {
       FractalProposalState.TIMELOCKED,
       FractalProposalState.EXECUTABLE,
       FractalProposalState.EXECUTED,
-
       FractalProposalState.REJECTED,
       FractalProposalState.EXPIRED,
     ];
@@ -129,6 +140,7 @@ export function ProposalsHome() {
         return [...prevState, filter];
       }
     });
+    setCurrentPage(1);
   };
 
   const filterOptions = allOptions.map(state => ({
@@ -138,12 +150,35 @@ export function ProposalsHome() {
     isSelected: filters.includes(state),
   }));
 
+  const handleSortChange: Dispatch<SetStateAction<SortBy>> = value => {
+    if (typeof value === 'function') {
+      setSortBy(prev => {
+        const newValue = value(prev);
+        setCurrentPage(1);
+        return newValue;
+      });
+    } else {
+      setSortBy(value);
+      setCurrentPage(1);
+    }
+  };
+
+  const handleSelectAll = () => {
+    setFilters(allOptions);
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilters([]);
+    setCurrentPage(1);
+  };
+
   const filterTitle =
     filters.length === 1
       ? t(filters[0])
       : filters.length === allOptions.length
         ? t('filterProposalsAllSelected')
-        : filters.length === 0 // No filters selected means no filtering applied
+        : filters.length === 0
           ? t('filterProposalsNoneSelected')
           : t('filterProposalsNSelected', { count: filters.length });
 
@@ -234,7 +269,7 @@ export function ProposalsHome() {
                     variant="tertiary"
                     size="sm"
                     mt="0.5rem"
-                    onClick={() => setFilters(allOptions)}
+                    onClick={handleSelectAll}
                   >
                     {t('selectAll', { ns: 'common' })}
                   </Button>
@@ -242,7 +277,7 @@ export function ProposalsHome() {
                     variant="tertiary"
                     size="sm"
                     mt="0.5rem"
-                    onClick={() => setFilters([])}
+                    onClick={handleClearFilters}
                   >
                     {t('clear', { ns: 'common' })}
                   </Button>
@@ -252,7 +287,7 @@ export function ProposalsHome() {
 
             <Sort
               sortBy={sortBy}
-              setSortBy={setSortBy}
+              setSortBy={handleSortChange}
               buttonProps={{ disabled: !proposals.length }}
             />
           </Flex>
@@ -277,7 +312,23 @@ export function ProposalsHome() {
           </Show>
         </Flex>
 
-        <ProposalsList proposals={proposals} />
+        <ProposalsList proposals={paginatedProposals} />
+
+        {/* PAGINATION CONTROLS */}
+        {proposals.length > 0 && (
+          <Flex
+            justify="flex-end"
+            mx="0.5rem"
+          >
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              pageSize={pageSize}
+              onPageSizeChange={setPageSize}
+            />
+          </Flex>
+        )}
       </Flex>
     </Box>
   );
