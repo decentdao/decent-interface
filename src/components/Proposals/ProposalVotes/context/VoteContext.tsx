@@ -184,18 +184,16 @@ export function VoteContextProvider({
     }
   }, [getHasVoted, proposal]);
 
-  return (
-    <VoteContext.Provider
-      value={{
+  const memoizedValue = useMemo(() => {
+    return {
       canVote,
       canVoteLoading,
       hasVoted,
       hasVotedLoading,
+      getCanVote,
       getHasVoted,
-        getCanVote,
-      }}
-    >
-      {children}
-    </VoteContext.Provider>
-  );
+    };
+  }, [canVote, canVoteLoading, getCanVote, getHasVoted, hasVoted, hasVotedLoading]);
+
+  return <VoteContext.Provider value={memoizedValue}>{children}</VoteContext.Provider>;
 }
