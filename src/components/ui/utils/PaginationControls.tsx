@@ -25,10 +25,10 @@ import { EaseOutComponent } from './EaseOutComponent';
 interface NavButtonProps {
   onClick: () => void;
   isDisabled: boolean;
-  icon: ComponentType;
+  iconComponent: ComponentType;
 }
 
-function NavButton({ onClick, isDisabled, icon: IconComponent }: NavButtonProps) {
+function NavButton({ onClick, isDisabled, iconComponent: IconComponent }: NavButtonProps) {
   return (
     <Button
       onClick={onClick}
@@ -110,12 +110,12 @@ export function PaginationControls({
         <NavButton
           onClick={() => onPageChange(1)}
           isDisabled={currentPage === 1}
-          icon={CaretDoubleLeft}
+          iconComponent={CaretDoubleLeft}
         />
         <NavButton
           onClick={() => onPageChange(currentPage - 1)}
           isDisabled={currentPage === 1}
-          icon={CaretLeft}
+          iconComponent={CaretLeft}
         />
 
         <Text
@@ -129,12 +129,12 @@ export function PaginationControls({
         <NavButton
           onClick={() => onPageChange(currentPage + 1)}
           isDisabled={currentPage === totalPages}
-          icon={CaretRight}
+          iconComponent={CaretRight}
         />
         <NavButton
           onClick={() => onPageChange(totalPages)}
           isDisabled={currentPage === totalPages}
-          icon={CaretDoubleRight}
+          iconComponent={CaretDoubleRight}
         />
       </HStack>
     </Flex>
