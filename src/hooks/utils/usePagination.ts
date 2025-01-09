@@ -18,13 +18,15 @@ export function usePagination({ totalItems }: UsePaginationProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [currentPage, setCurrentPage] = useState(() => {
-    const page = searchParams.get(QUERY_PARAMS.PAGE);
-    return page ? parseInt(page) : 1;
+    const pageParam = searchParams.get(QUERY_PARAMS.PAGE);
+    const parsedPage = pageParam ? parseInt(pageParam, 10) : 1;
+    return !isNaN(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   });
 
   const [pageSize, setPageSize] = useState(() => {
-    const size = searchParams.get(QUERY_PARAMS.SIZE);
-    return size && PAGE_SIZE_OPTIONS.includes(parseInt(size)) ? parseInt(size) : DEFAULT_PAGE_SIZE;
+    const sizeParam = searchParams.get(QUERY_PARAMS.SIZE);
+    const parsedSize = sizeParam ? parseInt(sizeParam, 10) : DEFAULT_PAGE_SIZE;
+    return PAGE_SIZE_OPTIONS.includes(parsedSize) ? parsedSize : DEFAULT_PAGE_SIZE;
   });
 
   // Calculate total pages
