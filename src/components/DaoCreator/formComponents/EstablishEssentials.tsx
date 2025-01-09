@@ -3,7 +3,6 @@ import { CheckCircle } from '@phosphor-icons/react';
 import debounce from 'lodash.debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useChainId, useSwitchChain } from 'wagmi';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import {
   supportedNetworks,
@@ -11,7 +10,7 @@ import {
 } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../../types';
-import { getChainIdFromPrefix, getNetworkIcon } from '../../../utils/url';
+import { getNetworkIcon } from '../../../utils/url';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -72,9 +71,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
     setFieldValue('essentials.governance', value);
   };
 
-  const { createOptions, setCurrentConfig, chain, getConfigByChainId, addressPrefix } =
-    useNetworkConfigStore();
-  const walletChainID = useChainId();
+  const { createOptions, setCurrentConfig, chain, getConfigByChainId } = useNetworkConfigStore();
 
   const [snapshotENSInput, setSnapshotENSInput] = useState('');
 
@@ -96,17 +93,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
     icon: getNetworkIcon(network.addressPrefix),
     selected: chain.id === network.chain.id,
   }));
-
-  const { switchChain } = useSwitchChain({
-    mutation: {
-      onError: () => {
-        if (chain.id !== walletChainID) {
-          const chainId = getChainIdFromPrefix(addressPrefix);
-          switchChain({ chainId });
-        }
-      },
-    },
-  });
 
   return (
     <>
@@ -144,7 +130,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
               selectedItem={dropdownItems.find(item => item.selected)}
               onSelect={item => {
                 setCurrentConfig(getConfigByChainId(Number(item.value)));
-                switchChain({ chainId: Number(item.value) });
               }}
               title={t('networks')}
               isDisabled={false}
