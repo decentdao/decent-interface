@@ -114,7 +114,7 @@ export function PaginationControls({
         />
         <NavButton
           onClick={() => onPageChange(currentPage - 1)}
-          isDisabled={currentPage === 1}
+          isDisabled={currentPage === 1 || currentPage > totalPages}
           iconComponent={CaretLeft}
         />
 
@@ -128,12 +128,12 @@ export function PaginationControls({
 
         <NavButton
           onClick={() => onPageChange(currentPage + 1)}
-          isDisabled={currentPage === totalPages}
+          isDisabled={currentPage >= totalPages}
           iconComponent={CaretRight}
         />
         <NavButton
           onClick={() => onPageChange(totalPages)}
-          isDisabled={currentPage === totalPages}
+          isDisabled={currentPage >= totalPages}
           iconComponent={CaretDoubleRight}
         />
       </HStack>
