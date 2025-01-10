@@ -28,17 +28,13 @@ export default function useSendAssetsActionModal() {
       return;
     }
     const isNative = isNativeAsset(sendAssetsData.asset);
-    const transactionData = prepareSendAssetsActionData({
-      transferAmount: sendAssetsData.transferAmount,
-      asset: sendAssetsData.asset,
-      destinationAddress: sendAssetsData.destinationAddress,
-    });
+    const transactionData = prepareSendAssetsActionData(sendAssetsData);
     addAction({
       actionType: ProposalActionType.TRANSFER,
       content: <></>,
       transactions: [
         {
-          targetAddress: transactionData.calldata,
+          targetAddress: transactionData.target,
           ethValue: {
             bigintValue: transactionData.value,
             value: transactionData.value.toString(),

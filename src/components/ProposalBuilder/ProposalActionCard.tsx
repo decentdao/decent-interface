@@ -127,12 +127,14 @@ export function ProposalActionCard({
       ? getAddress(action.transactions[0].parameters[0].value)
       : zeroAddress;
     const transferAmount = BigInt(action.transactions[0].parameters[1].value || '0');
+
     if (!destinationAddress || !transferAmount) {
       return null;
     }
 
+    // TODO: This does not work for native asset
     const actionAsset = assetsFungible.find(
-      asset => getAddress(asset.tokenAddress) === destinationAddress,
+      asset => getAddress(asset.tokenAddress) === getAddress(action.transactions[0].targetAddress),
     );
 
     if (!actionAsset) {
@@ -158,8 +160,11 @@ export function ProposalActionCard({
     );
     const recipientsCount = action.transactions[1].parameters[1].value?.split(',').length || 0;
 
+    // First transaction in the airdrop proposal will be approval transaction, which is called on the token
+    // Thus we can find the asset by looking at the target address of the first transaction
+
     const actionAsset = assetsFungible.find(
-      asset => getAddress(asset.tokenAddress) === action.transactions[0].targetAddress,
+      asset => getAddress(asset.tokenAddress) === getAddress(action.transactions[0].targetAddress),
     );
 
     if (!actionAsset) {
