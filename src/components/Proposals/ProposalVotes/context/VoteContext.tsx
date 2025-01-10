@@ -98,27 +98,30 @@ export function VoteContextProvider({
     extendedSnapshotProposal,
   ]);
 
-  const getErc721VotingWeight = useCallback(async (blockTag?: BlockTag) => {
-    const account = userAccount.address;
-    const azoriusGovernance = governance as AzoriusGovernance;
-    if (!account || !azoriusGovernance.erc721Tokens || !publicClient) {
-      return 0n;
-    }
-    const userVotingWeight = (
-      await Promise.all(
-        azoriusGovernance.erc721Tokens.map(async ({ address, votingWeight }) => {
-          const tokenContract = getContract({
-            abi: erc721Abi,
-            address: address,
-            client: publicClient,
-          });
-          const userBalance = await tokenContract.read.balanceOf([account], { blockTag});
-          return userBalance * votingWeight;
-        }),
-      )
-    ).reduce((prev, curr) => prev + curr, 0n);
-    return userVotingWeight;
-  }, [governance, publicClient, userAccount.address]);
+  const getErc721VotingWeight = useCallback(
+    async (blockTag?: BlockTag) => {
+      const account = userAccount.address;
+      const azoriusGovernance = governance as AzoriusGovernance;
+      if (!account || !azoriusGovernance.erc721Tokens || !publicClient) {
+        return 0n;
+      }
+      const userVotingWeight = (
+        await Promise.all(
+          azoriusGovernance.erc721Tokens.map(async ({ address, votingWeight }) => {
+            const tokenContract = getContract({
+              abi: erc721Abi,
+              address: address,
+              client: publicClient,
+            });
+            const userBalance = await tokenContract.read.balanceOf([account], { blockTag });
+            return userBalance * votingWeight;
+          }),
+        )
+      ).reduce((prev, curr) => prev + curr, 0n);
+      return userVotingWeight;
+    },
+    [governance, publicClient, userAccount.address],
+  );
 
   const getCanVote = useCallback(async () => {
     setCanVoteLoading(true);
