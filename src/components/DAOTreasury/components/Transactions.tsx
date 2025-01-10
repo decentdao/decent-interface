@@ -30,7 +30,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
           gap="0.5rem"
         >
           <Icon
-            as={displayData.eventType == TokenEventType.WITHDRAW ? ArrowUp : ArrowDown}
+            as={displayData.eventType === TokenEventType.WITHDRAW ? ArrowUp : ArrowDown}
             w="1.25rem"
             h="1.25rem"
             color="neutral-7"
@@ -40,7 +40,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
               textStyle="labels-small"
               color="neutral-7"
             >
-              {t(displayData.eventType == TokenEventType.WITHDRAW ? 'labelSent' : 'labelReceived')}
+              {t(displayData.eventType === TokenEventType.WITHDRAW ? 'labelSent' : 'labelReceived')}
             </Text>
             <Text>{useDateTimeDisplay(new Date(displayData.executionDate))}</Text>
           </Box>
@@ -76,7 +76,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
                   : 'link-token-amount'
               }
             >
-              {(displayData.eventType == TokenEventType.WITHDRAW ? '- ' : '+ ') +
+              {(displayData.eventType === TokenEventType.WITHDRAW ? '- ' : '+ ') +
                 displayData.assetDisplay}
             </Text>
           </DecentTooltip>
