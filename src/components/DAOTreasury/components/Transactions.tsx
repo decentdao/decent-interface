@@ -1,14 +1,13 @@
 import { Box, Button, Center, Flex, HStack, Icon, Image, Text } from '@chakra-ui/react';
 import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { TokenEventType, TransferDisplayData, TransferType } from '../../../types';
 import { DecentTooltip } from '../../ui/DecentTooltip';
-import { DisplayAddress } from '../../ui/links/DisplayAddress';
+import DisplayTransaction from '../../ui/links/DisplayTransaction';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 
@@ -97,12 +96,12 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         <HStack
           w="40%"
           justifyContent="flex-end"
+          textAlign="end"
+          onClick={e => e.stopPropagation()}
         >
-          <DisplayAddress
+          <DisplayTransaction
             data-testid="link-transfer-address"
-            address={getAddress(displayData.transferAddress)}
-            textAlign="end"
-            onClick={e => e.stopPropagation()}
+            txHash={displayData.transactionHash}
           />
         </HStack>
       </HStack>
