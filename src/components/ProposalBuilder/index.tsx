@@ -31,6 +31,7 @@ import ProposalMetadata from './ProposalMetadata';
 import { ProposalStreams } from './ProposalStreams';
 import ProposalTransactionsForm from './ProposalTransactionsForm';
 import StepButtons from './StepButtons';
+import { builderInProposalMode } from './constants';
 
 interface ProposalBuilderProps {
   mode: ProposalBuilderMode;
@@ -53,8 +54,8 @@ export function ProposalBuilder({
   const step = (paths[paths.length - 1] || paths[paths.length - 2]) as
     | CreateProposalSteps
     | undefined;
-  const isProposalMode =
-    mode === ProposalBuilderMode.PROPOSAL || mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS;
+  const isProposalMode = builderInProposalMode(mode);
+  const isSablierMode = mode === ProposalBuilderMode.SABLIER;
 
   const {
     governance: { isAzorius },
@@ -218,13 +219,13 @@ export function ProposalBuilder({
                         />
                         <Route
                           path={
-                            mode === ProposalBuilderMode.SABLIER
+                            isSablierMode
                               ? CreateProposalSteps.STREAMS
                               : CreateProposalSteps.TRANSACTIONS
                           }
                           element={
                             <>
-                              {mode === ProposalBuilderMode.SABLIER ? (
+                              {isSablierMode ? (
                                 <ProposalStreams
                                   pendingTransaction={pendingCreateTx}
                                   {...formikProps}
