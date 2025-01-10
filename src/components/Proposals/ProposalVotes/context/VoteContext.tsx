@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { erc721Abi, getContract } from 'viem';
+import { BlockTag, erc721Abi, getContract } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
@@ -98,7 +98,7 @@ export function VoteContextProvider({
     extendedSnapshotProposal,
   ]);
 
-  const erc721VotingWeight = useCallback(async () => {
+  const getErc721VotingWeight = useCallback(async (blockTag?: BlockTag) => {
     const account = userAccount.address;
     const azoriusGovernance = governance as AzoriusGovernance;
     if (!account || !azoriusGovernance.erc721Tokens || !publicClient) {
@@ -112,7 +112,7 @@ export function VoteContextProvider({
             address: address,
             client: publicClient,
           });
-          const userBalance = await tokenContract.read.balanceOf([account]);
+          const userBalance = await tokenContract.read.balanceOf([account], { blockTag});
           return userBalance * votingWeight;
         }),
       )
@@ -140,7 +140,7 @@ export function VoteContextProvider({
             Number(proposal.proposalId),
           ])) > 0n && !hasVoted;
       } else if (governance.type === GovernanceType.AZORIUS_ERC721) {
-        const votingWeight = await erc721VotingWeight();
+        const votingWeight = await getErc721VotingWeight();
         newCanVote = votingWeight > 0n && remainingTokenIds.length > 0;
       } else if (governance.type === GovernanceType.MULTISIG) {
         newCanVote = !!safe?.owners.includes(userAccount.address);
@@ -164,7 +164,7 @@ export function VoteContextProvider({
     remainingTokenIds.length,
     safe?.owners,
     proposal,
-    erc721VotingWeight,
+    getErc721VotingWeight,
   ]);
 
   const initialLoadRef = useRef(false);
