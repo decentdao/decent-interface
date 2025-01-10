@@ -1,4 +1,9 @@
-import { CreateProposalTransaction, ProposalBuilderMode, Stream, Tranche } from '../../types/proposalBuilder';
+import {
+  CreateProposalTransaction,
+  ProposalBuilderMode,
+  Stream,
+  Tranche,
+} from '../../types/proposalBuilder';
 
 export const builderInProposalMode = (mode: ProposalBuilderMode) =>
   mode === ProposalBuilderMode.PROPOSAL ||

@@ -1,17 +1,17 @@
 import {
-  VStack,
-  HStack,
-  Text,
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
   Box,
   Flex,
+  HStack,
   IconButton,
-  Accordion,
-  AccordionPanel,
-  AccordionItem,
-  AccordionButton,
   Radio,
+  Text,
+  VStack,
 } from '@chakra-ui/react';
-import { Plus, MinusCircle, CaretDown, CaretRight } from '@phosphor-icons/react';
+import { CaretDown, CaretRight, MinusCircle, Plus } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalTransaction, ProposalBuilderMode } from '../../types/proposalBuilder';
@@ -193,7 +193,7 @@ export default function ProposalTransaction({
                             setFieldValue(
                               `transactions.${transactionIndex}.parameters`,
                               transaction.parameters.filter(
-                                (parameterToRemove, parameterToRemoveIndex) =>
+                                (_parameterToRemove, parameterToRemoveIndex) =>
                                   parameterToRemoveIndex !== i,
                               ),
                             )

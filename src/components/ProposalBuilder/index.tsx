@@ -225,7 +225,7 @@ export function ProposalBuilder({
                           }
                           element={
                             <>
-                              {isSablierMode? (
+                              {isSablierMode ? (
                                 <ProposalStreams
                                   pendingTransaction={pendingCreateTx}
                                   {...formikProps}
