@@ -21,7 +21,7 @@ import ExampleLabel from '../ui/forms/ExampleLabel';
 import { BigIntComponent, InputComponent } from '../ui/forms/InputComponent';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
 import Divider from '../ui/utils/Divider';
-import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
+import { builderInProposalMode, DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
 interface ProposalTransactionProps {
   transaction: CreateProposalTransaction;
@@ -42,7 +42,7 @@ export default function ProposalTransaction({
   setFieldValue,
   mode,
 }: ProposalTransactionProps) {
-  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
+  const isProposalMode = builderInProposalMode(mode);
   const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
 
