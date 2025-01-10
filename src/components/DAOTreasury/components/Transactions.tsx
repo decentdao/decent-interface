@@ -12,6 +12,19 @@ import { DisplayAddress } from '../../ui/links/DisplayAddress';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 
+function getTransferEventLabel(eventType: TokenEventType) {
+  switch (eventType) {
+    case TokenEventType.WITHDRAW:
+      return 'labelSent';
+    case TokenEventType.DEPOSIT:
+      return 'labelReceived';
+    case TokenEventType.MINT:
+      return 'labelMinted';
+    default:
+      throw new Error('Unknown event type');
+  }
+}
+
 function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
   const { t } = useTranslation(['treasury', 'common']);
   const { etherscanBaseURL } = useNetworkConfigStore();
@@ -40,7 +53,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
               textStyle="labels-small"
               color="neutral-7"
             >
-              {t(displayData.eventType === TokenEventType.WITHDRAW ? 'labelSent' : 'labelReceived')}
+              {t(getTransferEventLabel(displayData.eventType))}
             </Text>
             <Text>{useDateTimeDisplay(new Date(displayData.executionDate))}</Text>
           </Box>
