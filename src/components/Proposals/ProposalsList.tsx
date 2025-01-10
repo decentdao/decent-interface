@@ -8,12 +8,16 @@ import ProposalCard from './ProposalCard/ProposalCard';
 
 interface ProposalsListProps {
   proposals: FractalProposal[];
+  currentPage: number;
+  totalPages: number;
 }
 
-export function ProposalsList({ proposals }: ProposalsListProps) {
+export function ProposalsList({ proposals, currentPage, totalPages }: ProposalsListProps) {
   const {
     governance: { type, loadingProposals, allProposalsLoaded },
   } = useFractal();
+
+  const showLoadingMore = currentPage === totalPages && !allProposalsLoaded;
 
   return (
     <Flex
@@ -33,7 +37,7 @@ export function ProposalsList({ proposals }: ProposalsListProps) {
               proposal={proposal}
             />
           ))}
-          {!allProposalsLoaded && <InfoBoxLoader />}
+          {showLoadingMore && <InfoBoxLoader />}
         </>
       ) : (
         <NoDataCard

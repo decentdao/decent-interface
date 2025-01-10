@@ -312,7 +312,11 @@ export function ProposalsHome() {
           </Show>
         </Flex>
 
-        <ProposalsList proposals={paginatedProposals} />
+        <ProposalsList
+          proposals={paginatedProposals}
+          currentPage={currentPage}
+          totalPages={totalPages}
+        />
 
         {/* PAGINATION CONTROLS */}
         {proposals.length > 0 && (
