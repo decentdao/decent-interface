@@ -27,11 +27,7 @@ export const useAutomaticSwitchChain = ({
       return;
     }
     const chainId = getChainIdFromPrefix(urlAddressPrefix);
-    if (
-      (addressPrefix !== urlAddressPrefix || chainId !== walletChainId) &&
-      urlAddressPrefix !== undefined &&
-      isFetchedAfterMount
-    ) {
+    if ((addressPrefix !== urlAddressPrefix || chainId !== walletChainId) && isFetchedAfterMount) {
       switchChain({ chainId });
     }
     setTimeout(() => setCurrentConfig(getConfigByChainId(chainId)), 300);
