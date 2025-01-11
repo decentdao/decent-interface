@@ -126,7 +126,7 @@ export function VoteContextProvider({
   const getCanVote = useCallback(async () => {
     setCanVoteLoading(true);
     let newCanVote = false;
-    console.log({ snapshotProposal, type: governance.type });
+    console.log({ snapshotProposal, type: governance.type }, 'Vote Context -> getCanVote -> 1');
     if (userAccount.address && publicClient) {
       if (snapshotProposal) {
         const votingWeightData = await loadVotingWeight();
@@ -145,7 +145,10 @@ export function VoteContextProvider({
           ])) > 0n && !hasVoted;
       } else if (governance.type === GovernanceType.AZORIUS_ERC721) {
         const votingWeight = await getErc721VotingWeight();
-        console.log({ votingWeight, remainingTokenIds: remainingTokenIds.length });
+        console.log(
+          { votingWeight, remainingTokenIds: remainingTokenIds.length },
+          'Vote Context -> getCanVote -> 2',
+        );
         newCanVote = votingWeight > 0n && remainingTokenIds.length > 0;
       } else if (governance.type === GovernanceType.MULTISIG) {
         newCanVote = !!safe?.owners.includes(userAccount.address);
@@ -154,7 +157,7 @@ export function VoteContextProvider({
       }
     }
 
-    console.log({ newCanVote, canVote });
+    console.log({ newCanVote, canVote }, 'Vote Context -> getCanVote -> 3');
     if (canVote !== newCanVote) {
       setCanVote(newCanVote);
     }
@@ -174,11 +177,11 @@ export function VoteContextProvider({
   ]);
 
   useEffect(() => {
-    console.log({ getCanVote });
+    console.log({ getCanVote }, 'Vote Context -> getCanVote effect');
   }, [getCanVote]);
 
   useEffect(() => {
-    console.log({ getHasVoted });
+    console.log({ getHasVoted }, 'Vote Context -> getHasVoted effect');
   }, [getHasVoted]);
 
   useEffect(() => {
