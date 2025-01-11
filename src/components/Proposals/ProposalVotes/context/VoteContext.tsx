@@ -154,6 +154,7 @@ export function VoteContextProvider({
       }
     }
 
+    console.log({ newCanVote, canVote });
     if (canVote !== newCanVote) {
       setCanVote(newCanVote);
     }
@@ -173,7 +174,14 @@ export function VoteContextProvider({
   ]);
 
   useEffect(() => {
+    console.log({ getCanVote });
+  }, [getCanVote]);
+  
+  useEffect(() => {
+    console.log({ getHasVoted });
+  }, [getHasVoted]);
 
+  useEffect(() => {
     getCanVote();
     getHasVoted();
   }, [getCanVote, getHasVoted]);
