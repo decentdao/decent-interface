@@ -12,13 +12,11 @@ import { Card } from '../ui/cards/Card';
 import { SendAssetsData } from '../ui/modals/SendAssetsModal';
 
 export function SendAssetsAction({
-  index,
   action,
   onRemove,
 }: {
-  index: number;
   action: SendAssetsData;
-  onRemove: (index: number) => void;
+  onRemove: () => void;
 }) {
   const { t } = useTranslation('common');
   const { displayName } = useGetAccountName(action.destinationAddress);
@@ -47,9 +45,7 @@ export function SendAssetsAction({
           color="red-0"
           variant="tertiary"
           size="sm"
-          onClick={() => {
-            onRemove(index);
-          }}
+          onClick={onRemove}
         >
           <Icon as={Trash} />
         </Button>
@@ -59,16 +55,14 @@ export function SendAssetsAction({
 }
 
 export function AirdropAction({
-  index,
   totalAmount,
   recipientsCount,
   onRemove,
   asset,
 }: {
-  index: number;
   totalAmount: bigint;
   recipientsCount: number;
-  onRemove: (index: number) => void;
+  onRemove: () => void;
   asset: TokenBalance;
 }) {
   const { t } = useTranslation('common');
@@ -98,9 +92,7 @@ export function AirdropAction({
           color="red-0"
           variant="tertiary"
           size="sm"
-          onClick={() => {
-            onRemove(index);
-          }}
+          onClick={onRemove}
         >
           <Icon as={Trash} />
         </Button>
@@ -143,14 +135,13 @@ export function ProposalActionCard({
     return (
       <SendAssetsAction
         key={index}
-        index={index}
         action={{
           destinationAddress,
           transferAmount,
           asset: actionAsset,
           nonceInput: undefined,
         }}
-        onRemove={removeAction}
+        onRemove={() => removeAction(index)}
       />
     );
   } else if (action.actionType === ProposalActionType.AIRDROP) {
@@ -174,11 +165,10 @@ export function ProposalActionCard({
     return (
       <AirdropAction
         key={index}
-        index={index}
         asset={actionAsset}
         totalAmount={totalAmount}
         recipientsCount={recipientsCount}
-        onRemove={removeAction}
+        onRemove={() => removeAction(index)}
       />
     );
   }
