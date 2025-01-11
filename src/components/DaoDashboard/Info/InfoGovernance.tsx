@@ -26,6 +26,8 @@ export function InfoGovernance({ showTitle = true }: { showTitle?: boolean }) {
 
   const governanceAzorius = governance.isAzorius ? (governance as AzoriusGovernance) : null;
 
+  console.log({ governance });
+
   useEffect(() => {
     const setTimelockInfo = async () => {
       const formatBlocks = async (blocks: number): Promise<string | undefined> => {

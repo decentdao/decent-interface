@@ -126,6 +126,7 @@ export function VoteContextProvider({
   const getCanVote = useCallback(async () => {
     setCanVoteLoading(true);
     let newCanVote = false;
+    console.log({ snapshotProposal, type: governance.type });
     if (userAccount.address && publicClient) {
       if (snapshotProposal) {
         const votingWeightData = await loadVotingWeight();
@@ -144,6 +145,7 @@ export function VoteContextProvider({
           ])) > 0n && !hasVoted;
       } else if (governance.type === GovernanceType.AZORIUS_ERC721) {
         const votingWeight = await getErc721VotingWeight();
+        console.log({ votingWeight, remainingTokenIds: remainingTokenIds.length });
         newCanVote = votingWeight > 0n && remainingTokenIds.length > 0;
       } else if (governance.type === GovernanceType.MULTISIG) {
         newCanVote = !!safe?.owners.includes(userAccount.address);

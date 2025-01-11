@@ -227,6 +227,7 @@ export default function useUserERC721VotingTokens(
     const proposalIdNum = proposalId === null ? null : Number(proposalId);
     const tokensInfo = await getUserERC721VotingTokens(safeAddress, proposalIdNum);
 
+    console.log({ tokensInfo });
     if (tokensInfo) {
       setTotalVotingTokenAddresses(tokensInfo.totalVotingTokenAddresses);
       setTotalVotingTokenIds(tokensInfo.totalVotingTokenIds);
