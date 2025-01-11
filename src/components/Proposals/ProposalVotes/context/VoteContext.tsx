@@ -5,7 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useRef,
+  useMemo,
   useState,
 } from 'react';
 import { BlockTag, erc721Abi, getContract } from 'viem';
@@ -172,11 +172,7 @@ export function VoteContextProvider({
     getErc721VotingWeight,
   ]);
 
-  const initialLoadRef = useRef(false);
   useEffect(() => {
-    // Prevent running this effect multiple times
-    if (initialLoadRef.current) return;
-    initialLoadRef.current = true;
 
     getCanVote();
     getHasVoted();
@@ -189,18 +185,17 @@ export function VoteContextProvider({
     }
   }, [proposal, proposalVotesLength]);
 
-  return (
-    <VoteContext.Provider
-      value={{
-        canVote,
-        canVoteLoading,
-        hasVoted,
-        hasVotedLoading,
-        getHasVoted,
-        getCanVote,
-      }}
-    >
-      {children}
-    </VoteContext.Provider>
+  const voteContextValue = useMemo(
+    () => ({
+      canVote,
+      canVoteLoading,
+      hasVoted,
+      hasVotedLoading,
+      getHasVoted,
+      getCanVote,
+    }),
+    [canVote, canVoteLoading, hasVoted, hasVotedLoading, getHasVoted, getCanVote],
   );
+
+  return <VoteContext.Provider value={voteContextValue}>{children}</VoteContext.Provider>;
 }
