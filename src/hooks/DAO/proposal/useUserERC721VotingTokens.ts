@@ -57,6 +57,8 @@ export default function useUserERC721VotingTokens(
         | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
         | undefined;
 
+      console.log({ globalContextSafeAddress, publicClient, safeAPI });
+
       if (!globalContextSafeAddress || !publicClient || !safeAPI) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
@@ -67,6 +69,7 @@ export default function useUserERC721VotingTokens(
       }
 
       if (_safeAddress && globalContextSafeAddress !== _safeAddress) {
+        console.log({ _safeAddress }, 'We shouldnt be here');
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
         const votingStrategies = await getVotingStrategies(_safeAddress);
         if (votingStrategies) {
@@ -116,6 +119,7 @@ export default function useUserERC721VotingTokens(
       }
 
       if (!governanceTokens || !votingContract || !user.address) {
+        console.log({ governanceTokens, votingContract, user: user.address }, 'We shouldnt be here');
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -129,6 +133,7 @@ export default function useUserERC721VotingTokens(
         // Using `map` instead of `forEach` to simplify usage of `Promise.all`
         // and guarantee syncronous contractFn assignment
         governanceTokens.map(async token => {
+          console.log({ token });
           const tokenContract = getContract({
             abi: erc721Abi,
             address: token.address,
@@ -144,6 +149,8 @@ export default function useUserERC721VotingTokens(
               { fromBlock: 0n },
             );
 
+            console.log({ tokenSentEvents, tokenReceivedEvents });
+
             const allTokenTransferEvents = tokenSentEvents
               .concat(tokenReceivedEvents)
               .sort(
@@ -152,6 +159,7 @@ export default function useUserERC721VotingTokens(
               );
 
             const ownedTokenIds = new Set<string>();
+            console.log({ allTokenTransferEvents });
             allTokenTransferEvents.forEach(({ args: { to, from, tokenId } }) => {
               if (!to || !from || !tokenId) {
                 throw new Error('An ERC721 event has undefiend data');
@@ -162,6 +170,7 @@ export default function useUserERC721VotingTokens(
                 ownedTokenIds.delete(tokenId.toString());
               }
             });
+            console.log({ ownedTokenIds });
             if (ownedTokenIds.size > 0) {
               userERC721Tokens.set(token.address, ownedTokenIds);
             }
@@ -171,7 +180,7 @@ export default function useUserERC721VotingTokens(
 
       const tokenIdsSets = [...userERC721Tokens.values()];
       const tokenAddressesKeys = [...userERC721Tokens.keys()];
-
+      console.log({ tokenIdsSets, tokenAddressesKeys });
       await Promise.all(
         // Same here
         tokenIdsSets.map(async (tokenIdsSet, setIndex) => {
@@ -195,6 +204,7 @@ export default function useUserERC721VotingTokens(
                   tokenAddress,
                   BigInt(tokenId),
                 ]);
+                console.log({ tokenVoted });
                 if (!tokenVoted) {
                   tokenAddresses.push(tokenAddress);
                   tokenIds.push(tokenId);
@@ -204,7 +214,7 @@ export default function useUserERC721VotingTokens(
           );
         }),
       );
-
+      console.log({ totalTokenAddresses, totalTokenIds, tokenAddresses, tokenIds });
       return {
         totalVotingTokenAddresses: totalTokenAddresses,
         totalVotingTokenIds: totalTokenIds,
