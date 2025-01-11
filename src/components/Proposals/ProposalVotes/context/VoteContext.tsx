@@ -176,7 +176,7 @@ export function VoteContextProvider({
   useEffect(() => {
     console.log({ getCanVote });
   }, [getCanVote]);
-  
+
   useEffect(() => {
     console.log({ getHasVoted });
   }, [getHasVoted]);
