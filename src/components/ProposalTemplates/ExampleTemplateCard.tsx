@@ -1,5 +1,4 @@
 import { Avatar, Flex, Text } from '@chakra-ui/react';
-// import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import ContentBox from '../ui/containers/ContentBox';
 import Markdown from '../ui/proposal/Markdown';
 
@@ -14,8 +13,6 @@ export default function ExampleTemplateCard({
   description,
   onProposalTemplateClick,
 }: ExampleTemplateCardProps) {
-  // const { canUserCreateProposal } = useCanUserCreateProposal();
-
   return (
     <ContentBox
       containerBoxProps={{ flex: '0 0 calc(33.333333% - 0.6666666rem)', my: '0' }}
