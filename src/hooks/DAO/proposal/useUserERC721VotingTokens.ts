@@ -119,7 +119,10 @@ export default function useUserERC721VotingTokens(
       }
 
       if (!governanceTokens || !votingContract || !user.address) {
-        console.log({ governanceTokens, votingContract, user: user.address }, 'We shouldnt be here');
+        console.log(
+          { governanceTokens, votingContract, user: user.address },
+          'We shouldnt be here',
+        );
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
