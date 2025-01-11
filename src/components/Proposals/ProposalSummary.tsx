@@ -87,14 +87,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;
 
   useEffect(() => {
-    console.log({ proposalVotingWeight }, 'Proposal Summary');
-  }, [proposalVotingWeight]);
-
-  useEffect(() => {
-    console.log({ type }, 'Proposal Summary');
-  }, [type]);
-
-  useEffect(() => {
     async function loadProposalVotingWeight() {
       if (address && publicClient) {
         if (isERC20) {

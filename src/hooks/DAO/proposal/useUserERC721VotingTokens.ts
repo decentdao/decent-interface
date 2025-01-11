@@ -57,11 +57,6 @@ export default function useUserERC721VotingTokens(
         | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
         | undefined;
 
-      console.log(
-        { globalContextSafeAddress, publicClient, safeAPI },
-        'useUserERC721VotingTokens -> 1',
-      );
-
       if (!globalContextSafeAddress || !publicClient || !safeAPI) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
@@ -72,7 +67,6 @@ export default function useUserERC721VotingTokens(
       }
 
       if (_safeAddress && globalContextSafeAddress !== _safeAddress) {
-        console.log({ _safeAddress }, 'We shouldnt be here');
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
         const votingStrategies = await getVotingStrategies(_safeAddress);
         if (votingStrategies) {
@@ -122,10 +116,6 @@ export default function useUserERC721VotingTokens(
       }
 
       if (!governanceTokens || !votingContract || !user.address) {
-        console.log(
-          { governanceTokens, votingContract, user: user.address },
-          'We shouldnt be here',
-        );
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -139,7 +129,6 @@ export default function useUserERC721VotingTokens(
         // Using `map` instead of `forEach` to simplify usage of `Promise.all`
         // and guarantee syncronous contractFn assignment
         governanceTokens.map(async token => {
-          console.log({ token }, 'useUserERC721VotingTokens -> 1');
           const tokenContract = getContract({
             abi: erc721Abi,
             address: token.address,
@@ -155,8 +144,6 @@ export default function useUserERC721VotingTokens(
               { fromBlock: 0n },
             );
 
-            console.log({ tokenSentEvents, tokenReceivedEvents }, 'useUserERC721VotingTokens -> 2');
-
             const allTokenTransferEvents = tokenSentEvents
               .concat(tokenReceivedEvents)
               .sort(
@@ -165,7 +152,6 @@ export default function useUserERC721VotingTokens(
               );
 
             const ownedTokenIds = new Set<string>();
-            console.log({ allTokenTransferEvents }, 'useUserERC721VotingTokens -> 3');
             allTokenTransferEvents.forEach(({ args: { to, from, tokenId } }) => {
               if (!to || !from || !tokenId) {
                 throw new Error('An ERC721 event has undefiend data');
@@ -176,7 +162,6 @@ export default function useUserERC721VotingTokens(
                 ownedTokenIds.delete(tokenId.toString());
               }
             });
-            console.log({ ownedTokenIds }, 'useUserERC721VotingTokens -> 4');
             if (ownedTokenIds.size > 0) {
               userERC721Tokens.set(token.address, ownedTokenIds);
             }
@@ -186,7 +171,6 @@ export default function useUserERC721VotingTokens(
 
       const tokenIdsSets = [...userERC721Tokens.values()];
       const tokenAddressesKeys = [...userERC721Tokens.keys()];
-      console.log({ tokenIdsSets, tokenAddressesKeys }, 'useUserERC721VotingTokens -> 5');
       await Promise.all(
         // Same here
         tokenIdsSets.map(async (tokenIdsSet, setIndex) => {
@@ -210,7 +194,6 @@ export default function useUserERC721VotingTokens(
                   tokenAddress,
                   BigInt(tokenId),
                 ]);
-                console.log({ tokenVoted }, 'useUserERC721VotingTokens -> 6');
                 if (!tokenVoted) {
                   tokenAddresses.push(tokenAddress);
                   tokenIds.push(tokenId);
@@ -219,10 +202,6 @@ export default function useUserERC721VotingTokens(
             }),
           );
         }),
-      );
-      console.log(
-        { totalTokenAddresses, totalTokenIds, tokenAddresses, tokenIds },
-        'useUserERC721VotingTokens -> 7',
       );
       return {
         totalVotingTokenAddresses: totalTokenAddresses,
@@ -245,8 +224,6 @@ export default function useUserERC721VotingTokens(
   const loadUserERC721VotingTokens = useCallback(async () => {
     const proposalIdNum = proposalId === null ? null : Number(proposalId);
     const tokensInfo = await getUserERC721VotingTokens(safeAddress, proposalIdNum);
-
-    console.log({ tokensInfo });
     if (tokensInfo) {
       setTotalVotingTokenAddresses(tokensInfo.totalVotingTokenAddresses);
       setTotalVotingTokenIds(tokensInfo.totalVotingTokenIds);
