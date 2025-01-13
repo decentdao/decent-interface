@@ -16,19 +16,26 @@ import { usePrepareFormData } from '../hooks/usePrepareFormData';
 import useStepRedirect from '../hooks/useStepRedirect';
 import { CreateDAOPresenter, ISelectionInput } from '../presenters/CreateDAOPresenter';
 import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
-import { HorizontalRadioSelection } from './SelectionInput';
-import { FullWidthTextInput } from './TextInput';
+import { VotesToken } from './VotesToken';
 import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
+import { HorizontalRadioSelection } from './input/SelectionInput';
+import { FullWidthTextInput } from './input/TextInput';
+import { InputSection } from './input/InputSection';
 
 function TokenConfigDisplay(props: ICreationStepProps) {
-  switch (props.values.erc20Token.tokenCreationType) {
-    case TokenCreationType.NEW:
-      return <VotesTokenNew {...props} />;
-    case TokenCreationType.IMPORTED:
-      return <VotesTokenImport {...props} />;
-    default:
-      return null;
+  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
+  if (REUSABLE_COMPONENTS) {
+    return <VotesToken {...props} />;
+  } else {
+    switch (props.values.erc20Token.tokenCreationType) {
+      case TokenCreationType.NEW:
+        return <VotesTokenNew {...props} />;
+      case TokenCreationType.IMPORTED:
+        return <VotesTokenImport {...props} />;
+      default:
+        return null;
+    }
   }
 }
 
@@ -109,36 +116,74 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
 
   const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
 
-  const tokenOptions: ISelectionInput = CreateDAOPresenter.tokenOptions(
-    t,
-    values.erc20Token.tokenCreationType,
-    tokenCreationType => {
-      if (tokenCreationType === TokenCreationType.NEW) {
-        setFieldValue('erc20Token.tokenImportAddress', zeroAddress);
-      }
-      setFieldValue('erc20Token.tokenName', '');
-      setFieldValue('erc20Token.tokenSymbol', '');
-      setFieldValue('erc20Token.tokenSupply', '');
-      setFieldValue('erc20Token.tokenCreationType', tokenCreationType);
-    },
-  );
+  if (REUSABLE_COMPONENTS) {
+    const tokenOptions: ISelectionInput = CreateDAOPresenter.tokenOptions(
+      t,
+      values.erc20Token.tokenCreationType,
+      tokenCreationType => {
+        if (tokenCreationType === TokenCreationType.NEW) {
+          setFieldValue('erc20Token.tokenImportAddress', zeroAddress);
+        }
+        setFieldValue('erc20Token.tokenName', '');
+        setFieldValue('erc20Token.tokenSymbol', '');
+        setFieldValue('erc20Token.tokenSupply', '');
+        setFieldValue('erc20Token.tokenCreationType', tokenCreationType);
+      },
+    );
 
-  const tokenImportAddress = CreateDAOPresenter.tokenImportAddress(
-    t,
-    createAccountSubstring(zeroAddress),
-    values.erc20Token.tokenImportAddress,
-    tokenErrorMsg,
-    event => {
-      setTouched({
-        erc20Token: {
-          tokenImportAddress: true,
-        },
-        ...touched,
-      });
+    const tokenImportAddress = CreateDAOPresenter.tokenImportAddress(
+      t,
+      createAccountSubstring(zeroAddress),
+      tokenErrorMsg,
+      event => {
+        setTouched({
+          erc20Token: {
+            tokenImportAddress: true,
+          },
+          ...touched,
+        });
 
-      handleChange(event);
-    },
-  );
+        handleChange(event);
+      },
+    );
+
+    const section = CreateDAOPresenter.section(t('titleTokenContract'));
+    <>
+      <StepWrapper
+        mode={mode}
+        isSubDAO={isSubDAO}
+        isFormSubmitting={!!isSubmitting || transactionPending}
+        allSteps={props.steps}
+        stepNumber={2}
+      >
+        <InputSection {...section}>
+          <HorizontalRadioSelection {...tokenOptions} />
+          {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
+            <FullWidthTextInput {...tokenImportAddress} />
+          )}
+        </InputSection>
+      </StepWrapper>
+      <Box
+        mt="1.5rem"
+        padding="1.5rem"
+        bg="neutral-2"
+        borderRadius="0.25rem"
+      >
+        <TokenConfigDisplay {...props} />
+      </Box>
+      {values.erc20Token.tokenCreationType === TokenCreationType.NEW && (
+        <Box
+          mt="1.5rem"
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+        >
+          <AzoriusTokenAllocations {...props} />
+        </Box>
+      )}
+      <StepButtons {...props} />
+    </>;
+  }
 
   return (
     <>
@@ -149,85 +194,71 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         allSteps={props.steps}
         stepNumber={2}
       >
-        {REUSABLE_COMPONENTS && (
-          <Flex
-            flexDirection="column"
-            gap={4}
+        <Flex
+          flexDirection="column"
+          gap={4}
+        >
+          <ContentBoxTitle>{t('titleTokenContract')}</ContentBoxTitle>
+          <RadioGroup
+            display="flex"
+            flexDirection="row"
+            name="erc20Token.tokenCreationType"
+            gap={8}
+            ml="0.25rem"
+            id="erc20Token.tokenCreationType"
+            value={values.erc20Token.tokenCreationType}
+            onChange={value => {
+              setFieldValue('erc20Token.tokenCreationType', value);
+            }}
           >
-            <ContentBoxTitle>{t('titleTokenContract')}</ContentBoxTitle>
-            <HorizontalRadioSelection {...tokenOptions} />
-            {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
-              <FullWidthTextInput {...tokenImportAddress} />
-            )}
-          </Flex>
-        )}
-        {!REUSABLE_COMPONENTS && (
-          <Flex
-            flexDirection="column"
-            gap={4}
-          >
-            <ContentBoxTitle>{t('titleTokenContract')}</ContentBoxTitle>
-            <RadioGroup
-              display="flex"
-              flexDirection="row"
-              name="erc20Token.tokenCreationType"
-              gap={8}
-              ml="0.25rem"
-              id="erc20Token.tokenCreationType"
-              value={values.erc20Token.tokenCreationType}
-              onChange={value => {
-                setFieldValue('erc20Token.tokenCreationType', value);
+            <RadioWithText
+              label={t('radioLabelExistingToken')}
+              description={t('helperExistingToken')}
+              testId="choose-existingToken"
+              value={TokenCreationType.IMPORTED}
+              onClick={() => {
+                setFieldValue('erc20Token.tokenName', '');
+                setFieldValue('erc20Token.tokenSymbol', '');
+                setFieldValue('erc20Token.tokenSupply', '');
               }}
-            >
-              <RadioWithText
-                label={t('radioLabelExistingToken')}
-                description={t('helperExistingToken')}
-                testId="choose-existingToken"
-                value={TokenCreationType.IMPORTED}
-                onClick={() => {
-                  setFieldValue('erc20Token.tokenName', '');
-                  setFieldValue('erc20Token.tokenSymbol', '');
-                  setFieldValue('erc20Token.tokenSupply', '');
-                }}
-              />
-              <RadioWithText
-                label={t('radioLabelNewToken')}
-                description={t('helperNewToken')}
-                testId="choose-newToken"
-                value={TokenCreationType.NEW}
-                onClick={() => {
-                  setFieldValue('erc20Token.tokenImportAddress', '');
-                  setFieldValue('erc20Token.tokenName', '');
-                  setFieldValue('erc20Token.tokenSymbol', '');
-                  setFieldValue('erc20Token.tokenSupply', '');
-                }}
-              />
-            </RadioGroup>
-            {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
-              <>
-                <LabelWrapper errorMessage={tokenErrorMsg}>
-                  <Input
-                    name="erc20Token.tokenImportAddress"
-                    onChange={e => {
-                      setTouched({
-                        erc20Token: {
-                          tokenImportAddress: true,
-                        },
-                        ...touched,
-                      });
+            />
+            <RadioWithText
+              label={t('radioLabelNewToken')}
+              description={t('helperNewToken')}
+              testId="choose-newToken"
+              value={TokenCreationType.NEW}
+              onClick={() => {
+                setFieldValue('erc20Token.tokenImportAddress', '');
+                setFieldValue('erc20Token.tokenName', '');
+                setFieldValue('erc20Token.tokenSymbol', '');
+                setFieldValue('erc20Token.tokenSupply', '');
+              }}
+            />
+          </RadioGroup>
+          {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
+            <>
+              <LabelWrapper errorMessage={tokenErrorMsg}>
+                <Input
+                  name="erc20Token.tokenImportAddress"
+                  onChange={e => {
+                    setTouched({
+                      erc20Token: {
+                        tokenImportAddress: true,
+                      },
+                      ...touched,
+                    });
 
-                      handleChange(e);
-                    }}
-                    value={values.erc20Token.tokenImportAddress}
-                    placeholder={createAccountSubstring(zeroAddress)}
-                    isInvalid={!!tokenErrorMsg}
-                    isRequired
-                  />
-                </LabelWrapper>
-              </>
-            )}
-          </Flex>
-        )}
+                    handleChange(e);
+                  }}
+                  value={values.erc20Token.tokenImportAddress}
+                  placeholder={createAccountSubstring(zeroAddress)}
+                  isInvalid={!!tokenErrorMsg}
+                  isRequired
+                />
+              </LabelWrapper>
+            </>
+          )}
+        </Flex>
       </StepWrapper>
       <Box
         mt="1.5rem"

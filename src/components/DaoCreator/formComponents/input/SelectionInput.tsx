@@ -1,9 +1,9 @@
 import { Box, Flex, Icon, Image, RadioGroup } from '@chakra-ui/react';
 import { CheckCircle } from '@phosphor-icons/react';
-import { LabelComponent } from '../../ui/forms/InputComponent';
-import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
-import { DropdownMenu } from '../../ui/menus/DropdownMenu';
-import { ISelectionInput } from '../presenters/CreateDAOPresenter';
+import { LabelComponent } from '../../../ui/forms/InputComponent';
+import { RadioWithText } from '../../../ui/forms/Radio/RadioWithText';
+import { DropdownMenu } from '../../../ui/menus/DropdownMenu';
+import { ISelectionInput } from '../../presenters/CreateDAOPresenter';
 
 export function DropdownMenuSelection({
   label,

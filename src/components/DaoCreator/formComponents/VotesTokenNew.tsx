@@ -8,7 +8,8 @@ import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { CreateDAOPresenter } from '../presenters/CreateDAOPresenter';
-import { BigIntTextInput, TextInput } from './TextInput';
+import { InputSection } from './input/InputSection';
+import { BigIntTextInput, TextInput } from './input/TextInput';
 
 export function VotesTokenNew(props: ICreationStepProps) {
   const { values, handleChange, setFieldValue } = props;
@@ -16,34 +17,39 @@ export function VotesTokenNew(props: ICreationStepProps) {
   const { restrictChars } = useFormHelpers();
 
   const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
-  const tokenName = CreateDAOPresenter.tokenName(t, values.erc20Token.tokenName, value => {
-    setFieldValue('erc20Token.tokenName', value);
-  });
-  const tokenSymbol = CreateDAOPresenter.tokenSymbol(t, values.erc20Token.tokenSymbol, event => {
-    handleChange(event);
-  });
-  const tokenSupply = CreateDAOPresenter.tokenSupply(
-    t,
-    values.erc20Token.tokenSupply.bigintValue,
-    value => {
-      setFieldValue('erc20Token.tokenSupply', value);
-    },
-  );
 
-  return (
-    <Flex
-      flexDirection="column"
-      gap={8}
-    >
-      <ContentBoxTitle>{t('titleTokenParams')}</ContentBoxTitle>
-      {REUSABLE_COMPONENTS && (
-        <>
-          <TextInput {...tokenName} />
-          <TextInput {...tokenSymbol} />
-          <BigIntTextInput {...tokenSupply} />
-        </>
-      )}
-      {!REUSABLE_COMPONENTS && (
+  if (REUSABLE_COMPONENTS) {
+    const tokenName = CreateDAOPresenter.tokenName(t, false, value => {
+      setFieldValue('erc20Token.tokenName', value);
+    });
+    const tokenSymbol = CreateDAOPresenter.tokenSymbol(t, false, event => {
+      handleChange(event);
+    });
+    const tokenSupply = CreateDAOPresenter.tokenSupply(
+      t,
+      values.erc20Token.tokenSupply.bigintValue,
+      false,
+      value => {
+        setFieldValue('erc20Token.tokenSupply', value);
+      },
+    );
+
+    const section = CreateDAOPresenter.section(t('titleTokenParams'));
+
+    return (
+      <InputSection {...section}>
+        <TextInput {...tokenName} />
+        <TextInput {...tokenSymbol} />
+        <BigIntTextInput {...tokenSupply} />
+      </InputSection>
+    );
+  } else {
+    return (
+      <Flex
+        flexDirection="column"
+        gap={8}
+      >
+        <ContentBoxTitle>{t('titleTokenParams')}</ContentBoxTitle>
         <>
           <LabelComponent
             label={t('labelTokenName')}
@@ -89,7 +95,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
             />
           </LabelComponent>
         </>
-      )}
-    </Flex>
-  );
+      </Flex>
+    );
+  }
 }

@@ -2,6 +2,7 @@ import { Text, Flex, Grid, IconButton, Icon, Button } from '@chakra-ui/react';
 import { MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { FeatureFlags } from '../../../helpers/featureFlags';
 import { ICreationStepProps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -10,7 +11,11 @@ import { NumberStepperInput } from '../../ui/forms/NumberStepperInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
+import { CreateDAOPresenter, IInputSection } from '../presenters/CreateDAOPresenter';
 import { DAOCreateMode } from './EstablishEssentials';
+import { InputSection } from './input/InputSection';
+import { EmbeddedAddressInput, TextInputs } from './input/TextInput';
+import { MultiInputs } from './input/CompositeInput';
 
 export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
@@ -31,6 +36,101 @@ export function Multisig(props: ICreationStepProps) {
     return updatedNum !== num;
   };
 
+  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
+  if (REUSABLE_COMPONENTS) {
+    const section: IInputSection = CreateDAOPresenter.section(undefined);
+
+    const multiSigOwners = CreateDAOPresenter.multiSigOwners(t);
+
+    return (
+      <>
+        <StepWrapper
+          mode={mode}
+          isSubDAO={isSubDAO}
+          isFormSubmitting={!!isSubmitting || transactionPending}
+          allSteps={props.steps}
+          stepNumber={2}
+        >
+          <InputSection {...section}>
+            {/* ADD OWNER BUTTON */}
+            <Button
+              variant="secondary"
+              py="0.25rem"
+              px="0.5rem"
+              alignSelf="flex-end"
+              onClick={() => {
+                setFieldValue('multisig', {
+                  ...values.multisig,
+                  numOfSigners: values.multisig.numOfSigners! + 1,
+                  trustedAddresses: [...values.multisig.trustedAddresses, ''],
+                });
+              }}
+              size="md"
+            >
+              <Icon as={Plus} />
+              <Text>{t('owner', { ns: 'common' })}</Text>
+            </Button>
+
+            <MultiInputs {...multiSigOwners}>
+              {values.multisig.trustedAddresses.map((trustedAddress, i) => {
+                const errorMessage =
+                  errors?.multisig?.trustedAddresses?.[i] && trustedAddress.length
+                    ? errors?.multisig?.trustedAddresses?.[i]
+                    : undefined;
+                const multiSign = CreateDAOPresenter.multiSign(
+                  t,
+                  i,
+                  errorMessage,
+                  value => setFieldValue('multisig.trustedAddresses.${i}', value, true),
+                  removalIndex => {
+                    setFieldValue('multisig', {
+                      ...values.multisig,
+                      numOfSigners: values.multisig.numOfSigners! - 1,
+                      trustedAddresses: values.multisig.trustedAddresses.filter(
+                        (_, index) => index !== removalIndex,
+                      ),
+                    });
+
+                    // If this removal causes the threshold to be higher than the number of signers, adjust the threshold
+                    if (values.multisig.signatureThreshold! > values.multisig.numOfSigners! - 1) {
+                      setFieldValue(
+                        'multisig.signatureThreshold',
+                        values.multisig.numOfSigners! - 1,
+                      );
+                    }
+                  },
+                );
+                <EmbeddedAddressInput
+                  {...multiSign}
+                  key={multiSign.id}
+                />;
+              })}
+            </MultiInputs>
+
+            <LabelComponent
+              label={t('labelSigThreshold')}
+              helper={t('helperSigThreshold')}
+              errorMessage={
+                values.multisig.signatureThreshold ? errors.multisig?.signatureThreshold : undefined
+              }
+              isRequired
+            >
+              <Flex w="200px">
+                <NumberStepperInput
+                  onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
+                  value={values.multisig.signatureThreshold}
+                />
+              </Flex>
+            </LabelComponent>
+          </InputSection>
+        </StepWrapper>
+        <StepButtons
+          {...props}
+          isEdit={mode === DAOCreateMode.EDIT}
+        />
+      </>
+    );
+  }
   return (
     <>
       <StepWrapper

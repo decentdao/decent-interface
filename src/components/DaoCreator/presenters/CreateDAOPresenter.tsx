@@ -8,10 +8,8 @@ import { NetworkConfig } from '../../../types/network';
 import { getNetworkIcon } from '../../../utils/url';
 
 export interface IInput {
-  id: string; // id
   label: string; // label
   description?: string; // optional description
-  isDisabled?: boolean; // is disabled
 }
 
 export interface ITextValueChange {
@@ -28,40 +26,71 @@ export interface ISelectionOption {
 }
 
 export interface ISelectionInput extends IInput, ITextValueChange {
+  id: string; // id of the input
   selected?: string; // selected item
   options: ISelectionOption[]; // list of options
 }
 
-export interface ITextInput extends IInput, ITextValueChange {
+export interface ITextInput extends ITextValueChange {
+  id: string; // id of the input
+  fieldName?: string; // key path for Formik,
   value?: string; // current value
-  placeholder: string; // placeholder
-  error?: string; // error message
-  isRequired: boolean; // is required
+  placeholder?: string; // placeholder
   testId?: string; // optional test id
+  error?: string; // error message
+  isDisabled?: boolean; // is disabled
+  isRequired: boolean; // is required
 }
 
-export interface IBigIntTextInput extends IInput {
+export interface IRemoval {
+  removalLabel?: string;
+  removalIndex: number;
+  onRemoval?: (index: number) => void; // on removal button is clicked
+}
+
+export interface ILabeledTextInput extends IInput, ITextInput {}
+
+export interface IBigIntTextInput {
+  id: string; // id of the input
+  fieldName?: string; // key path for Formik,
   value?: bigint; // current value
   placeholder: string; // placeholder
-  error?: string; // error message
-  isRequired: boolean; // is required
   testId?: string; // optional test id
+  error?: string; // error message
+  isDisabled?: boolean; // is disabled
+  isRequired: boolean; // is required
+  min?: string; // min value
+  max?: string; // max value
+  decimalPlaces?: number; // decimal places
+  suffix?: string; // suffix
   onValueChange?: (value: BigIntValuePair) => void; // on change callback with input value
+}
+
+export interface ILabeledBigIntTextInput extends IInput, IBigIntTextInput {}
+
+export interface IInputSection {
+  label?: string; // title of the section
+}
+
+export interface IStepperInput extends IInput {
+  id: string; // id of the input
+  unit?: string; // stepper unit
+  value: number; // current value
+  onValueChange?: (value: number) => void; // on change callback with input value
 }
 
 export const CreateDAOPresenter = {
   daoname(
     t: TFunction<[string, string], undefined>,
-    value: string,
     isDisabled: boolean,
     onValueChange: (value: string) => void,
-  ): ITextInput {
+  ): ILabeledTextInput {
     return {
       id: 'essentials-daoName',
       label: t('labelDAOName'),
       description: t('helperDAOName'),
       placeholder: t('daoNamePlaceholder'),
-      value: value,
+      fieldName: 'essentials.daoName',
       isDisabled: isDisabled,
       isRequired: true,
       testId: 'essentials-daoName',
@@ -88,7 +117,6 @@ export const CreateDAOPresenter = {
       description: t('networkDescription'),
       selected: selected.toString(),
       options: options,
-      isDisabled: false,
       onValueChange: value => {
         onValueChange(Number(value));
       },
@@ -125,7 +153,6 @@ export const CreateDAOPresenter = {
           value: GovernanceType.MULTISIG,
         },
       ],
-      isDisabled: false,
       onValueChange: value => {
         const governanceType = value as GovernanceType;
         onValueChange(governanceType);
@@ -135,18 +162,17 @@ export const CreateDAOPresenter = {
 
   snapshot(
     t: TFunction<[string, string], undefined>,
-    value: string,
     isDisabled: boolean,
     error: string | undefined,
     onValueChange: (value: string) => void,
-  ): ITextInput {
+  ): ILabeledTextInput {
     return {
       id: 'snapshot',
       label: t('snapshot'),
       description: t('snapshotHelper'),
       placeholder: 'example.eth',
       error: error,
-      value: value,
+      fieldName: 'essentials.snapshotENS',
       isDisabled: isDisabled,
       isRequired: false,
       testId: 'essentials-snapshotENS',
@@ -177,7 +203,6 @@ export const CreateDAOPresenter = {
           value: TokenCreationType.NEW,
         },
       ],
-      isDisabled: false,
       onValueChange: value => {
         const tokenCreationType = value as TokenCreationType;
         onValueChange(tokenCreationType);
@@ -188,22 +213,21 @@ export const CreateDAOPresenter = {
   tokenImportAddress(
     t: TFunction<[string, string], undefined>,
     placeholder: string,
-    value: string | undefined,
     error: string | undefined,
     onChange: (event: ChangeEvent<HTMLInputElement>) => void,
-  ): ITextInput {
+  ): ILabeledTextInput {
     return {
       id: 'erc20Token.tokenImportAddress',
       label: '',
       placeholder: placeholder,
       error: error,
-      value: value,
+      fieldName: 'erc20Token.tokenImportAddress',
       isRequired: true,
       onChange: onChange,
     };
   },
 
-  tokenNew(t: TFunction<[string, string], undefined>): ITextInput {
+  tokenNew(t: TFunction<[string, string], undefined>): ILabeledTextInput {
     return {
       id: 'erc20Token.tokenName',
       label: t('labelTokenName'),
@@ -215,16 +239,16 @@ export const CreateDAOPresenter = {
 
   tokenName(
     t: TFunction<[string, string], undefined>,
-    value: string,
+    isDisabled: boolean,
     onValueChange: (value: string) => void,
-  ): ITextInput {
+  ): ILabeledTextInput {
     return {
       id: 'erc20Token.tokenName',
       label: t('labelTokenName'),
       description: t('helperTokenName'),
       placeholder: 'Name',
-      value: value,
-      isDisabled: false,
+      fieldName: 'erc20Token.tokenName',
+      isDisabled: isDisabled,
       isRequired: true,
       testId: 'tokenVoting-tokenNameInput',
       onValueChange: onValueChange,
@@ -233,16 +257,16 @@ export const CreateDAOPresenter = {
 
   tokenSymbol(
     t: TFunction<[string, string], undefined>,
-    value: string,
+    isDisabled: boolean,
     onChange: (event: ChangeEvent<HTMLInputElement>) => void,
-  ): ITextInput {
+  ): ILabeledTextInput {
     return {
       id: 'erc20Token.tokenSymbol',
       label: t('labelTokenSymbol'),
       description: t('helperTokenSymbol'),
       placeholder: 'TKN',
-      value: value,
-      isDisabled: false,
+      fieldName: 'erc20Token.tokenSymbol',
+      isDisabled: isDisabled,
       isRequired: true,
       testId: 'tokenVoting-tokenSymbolInput',
       onChange: onChange,
@@ -252,18 +276,136 @@ export const CreateDAOPresenter = {
   tokenSupply(
     t: TFunction<[string, string], undefined>,
     value: bigint | undefined,
+    isDisabled: boolean,
     onValueChange: (value: BigIntValuePair) => void,
-  ): IBigIntTextInput {
+  ): ILabeledBigIntTextInput {
     return {
-      id: 'erc20Token.tokenSymbol',
+      id: 'erc20Token.tokenSupply',
       label: t('labelTokenSupply'),
       description: t('helperTokenSupply'),
       placeholder: '100,000,000',
       value: value,
-      isDisabled: false,
+      isDisabled: isDisabled,
       isRequired: true,
       testId: 'tokenVoting-tokenSupplyInput',
       onValueChange: onValueChange,
+    };
+  },
+
+  section(label?: string): IInputSection {
+    return {
+      label: label,
+    };
+  },
+
+  erc20Quorum(
+    t: TFunction<[string, string], undefined>,
+    value: bigint | undefined,
+    onValueChange: (value: BigIntValuePair) => void,
+  ): ILabeledBigIntTextInput {
+    return {
+      id: 'erc20Token.quorum',
+      label: t('quorum', { ns: 'common' }),
+      description: t('helperQuorumERC20'),
+      placeholder: '',
+      value: value,
+      max: '100',
+      decimalPlaces: 0,
+      suffix: '%',
+      isDisabled: false,
+      isRequired: true,
+      testId: 'govConfig-quorumPercentage',
+      onValueChange: onValueChange,
+    };
+  },
+
+  erc721Quorum(
+    t: TFunction<[string, string], undefined>,
+    value: bigint | undefined,
+    onValueChange: (value: BigIntValuePair) => void,
+  ): ILabeledBigIntTextInput {
+    return {
+      id: 'erc20Token.quorum',
+      label: t('quorum', { ns: 'common' }),
+      description: t('helperQuorumERC721'),
+      placeholder: '',
+      value: value,
+      min: '1',
+      decimalPlaces: 0,
+      isDisabled: false,
+      isRequired: true,
+      testId: 'govConfig-quorumThreshold',
+      onValueChange: onValueChange,
+    };
+  },
+
+  votingPeriod(
+    t: TFunction<[string, string], undefined>,
+    value: number,
+    onValueChange: (value: number) => void,
+  ): IStepperInput {
+    return {
+      id: 'votingPeriod',
+      label: t('labelVotingPeriod'),
+      description: t('helperVotingPeriod'),
+      unit: t('days', { ns: 'common' }),
+      value: value,
+      onValueChange: onValueChange,
+    };
+  },
+
+  timelockPeriod(
+    t: TFunction<[string, string], undefined>,
+    value: number,
+    onValueChange: (value: number) => void,
+  ): IStepperInput {
+    return {
+      id: 'timelockPeriod',
+      label: t('labelTimelockPeriod'),
+      description: t('helperTimelockPeriod'),
+      unit: t('days', { ns: 'common' }),
+      value: value,
+      onValueChange: onValueChange,
+    };
+  },
+
+  executionPeriod(
+    t: TFunction<[string, string], undefined>,
+    value: number,
+    onValueChange: (value: number) => void,
+  ): IStepperInput {
+    return {
+      id: 'votingPeriod',
+      label: t('labelExecutionPeriod'),
+      description: t('helperExecutionPeriod'),
+      unit: t('days', { ns: 'common' }),
+      value: value,
+      onValueChange: onValueChange,
+    };
+  },
+
+  multiSignOwners(t: TFunction<[string, string], undefined>): IInput {
+    return {
+      label: t('titleSignerAddresses'),
+      description: t('subTitleSignerAddresses'),
+    };
+  },
+
+  multiSign(
+    t: TFunction<[string, string], undefined>,
+    index: number,
+    error: string | undefined,
+    onValueChange: (value: string) => void,
+    onRemoval: (index: number) => void,
+  ): ITextInput & IRemoval {
+    return {
+      id: `multiSigOwner${index}`,
+      fieldName: `multisig.trustedAddresses.${index}`,
+      testId: `safeConfig-signer-${index}`,
+      error: error,
+      isRequired: true,
+      onValueChange: onValueChange,
+      onRemoval: onRemoval,
     };
   },
 };
