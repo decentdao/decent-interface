@@ -171,7 +171,6 @@ export default function useUserERC721VotingTokens(
 
       const tokenIdsSets = [...userERC721Tokens.values()];
       const tokenAddressesKeys = [...userERC721Tokens.keys()];
-
       await Promise.all(
         // Same here
         tokenIdsSets.map(async (tokenIdsSet, setIndex) => {
@@ -204,7 +203,6 @@ export default function useUserERC721VotingTokens(
           );
         }),
       );
-
       return {
         totalVotingTokenAddresses: totalTokenAddresses,
         totalVotingTokenIds: totalTokenIds,
@@ -226,7 +224,6 @@ export default function useUserERC721VotingTokens(
   const loadUserERC721VotingTokens = useCallback(async () => {
     const proposalIdNum = proposalId === null ? null : Number(proposalId);
     const tokensInfo = await getUserERC721VotingTokens(safeAddress, proposalIdNum);
-
     if (tokensInfo) {
       setTotalVotingTokenAddresses(tokensInfo.totalVotingTokenAddresses);
       setTotalVotingTokenIds(tokensInfo.totalVotingTokenIds);
