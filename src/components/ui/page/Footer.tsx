@@ -10,8 +10,8 @@ import {
   URL_TWITTER,
   URL_WARPCAST,
 } from '../../../constants/url';
-import ExternalLink from '../links/ExternalLink';
 import { isConfigDemo } from '../../../helpers/featureFlags';
+import ExternalLink from '../links/ExternalLink';
 
 function NavigationIconLink(props: {
   DisplayIcon: Icon | ComponentWithAs<'svg', IconProps>;

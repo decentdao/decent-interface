@@ -1,9 +1,7 @@
 import { Box, Flex, Hide, Show, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
 import { DAOSearch } from '../../components/ui/menus/DAOSearch';
-import { FeatureFlag, FeatureFlags } from '../../helpers/featureFlags';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { GettingStarted } from './GettingStarted';
@@ -20,13 +18,6 @@ export default function HomePage() {
       action.resetSafeState();
     }
   }, [safe?.address, action]);
-
-  const [searchParams] = useSearchParams();
-  searchParams.forEach((value, key) => {
-    if (key.startsWith('VITE_APP_FLAG_')) {
-      FeatureFlags.instance?.set(key as FeatureFlag, value);
-    }
-  });
 
   return (
     <Flex
