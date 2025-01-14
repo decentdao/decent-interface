@@ -5,10 +5,10 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useRef,
+  useMemo,
   useState,
 } from 'react';
-import { erc721Abi, getContract } from 'viem';
+import { BlockTag, erc721Abi, getContract } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
@@ -98,27 +98,30 @@ export function VoteContextProvider({
     extendedSnapshotProposal,
   ]);
 
-  const erc721VotingWeight = useCallback(async () => {
-    const account = userAccount.address;
-    const azoriusGovernance = governance as AzoriusGovernance;
-    if (!account || !azoriusGovernance.erc721Tokens || !publicClient) {
-      return 0n;
-    }
-    const userVotingWeight = (
-      await Promise.all(
-        azoriusGovernance.erc721Tokens.map(async ({ address, votingWeight }) => {
-          const tokenContract = getContract({
-            abi: erc721Abi,
-            address: address,
-            client: publicClient,
-          });
-          const userBalance = await tokenContract.read.balanceOf([account]);
-          return userBalance * votingWeight;
-        }),
-      )
-    ).reduce((prev, curr) => prev + curr, 0n);
-    return userVotingWeight;
-  }, [governance, publicClient, userAccount.address]);
+  const getErc721VotingWeight = useCallback(
+    async (blockTag?: BlockTag) => {
+      const account = userAccount.address;
+      const azoriusGovernance = governance as AzoriusGovernance;
+      if (!account || !azoriusGovernance.erc721Tokens || !publicClient) {
+        return 0n;
+      }
+      const userVotingWeight = (
+        await Promise.all(
+          azoriusGovernance.erc721Tokens.map(async ({ address, votingWeight }) => {
+            const tokenContract = getContract({
+              abi: erc721Abi,
+              address: address,
+              client: publicClient,
+            });
+            const userBalance = await tokenContract.read.balanceOf([account], { blockTag });
+            return userBalance * votingWeight;
+          }),
+        )
+      ).reduce((prev, curr) => prev + curr, 0n);
+      return userVotingWeight;
+    },
+    [governance, publicClient, userAccount.address],
+  );
 
   const getCanVote = useCallback(async () => {
     setCanVoteLoading(true);
@@ -140,7 +143,7 @@ export function VoteContextProvider({
             Number(proposal.proposalId),
           ])) > 0n && !hasVoted;
       } else if (governance.type === GovernanceType.AZORIUS_ERC721) {
-        const votingWeight = await erc721VotingWeight();
+        const votingWeight = await getErc721VotingWeight();
         newCanVote = votingWeight > 0n && remainingTokenIds.length > 0;
       } else if (governance.type === GovernanceType.MULTISIG) {
         newCanVote = !!safe?.owners.includes(userAccount.address);
@@ -148,7 +151,6 @@ export function VoteContextProvider({
         newCanVote = false;
       }
     }
-
     if (canVote !== newCanVote) {
       setCanVote(newCanVote);
     }
@@ -164,15 +166,10 @@ export function VoteContextProvider({
     remainingTokenIds.length,
     safe?.owners,
     proposal,
-    erc721VotingWeight,
+    getErc721VotingWeight,
   ]);
 
-  const initialLoadRef = useRef(false);
   useEffect(() => {
-    // Prevent running this effect multiple times
-    if (initialLoadRef.current) return;
-    initialLoadRef.current = true;
-
     getCanVote();
     getHasVoted();
   }, [getCanVote, getHasVoted]);
@@ -184,18 +181,17 @@ export function VoteContextProvider({
     }
   }, [proposal, proposalVotesLength]);
 
-  return (
-    <VoteContext.Provider
-      value={{
-        canVote,
-        canVoteLoading,
-        hasVoted,
-        hasVotedLoading,
-        getHasVoted,
-        getCanVote,
-      }}
-    >
-      {children}
-    </VoteContext.Provider>
+  const voteContextValue = useMemo(
+    () => ({
+      canVote,
+      canVoteLoading,
+      hasVoted,
+      hasVotedLoading,
+      getHasVoted,
+      getCanVote,
+    }),
+    [canVote, canVoteLoading, hasVoted, hasVotedLoading, getHasVoted, getCanVote],
   );
+
+  return <VoteContext.Provider value={voteContextValue}>{children}</VoteContext.Provider>;
 }
