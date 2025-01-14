@@ -13,9 +13,9 @@ import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
 import { CreateDAOPresenter, IInputSection } from '../presenters/CreateDAOPresenter';
 import { DAOCreateMode } from './EstablishEssentials';
-import { InputSection } from './input/InputSection';
-import { EmbeddedAddressInput, TextInputs } from './input/TextInput';
 import { MultiInputs } from './input/CompositeInput';
+import { InputSection } from './input/InputSection';
+import { EmbeddedAddressInput } from './input/TextInput';
 
 export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
@@ -40,7 +40,7 @@ export function Multisig(props: ICreationStepProps) {
   if (REUSABLE_COMPONENTS) {
     const section: IInputSection = CreateDAOPresenter.section(undefined);
 
-    const multiSigOwners = CreateDAOPresenter.multiSigOwners(t);
+    const multiSigOwners = CreateDAOPresenter.multiSignOwners(t);
 
     return (
       <>

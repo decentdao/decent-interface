@@ -2,10 +2,10 @@ import { Flex } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
 import { LabelComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { IInput } from '../../presenters/CreateDAOPresenter';
+import { IInput, IInputRequirements } from '../../presenters/CreateDAOPresenter';
 
 export function MultiInputs(
-  { label, description, isRequired, error }: IInput,
+  { label, description, isRequired, error }: IInput & IInputRequirements,
   { children }: PropsWithChildren<{}>,
 ) {
   return (

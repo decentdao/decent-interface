@@ -12,6 +12,12 @@ export interface IInput {
   description?: string; // optional description
 }
 
+export interface IInputRequirements {
+  error?: string; // error message
+  isDisabled?: boolean; // is disabled
+  isRequired: boolean; // is required
+}
+
 export interface ITextValueChange {
   onValueChange?: (value: string) => void; // on change callback with input value
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void; // on change callback with the raw event
@@ -25,21 +31,18 @@ export interface ISelectionOption {
   testId?: string; // optional test id
 }
 
-export interface ISelectionInput extends IInput, ITextValueChange {
+export interface ISelectionInput extends IInput, IInputRequirements, ITextValueChange {
   id: string; // id of the input
   selected?: string; // selected item
   options: ISelectionOption[]; // list of options
 }
 
-export interface ITextInput extends ITextValueChange {
+export interface ITextInput extends ITextValueChange, IInputRequirements {
   id: string; // id of the input
   fieldName?: string; // key path for Formik,
   value?: string; // current value
   placeholder?: string; // placeholder
   testId?: string; // optional test id
-  error?: string; // error message
-  isDisabled?: boolean; // is disabled
-  isRequired: boolean; // is required
 }
 
 export interface IRemoval {
@@ -50,15 +53,12 @@ export interface IRemoval {
 
 export interface ILabeledTextInput extends IInput, ITextInput {}
 
-export interface IBigIntTextInput {
+export interface IBigIntTextInput extends IInputRequirements {
   id: string; // id of the input
   fieldName?: string; // key path for Formik,
   value?: bigint; // current value
   placeholder: string; // placeholder
   testId?: string; // optional test id
-  error?: string; // error message
-  isDisabled?: boolean; // is disabled
-  isRequired: boolean; // is required
   min?: string; // min value
   max?: string; // max value
   decimalPlaces?: number; // decimal places
@@ -116,6 +116,7 @@ export const CreateDAOPresenter = {
       label: t('networks'),
       description: t('networkDescription'),
       selected: selected.toString(),
+      isRequired: true,
       options: options,
       onValueChange: value => {
         onValueChange(Number(value));
@@ -133,6 +134,7 @@ export const CreateDAOPresenter = {
       label: t('labelChooseGovernance'),
       description: t('helperChooseGovernance'),
       selected: selected,
+      isRequired: true,
       options: [
         {
           label: t('labelAzoriusErc20Gov'),
@@ -189,6 +191,7 @@ export const CreateDAOPresenter = {
       id: 'tokenContract',
       label: '',
       selected: selected,
+      isRequired: true,
       options: [
         {
           label: t('radioLabelExistingToken'),
@@ -384,10 +387,11 @@ export const CreateDAOPresenter = {
     };
   },
 
-  multiSignOwners(t: TFunction<[string, string], undefined>): IInput {
+  multiSignOwners(t: TFunction<[string, string], undefined>): IInput & IInputRequirements {
     return {
       label: t('titleSignerAddresses'),
       description: t('subTitleSignerAddresses'),
+      isRequired: true,
     };
   },
 
@@ -397,13 +401,15 @@ export const CreateDAOPresenter = {
     error: string | undefined,
     onValueChange: (value: string) => void,
     onRemoval: (index: number) => void,
-  ): ITextInput & IRemoval {
+  ): ITextInput & IInputRequirements & IRemoval {
     return {
       id: `multiSigOwner${index}`,
       fieldName: `multisig.trustedAddresses.${index}`,
       testId: `safeConfig-signer-${index}`,
       error: error,
       isRequired: true,
+      removalIndex: index,
+      removalLabel: t('removeSigner'),
       onValueChange: onValueChange,
       onRemoval: onRemoval,
     };
