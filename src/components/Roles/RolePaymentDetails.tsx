@@ -6,8 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { DETAILS_BOX_SHADOW, isDemoMode } from '../../constants/common';
+import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
+import { getModeStatus } from '../../hooks/utils/modes';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
@@ -145,6 +146,8 @@ export function RolePaymentDetails({
   const { refreshWithdrawableAmount } = useRolesStore();
   const navigate = useNavigate();
   const publicClient = usePublicClient();
+  const isDemoMode = getModeStatus('DEMO');
+
   const canWithdraw = useMemo(() => {
     if (
       connectedAccount &&
@@ -153,8 +156,8 @@ export function RolePaymentDetails({
     ) {
       return true;
     }
-    return isDemoMode();
-  }, [connectedAccount, payment.recipient, showWithdraw, roleHatWearerAddress]);
+    return isDemoMode;
+  }, [connectedAccount, payment.recipient, showWithdraw, roleHatWearerAddress, isDemoMode]);
 
   const assignedTerm = useMemo(() => {
     return roleTerms.find(term => term.termEndDate.getTime() === payment.endDate.getTime());

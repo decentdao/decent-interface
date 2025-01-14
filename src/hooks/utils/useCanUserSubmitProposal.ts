@@ -2,11 +2,11 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, getContract } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { isDemoMode } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType } from '../../types';
+import { getModeStatus } from './modes';
 import useVotingStrategiesAddresses from './useVotingStrategiesAddresses';
 
 export function useCanUserCreateProposal() {
@@ -26,6 +26,8 @@ export function useCanUserCreateProposal() {
   const publicClient = usePublicClient();
 
   const { getVotingStrategies } = useVotingStrategiesAddresses();
+
+  const isDemoMode = getModeStatus('DEMO');
 
   /**
    * Performs a check whether user has access rights to create proposal for DAO
@@ -117,13 +119,13 @@ export function useCanUserCreateProposal() {
 
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
-      const newCanCreateProposal = isDemoMode() || (await getCanUserCreateProposal());
+      const newCanCreateProposal = isDemoMode || (await getCanUserCreateProposal());
       if (newCanCreateProposal !== canUserCreateProposal) {
         setCanUserCreateProposal(newCanCreateProposal);
       }
     };
     loadCanUserCreateProposal();
-  }, [getCanUserCreateProposal, canUserCreateProposal]);
+  }, [getCanUserCreateProposal, canUserCreateProposal, isDemoMode]);
 
   return { canUserCreateProposal, getCanUserCreateProposal };
 }
