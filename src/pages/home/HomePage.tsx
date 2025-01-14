@@ -23,7 +23,9 @@ export default function HomePage() {
 
   const [searchParams] = useSearchParams();
   searchParams.forEach((value, key) => {
-    FeatureFlags.instance?.set(key, value);
+    if (key.startsWith('VITE_APP_FLAG_')) {
+      FeatureFlags.instance?.set(key, value);
+    }
   });
 
   return (

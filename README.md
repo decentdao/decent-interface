@@ -45,23 +45,32 @@ It is crucial to have `Netlify` functions running locally to work with anything 
 
 ### Setup
 
-During development, add a flag in .env file. It can be of any data type but usually a boolean:
+During development, add a flag in .env file with prefix "VITE*APP_FLAG*". It can be of any data type but boolean value, use "ON" or "OFF":
 
-FEATURE_1=false
+VITE_APP_FLAG_FEATURE_1="ON"
 
-In code, use following code for code branching:
+In /src/constants/common.ts, Add a flag in features:
 
-if (FeatureFlags.instance?.get('FEATURE_1') === true) {
-// executed with FEATURE_1=true,
-} else {
-// executed with FEATURE_1=false,
+const features = {
+developmentMode: 'DEVELOPMENT_MODE',
+demoMode: 'DEMO_MODE',
+feature1: 'FEATURE_1',
+} as const;
+
+and add a convenience function for FEATURE_1:
+
+export const isFeature1 = () => isFeatureEnabled(features.feature1);
+
+In consumer of the flag, use the convenience function
+if (ifFeature1()) {
+...
 }
 
 ### Testing
 
-Change the value of the flag by adding params on home page:
+Change the value of the flag with VITE*APP_FLAG* prefix by adding params on home page:
 
-https://app.dev.decentdao.org?FEATURE_1=true
+https://app.dev.decentdao.org?VITE_APP_FLAG_FEATURE_1=true
 
 From then, the flag holds the value from the URL param until app is refreshed
 

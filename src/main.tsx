@@ -1,7 +1,7 @@
 import '@fontsource/space-mono';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, useSearchParams } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import './assets/css/Markdown.css';
 import './assets/css/sentry.css';
 import './assets/css/Toast.css';
