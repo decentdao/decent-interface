@@ -31,6 +31,10 @@
   margin-right: 0;
 }
 
+.sonner-toast[data-type='loading'] [data-icon] {
+  margin-top: 8px;
+}
+
 .sonner-toast [data-icon] svg {
   width: 24px;
   height: 24px;
