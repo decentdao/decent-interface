@@ -47,7 +47,7 @@ It is crucial to have `Netlify` functions running locally to work with anything 
 
 During development, add a flag in .env file with prefix "VITE*APP_FLAG*". It can be of any data type but boolean value, use "ON" or "OFF":
 
-VITE_APP_FLAG_FEATURE_1="ON"
+VITE_APP_FLAG_CONFIG_DEMO="ON"
 
 In /src/helpers/featureFlags.ts, Add a flag in features. The string value should have VITE*APP_FLAG* prefix:
 
@@ -55,20 +55,20 @@ In /src/helpers/featureFlags.ts, Add a flag in features. The string value should
 export enum FeatureFlag {
   developmentMode = 'VITE_APP_FLAG_DEVELOPMENT_MODE',
   demoMode = 'VITE_APP_FLAG_DEMO_MODE',
-  feature1 = 'VITE_APP_FLAG_FEATURE_1',
+  configDemo = 'VITE_APP_FLAG_CONFIG_DEMO',
 }
 ```
 
-and add a convenience function for FEATURE_1:
+and add a convenience function for FLAG_DEMO:
 
 ```typescript
-export const isFeature1 = () => isFeatureEnabled(FeatureFlag.feature1);
+export const isConfigDemo = () => isFeatureEnabled(FeatureFlag.configDemo);
 ```
 
 In consumer of the flag, use the convenience function
 
 ```typescript
-if (ifFeature1()) {
+if (ifconfigDemo()) {
   // code here
 }
 ```
@@ -78,7 +78,7 @@ if (ifFeature1()) {
 Change the value of the flag with VITE*APP_FLAG* prefix by adding params on home page:
 
 ```
-https://app.dev.decentdao.org?VITE_APP_FLAG_FEATURE_1=ON
+https://app.dev.decentdao.org?VITE_APP_FLAG_CONFIG_DEMO=ON
 ```
 
 From then, the flag holds the value from the URL param until app is refreshed

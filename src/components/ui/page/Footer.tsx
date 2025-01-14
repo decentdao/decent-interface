@@ -11,6 +11,7 @@ import {
   URL_WARPCAST,
 } from '../../../constants/url';
 import ExternalLink from '../links/ExternalLink';
+import { isConfigDemo } from '../../../helpers/featureFlags';
 
 function NavigationIconLink(props: {
   DisplayIcon: Icon | ComponentWithAs<'svg', IconProps>;
@@ -66,7 +67,9 @@ export function Footer() {
         styleVariant="grey"
         fontSize="1.2rem"
       >
-        {t('madeWithLove', { ns: 'home' })}
+        {isConfigDemo()
+          ? t('madeWithLove', { ns: 'home' }).toUpperCase()
+          : t('madeWithLove', { ns: 'home' })}
       </ExternalLink>
 
       <Flex

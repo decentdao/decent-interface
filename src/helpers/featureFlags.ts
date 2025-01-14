@@ -1,7 +1,7 @@
 export enum FeatureFlag {
   developmentMode = 'VITE_APP_FLAG_DEVELOPMENT_MODE',
   demoMode = 'VITE_APP_FLAG_DEMO_MODE',
-  feature1 = 'VITE_APP_FLAG_FEATURE_1',
+  configDemo = 'VITE_APP_FLAG_CONFIG_DEMO',
 }
 
 export interface IFeatureFlags {
@@ -30,4 +30,4 @@ export const isFeatureEnabled = (feature: FeatureFlag) => {
 
 export const isDevMode = () => isFeatureEnabled(FeatureFlag.developmentMode);
 export const isDemoMode = () => isFeatureEnabled(FeatureFlag.demoMode);
-export const isFeature1 = () => isFeatureEnabled(FeatureFlag.feature1);
+export const isConfigDemo = () => isFeatureEnabled(FeatureFlag.configDemo);
