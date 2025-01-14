@@ -198,11 +198,20 @@ export const mapProposalCreatedEventToProposal = async (
     abstainVotes: 0n,
   };
 
-  const strategyContract = getContract({
-    address: strategyAddress,
-    abi: abis.LinearERC20Voting,
-    client: publicClient,
-  });
+  const strategyContract =
+    strategyType === VotingStrategyType.LINEAR_ERC20 ||
+    strategyType === VotingStrategyType.LINEAR_ERC20_HATS_WHITELISTING
+      ? getContract({
+          address: strategyAddress,
+          abi: abis.LinearERC20Voting,
+          client: publicClient,
+        })
+      : getContract({
+          address: strategyAddress,
+          abi: abis.LinearERC721Voting,
+          client: publicClient,
+        });
+
   const stratProposalVotes = await strategyContract.read.getProposalVotes([proposalId]);
   proposalVotes.noVotes = stratProposalVotes[0];
   proposalVotes.yesVotes = stratProposalVotes[1];
