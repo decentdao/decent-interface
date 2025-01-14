@@ -49,28 +49,37 @@ During development, add a flag in .env file with prefix "VITE*APP_FLAG*". It can
 
 VITE_APP_FLAG_FEATURE_1="ON"
 
-In /src/constants/common.ts, Add a flag in features:
+In /src/helpers/featureFlags.ts, Add a flag in features. The string value should have VITE*APP_FLAG* prefix:
 
-const features = {
-developmentMode: 'DEVELOPMENT_MODE',
-demoMode: 'DEMO_MODE',
-feature1: 'FEATURE_1',
-} as const;
+```typescript
+export enum FeatureFlag {
+  developmentMode = 'VITE_APP_FLAG_DEVELOPMENT_MODE',
+  demoMode = 'VITE_APP_FLAG_DEMO_MODE',
+  feature1 = 'VITE_APP_FLAG_FEATURE_1',
+}
+```
 
 and add a convenience function for FEATURE_1:
 
-export const isFeature1 = () => isFeatureEnabled(features.feature1);
+```typescript
+export const isFeature1 = () => isFeatureEnabled(FeatureFlag.feature1);
+```
 
 In consumer of the flag, use the convenience function
+
+```typescript
 if (ifFeature1()) {
-...
+  // code here
 }
+```
 
 ### Testing
 
 Change the value of the flag with VITE*APP_FLAG* prefix by adding params on home page:
 
-https://app.dev.decentdao.org?VITE_APP_FLAG_FEATURE_1=true
+```
+https://app.dev.decentdao.org?VITE_APP_FLAG_FEATURE_1=ON
+```
 
 From then, the flag holds the value from the URL param until app is refreshed
 

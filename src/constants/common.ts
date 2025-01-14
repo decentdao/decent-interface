@@ -55,20 +55,6 @@ export const SIDEBAR_WIDTH = '4.25rem';
 
 export const MAX_CONTENT_WIDTH = '80rem';
 
-const features = {
-  developmentMode: 'DEVELOPMENT_MODE',
-  demoMode: 'DEMO_MODE',
-} as const;
-
-type FeatureFlag = (typeof features)[keyof typeof features];
-
-export const isFeatureEnabled = (feature: FeatureFlag) => {
-  return FeatureFlags.instance?.get(`VITE_APP_FLAG_${feature}`) === 'ON';
-};
-
-export const isDevMode = () => isFeatureEnabled(features.developmentMode);
-export const isDemoMode = () => isFeatureEnabled(features.demoMode);
-
 /**
  * @dev DO NOT CHANGE THE SALT
  * @note This SALT is used to generate the account address for the Hats Smart Account
