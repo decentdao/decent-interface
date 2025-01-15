@@ -11,7 +11,7 @@ import {
   URL_WARPCAST,
 } from '../../../constants/url';
 import { isFeatureEnabled } from '../../../helpers/featureFlags';
-import { DemoModeButton } from '../../../hooks/utils/demoMode';
+import { DemoModeButton } from '../../../utils/demoMode';
 import ExternalLink from '../links/ExternalLink';
 
 function NavigationIconLink(props: {

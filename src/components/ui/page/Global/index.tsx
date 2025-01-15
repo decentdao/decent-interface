@@ -9,13 +9,13 @@ import {
   FavoritesCacheValue,
 } from '../../../../hooks/utils/cache/cacheDefaults';
 import { setValue } from '../../../../hooks/utils/cache/useLocalStorage';
-import { useInitializeDemoMode } from '../../../../hooks/utils/demoMode';
 import { getSafeName } from '../../../../hooks/utils/useGetSafeName';
 import {
   getNetworkConfig,
   supportedNetworks,
 } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { wagmiConfig } from '../../../../providers/NetworkConfig/web3-modal.config';
+import { useInitializeDemoMode } from '../../../../utils/demoMode';
 import { getChainIdFromPrefix } from '../../../../utils/url';
 import { Layout } from '../Layout';
 
