@@ -54,23 +54,17 @@ VITE_APP_FLAG_YELLING="ON"
 In /src/helpers/featureFlags.ts, Add a flag in features. The string value should match the environment variable name completely:
 
 ```typescript
-const FEATURE_FLAG_ENVIRONMENT_VARIABLES = {
+export const FEATURE_FLAG_ENVIRONMENT_VARIABLES = {
   devMode: 'VITE_APP_FLAG_DEV',
   demoMode: 'VITE_APP_FLAG_DEMO',
   yellingMode: 'VITE_APP_FLAG_YELLING', // <- this one
 } as const;
 ```
 
-and add a convenience function for `yellingMode`:
-
-```typescript
-export const isYellingMode = () => isFeatureEnabled('yellingMode');
-```
-
 In consumer of the flag, use the convenience function
 
 ```typescript
-if (isYellingMode()) {
+if (isFeatureEnabled('yellingMode')) {
   // code here
 }
 ```

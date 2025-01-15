@@ -2,9 +2,9 @@ import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getContract } from 'viem';
+import { erc721Abi, getContract } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { TOOLTIP_MAXW } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
@@ -60,31 +60,69 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
 
   const publicClient = usePublicClient();
 
+  const getErc721VotingWeight = useCallback(async () => {
+    if (!address || !azoriusGovernance.erc721Tokens || !publicClient) {
+      return 0n;
+    }
+    const userVotingWeight = (
+      await Promise.all(
+        azoriusGovernance.erc721Tokens.map(async ({ address: tokenAddress, votingWeight }) => {
+          const tokenContract = getContract({
+            abi: erc721Abi,
+            address: tokenAddress,
+            client: publicClient,
+          });
+          // @todo We should be checking proposal state - if it's active, we should use the latest block, otherwise we should calculate the voting weight based on the startBlock and deadlineMs
+          const userBalance = await tokenContract.read.balanceOf([address], {
+            blockNumber: startBlock,
+          });
+          return userBalance * votingWeight;
+        }),
+      )
+    ).reduce((prev, curr) => prev + curr, 0n);
+    return userVotingWeight;
+  }, [azoriusGovernance.erc721Tokens, publicClient, address, startBlock]);
+
+  const isERC20 = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721 = type === GovernanceType.AZORIUS_ERC721;
+
   useEffect(() => {
     async function loadProposalVotingWeight() {
       if (address && publicClient) {
-        const strategyContract = getContract({
-          abi: abis.LinearERC20Voting,
-          address: proposal.votingStrategy,
-          client: publicClient,
-        });
+        if (isERC20) {
+          const strategyContract = getContract({
+            abi: abis.LinearERC20Voting,
+            address: proposal.votingStrategy,
+            client: publicClient,
+          });
 
-        const pastVotingWeight = await strategyContract.read.getVotingWeight([
-          address,
-          Number(proposal.proposalId),
-        ]);
+          const pastVotingWeight = await strategyContract.read.getVotingWeight([
+            address,
+            Number(proposal.proposalId),
+          ]);
 
-        setProposalVotingWeight(
-          formatCoin(pastVotingWeight, true, votesToken?.decimals, undefined, false),
-        );
+          setProposalVotingWeight(
+            formatCoin(pastVotingWeight, true, votesToken?.decimals, undefined, false),
+          );
+        } else if (isERC721) {
+          const votingWeight = await getErc721VotingWeight();
+          setProposalVotingWeight(votingWeight.toString());
+        }
       }
     }
 
     loadProposalVotingWeight();
-  }, [address, proposal.proposalId, proposal.votingStrategy, publicClient, votesToken?.decimals]);
-
-  const isERC20 = type === GovernanceType.AZORIUS_ERC20;
-  const isERC721 = type === GovernanceType.AZORIUS_ERC721;
+  }, [
+    address,
+    proposal.proposalId,
+    proposal.votingStrategy,
+    publicClient,
+    votesToken?.decimals,
+    isERC20,
+    isERC721,
+    getErc721VotingWeight,
+    startBlock,
+  ]);
 
   // @todo @dev (see below):
   // Caching has introduced a new "problem" edge case -- a proposal can be loaded before `votingStrategy` is loaded.

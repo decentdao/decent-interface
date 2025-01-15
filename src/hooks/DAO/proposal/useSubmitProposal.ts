@@ -374,6 +374,7 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
+            safeAddress: safe?.address,
           });
         } else {
           const userProposerVotingStrategy = (

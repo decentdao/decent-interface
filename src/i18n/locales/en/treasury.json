@@ -13,6 +13,7 @@
   "columnProtocols": "Protocols",
   "labelSent": "Sent",
   "labelReceived": "Received",
+  "labelMinted": "Mint",
   "textEmptyTransactions": "No transfers",
   "textMoreTransactions": "Load More",
   "transactionsShownCount": "Latest {{count}} from a total of",

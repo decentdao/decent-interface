@@ -2,7 +2,7 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, getContract } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { isDemoMode } from '../../helpers/featureFlags';
+import { isFeatureEnabled } from '../../helpers/featureFlags';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
@@ -117,7 +117,8 @@ export function useCanUserCreateProposal() {
 
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
-      const newCanCreateProposal = isDemoMode() || (await getCanUserCreateProposal());
+      const newCanCreateProposal =
+        isFeatureEnabled('demoMode') || (await getCanUserCreateProposal());
       if (newCanCreateProposal !== canUserCreateProposal) {
         setCanUserCreateProposal(newCanCreateProposal);
       }

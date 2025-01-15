@@ -3,6 +3,7 @@ import { Address } from 'viem';
 export enum TokenEventType {
   DEPOSIT = 'DEPOSIT',
   WITHDRAW = 'WITHDRAW',
+  MINT = 'MINT',
 }
 
 export interface TokenEvent {
