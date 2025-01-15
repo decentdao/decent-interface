@@ -26,7 +26,7 @@ export function useInitializeDemoMode() {
   }
 }
 
-export function getDemoModeStatus(): boolean {
+export function isDemoMode(): boolean {
   try {
     return localStorage.getItem(DEMO_MODE_STORAGE_KEY) === DEMO_MODE_VALUES.ON;
   } catch {
@@ -68,5 +68,5 @@ function DemoModeToggleButton() {
 }
 
 export function DemoModeButton() {
-  return <>{getDemoModeStatus() && <DemoModeToggleButton />}</>;
+  return <>{isDemoMode() && <DemoModeToggleButton />}</>;
 }
