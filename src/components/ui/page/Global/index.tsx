@@ -9,6 +9,7 @@ import {
   FavoritesCacheValue,
 } from '../../../../hooks/utils/cache/cacheDefaults';
 import { setValue } from '../../../../hooks/utils/cache/useLocalStorage';
+import { useInitializeDemoMode } from '../../../../hooks/utils/demoMode';
 import { getSafeName } from '../../../../hooks/utils/useGetSafeName';
 import {
   getNetworkConfig,
@@ -90,6 +91,9 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
 
 export function Global() {
   useUserTracking();
+
+  // Initialize all modes from URL parameters
+  useInitializeDemoMode();
 
   // Trigger a re-render when favorite names are updated
   const [favoritesUpdatedTrigger, setFavoritesUpdatedTrigger] = useState(0);
