@@ -1,7 +1,7 @@
 import { IFeatureFlags, FeatureFlagKeys, FeatureFlagKey } from './featureFlags';
 
 export class EnvironmentFeatureFlags implements IFeatureFlags {
-  urlParams: { [key: string]: any } = {};
+  urlParams: { [key: string]: string | null } = {};
   envVars: { [key: string]: any } = {};
 
   private keyToEnvVar = (key: FeatureFlagKey): string => {
@@ -36,8 +36,12 @@ export class EnvironmentFeatureFlags implements IFeatureFlags {
     return this.envVars[key];
   }
 
-  setUrlParam(key: FeatureFlagKey, value: any): void {
-    this.urlParams[key] = value?.toLowerCase();
+  setUrlParam(key: FeatureFlagKey, value: string | null): void {
+    if (value === null) {
+      this.urlParams[key] = null;
+    } else {
+      this.urlParams[key] = value.toLowerCase();
+    }
   }
 
   getUrlParam(key: FeatureFlagKey) {
