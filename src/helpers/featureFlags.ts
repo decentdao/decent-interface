@@ -1,7 +1,7 @@
 const FEATURE_FLAG_ENVIRONMENT_VARIABLES = {
   devMode: 'VITE_APP_FLAG_DEV',
   demoMode: 'VITE_APP_FLAG_DEMO',
-  configMode: 'VITE_APP_FLAG_CONFIG',
+  yellingMode: 'VITE_APP_FLAG_YELLING',
 } as const;
 
 const FEATURE_FLAG_VALUES = {
@@ -66,4 +66,4 @@ export const isFeatureEnabled = (feature: FeatureFlag): boolean => {
 
 export const isDevMode = () => isFeatureEnabled('devMode');
 export const isDemoMode = () => isFeatureEnabled('demoMode');
-export const isConfigDemo = () => isFeatureEnabled('configMode');
+export const isYellingMode = () => isFeatureEnabled('yellingMode');

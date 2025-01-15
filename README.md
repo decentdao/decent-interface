@@ -45,40 +45,42 @@ It is crucial to have `Netlify` functions running locally to work with anything 
 
 ### Setup
 
-During development, add a flag in .env file with prefix "VITE*APP_FLAG*". It can be of any data type but boolean value, use "ON" or "OFF":
+During development, add a flag in .env file. It must be a string value of "ON" or "OFF".
 
-VITE_APP_FLAG_CONFIG_DEMO="ON"
-
-In /src/helpers/featureFlags.ts, Add a flag in features. The string value should have VITE*APP_FLAG* prefix:
-
-```typescript
-export enum FeatureFlag {
-  developmentMode = 'VITE_APP_FLAG_DEVELOPMENT_MODE',
-  demoMode = 'VITE_APP_FLAG_DEMO_MODE',
-  configDemo = 'VITE_APP_FLAG_CONFIG_DEMO',
-}
+```shell
+VITE_APP_FLAG_YELLING="ON"
 ```
 
-and add a convenience function for FLAG_DEMO:
+In /src/helpers/featureFlags.ts, Add a flag in features. The string value should match the environment variable name completely:
 
 ```typescript
-export const isConfigDemo = () => isFeatureEnabled(FeatureFlag.configDemo);
+const FEATURE_FLAG_ENVIRONMENT_VARIABLES = {
+  devMode: 'VITE_APP_FLAG_DEV',
+  demoMode: 'VITE_APP_FLAG_DEMO',
+  yellingMode: 'VITE_APP_FLAG_YELLING', // <- this one
+} as const;
+```
+
+and add a convenience function for `yellingMode`:
+
+```typescript
+export const isYellingMode = () => isFeatureEnabled('yellingMode');
 ```
 
 In consumer of the flag, use the convenience function
 
 ```typescript
-if (ifconfigDemo()) {
+if (isYellingMode()) {
   // code here
 }
 ```
 
 ### Testing
 
-Change the value of the flag with VITE*APP_FLAG* prefix by adding params on home page:
+Override the flag value by adding query params to the URL. Notice how the `VITE_APP_` prefix is omitted and the flag name is in lowercase:
 
 ```
-https://app.dev.decentdao.org?VITE_APP_FLAG_CONFIG_DEMO=ON
+https://app.dev.decentdao.org?yelling_mode=on
 ```
 
 From then, the flag holds the value from the URL param until app is refreshed
