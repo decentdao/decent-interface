@@ -1,8 +1,8 @@
 import { IFeatureFlags, FeatureFlagKeys, FeatureFlagKey } from './featureFlags';
 
 export class EnvironmentFeatureFlags implements IFeatureFlags {
-  urlParams: { [key: string]: string | undefined } = {};
-  envVars: { [key: string]: string | undefined } = {};
+  urlParams: { [key: string]: any } = {};
+  envVars: { [key: string]: any } = {};
 
   private keyToEnvVar = (key: FeatureFlagKey): string => {
     return `VITE_APP_${key.toUpperCase()}`;
@@ -18,7 +18,7 @@ export class EnvironmentFeatureFlags implements IFeatureFlags {
 
     // Check all feature flags
     featureFlags.forEach(featureFlag => {
-      const envValue: string | undefined = envVars[this.keyToEnvVar(featureFlag)];
+      const envValue = envVars[this.keyToEnvVar(featureFlag)];
       this.setEnvVar(featureFlag, envValue);
 
       const queryParam = urlParams.get(this.keyToQueryParam(featureFlag));
@@ -28,7 +28,7 @@ export class EnvironmentFeatureFlags implements IFeatureFlags {
     });
   }
 
-  setEnvVar(key: FeatureFlagKey, value: string | undefined): void {
+  setEnvVar(key: FeatureFlagKey, value: any): void {
     this.envVars[key] = value?.toLowerCase();
   }
 
@@ -36,7 +36,7 @@ export class EnvironmentFeatureFlags implements IFeatureFlags {
     return this.envVars[key];
   }
 
-  setUrlParam(key: FeatureFlagKey, value: string | null): void {
+  setUrlParam(key: FeatureFlagKey, value: any): void {
     this.urlParams[key] = value?.toLowerCase();
   }
 
