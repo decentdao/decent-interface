@@ -5,7 +5,7 @@ import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
-import { FeatureFlag, isFeatureEnabled } from '../../../helpers/featureFlags';
+import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import { DatePicker } from '../../ui/forms/DatePicker';
@@ -216,7 +216,7 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
                 {t('save')}
               </Button>
             )}
-            {isFeatureEnabled(FeatureFlag.developmentMode) && !canBeCancelled && (
+            {isFeatureEnabled('flag_dev') && !canBeCancelled && (
               <Button
                 onClick={() => {
                   if (payment === undefined) {

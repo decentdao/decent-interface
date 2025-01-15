@@ -10,7 +10,7 @@ import {
   URL_TWITTER,
   URL_WARPCAST,
 } from '../../../constants/url';
-import { FeatureFlag, isFeatureEnabled } from '../../../helpers/featureFlags';
+import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import ExternalLink from '../links/ExternalLink';
 
 function NavigationIconLink(props: {
@@ -67,7 +67,7 @@ export function Footer() {
         styleVariant="grey"
         fontSize="1.2rem"
       >
-        {isFeatureEnabled(FeatureFlag.configDemo)
+        {isFeatureEnabled('flag_yelling')
           ? t('madeWithLove', { ns: 'home' }).toUpperCase()
           : t('madeWithLove', { ns: 'home' })}
       </ExternalLink>
