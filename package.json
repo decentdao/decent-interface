@@ -67,6 +67,7 @@
     "start": "vite start",
     "preview": "vite preview",
     "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build:cf": "vite build",
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
     "test": "vitest --dir=test",
