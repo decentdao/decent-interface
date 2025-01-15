@@ -2,3 +2,13 @@
 name = "decent-interface"
 pages_build_output_dir = "dist"
 compatibility_date = "2025-01-08"
+
+[[kv_namespaces]]
+binding = "balances"
+id = "680ec75643924ba4b5d0692aa999c3a1"
+
+[env.production]
+
+[[env.production.kv_namespaces]]
+binding = "balances"
+id = "3dd583aab1e94419a47834c3076ab401"
