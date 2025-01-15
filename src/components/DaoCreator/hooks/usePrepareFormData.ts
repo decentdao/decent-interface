@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Address, getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
 import IVotesAbi from '../../../assets/abi/IVotes';
+import useNetworkPublicClient from '../../../hooks/useNetworkPublicClient';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
@@ -17,7 +17,7 @@ import { validateENSName } from '../../../utils/url';
 type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigIntValuePair> };
 
 export function usePrepareFormData() {
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
 
   // Helper function to prepare freezeGuard data
   const prepareFreezeGuardData = useCallback(
