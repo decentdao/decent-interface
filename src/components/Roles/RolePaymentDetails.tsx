@@ -8,12 +8,12 @@ import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
-import { isFeatureEnabled } from '../../helpers/featureFlags';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import { BigIntValuePair } from '../../types';
 import { DEFAULT_DATE_FORMAT, formatCoin } from '../../utils';
+import { isDemoMode } from '../../utils/demoMode';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useDecentModal } from '../ui/modals/useDecentModal';
 
@@ -154,7 +154,7 @@ export function RolePaymentDetails({
     ) {
       return true;
     }
-    return isFeatureEnabled('flag_demo');
+    return isDemoMode();
   }, [connectedAccount, payment.recipient, showWithdraw, roleHatWearerAddress]);
 
   const assignedTerm = useMemo(() => {
