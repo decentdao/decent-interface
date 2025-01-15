@@ -2,12 +2,12 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, getContract } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
+import { isDemoMode } from '../../helpers/featureFlags';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType } from '../../types';
 import useVotingStrategiesAddresses from './useVotingStrategiesAddresses';
-import { isDemoMode } from '../../helpers/featureFlags';
 
 export function useCanUserCreateProposal() {
   const {
