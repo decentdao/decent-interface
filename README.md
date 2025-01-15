@@ -41,32 +41,44 @@ It is crucial to have `Netlify` functions running locally to work with anything 
 - Treasury page
 - Payments feature
 
-## Environmental feature flags
+## Feature flags
 
 ### Setup
 
-During development, add a flag in .env file. It must be a string value of "ON" or "OFF".
+Start with adding a new Feature Flag to the app. In https://github.com/decentdao/decent-interface/src/helpers/featureFlags.ts, Add a flag.
+
+```typescript
+export const FEATURE_FLAGS = [
+  'flag_dev',
+  'flag_demo',
+  'flag_yelling', // <-- new flag
+] as const;
+```
+
+### Usage
+
+In consumer of the flag, use the convenience function
+
+```typescript
+import { isFeatureEnabled } from '@/helpers/featureFlags';
+
+if (isFeatureEnabled('flag_yelling')) {
+  // code here
+}
+```
+
+### Injecting flags via your environment
+
+During development, add a flag environment variable in your (local) .env(.local) file. It must be a string value of "ON" or "OFF". The syntax of the environment variable is `VITE_APP_<FLAG_NAME>`.
 
 ```shell
 VITE_APP_FLAG_YELLING="ON"
 ```
 
-In /src/helpers/featureFlags.ts, Add a flag in features. The string value should match the environment variable name completely:
+You can also set the flag in the URL with a query param. Notice how the `VITE_APP_` prefix is omitted and the flag name in the query param matches the name you gave it in code:
 
-```typescript
-export const FEATURE_FLAG_ENVIRONMENT_VARIABLES = {
-  devMode: 'VITE_APP_FLAG_DEV',
-  demoMode: 'VITE_APP_FLAG_DEMO',
-  yellingMode: 'VITE_APP_FLAG_YELLING', // <- this one
-} as const;
-```
-
-In consumer of the flag, use the convenience function
-
-```typescript
-if (isFeatureEnabled('yellingMode')) {
-  // code here
-}
+```shell
+http://localhost:3000/?flag_yelling=on
 ```
 
 ### Testing
@@ -74,7 +86,7 @@ if (isFeatureEnabled('yellingMode')) {
 Override the flag value by adding query params to the URL. Notice how the `VITE_APP_` prefix is omitted and the flag name is in lowercase:
 
 ```
-https://app.dev.decentdao.org?yelling_mode=on
+https://app.dev.decentdao.org?flag_yelling=on
 ```
 
 From then, the flag holds the value from the URL param until app is refreshed

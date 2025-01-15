@@ -1,45 +1,46 @@
 import {
   IFeatureFlags,
-  FeatureFlagValue,
-  FEATURE_FLAG_ENVIRONMENT_VARIABLES,
-  FeatureFlag,
+  FeatureFlagKeys,
+  FeatureFlagKey,
   FEATURE_FLAG_VALUES,
+  FeatureFlagValue,
 } from './featureFlags';
 
-const envVarToQueryParam = (envVar: string): string => {
-  return envVar.replace('VITE_APP_', '').toLowerCase();
-};
-
 export class EnvironmentFeatureFlags implements IFeatureFlags {
-  urlFlags: { [key: string]: FeatureFlagValue } = {};
+  flags: { [key: string]: FeatureFlagValue | undefined } = {};
 
-  constructor() {
+  private keyToEnvVar = (key: FeatureFlagKey): string => {
+    return `VITE_APP_${key.toUpperCase()}`;
+  };
+
+  private keyToQueryParam = (key: FeatureFlagKey): string => {
+    return key.toLowerCase();
+  };
+
+  constructor(featureFlags: FeatureFlagKeys) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
     // Check all feature flags
-    (Object.entries(FEATURE_FLAG_ENVIRONMENT_VARIABLES) as Array<[FeatureFlag, string]>).forEach(
-      ([key, envVar]) => {
-        const queryParam = envVarToQueryParam(envVar);
-        const rawValue = urlParams.get(queryParam)?.toLowerCase();
-        if (rawValue === FEATURE_FLAG_VALUES.ON || rawValue === FEATURE_FLAG_VALUES.OFF) {
-          this.set(key, rawValue);
-        }
-      },
-    );
+    featureFlags.forEach(featureFlag => {
+      const envValue = import.meta.env[this.keyToEnvVar(featureFlag)]?.toLowerCase();
+      if (envValue === FEATURE_FLAG_VALUES.ON || envValue === FEATURE_FLAG_VALUES.OFF) {
+        this.set(featureFlag, envValue);
+      }
+      const queryParam = urlParams.get(this.keyToQueryParam(featureFlag))?.toLowerCase();
+      if (queryParam === FEATURE_FLAG_VALUES.ON || queryParam === FEATURE_FLAG_VALUES.OFF) {
+        this.set(featureFlag, queryParam);
+      }
+
+      console.log({ featureFlag, envValue, queryParam });
+    });
   }
 
-  set(key: FeatureFlag, value: FeatureFlagValue): void {
-    this.urlFlags[key] = value;
+  set(key: FeatureFlagKey, value: FeatureFlagValue): void {
+    this.flags[key] = value;
   }
 
-  get(key: FeatureFlag): FeatureFlagValue | undefined {
-    const envValue = import.meta.env[FEATURE_FLAG_ENVIRONMENT_VARIABLES[key]]?.toLowerCase();
-    return (
-      this.urlFlags[key] ??
-      (envValue === FEATURE_FLAG_VALUES.ON || envValue === FEATURE_FLAG_VALUES.OFF
-        ? envValue
-        : undefined)
-    );
+  get(key: FeatureFlagKey) {
+    return this.flags[key];
   }
 }

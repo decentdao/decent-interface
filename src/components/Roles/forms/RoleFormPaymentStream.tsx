@@ -216,7 +216,7 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
                 {t('save')}
               </Button>
             )}
-            {isFeatureEnabled('devMode') && !canBeCancelled && (
+            {isFeatureEnabled('flag_dev') && !canBeCancelled && (
               <Button
                 onClick={() => {
                   if (payment === undefined) {

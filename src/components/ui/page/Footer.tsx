@@ -67,7 +67,7 @@ export function Footer() {
         styleVariant="grey"
         fontSize="1.2rem"
       >
-        {isFeatureEnabled('yellingMode')
+        {isFeatureEnabled('flag_yelling')
           ? t('madeWithLove', { ns: 'home' }).toUpperCase()
           : t('madeWithLove', { ns: 'home' })}
       </ExternalLink>

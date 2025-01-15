@@ -154,7 +154,7 @@ export function RolePaymentDetails({
     ) {
       return true;
     }
-    return isFeatureEnabled('demoMode');
+    return isFeatureEnabled('flag_demo');
   }, [connectedAccount, payment.recipient, showWithdraw, roleHatWearerAddress]);
 
   const assignedTerm = useMemo(() => {

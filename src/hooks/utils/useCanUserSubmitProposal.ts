@@ -118,7 +118,7 @@ export function useCanUserCreateProposal() {
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
       const newCanCreateProposal =
-        isFeatureEnabled('demoMode') || (await getCanUserCreateProposal());
+        isFeatureEnabled('flag_demo') || (await getCanUserCreateProposal());
       if (newCanCreateProposal !== canUserCreateProposal) {
         setCanUserCreateProposal(newCanCreateProposal);
       }

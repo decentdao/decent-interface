@@ -78,7 +78,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   useStepRedirect({ values });
 
-  const isDevMode = isFeatureEnabled('devMode');
+  const isDevMode = isFeatureEnabled('flag_dev');
   const [votingPeriodDays, setVotingPeriodDays] = useState(isDevMode ? 0.0021 : 7);
   const [timelockPeriodDays, setTimelockPeriodDays] = useState(isDevMode ? 0 : 1);
   const [executionPeriodDays, setExecutionPeriodDays] = useState(2);
