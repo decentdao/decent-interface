@@ -1,13 +1,8 @@
-import {
-  IFeatureFlags,
-  FeatureFlagKeys,
-  FeatureFlagKey,
-  FEATURE_FLAG_VALUES,
-  FeatureFlagValue,
-} from './featureFlags';
+import { IFeatureFlags, FeatureFlagKeys, FeatureFlagKey } from './featureFlags';
 
 export class EnvironmentFeatureFlags implements IFeatureFlags {
-  flags: { [key: string]: FeatureFlagValue | undefined } = {};
+  urlParams: { [key: string]: string | undefined } = {};
+  envVars: { [key: string]: string | undefined } = {};
 
   private keyToEnvVar = (key: FeatureFlagKey): string => {
     return `VITE_APP_${key.toUpperCase()}`;
@@ -18,29 +13,43 @@ export class EnvironmentFeatureFlags implements IFeatureFlags {
   };
 
   constructor(featureFlags: FeatureFlagKeys) {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
+    const urlParams = new URLSearchParams(window.location.search);
+    const envVars = import.meta.env;
 
     // Check all feature flags
     featureFlags.forEach(featureFlag => {
-      const envValue = import.meta.env[this.keyToEnvVar(featureFlag)]?.toLowerCase();
-      if (envValue === FEATURE_FLAG_VALUES.ON || envValue === FEATURE_FLAG_VALUES.OFF) {
-        this.set(featureFlag, envValue);
-      }
-      const queryParam = urlParams.get(this.keyToQueryParam(featureFlag))?.toLowerCase();
-      if (queryParam === FEATURE_FLAG_VALUES.ON || queryParam === FEATURE_FLAG_VALUES.OFF) {
-        this.set(featureFlag, queryParam);
-      }
+      const envValue: string | undefined = envVars[this.keyToEnvVar(featureFlag)];
+      this.setEnvVar(featureFlag, envValue);
+
+      const queryParam = urlParams.get(this.keyToQueryParam(featureFlag));
+      this.setUrlParam(featureFlag, queryParam);
 
       console.log({ featureFlag, envValue, queryParam });
     });
   }
 
-  set(key: FeatureFlagKey, value: FeatureFlagValue): void {
-    this.flags[key] = value;
+  setEnvVar(key: FeatureFlagKey, value: string | undefined): void {
+    this.envVars[key] = value?.toLowerCase();
   }
 
-  get(key: FeatureFlagKey) {
-    return this.flags[key];
+  getEnvVar(key: FeatureFlagKey) {
+    return this.envVars[key];
+  }
+
+  setUrlParam(key: FeatureFlagKey, value: string | null): void {
+    this.urlParams[key] = value?.toLowerCase();
+  }
+
+  getUrlParam(key: FeatureFlagKey) {
+    return this.urlParams[key];
+  }
+
+  isFeatureEnabled(key: FeatureFlagKey) {
+    const envVar = this.getEnvVar(key);
+    const urlParam = this.getUrlParam(key);
+
+    if (urlParam === 'on') return true;
+    if (envVar === 'on' && urlParam !== 'off') return true;
+    return false;
   }
 }
