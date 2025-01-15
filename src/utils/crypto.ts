@@ -28,7 +28,10 @@ export const encodeFunction = (
   const parametersFixed: Array<string | string[]> | undefined = parameters ? [] : undefined;
   let tupleIndex: number | undefined = undefined;
   parameters?.forEach((param, i) => {
-    if (param.startsWith('[') && param.endsWith(']')) {
+    if (param === '[]' || param === '[ ]') {
+      // Handle empty array explicitly
+      parametersFixed!!.push([]);
+    } else if (param.startsWith('[') && param.endsWith(']')) {
       parametersFixed!!.push(
         param
           .substring(1, param.length - 1)
