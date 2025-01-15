@@ -13,35 +13,10 @@ export class FeatureFlags {
   static instance?: IFeatureFlags;
 }
 
-export class EnvironmentFeatureFlags implements IFeatureFlags {
-  urlFlags: { [key: string]: any } = {};
-
-  constructor() {
-    const queryString = window.location.search;
-    console.log(queryString);
-    const urlParams = new URLSearchParams(queryString);
-    const keys = urlParams.keys();
-    for (const key of keys) {
-      if (key.startsWith('VITE_APP_FLAG_')) {
-        const value = urlParams.get(key);
-        this.set(key as FeatureFlag, value);
-      }
-    }
-  }
-
-  set(key: FeatureFlag, value: any): void {
-    this.urlFlags[key] = value;
-  }
-
-  get(key: FeatureFlag): any {
-    return this.urlFlags[key] ?? import.meta.env[key];
-  }
-}
-
+/*
+  Convenience function to check if a feature is enabled when we use the feature flags as a boolean value.
+  Although boolean is the most common use case, the feature flags can be used for any value, including number, string, enum or even object.
+  */
 export const isFeatureEnabled = (feature: FeatureFlag) => {
   return FeatureFlags.instance?.get(feature) === 'ON';
 };
-
-export const isDevMode = () => isFeatureEnabled(FeatureFlag.developmentMode);
-export const isDemoMode = () => isFeatureEnabled(FeatureFlag.demoMode);
-export const isConfigDemo = () => isFeatureEnabled(FeatureFlag.configDemo);

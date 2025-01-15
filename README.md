@@ -59,16 +59,10 @@ export enum FeatureFlag {
 }
 ```
 
-and add a convenience function for FLAG_DEMO:
-
-```typescript
-export const isConfigDemo = () => isFeatureEnabled(FeatureFlag.configDemo);
-```
-
 In consumer of the flag, use the convenience function
 
 ```typescript
-if (ifconfigDemo()) {
+if (isFeatureEnabled(FeatureFlag.configDemo)) {
   // code here
 }
 ```

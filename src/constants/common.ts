@@ -1,6 +1,5 @@
 import { useBreakpointValue } from '@chakra-ui/react';
 import { Hex } from 'viem';
-import { FeatureFlags } from '../helpers/featureFlags';
 
 const HEADER_HEIGHT = '4.5rem';
 const HEADER_HEIGHT_MOBILE = '3.75rem';
