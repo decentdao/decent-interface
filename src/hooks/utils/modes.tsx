@@ -1,6 +1,6 @@
 import { Button, Icon as ChakraIcon } from '@chakra-ui/react';
 import { X } from '@phosphor-icons/react';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export const MODE_QUERY_PARAMS = {
@@ -24,19 +24,17 @@ function getModeStorageKey(modeType: ModeTypesKeys) {
 export function useInitializeModes() {
   const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    (Object.keys(MODE_QUERY_PARAMS) as Array<ModeTypesKeys>).forEach(modeType => {
-      const MODE_QUERY_PARAM = MODE_QUERY_PARAMS[modeType];
-      const MODE_STORAGE_KEY = getModeStorageKey(modeType);
-      const rawValue = searchParams.get(MODE_QUERY_PARAM)?.toLowerCase();
+  (Object.keys(MODE_QUERY_PARAMS) as Array<ModeTypesKeys>).forEach(modeType => {
+    const MODE_QUERY_PARAM = MODE_QUERY_PARAMS[modeType];
+    const MODE_STORAGE_KEY = getModeStorageKey(modeType);
+    const rawValue = searchParams.get(MODE_QUERY_PARAM)?.toLowerCase();
 
-      if (rawValue === MODE_VALUES.ON) {
-        localStorage.setItem(MODE_STORAGE_KEY, MODE_VALUES.ON);
-      } else if (rawValue === MODE_VALUES.OFF) {
-        localStorage.setItem(MODE_STORAGE_KEY, MODE_VALUES.OFF);
-      }
-    });
-  }, [searchParams]);
+    if (rawValue === MODE_VALUES.ON) {
+      localStorage.setItem(MODE_STORAGE_KEY, MODE_VALUES.ON);
+    } else if (rawValue === MODE_VALUES.OFF) {
+      localStorage.setItem(MODE_STORAGE_KEY, MODE_VALUES.OFF);
+    }
+  });
 }
 
 export function getModeStatus(modeType: ModeTypesKeys): boolean {
