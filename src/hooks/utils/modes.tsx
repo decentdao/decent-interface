@@ -13,7 +13,11 @@ export const MODE_VALUES = {
   OFF: 'off',
 } as const;
 
-function getModeStorageKey(modeType: keyof typeof MODE_QUERY_PARAMS) {
+type ModeTypesKeys = keyof typeof MODE_QUERY_PARAMS;
+type ModeValueTypes = typeof MODE_VALUES;
+type ModeValueTypesKeys = keyof ModeValueTypes;
+
+function getModeStorageKey(modeType: ModeTypesKeys) {
   return `decent_${MODE_QUERY_PARAMS[modeType]}`;
 }
 
@@ -21,24 +25,24 @@ export function useInitializeModes() {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    (Object.keys(MODE_QUERY_PARAMS) as Array<keyof typeof MODE_QUERY_PARAMS>).forEach(modeType => {
+    (Object.keys(MODE_QUERY_PARAMS) as Array<ModeTypesKeys>).forEach(modeType => {
       const MODE_QUERY_PARAM = MODE_QUERY_PARAMS[modeType];
       const MODE_STORAGE_KEY = getModeStorageKey(modeType);
       const rawValue = searchParams.get(MODE_QUERY_PARAM)?.toLowerCase();
 
       if (rawValue === MODE_VALUES.ON) {
-        localStorage.setItem(MODE_STORAGE_KEY, 'true');
+        localStorage.setItem(MODE_STORAGE_KEY, MODE_VALUES.ON);
       } else if (rawValue === MODE_VALUES.OFF) {
-        localStorage.setItem(MODE_STORAGE_KEY, 'false');
+        localStorage.setItem(MODE_STORAGE_KEY, MODE_VALUES.OFF);
       }
     });
   }, [searchParams]);
 }
 
-export function getModeStatus(modeType: keyof typeof MODE_QUERY_PARAMS): boolean {
+export function getModeStatus(modeType: ModeTypesKeys): boolean {
   try {
     const MODE_STORAGE_KEY = getModeStorageKey(modeType);
-    return localStorage.getItem(MODE_STORAGE_KEY) === 'true';
+    return localStorage.getItem(MODE_STORAGE_KEY) === MODE_VALUES.ON;
   } catch {
     return false;
   }
@@ -48,10 +52,7 @@ function useToggleMode() {
   const [searchParams] = useSearchParams();
 
   return useCallback(
-    (
-      modeType: keyof typeof MODE_QUERY_PARAMS,
-      modeValue: (typeof MODE_VALUES)[keyof typeof MODE_VALUES],
-    ) => {
+    (modeType: ModeTypesKeys, modeValue: ModeValueTypes[ModeValueTypesKeys]) => {
       const newParams = new URLSearchParams(searchParams);
       newParams.set(MODE_QUERY_PARAMS[modeType], modeValue);
       window.location.href = `${window.location.pathname}?${newParams.toString()}`;
@@ -61,12 +62,9 @@ function useToggleMode() {
 }
 
 interface ModeToggleButtonProps {
-  modeType: keyof typeof MODE_QUERY_PARAMS;
+  modeType: ModeTypesKeys;
   isActive: boolean;
-  onToggle: (
-    modeType: keyof typeof MODE_QUERY_PARAMS,
-    modeValue: (typeof MODE_VALUES)[keyof typeof MODE_VALUES],
-  ) => void;
+  onToggle: (modeType: ModeTypesKeys, modeValue: ModeValueTypes[ModeValueTypesKeys]) => void;
 }
 
 function ModeToggleButton({ modeType, isActive, onToggle }: ModeToggleButtonProps) {
@@ -81,12 +79,11 @@ function ModeToggleButton({ modeType, isActive, onToggle }: ModeToggleButtonProp
       onClick={() => onToggle(modeType, MODE_VALUES.OFF)}
       pr="0.3rem"
     >
-      {modeType.charAt(0) + modeType.slice(1).toLowerCase()}{' '}
+      {modeType}
       <ChakraIcon
         as={X}
         boxSize="16px"
         position="relative"
-        top="1px"
       />
     </Button>
   );
@@ -94,7 +91,7 @@ function ModeToggleButton({ modeType, isActive, onToggle }: ModeToggleButtonProp
 
 export function ModeButtons() {
   const handleToggleMode = useToggleMode();
-  const modes = Object.keys(MODE_QUERY_PARAMS) as Array<keyof typeof MODE_QUERY_PARAMS>;
+  const modes = Object.keys(MODE_QUERY_PARAMS) as Array<ModeTypesKeys>;
 
   return (
     <>
