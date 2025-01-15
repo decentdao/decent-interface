@@ -1,9 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
-import { useEffect } from 'react';
-import { useChainId, useSwitchChain } from 'wagmi';
+
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
-import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
@@ -31,8 +29,6 @@ function DaoCreator({
   mode: DAOCreateMode;
 }) {
   const { totalParentVotingWeight } = useParentSafeVotingWeight();
-  const walletChainID = useChainId();
-  const { chain } = useNetworkConfigStore();
 
   const { createDAOValidation } = useDAOCreateSchema({
     isSubDAO: !!isSubDAO,
@@ -41,21 +37,6 @@ function DaoCreator({
 
   const { prepareMultisigFormData, prepareAzoriusERC20FormData, prepareAzoriusERC721FormData } =
     usePrepareFormData();
-
-  const { switchChain } = useSwitchChain({
-    mutation: {
-      onError: () => {
-        if (chain.id !== walletChainID && !isSubDAO) {
-          switchChain({ chainId: chain.id });
-        }
-      },
-    },
-  });
-  useEffect(() => {
-    if (chain.id !== walletChainID && !isSubDAO) {
-      switchChain({ chainId: chain.id });
-    }
-  }, [chain.id, walletChainID, switchChain, isSubDAO]);
 
   return (
     <Box>

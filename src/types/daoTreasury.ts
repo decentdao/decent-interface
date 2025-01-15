@@ -88,20 +88,22 @@ type NftMediaItem = {
   url: string;
 };
 
+export type NFTMedia =
+  | {
+      originalMediaUrl?: string | undefined;
+      mediaCollection?:
+        | {
+            low: NftMediaItem;
+            medium: NftMediaItem;
+            high: NftMediaItem;
+          }
+        | undefined;
+    }
+  | undefined;
+
 export type NFTBalance = {
   tokenAddress: string;
-  media:
-    | {
-        originalMediaUrl?: string | undefined;
-        mediaCollection?:
-          | {
-              low: NftMediaItem;
-              medium: NftMediaItem;
-              high: NftMediaItem;
-            }
-          | undefined;
-      }
-    | undefined;
+  media: NFTMedia;
   metadata?: {
     backgroundImage?: string;
     image?: string;

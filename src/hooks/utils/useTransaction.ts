@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Hash, TransactionReceipt } from 'viem';
-import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
+import useNetworkPublicClient from '../useNetworkPublicClient';
 
 interface ProviderRpcError extends Error {
   message: string;
@@ -24,7 +24,7 @@ interface ContractCallParams {
 const useTransaction = () => {
   const [pending, setPending] = useState(false);
   const { t } = useTranslation(['transaction', 'common']);
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
 
   const contractCall = useCallback(
     (params: ContractCallParams) => {
