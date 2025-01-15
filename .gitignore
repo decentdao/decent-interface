@@ -38,3 +38,7 @@ yarn-error.log*
 
 # Local Netlify folder
 /.netlify
+
+# Wrangler
+/.wrangler
+.dev.vars

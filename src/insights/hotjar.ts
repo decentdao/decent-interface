@@ -2,8 +2,8 @@ import Hotjar from '@hotjar/browser';
 
 export const initHotjar = () => {
   if (
-    import.meta.env.VITE_APP_HOTJAR_SITE_ID === '' ||
-    import.meta.env.VITE_APP_HOTJAR_VERSION === ''
+    import.meta.env.VITE_APP_HOTJAR_VERSION === undefined ||
+    import.meta.env.VITE_APP_HOTJAR_SITE_ID === undefined
   ) {
     // Do not initialize Hotjar if the site ID or version are not set, as this would be the case on all non-prod sites.
     return;

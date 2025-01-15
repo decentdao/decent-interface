@@ -25,6 +25,7 @@
     "app",
     "netlify/functions",
     "netlify/shared",
+    "functions",
     "vite.config.mts",
     "vitest.setup.ts"
   ]
