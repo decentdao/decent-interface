@@ -61,22 +61,14 @@ function useToggleMode() {
   );
 }
 
-interface ModeToggleButtonProps {
-  modeType: ModeTypesKeys;
-  isActive: boolean;
-  onToggle: (modeType: ModeTypesKeys, modeValue: ModeValueTypes[ModeValueTypesKeys]) => void;
-}
-
-function ModeToggleButton({ modeType, isActive, onToggle }: ModeToggleButtonProps) {
-  if (!isActive) {
-    return null;
-  }
+function ModeToggleButton({ modeType }: { modeType: ModeTypesKeys }) {
+  const handleToggleMode = useToggleMode();
 
   return (
     <Button
       size="sm"
       variant="secondary"
-      onClick={() => onToggle(modeType, MODE_VALUES.OFF)}
+      onClick={() => handleToggleMode(modeType, MODE_VALUES.OFF)}
       pr="0.3rem"
     >
       {modeType}
@@ -90,19 +82,18 @@ function ModeToggleButton({ modeType, isActive, onToggle }: ModeToggleButtonProp
 }
 
 export function ModeButtons() {
-  const handleToggleMode = useToggleMode();
   const modes = Object.keys(MODE_QUERY_PARAMS) as Array<ModeTypesKeys>;
 
   return (
     <>
-      {modes.map(modeType => (
-        <ModeToggleButton
-          key={modeType}
-          modeType={modeType}
-          isActive={getModeStatus(modeType)}
-          onToggle={handleToggleMode}
-        />
-      ))}
+      {modes
+        .filter(modeType => getModeStatus(modeType))
+        .map(modeType => (
+          <ModeToggleButton
+            key={modeType}
+            modeType={modeType}
+          />
+        ))}
     </>
   );
 }
