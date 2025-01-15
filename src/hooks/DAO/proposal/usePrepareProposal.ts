@@ -21,8 +21,6 @@ export function usePrepareProposal() {
           const signature = tx.parameters.map(parameter => parameter.signature.trim()).join(', ');
           const parameters = tx.parameters
             .map(parameter =>
-              parameter.value !== '[]' &&
-              parameter.value !== '[ ]' &&
               isValidUrl(parameter.value!.trim())
                 ? encodeURIComponent(parameter.value!.trim()) // If parameter.value is valid URL with special symbols like ":" or "?" - decoding might fail, thus we need to encode URL
                 : parameter.value!.trim(),
