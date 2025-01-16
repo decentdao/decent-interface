@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getContract, isHex } from 'viem';
-import { useWalletClient } from 'wagmi';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
-import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { AzoriusERC20DAO, AzoriusERC721DAO, SafeMultisigDAO } from '../../types';
+import { useWaletClient } from '../../useWaletClient';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
 
@@ -20,7 +20,7 @@ const useDeployDAO = () => {
     contracts: { multiSendCallOnly },
   } = useNetworkConfigStore();
 
-  const { data: walletClient } = useWalletClient({
+  const { data: walletClient } = useWaletClient({
     chainId: chain.id,
   });
 
@@ -32,15 +32,6 @@ const useDeployDAO = () => {
       const deploy = async () => {
         if (!walletClient) {
           return;
-        }
-
-        // ensure the chain is correct
-        await walletClient.switchChain({
-          id: chain.id,
-        });
-
-        if (walletClient.chain.id !== chain.id) {
-          throw new Error('wallet client chain does not match network config');
         }
 
         const builtSafeTx = await build(daoData);
@@ -72,7 +63,7 @@ const useDeployDAO = () => {
 
       deploy();
     },
-    [addressPrefix, build, chain.id, contractCall, multiSendCallOnly, t, walletClient],
+    [addressPrefix, build, contractCall, multiSendCallOnly, t, walletClient],
   );
 
   return [deployDao, pending] as const;
