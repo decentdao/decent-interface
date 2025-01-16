@@ -23,8 +23,6 @@ export class EnvironmentFeatureFlags implements IFeatureFlags {
 
       const queryParam = urlParams.get(this.keyToQueryParam(featureFlag));
       this.setUrlParam(featureFlag, queryParam);
-
-      console.log({ featureFlag, envValue, queryParam });
     });
   }
 
