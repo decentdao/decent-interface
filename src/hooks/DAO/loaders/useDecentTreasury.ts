@@ -6,7 +6,7 @@ import {
 } from '@safe-global/api-kit';
 import { useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
-import { erc20Abi, getAddress } from 'viem';
+import { Address, erc20Abi, getAddress, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
@@ -25,6 +25,16 @@ import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { setValue } from '../../utils/cache/useLocalStorage';
 
+function getTransferEventType(transferFrom: string, safeAddress: Address | undefined) {
+  if (transferFrom === zeroAddress) {
+    return TokenEventType.MINT;
+  }
+  if (transferFrom === safeAddress) {
+    return TokenEventType.WITHDRAW;
+  } else {
+    return TokenEventType.DEPOSIT;
+  }
+}
 export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
   const loadKey = useRef<string | null>();
@@ -44,7 +54,7 @@ export const useDecentTreasury = () => {
       const decimals = transfer.tokenInfo.decimals;
 
       const formattedTransfer: TransferDisplayData = {
-        eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
+        eventType: getTransferEventType(transfer.from, safeAddress),
         transferType: transfer.type as TransferType,
         executionDate: transfer.executionDate,
         image: transfer.tokenInfo.logoUri ?? '/images/coin-icon-default.svg',

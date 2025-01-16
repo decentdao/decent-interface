@@ -1,16 +1,28 @@
 import { Box, Button, Center, Flex, HStack, Icon, Image, Text } from '@chakra-ui/react';
 import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { TokenEventType, TransferDisplayData, TransferType } from '../../../types';
 import { DecentTooltip } from '../../ui/DecentTooltip';
-import { DisplayAddress } from '../../ui/links/DisplayAddress';
+import DisplayTransaction from '../../ui/links/DisplayTransaction';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import { BarLoader } from '../../ui/loaders/BarLoader';
+
+function getTransferEventLabel(eventType: TokenEventType) {
+  switch (eventType) {
+    case TokenEventType.WITHDRAW:
+      return 'labelSent';
+    case TokenEventType.DEPOSIT:
+      return 'labelReceived';
+    case TokenEventType.MINT:
+      return 'labelMinted';
+    default:
+      throw new Error('Unknown event type');
+  }
+}
 
 function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
   const { t } = useTranslation(['treasury', 'common']);
@@ -30,7 +42,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
           gap="0.5rem"
         >
           <Icon
-            as={displayData.eventType == TokenEventType.WITHDRAW ? ArrowUp : ArrowDown}
+            as={displayData.eventType === TokenEventType.WITHDRAW ? ArrowUp : ArrowDown}
             w="1.25rem"
             h="1.25rem"
             color="neutral-7"
@@ -40,7 +52,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
               textStyle="labels-small"
               color="neutral-7"
             >
-              {t(displayData.eventType == TokenEventType.WITHDRAW ? 'labelSent' : 'labelReceived')}
+              {t(getTransferEventLabel(displayData.eventType))}
             </Text>
             <Text>{useDateTimeDisplay(new Date(displayData.executionDate))}</Text>
           </Box>
@@ -76,7 +88,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
                   : 'link-token-amount'
               }
             >
-              {(displayData.eventType == TokenEventType.WITHDRAW ? '- ' : '+ ') +
+              {(displayData.eventType === TokenEventType.WITHDRAW ? '- ' : '+ ') +
                 displayData.assetDisplay}
             </Text>
           </DecentTooltip>
@@ -84,12 +96,12 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         <HStack
           w="40%"
           justifyContent="flex-end"
+          textAlign="end"
+          onClick={e => e.stopPropagation()}
         >
-          <DisplayAddress
+          <DisplayTransaction
             data-testid="link-transfer-address"
-            address={getAddress(displayData.transferAddress)}
-            textAlign="end"
-            onClick={e => e.stopPropagation()}
+            txHash={displayData.transactionHash}
           />
         </HStack>
       </HStack>
