@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -32,21 +32,19 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
 
   const { redirectToInitialStep } = useStepRedirect({ values, redirectOnMount: false });
 
-  const disconnectedToast = useRef<string | number>();
   const { isConnected } = useAccount();
-
   useEffect(() => {
-    if (!isConnected) {
-      disconnectedToast.current = toast.info(
-        t('toastDisconnectedPersistent', { ns: 'daoCreate' }),
-        {
-          duration: Infinity,
-        },
-      );
+    if (isConnected) {
+      return;
     }
+    const disconnectedToast = toast.info(t('toastDisconnectedPersistent', { ns: 'daoCreate' }), {
+      duration: Infinity,
+      closeButton: false,
+      dismissible: false,
+    });
 
     return () => {
-      toast.dismiss();
+      toast.dismiss(disconnectedToast);
     };
   }, [isConnected, t]);
 
