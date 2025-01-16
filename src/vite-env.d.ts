@@ -25,8 +25,6 @@ interface ImportMetaEnv {
 
   readonly VITE_APP_AMPLITUDE_API_KEY: string;
 
-  readonly VITE_APP_SHUTTER_EON_PUBKEY: string;
-
   readonly VITE_APP_SITE_URL: string;
 
   readonly VITE_APP_WALLET_CONNECT_PROJECT_ID: string;
