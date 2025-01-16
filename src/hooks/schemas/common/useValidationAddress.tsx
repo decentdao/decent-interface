@@ -2,12 +2,12 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, PublicClient, getAddress, isAddress } from 'viem';
 import { normalize } from 'viem/ens';
-import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
 import { validateENSName } from '../../../utils/url';
+import useNetworkPublicClient from '../../useNetworkPublicClient';
 
 export async function validateAddress({
   publicClient,
@@ -75,7 +75,7 @@ export const useValidationAddress = () => {
   const { safe } = useDaoInfoStore();
   const { chain } = useNetworkConfigStore();
 
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
 
   const [isValidating, setIsValidating] = useState(false);
 

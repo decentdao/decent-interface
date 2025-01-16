@@ -5,6 +5,7 @@
 // Netlify (or a local `.env.local` file) will override these environment variables.
 interface ImportMetaEnv {
   readonly PACKAGE_VERSION: string;
+  readonly VITE_APP_USE_LEGACY_BACKEND: string;
 
   readonly VITE_APP_NAME: string;
 

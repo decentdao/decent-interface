@@ -1,0 +1,6 @@
+# Minutes to cache token balances for address
+BALANCES_CACHE_INTERVAL_MINUTES="1"
+# Minutes to give Moralis to index new addresses
+BALANCES_MORALIS_INDEX_DELAY_MINUTES="0"
+# Moralis API key for fetching DAO treasury balances
+MORALIS_API_KEY="local api key"

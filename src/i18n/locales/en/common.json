@@ -120,5 +120,6 @@
   "days": "Days",
   "owner": "Owner",
   "recipients": "recipients",
-  "airdrop": "Airdrop"
+  "airdrop": "Airdrop",
+  "pageXofY": "Page {{current}} of {{total}}"
 }

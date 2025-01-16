@@ -1,4 +1,4 @@
-import { Box, ComponentWithAs, Flex, Icon as ChakraIcon, IconProps } from '@chakra-ui/react';
+import { Box, Icon as ChakraIcon, ComponentWithAs, Flex, IconProps } from '@chakra-ui/react';
 import { DiscordLogo, Icon, TelegramLogo, XLogo } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -10,6 +10,8 @@ import {
   URL_TWITTER,
   URL_WARPCAST,
 } from '../../../constants/url';
+import { isFeatureEnabled } from '../../../helpers/featureFlags';
+import { DemoModeButton } from '../../../utils/demoMode';
 import ExternalLink from '../links/ExternalLink';
 
 function NavigationIconLink(props: {
@@ -66,7 +68,9 @@ export function Footer() {
         styleVariant="grey"
         fontSize="1.2rem"
       >
-        {t('madeWithLove', { ns: 'home' })}
+        {isFeatureEnabled('flag_yelling')
+          ? t('madeWithLove', { ns: 'home' }).toUpperCase()
+          : t('madeWithLove', { ns: 'home' })}
       </ExternalLink>
 
       <Flex
@@ -94,6 +98,7 @@ export function Footer() {
           DisplayIcon={DiscordLogo}
         />
       </Flex>
+      <DemoModeButton />
     </Flex>
   );
 }

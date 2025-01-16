@@ -3,7 +3,7 @@ import { useFormikContext } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
-import { usePublicClient, useWalletClient } from 'wagmi';
+import useNetworkPublicClient from '../../../hooks/useNetworkPublicClient';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { CreatorFormState, ICreationStepProps, TokenCreationType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
@@ -33,8 +33,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     props;
 
   const { t } = useTranslation('daoCreate');
-  const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
 
   const { values, touched, setTouched } = useFormikContext<CreatorFormState>();
 
@@ -53,7 +52,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       const tokenContract = getContract({
         address: importAddress,
         abi: erc20Abi,
-        client: { wallet: walletClient, public: publicClient },
+        client: publicClient,
       });
       const [name, symbol, decimals] = await Promise.all([
         tokenContract.read.name(),
@@ -87,7 +86,6 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     errors?.erc20Token?.tokenImportAddress,
     setFieldValue,
     publicClient,
-    walletClient,
     values.erc20Token.tokenImportAddress,
   ]);
 
