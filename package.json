@@ -63,7 +63,6 @@
     "pretty": "prettier . --write",
     "pretty:check": "prettier . --check",
     "dev": "vite --force",
-    "start": "vite start",
     "preview": "vite preview",
     "build": "vite build && vite build --mode page-function",
     "build:cf": "vite build && vite build --mode page-function",
