@@ -67,7 +67,6 @@
     "pretty:check": "prettier . --check",
     "dev": "vite --force",
     "dev:netlify": "VITE_APP_USE_LEGACY_BACKEND=true netlify dev",
-    "start": "vite start",
     "preview": "vite preview",
     "build": "VITE_APP_USE_LEGACY_BACKEND=true NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "build:cf": "vite build && vite build --mode page-function",
