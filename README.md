@@ -59,6 +59,64 @@ The application uses two sets of environment variables:
    - Contains Vite-injected variables for the React application
    - In production, these also need to be manually configured as "secrets" in the Cloudflare Dashboard
 
+## Feature flags
+
+### Setup
+
+Start with adding a new Feature Flag to the app. In https://github.com/decentdao/decent-interface/src/helpers/featureFlags.ts, Add a flag.
+
+```typescript
+export const FEATURE_FLAGS = [
+  'flag_dev',
+  'flag_demo',
+  'flag_yelling', // <-- new flag
+] as const;
+```
+
+### Usage
+
+In consumer of the flag, use the convenience function
+
+```typescript
+import { isFeatureEnabled } from '@/helpers/featureFlags';
+
+if (isFeatureEnabled('flag_yelling')) {
+  // code here
+}
+```
+
+### Injecting flags via your environment
+
+During development, add a flag environment variable in your (local) .env(.local) file. It must be a string value of "ON" or "OFF". The syntax of the environment variable is `VITE_APP_<FLAG_NAME>`.
+
+```shell
+VITE_APP_FLAG_YELLING="ON"
+```
+
+You can also set the flag in the URL with a query param. Notice how the `VITE_APP_` prefix is omitted and the flag name in the query param matches the name you gave it in code:
+
+```shell
+http://localhost:3000/?flag_yelling=on
+```
+
+### Testing
+
+Override the flag value by adding query params to the URL. Notice how the `VITE_APP_` prefix is omitted and the flag name is in lowercase:
+
+```
+https://app.dev.decentdao.org?flag_yelling=on
+```
+
+From then, the flag holds the value from the URL param until app is refreshed
+
+### Deployment and after
+
+Deployment can ship with the flag turned off in .env file.
+
+Change the value in .env file after the feature is completed and thouroughly tested.
+
+Once code under the feature flag has been proven reliable, remove the feature flag and dead code from code base.
+
 ## Subgraph
 
 We're using `Subgraph` to index certain "metadata" events to simplify data fetching from application site.

@@ -15,6 +15,7 @@ import {
   supportedNetworks,
 } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { wagmiConfig } from '../../../../providers/NetworkConfig/web3-modal.config';
+import { useInitializeDemoMode } from '../../../../utils/demoMode';
 import { getChainIdFromPrefix } from '../../../../utils/url';
 import { Layout } from '../Layout';
 
@@ -90,6 +91,9 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
 
 export function Global() {
   useUserTracking();
+
+  // Initialize all modes from URL parameters
+  useInitializeDemoMode();
 
   // Trigger a re-render when favorite names are updated
   const [favoritesUpdatedTrigger, setFavoritesUpdatedTrigger] = useState(0);
