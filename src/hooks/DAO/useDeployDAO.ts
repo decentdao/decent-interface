@@ -16,10 +16,13 @@ const useDeployDAO = () => {
 
   const {
     addressPrefix,
+    chain,
     contracts: { multiSendCallOnly },
   } = useNetworkConfigStore();
 
-  const { data: walletClient } = useWalletClient();
+  const { data: walletClient } = useWalletClient({
+    chainId: chain.id,
+  });
 
   const deployDao = useCallback(
     (
@@ -29,6 +32,15 @@ const useDeployDAO = () => {
       const deploy = async () => {
         if (!walletClient) {
           return;
+        }
+
+        // ensure the chain is correct
+        await walletClient.switchChain({
+          id: chain.id,
+        });
+
+        if (walletClient.chain.id !== chain.id) {
+          throw new Error('wallet client chain does not match network config');
         }
 
         const builtSafeTx = await build(daoData);
@@ -60,7 +72,7 @@ const useDeployDAO = () => {
 
       deploy();
     },
-    [addressPrefix, build, contractCall, multiSendCallOnly, t, walletClient],
+    [addressPrefix, build, chain.id, contractCall, multiSendCallOnly, t, walletClient],
   );
 
   return [deployDao, pending] as const;

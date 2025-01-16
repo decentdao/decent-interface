@@ -1,10 +1,10 @@
 import { Alert, Box, Button, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
 import { ArrowRight, Info, Trash } from '@phosphor-icons/react';
-import { addDays, addMinutes } from 'date-fns';
+import { addDays } from 'date-fns';
 import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DETAILS_BOX_SHADOW, isDevMode } from '../../../constants/common';
+import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import { DatePicker } from '../../ui/forms/DatePicker';
@@ -213,27 +213,6 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
                 }}
               >
                 {t('save')}
-              </Button>
-            )}
-            {isDevMode() && !canBeCancelled && (
-              <Button
-                onClick={() => {
-                  if (payment === undefined) {
-                    return;
-                  }
-                  const nowDate = new Date();
-                  setFieldValue(`roleEditing.payments.${formIndex}`, {
-                    ...payment,
-                    amount: {
-                      value: '100',
-                      bigintValue: 100000000000000000000n,
-                    },
-                    startDate: addMinutes(nowDate, 1),
-                    endDate: addMinutes(nowDate, 10),
-                  });
-                }}
-              >
-                Ze stream ends in 10!
               </Button>
             )}
             {canBeCancelled && (
