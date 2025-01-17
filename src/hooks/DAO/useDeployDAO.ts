@@ -4,7 +4,7 @@ import { Address, getContract, isHex } from 'viem';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { AzoriusERC20DAO, AzoriusERC721DAO, SafeMultisigDAO } from '../../types';
-import { useWaletClient } from '../../useWaletClient';
+import { useNetworkWalletClient } from '../useNetworkWalletClient';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
 
@@ -16,13 +16,10 @@ const useDeployDAO = () => {
 
   const {
     addressPrefix,
-    chain,
     contracts: { multiSendCallOnly },
   } = useNetworkConfigStore();
 
-  const { data: walletClient } = useWaletClient({
-    chainId: chain.id,
-  });
+  const { data: walletClient } = useNetworkWalletClient();
 
   const deployDao = useCallback(
     (
