@@ -3,10 +3,11 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getAddress, getContract, zeroAddress } from 'viem';
-import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
+import { useNetworkWalletClient } from '../../../hooks/useNetworkWalletClient';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -35,7 +36,7 @@ export function DelegateModal({ close }: { close: Function }) {
   );
   const [contractCall, pending] = useTransaction();
   const { addressValidationTest } = useValidationAddress();
-  const { data: walletClient } = useWalletClient();
+  const { data: walletClient } = useNetworkWalletClient();
   const publicClient = usePublicClient();
 
   const submitDelegation = async (values: { address: string }) => {

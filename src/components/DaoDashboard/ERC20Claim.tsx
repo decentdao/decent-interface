@@ -3,8 +3,9 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
-import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { Alert as AlertIcon } from '../../assets/theme/custom/icons/Alert';
+import { useNetworkWalletClient } from '../../hooks/useNetworkWalletClient';
 import { useTransaction } from '../../hooks/utils/useTransaction';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../types';
@@ -20,7 +21,7 @@ export function ERCO20Claim() {
   const [contractCall, pending] = useTransaction();
   const azoriusGovernance = governance as AzoriusGovernance;
   const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
+  const { data: walletClient } = useNetworkWalletClient();
 
   const loadClaim = useCallback(async () => {
     if (!tokenClaimContractAddress || !type || !account || !publicClient) {
