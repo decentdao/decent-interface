@@ -12,7 +12,7 @@ import {
   isHex,
   parseAbiParameters,
 } from 'viem';
-import { useAccount, usePublicClient } from 'wagmi';
+import { useAccount } from 'wagmi';
 import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
@@ -25,6 +25,7 @@ import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetwo
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalMetadata, MetaTransaction, ProposalExecuteData } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
+import useNetworkPublicClient from '../../useNetworkPublicClient';
 import { useNetworkWalletClient } from '../../useNetworkWalletClient';
 import useVotingStrategiesAddresses from '../../utils/useVotingStrategiesAddresses';
 import { useDecentModules } from '../loaders/useDecentModules';
@@ -63,7 +64,7 @@ export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
   const loadDAOProposals = useLoadDAOProposals();
   const { data: walletClient } = useNetworkWalletClient();
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
 
   const { getVotingStrategies } = useVotingStrategiesAddresses();
   const { address: userAddress } = useAccount();
@@ -247,7 +248,7 @@ export default function useSubmitProposal() {
       failedToastMessage,
       safeAddress,
     }: ISubmitAzoriusProposal) => {
-      if (!proposalData || !walletClient || !publicClient) {
+      if (!proposalData || !walletClient) {
         return;
       }
       const toastId = toast.loading(pendingToastMessage, {
@@ -309,7 +310,7 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData || !safeAPI || !publicClient || !userAddress) {
+      if (!proposalData || !safeAPI || !userAddress) {
         return;
       }
 
