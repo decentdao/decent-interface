@@ -10,6 +10,7 @@ import {
   SendTransactionRequest,
 } from 'viem';
 import { useWalletClient } from 'wagmi';
+import { useNetworkConfigStore } from '../providers/NetworkConfig/useNetworkConfigStore';
 
 type WalletClientExtension = {
   sendTransaction<
@@ -28,7 +29,10 @@ type WalletClientExtension = {
   ): Promise<Hash>;
 };
 
-export const useWaletClient = ({ chainId }: { chainId: number }) => {
+export const useNetworkWalletClient = (props?: { chainId?: number }) => {
+  const { chain } = useNetworkConfigStore();
+  const chainId = props?.chainId ?? chain.id;
+
   const walletClient = useWalletClient({ chainId });
 
   const extendedWalletClient = walletClient.data?.extend(
