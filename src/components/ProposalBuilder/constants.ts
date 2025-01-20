@@ -8,8 +8,7 @@ import {
 export const builderInProposalMode = (mode: ProposalBuilderMode) =>
   mode === ProposalBuilderMode.PROPOSAL ||
   mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS ||
-  mode === ProposalBuilderMode.SABLIER ||
-  mode === ProposalBuilderMode.PROPOSAL_FROM_TEMPLATE;
+  mode === ProposalBuilderMode.SABLIER;
 
 export const DEFAULT_PROPOSAL_TRANSACTION: CreateProposalTransaction = {
   targetAddress: '',
