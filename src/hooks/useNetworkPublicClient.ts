@@ -10,7 +10,7 @@ export default function useNetworkPublicClient() {
         chain,
         batch: {
           multicall: {
-            wait: 500,
+            wait: 200,
           },
         },
         transport: http(rpcEndpoint),
