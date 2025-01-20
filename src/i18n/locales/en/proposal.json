@@ -173,5 +173,7 @@
   "labelTotalAmount": "Total Amount",
   "labelTranches": "Tranches",
   "labelTrancheAmount": "Tranche Amount",
-  "labelTrancheDuration": "Tranche Duration"
+  "labelTrancheDuration": "Tranche Duration",
+  "streamCancelableHelper": "If enabled, the stream can be canceled by the owner of the Safe",
+  "streamTransferableHelper": "If enabled, the stream can be transferred to another address by the stream's recipient"
 }
