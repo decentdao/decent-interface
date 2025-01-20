@@ -38,6 +38,7 @@ export default function StepButtons(props: StepButtonsProps) {
   // @dev these prevStepUrl and nextStepUrl calculation is done this way to universally build URL for the next/prev steps both for proposal builder and proposal template builder
   const prevStepUrl = `${location.pathname.replace(`${mode === ProposalBuilderMode.SABLIER ? CreateProposalSteps.STREAMS : CreateProposalSteps.TRANSACTIONS}`, `${CreateProposalSteps.METADATA}`)}${location.search}`;
   const nextStepUrl = `${location.pathname.replace(`${CreateProposalSteps.METADATA}`, `${mode === ProposalBuilderMode.SABLIER ? CreateProposalSteps.STREAMS : CreateProposalSteps.TRANSACTIONS}`)}${location.search}`;
+  const isStreamMode = mode === ProposalBuilderMode.SABLIER;
 
   return (
     <Flex
@@ -79,7 +80,7 @@ export default function StepButtons(props: StepButtonsProps) {
           }
         />
         <Route
-          path={CreateProposalSteps.TRANSACTIONS}
+          path={isStreamMode ? CreateProposalSteps.STREAMS : CreateProposalSteps.TRANSACTIONS}
           element={
             <>
               <Button
@@ -101,7 +102,7 @@ export default function StepButtons(props: StepButtonsProps) {
                 type="submit"
                 isDisabled={
                   !canUserCreateProposal ||
-                  !!transactionsError ||
+                  (!isStreamMode && !!transactionsError) ||
                   !!nonceError ||
                   pendingTransaction
                 }
