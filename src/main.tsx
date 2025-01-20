@@ -1,12 +1,13 @@
 import '@fontsource/space-mono';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, useSearchParams } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import './assets/css/Markdown.css';
 import './assets/css/sentry.css';
 import './assets/css/Toast.css';
 import './insights';
-import { EnvironmentFeatureFlags, FeatureFlags } from './helpers/featureFlags';
+import { EnvironmentFeatureFlags } from './helpers/environmentFeatureFlags';
+import { FEATURE_FLAGS, FeatureFlags } from './helpers/featureFlags';
 import { runMigrations } from './hooks/utils/cache/runMigrations';
 import { useNetworkConfigStore } from './providers/NetworkConfig/useNetworkConfigStore';
 import Providers from './providers/Providers';
@@ -26,7 +27,7 @@ function DecentRouterProvider() {
 async function initializeApp() {
   await runMigrations();
 
-  FeatureFlags.instance = new EnvironmentFeatureFlags();
+  FeatureFlags.instance = new EnvironmentFeatureFlags(FEATURE_FLAGS);
 
   const root = document.getElementById('root');
   if (root !== null) {

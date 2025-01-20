@@ -3,8 +3,7 @@ import { useFormikContext } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
-import { usePublicClient, useWalletClient } from 'wagmi';
-import { FeatureFlags } from '../../../helpers/featureFlags';
+import useNetworkPublicClient from '../../../hooks/useNetworkPublicClient';
 import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { CreatorFormState, ICreationStepProps, TokenCreationType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
@@ -14,28 +13,18 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { usePrepareFormData } from '../hooks/usePrepareFormData';
 import useStepRedirect from '../hooks/useStepRedirect';
-import { CreateDAOPresenter, ISelectionInput } from '../presenters/CreateDAOPresenter';
 import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
-import { VotesToken } from './VotesToken';
 import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
-import { HorizontalRadioSelection } from './input/SelectionInput';
-import { FullWidthTextInput } from './input/TextInput';
-import { InputSection } from './input/InputSection';
 
 function TokenConfigDisplay(props: ICreationStepProps) {
-  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
-  if (REUSABLE_COMPONENTS) {
-    return <VotesToken {...props} />;
-  } else {
-    switch (props.values.erc20Token.tokenCreationType) {
-      case TokenCreationType.NEW:
-        return <VotesTokenNew {...props} />;
-      case TokenCreationType.IMPORTED:
-        return <VotesTokenImport {...props} />;
-      default:
-        return null;
-    }
+  switch (props.values.erc20Token.tokenCreationType) {
+    case TokenCreationType.NEW:
+      return <VotesTokenNew {...props} />;
+    case TokenCreationType.IMPORTED:
+      return <VotesTokenImport {...props} />;
+    default:
+      return null;
   }
 }
 
@@ -44,8 +33,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     props;
 
   const { t } = useTranslation('daoCreate');
-  const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
 
   const { values, touched, setTouched } = useFormikContext<CreatorFormState>();
 
@@ -64,7 +52,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       const tokenContract = getContract({
         address: importAddress,
         abi: erc20Abi,
-        client: { wallet: walletClient, public: publicClient },
+        client: publicClient,
       });
       const [name, symbol, decimals] = await Promise.all([
         tokenContract.read.name(),
@@ -98,7 +86,6 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     errors?.erc20Token?.tokenImportAddress,
     setFieldValue,
     publicClient,
-    walletClient,
     values.erc20Token.tokenImportAddress,
   ]);
 
@@ -112,77 +99,6 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     tokenErrorMsg =
       errors?.erc20Token?.tokenImportAddress ||
       (!isImportedVotesToken ? t('errorNotVotingToken') : '');
-  }
-
-  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
-
-  if (REUSABLE_COMPONENTS) {
-    const tokenOptions: ISelectionInput = CreateDAOPresenter.tokenOptions(
-      t,
-      values.erc20Token.tokenCreationType,
-      tokenCreationType => {
-        if (tokenCreationType === TokenCreationType.NEW) {
-          setFieldValue('erc20Token.tokenImportAddress', zeroAddress);
-        }
-        setFieldValue('erc20Token.tokenName', '');
-        setFieldValue('erc20Token.tokenSymbol', '');
-        setFieldValue('erc20Token.tokenSupply', '');
-        setFieldValue('erc20Token.tokenCreationType', tokenCreationType);
-      },
-    );
-
-    const tokenImportAddress = CreateDAOPresenter.tokenImportAddress(
-      t,
-      createAccountSubstring(zeroAddress),
-      tokenErrorMsg,
-      event => {
-        setTouched({
-          erc20Token: {
-            tokenImportAddress: true,
-          },
-          ...touched,
-        });
-
-        handleChange(event);
-      },
-    );
-
-    const section = CreateDAOPresenter.section(t('titleTokenContract'));
-    <>
-      <StepWrapper
-        mode={mode}
-        isSubDAO={isSubDAO}
-        isFormSubmitting={!!isSubmitting || transactionPending}
-        allSteps={props.steps}
-        stepNumber={2}
-      >
-        <InputSection {...section}>
-          <HorizontalRadioSelection {...tokenOptions} />
-          {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
-            <FullWidthTextInput {...tokenImportAddress} />
-          )}
-        </InputSection>
-      </StepWrapper>
-      <Box
-        mt="1.5rem"
-        padding="1.5rem"
-        bg="neutral-2"
-        borderRadius="0.25rem"
-      >
-        <TokenConfigDisplay {...props} />
-      </Box>
-      {values.erc20Token.tokenCreationType === TokenCreationType.NEW && (
-        <Box
-          mt="1.5rem"
-          padding="1.5rem"
-          bg="neutral-2"
-          borderRadius="0.25rem"
-        >
-          <AzoriusTokenAllocations {...props} />
-        </Box>
-      )}
-      <StepButtons {...props} />
-    </>;
   }
 
   return (

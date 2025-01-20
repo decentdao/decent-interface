@@ -1,12 +1,13 @@
 {
   "name": "decent-interface",
-  "version": "0.4.0",
+  "version": "0.4.3",
   "private": true,
   "dependencies": {
     "@amplitude/analytics-browser": "^2.11.1",
     "@apollo/client": "^3.7.10",
     "@chakra-ui/anatomy": "^2.2.2",
     "@chakra-ui/react": "^2.8.2",
+    "@cloudflare/workers-types": "^4.20241230.0",
     "@fontsource/space-mono": "^5.0.19",
     "@fractal-framework/fractal-contracts": "^1.4.2",
     "@graphprotocol/client-apollo": "^1.0.16",
@@ -14,8 +15,6 @@
     "@hatsprotocol/sdk-v1-core": "^0.9.0",
     "@hatsprotocol/sdk-v1-subgraph": "^1.0.0",
     "@hotjar/browser": "^1.0.9",
-    "@netlify/blobs": "^6.5.0",
-    "@netlify/functions": "^2.6.0",
     "@phosphor-icons/react": "^2.1.4",
     "@safe-global/api-kit": "^2.4.2",
     "@safe-global/safe-core-sdk-types": "^5.0.2",
@@ -23,6 +22,7 @@
     "@sentry/react": "^8.7.0",
     "@shutter-network/shutter-crypto": "^1.0.1",
     "@tanstack/react-query": "^5.36.2",
+    "@torchauth/vite-plugin-wrangler-spa": "^2.0.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "@web3modal/wagmi": "^4.2.3",
     "axios": "^0.27.2",
@@ -32,13 +32,13 @@
     "evm-proxy-detection": "^1.1.0",
     "formik": "^2.2.9",
     "framer-motion": "^6.5.1",
+    "hono": "^4.6.16",
     "i18next": "^23.10.1",
     "i18next-browser-languagedetector": "^6.1.5",
     "js-big-decimal": "^1.3.12",
     "lodash.camelcase": "^4.3.0",
     "lodash.debounce": "^4.0.8",
     "lodash.groupby": "^4.6.0",
-    "moralis": "^2.27.1",
     "react": "^18.2.0",
     "react-calendar": "^5.0.0",
     "react-dom": "^18.2.0",
@@ -63,18 +63,17 @@
     "pretty": "prettier . --write",
     "pretty:check": "prettier . --check",
     "dev": "vite --force",
-    "dev:netlify": "netlify dev",
-    "start": "vite start",
     "preview": "vite preview",
-    "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build": "vite build && vite build --mode page-function",
+    "build:cf": "vite build && vite build --mode page-function",
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
     "test": "vitest --dir=test",
     "postinstall": "npm run graphql:build"
   },
   "engines": {
-    "node": "20.17.0",
-    "npm": "10.8.2"
+    "node": "23.6.0",
+    "npm": "10.9.2"
   },
   "browserslist": {
     "production": [
@@ -108,9 +107,9 @@
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "jsdom": "^24.0.0",
-    "netlify-cli": "^17.33.3",
     "prettier": "^3.3.3",
     "typescript": "^5.6.3",
-    "vitest": "^1.2.2"
+    "vitest": "^1.2.2",
+    "wrangler": "^3.102.0"
   }
 }

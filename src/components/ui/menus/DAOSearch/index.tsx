@@ -143,7 +143,7 @@ export function DAOSearch() {
             marginTop="0.25rem"
             rounded="0.5rem"
             bg="neutral-2"
-            boxShadow={SEXY_BOX_SHADOW_T_T}
+            boxShadow={resolvedAddressesWithPrefix.length ? SEXY_BOX_SHADOW_T_T : 'none'}
             hidden={!showResults}
             w="full"
             position="absolute"

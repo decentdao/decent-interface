@@ -1,6 +1,5 @@
 import { useBreakpointValue } from '@chakra-ui/react';
 import { Hex } from 'viem';
-import { FeatureFlags } from '../helpers/featureFlags';
 
 const HEADER_HEIGHT = '4.5rem';
 const HEADER_HEIGHT_MOBILE = '3.75rem';
@@ -54,22 +53,6 @@ export const SENTINEL_ADDRESS = '0x0000000000000000000000000000000000000001';
 export const SIDEBAR_WIDTH = '4.25rem';
 
 export const MAX_CONTENT_WIDTH = '80rem';
-
-const features = {
-  developmentMode: 'DEVELOPMENT_MODE',
-  termedRoles: 'TERMED_ROLES',
-  demoMode: 'DEMO_MODE',
-} as const;
-
-type FeatureFlag = (typeof features)[keyof typeof features];
-
-export const isFeatureEnabled = (feature: FeatureFlag) => {
-  return FeatureFlags.instance?.get(`VITE_APP_FLAG_${feature}`) === 'ON';
-};
-
-export const isDevMode = () => isFeatureEnabled(features.developmentMode);
-export const isTermedRolesEnabled = () => isFeatureEnabled(features.termedRoles);
-export const isDemoMode = () => isFeatureEnabled(features.demoMode);
 
 /**
  * @dev DO NOT CHANGE THE SALT

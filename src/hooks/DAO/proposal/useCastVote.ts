@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useTransaction } from '../../utils/useTransaction';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
@@ -25,7 +24,6 @@ const useCastVote = (proposalId: string, strategy: Address) => {
     proposalId,
   );
 
-  const { getCanVote, getHasVoted } = useVoteContext();
   const { data: walletClient } = useWalletClient();
 
   const { t } = useTranslation('transaction');
@@ -50,12 +48,6 @@ const useCastVote = (proposalId: string, strategy: Address) => {
           pendingMessage: t('pendingCastVote'),
           failedMessage: t('failedCastVote'),
           successMessage: t('successCastVote'),
-          successCallback: () => {
-            setTimeout(() => {
-              getHasVoted();
-              getCanVote();
-            }, 3000);
-          },
         });
       } else if (
         strategy === linearVotingErc721Address ||
@@ -77,12 +69,6 @@ const useCastVote = (proposalId: string, strategy: Address) => {
           pendingMessage: t('pendingCastVote'),
           failedMessage: t('failedCastVote'),
           successMessage: t('successCastVote'),
-          successCallback: () => {
-            setTimeout(() => {
-              getHasVoted();
-              getCanVote();
-            }, 3000);
-          },
         });
       }
     },
@@ -90,8 +76,6 @@ const useCastVote = (proposalId: string, strategy: Address) => {
       contractCall,
       linearVotingErc721Address,
       linearVotingErc721WithHatsWhitelistingAddress,
-      getCanVote,
-      getHasVoted,
       linearVotingErc20Address,
       linearVotingErc20WithHatsWhitelistingAddress,
       proposalId,

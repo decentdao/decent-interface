@@ -11,8 +11,7 @@ import {
 import { WarningCircle } from '@phosphor-icons/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isDevMode } from '../../../constants/common';
-import { FeatureFlags } from '../../../helpers/featureFlags';
+import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
@@ -22,11 +21,7 @@ import { NumberStepperInput } from '../../ui/forms/NumberStepperInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
-import { CreateDAOPresenter } from '../presenters/CreateDAOPresenter';
 import { DAOCreateMode } from './EstablishEssentials';
-import { BigIntTextInput } from './input/TextInput';
-import { StepperInput } from './input/StepperInput';
-import { InputSection } from './input/InputSection';
 
 function DayStepperInput({
   inputValue,
@@ -83,8 +78,9 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   useStepRedirect({ values });
 
-  const [votingPeriodDays, setVotingPeriodDays] = useState(isDevMode() ? 0.0021 : 7);
-  const [timelockPeriodDays, setTimelockPeriodDays] = useState(isDevMode() ? 0 : 1);
+  const isDevMode = isFeatureEnabled('flag_dev');
+  const [votingPeriodDays, setVotingPeriodDays] = useState(isDevMode ? 0.0021 : 7);
+  const [timelockPeriodDays, setTimelockPeriodDays] = useState(isDevMode ? 0 : 1);
   const [executionPeriodDays, setExecutionPeriodDays] = useState(2);
 
   useEffect(() => {
@@ -104,126 +100,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
     setFieldValue('azorius.executionPeriod', { bigintValue: minutes, value: minutes.toString() });
   }, [setFieldValue, executionPeriodDays]);
 
-  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
-  if (REUSABLE_COMPONENTS) {
-    const quorum =
-      values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
-        ? CreateDAOPresenter.erc20Quorum(
-            t,
-            values.azorius.quorumPercentage.bigintValue,
-            valuePair => setFieldValue('azorius.quorumPercentage', valuePair),
-          )
-        : CreateDAOPresenter.erc721Quorum(
-            t,
-            values.erc721Token.quorumThreshold.bigintValue,
-            valuePair => setFieldValue('erc721Token.quorumThreshold', valuePair),
-          );
-    const votingPeriod = CreateDAOPresenter.votingPeriod(t, votingPeriodDays, setVotingPeriodDays);
-    const timelockPeriod = CreateDAOPresenter.timelockPeriod(
-      t,
-      timelockPeriodDays,
-      setTimelockPeriodDays,
-    );
-    const executionPeriod = CreateDAOPresenter.executionPeriod(
-      t,
-      executionPeriodDays,
-      setExecutionPeriodDays,
-    );
-    const section = CreateDAOPresenter.section();
-
-    return (
-      <>
-        <StepWrapper
-          mode={mode}
-          isSubDAO={isSubDAO}
-          isFormSubmitting={!!isSubmitting || transactionPending}
-          allSteps={props.steps}
-          stepNumber={3}
-        >
-          <InputSection {...section}>
-            <BigIntTextInput {...quorum} />
-            <StepperInput {...votingPeriod} />
-            <StepperInput {...timelockPeriod} />
-            <StepperInput {...executionPeriod} />
-
-            <Alert
-              status="info"
-              gap={4}
-            >
-              <Box
-                width="1.5rem"
-                height="1.5rem"
-              >
-                <WarningCircle size="24" />
-              </Box>
-              <Text
-                whiteSpace="pre-wrap"
-                ml="1rem"
-              >
-                {t('governanceDescription')}
-              </Text>
-            </Alert>
-          </InputSection>
-        </StepWrapper>
-        {!!subgraphInfo?.parentAddress && (
-          <Box
-            padding="1.5rem"
-            bg="neutral-2"
-            borderRadius="0.25rem"
-            mt="1.5rem"
-            mb={showCustomNonce ? '1.5rem' : 0}
-          >
-            <FormControl
-              gap="0.5rem"
-              width="100%"
-              justifyContent="space-between"
-              display="flex"
-              isDisabled={!!fractalModule}
-            >
-              <Text>{t('attachFractalModuleLabel')}</Text>
-              <Switch
-                size="md"
-                variant="secondary"
-                onChange={() =>
-                  setFieldValue('freeze.attachFractalModule', !values.freeze.attachFractalModule)
-                }
-                isChecked={!!fractalModule || values.freeze.attachFractalModule}
-                isDisabled={!!fractalModule}
-              />
-            </FormControl>
-            <Text
-              color="neutral-7"
-              width="50%"
-            >
-              {t(
-                fractalModule
-                  ? 'fractalModuleAttachedDescription'
-                  : 'attachFractalModuleDescription',
-              )}
-            </Text>
-          </Box>
-        )}
-        {showCustomNonce && (
-          <Box
-            padding="1.5rem"
-            bg="neutral-2"
-            borderRadius="0.25rem"
-            my="1.5rem"
-          >
-            <CustomNonceInput
-              nonce={values.multisig.customNonce}
-              onChange={handleNonceChange}
-              renderTrimmed={false}
-            />
-          </Box>
-        )}
-        <StepButtons
-          {...props}
-          isEdit={mode === DAOCreateMode.EDIT}
-        />
-      </>
-    );
-  }
   return (
     <>
       <StepWrapper
