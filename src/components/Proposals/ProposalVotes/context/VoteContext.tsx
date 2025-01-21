@@ -30,8 +30,6 @@ interface IVoteContext {
   canVoteLoading: boolean;
   hasVoted: boolean;
   hasVotedLoading: boolean;
-  getCanVote: () => Promise<void>;
-  getHasVoted: () => void;
 }
 
 const VoteContext = createContext<IVoteContext>({
@@ -39,8 +37,6 @@ const VoteContext = createContext<IVoteContext>({
   canVoteLoading: false,
   hasVoted: false,
   hasVotedLoading: false,
-  getCanVote: async () => {},
-  getHasVoted: () => {},
 });
 
 export const useVoteContext = () => {
@@ -191,10 +187,8 @@ export function VoteContextProvider({
       canVoteLoading,
       hasVoted,
       hasVotedLoading,
-      getCanVote,
-      getHasVoted,
     };
-  }, [canVote, canVoteLoading, getCanVote, getHasVoted, hasVoted, hasVotedLoading]);
+  }, [canVote, canVoteLoading, hasVoted, hasVotedLoading]);
 
   return <VoteContext.Provider value={memoizedValue}>{children}</VoteContext.Provider>;
 }
