@@ -1,7 +1,7 @@
 import { Flex, Input } from '@chakra-ui/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FeatureFlags } from '../../../helpers/featureFlags';
+import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { ICreationStepProps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
@@ -16,9 +16,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
   const { t } = useTranslation('daoCreate');
   const { restrictChars } = useFormHelpers();
 
-  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
-
-  if (REUSABLE_COMPONENTS) {
+  if (isFeatureEnabled('flag_higher_components')) {
     const tokenName = CreateDAOPresenter.tokenName(t, false, value => {
       setFieldValue('erc20Token.tokenName', value);
     });

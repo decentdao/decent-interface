@@ -2,7 +2,7 @@ import { Text, Flex, Grid, IconButton, Icon, Button } from '@chakra-ui/react';
 import { MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FeatureFlags } from '../../../helpers/featureFlags';
+import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import { ICreationStepProps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -36,8 +36,7 @@ export function Multisig(props: ICreationStepProps) {
     return updatedNum !== num;
   };
 
-  const REUSABLE_COMPONENTS = FeatureFlags.instance?.get('REUSABLE_COMPONENTS') == true;
-  if (REUSABLE_COMPONENTS) {
+  if (isFeatureEnabled('flag_higher_components')) {
     const section: IInputSection = CreateDAOPresenter.section(undefined);
 
     const multiSigOwners = CreateDAOPresenter.multiSignOwners(t);
