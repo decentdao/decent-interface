@@ -26,18 +26,20 @@ import { AddActions } from '../ui/modals/AddActions';
 import { SendAssetsData } from '../ui/modals/SendAssetsModal';
 import PageHeader from '../ui/page/Header/PageHeader';
 import { ProposalActionCard } from './ProposalActionCard';
-import ProposalDetails from './ProposalDetails';
+import ProposalDetails, {
+  StreamsDetails,
+  TemplateDetails,
+  TransactionsDetails,
+} from './ProposalDetails';
 import ProposalMetadata from './ProposalMetadata';
 import { ProposalStreams } from './ProposalStreams';
 import ProposalTransactionsForm from './ProposalTransactionsForm';
-import StepButtons from './StepButtons';
+import StepButtons, { CreateProposalButton, NextButton, PreviousButton } from './StepButtons';
 import { builderInProposalMode } from './constants';
 
 interface ProposalBuilderProps {
   mode: ProposalBuilderMode;
-  prepareProposalData: (
-    values: CreateProposalForm | CreateSablierProposalForm,
-  ) => Promise<ProposalExecuteData | undefined>;
+  prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
 }
 
@@ -104,7 +106,7 @@ export function ProposalBuilder({
   }, [safeAddress, step, navigate, addressPrefix]);
 
   return (
-    <Formik<CreateProposalForm | CreateSablierProposalForm>
+    <Formik<CreateProposalForm>
       validationSchema={createProposalValidation}
       initialValues={initialValues}
       enableReinitialize
@@ -131,12 +133,31 @@ export function ProposalBuilder({
         }
       }}
     >
-      {(formikProps: FormikProps<CreateProposalForm | CreateSablierProposalForm>) => {
-        const { handleSubmit } = formikProps;
+      {(formikProps: FormikProps<CreateProposalForm>) => {
+        const {
+          handleSubmit,
+          values: {
+            proposalMetadata: { title, description },
+            transactions,
+            nonce,
+          },
+        } = formikProps;
 
         if (!safeAddress) {
           return;
         }
+
+        const trimmedTitle = title.trim();
+
+        const createProposalButtonDisabled =
+          !canUserCreateProposal ||
+          !!formikProps.errors.transactions ||
+          !!formikProps.errors.nonce ||
+          pendingCreateTx;
+
+        // @dev these prevStepUrl and nextStepUrl calculation is done this way to universally build URL for the next/prev steps both for proposal builder and proposal template builder
+        const prevStepUrl = `${location.pathname.replace(`${mode === ProposalBuilderMode.SABLIER ? CreateProposalSteps.STREAMS : CreateProposalSteps.TRANSACTIONS}`, `${CreateProposalSteps.METADATA}`)}${location.search}`;
+        const nextStepUrl = `${location.pathname.replace(`${CreateProposalSteps.METADATA}`, `${mode === ProposalBuilderMode.SABLIER ? CreateProposalSteps.STREAMS : CreateProposalSteps.TRANSACTIONS}`)}${location.search}`;
 
         return (
           <form onSubmit={handleSubmit}>
@@ -249,7 +270,7 @@ export function ProposalBuilder({
                                   bg="neutral-2"
                                 >
                                   <CustomNonceInput
-                                    nonce={formikProps.values.nonce}
+                                    nonce={nonce}
                                     onChange={newNonce =>
                                       formikProps.setFieldValue('nonce', newNonce)
                                     }
@@ -305,9 +326,24 @@ export function ProposalBuilder({
                       </Flex>
                     )}
                     <StepButtons
-                      {...formikProps}
-                      mode={mode}
-                      pendingTransaction={pendingCreateTx}
+                      metadataStepButtons={(() => {
+                        if (mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS) {
+                          return <CreateProposalButton isDisabled={createProposalButtonDisabled} />;
+                        } else {
+                          return (
+                            <NextButton
+                              nextStepUrl={nextStepUrl}
+                              isDisabled={!!formikProps.errors.proposalMetadata}
+                            />
+                          );
+                        }
+                      })()}
+                      transactionsStepButtons={
+                        <>
+                          <PreviousButton prevStepUrl={prevStepUrl} />
+                          <CreateProposalButton isDisabled={createProposalButtonDisabled} />
+                        </>
+                      }
                     />
                   </Flex>
                 </GridItem>
@@ -316,8 +352,30 @@ export function ProposalBuilder({
                   w="100%"
                 >
                   <ProposalDetails
-                    {...formikProps}
-                    mode={mode}
+                    title={trimmedTitle}
+                    description={description}
+                    transactionsDetails={(() => {
+                      if (mode !== ProposalBuilderMode.SABLIER) {
+                        return <TransactionsDetails transactions={transactions} />;
+                      }
+                      return null;
+                    })()}
+                    templateDetails={(() => {
+                      if (mode === ProposalBuilderMode.TEMPLATE) {
+                        return <TemplateDetails title={trimmedTitle} />;
+                      }
+                      return null;
+                    })()}
+                    streamsDetails={(() => {
+                      if (mode === ProposalBuilderMode.SABLIER) {
+                        return (
+                          <StreamsDetails
+                            streams={(formikProps.values as CreateSablierProposalForm).streams}
+                          />
+                        );
+                      }
+                      return null;
+                    })()}
                   />
                 </GridItem>
               </Grid>
