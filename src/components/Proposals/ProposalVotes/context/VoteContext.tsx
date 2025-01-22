@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Address, erc721Abi, getContract } from 'viem';
+import { erc721Abi, getContract, Hex, toHex } from 'viem';
 import { useAccount } from 'wagmi';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
@@ -31,8 +31,6 @@ interface IVoteContext {
   canVoteLoading: boolean;
   hasVoted: boolean;
   hasVotedLoading: boolean;
-  getCanVote: () => Promise<void>;
-  getHasVoted: () => void;
 }
 
 const VoteContext = createContext<IVoteContext>({
@@ -40,8 +38,6 @@ const VoteContext = createContext<IVoteContext>({
   canVoteLoading: false,
   hasVoted: false,
   hasVotedLoading: false,
-  getCanVote: async () => {},
-  getHasVoted: () => {},
 });
 
 export const useVoteContext = () => {
@@ -121,60 +117,63 @@ export function VoteContextProvider({
     return userVotingWeight;
   }, [governance, publicClient, userAccount.address]);
 
-  const getCanVote = useCallback(async () => {
-    setCanVoteLoading(true);
-    let newCanVote = false;
-    if (userAccount.address) {
-      if (snapshotProposal) {
-        const votingWeightData = await loadVotingWeight();
-        newCanVote = votingWeightData.votingWeight >= 1;
-      } else if (governance.type === GovernanceType.AZORIUS_ERC20) {
-        const azoriusProposal = proposal as AzoriusProposal;
-        const ozLinearVotingContract = getContract({
-          abi: abis.LinearERC20Voting,
-          address: azoriusProposal.votingStrategy,
-          client: publicClient,
-        });
-        newCanVote =
-          (await ozLinearVotingContract.read.getVotingWeight([
-            userAccount.address,
-            Number(proposal.proposalId),
-          ])) > 0n;
-      } else if (governance.type === GovernanceType.AZORIUS_ERC721) {
-        const votingWeight = await erc721VotingWeight();
-        newCanVote = votingWeight > 0n && remainingTokenIds.length > 0;
-      } else if (governance.type === GovernanceType.MULTISIG) {
-        newCanVote = !!safe?.owners.includes(userAccount.address);
-      } else {
-        newCanVote = false;
+  const getCanVote = useCallback(
+    async (remainingTokenIdsLength: number) => {
+      setCanVoteLoading(true);
+      let newCanVote = false;
+      if (userAccount.address) {
+        if (snapshotProposal) {
+          const votingWeightData = await loadVotingWeight();
+          newCanVote = votingWeightData.votingWeight >= 1;
+        } else if (governance.type === GovernanceType.AZORIUS_ERC20) {
+          const azoriusProposal = proposal as AzoriusProposal;
+          const ozLinearVotingContract = getContract({
+            abi: abis.LinearERC20Voting,
+            address: azoriusProposal.votingStrategy,
+            client: publicClient,
+          });
+          newCanVote =
+            (await ozLinearVotingContract.read.getVotingWeight([
+              userAccount.address,
+              Number(proposal.proposalId),
+            ])) > 0n;
+        } else if (governance.type === GovernanceType.AZORIUS_ERC721) {
+          const votingWeight = await erc721VotingWeight();
+          newCanVote = votingWeight > 0n && remainingTokenIdsLength > 0;
+        } else if (governance.type === GovernanceType.MULTISIG) {
+          newCanVote = !!safe?.owners.includes(userAccount.address);
+        } else {
+          newCanVote = false;
+        }
       }
-    }
 
-    if (canVote !== newCanVote) {
-      setCanVote(newCanVote);
-    }
-    setCanVoteLoading(false);
-  }, [
-    userAccount.address,
-    publicClient,
-    canVote,
-    snapshotProposal,
-    governance.type,
-    loadVotingWeight,
-    remainingTokenIds.length,
-    safe?.owners,
-    proposal,
-    erc721VotingWeight,
-  ]);
+      if (canVote !== newCanVote) {
+        setCanVote(newCanVote);
+      }
+      setCanVoteLoading(false);
+    },
+    [
+      userAccount.address,
+      publicClient,
+      canVote,
+      snapshotProposal,
+      governance.type,
+      loadVotingWeight,
+      safe?.owners,
+      proposal,
+      erc721VotingWeight,
+    ],
+  );
 
-  const connectedUserRef = useRef<Address>();
+  const connectedUserRef = useRef<Hex>();
   useEffect(() => {
-    const isUserRefCurrent = connectedUserRef.current === userAccount.address;
+    const refValue = toHex(`${userAccount.address}-${remainingTokenIds.length}`);
+    const isUserRefCurrent = connectedUserRef.current === refValue;
     if (!isUserRefCurrent) {
-      connectedUserRef.current = userAccount.address;
-      getCanVote();
+      connectedUserRef.current = refValue;
+      getCanVote(remainingTokenIds.length);
     }
-  }, [getCanVote, userAccount.address]);
+  }, [getCanVote, userAccount.address, remainingTokenIds.length]);
 
   const connectedUserVotingWeightRef = useRef<string>();
   useEffect(() => {
@@ -192,10 +191,8 @@ export function VoteContextProvider({
       canVoteLoading,
       hasVoted,
       hasVotedLoading,
-      getCanVote,
-      getHasVoted,
     };
-  }, [canVote, canVoteLoading, getCanVote, getHasVoted, hasVoted, hasVotedLoading]);
+  }, [canVote, canVoteLoading, hasVoted, hasVotedLoading]);
 
   return <VoteContext.Provider value={memoizedValue}>{children}</VoteContext.Provider>;
 }

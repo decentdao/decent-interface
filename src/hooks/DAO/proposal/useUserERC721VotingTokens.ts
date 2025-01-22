@@ -154,8 +154,8 @@ export default function useUserERC721VotingTokens(
 
             const ownedTokenIds = new Set<string>();
             allTokenTransferEvents.forEach(({ args: { to, from, tokenId } }) => {
-              if (!to || !from || !tokenId) {
-                throw new Error('An ERC721 event has undefiend data');
+              if (!to || !from || tokenId === undefined) {
+                throw new Error('An ERC721 event has undefined data');
               }
               if (to.toLowerCase() === userAddress.toLowerCase()) {
                 ownedTokenIds.add(tokenId.toString());
