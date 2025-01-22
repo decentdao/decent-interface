@@ -32,21 +32,59 @@ import ProposalDetails, {
   TransactionsDetails,
 } from './ProposalDetails';
 import ProposalMetadata from './ProposalMetadata';
-import { ProposalStreams } from './ProposalStreams';
-import ProposalTransactionsForm from './ProposalTransactionsForm';
 import StepButtons, { CreateProposalButton, NextButton, PreviousButton } from './StepButtons';
 import { builderInProposalMode } from './constants';
+
+export function ShowNonceInputOnMultisig({
+  nonce,
+  nonceOnChange,
+}: {
+  nonce: number | undefined;
+  nonceOnChange: (nonce?: string) => void;
+}) {
+  const {
+    governance: { isAzorius },
+  } = useFractal();
+
+  if (isAzorius) {
+    return null;
+  }
+
+  return (
+    <Flex
+      alignItems="center"
+      justifyContent="space-between"
+      marginBottom="2rem"
+      rounded="lg"
+      p="1.5rem"
+      bg="neutral-2"
+    >
+      <CustomNonceInput
+        nonce={nonce}
+        onChange={nonceOnChange}
+        align="end"
+        renderTrimmed={false}
+      />
+    </Flex>
+  );
+}
 
 interface ProposalBuilderProps {
   mode: ProposalBuilderMode;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
+  contentRoute: (
+    formikProps: FormikProps<CreateProposalForm>,
+    pendingCreateTx: boolean,
+    nonce: number | undefined,
+  ) => JSX.Element;
 }
 
 export function ProposalBuilder({
   mode,
   initialValues,
   prepareProposalData,
+  contentRoute,
 }: ProposalBuilderProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,11 +95,6 @@ export function ProposalBuilder({
     | CreateProposalSteps
     | undefined;
   const isProposalMode = builderInProposalMode(mode);
-  const isSablierMode = mode === ProposalBuilderMode.SABLIER;
-
-  const {
-    governance: { isAzorius },
-  } = useFractal();
   const { safe } = useDaoInfoStore();
   const safeAddress = safe?.address;
 
@@ -238,50 +271,7 @@ export function ProposalBuilder({
                             />
                           }
                         />
-                        <Route
-                          path={
-                            isSablierMode
-                              ? CreateProposalSteps.STREAMS
-                              : CreateProposalSteps.TRANSACTIONS
-                          }
-                          element={
-                            <>
-                              {isSablierMode ? (
-                                <ProposalStreams
-                                  pendingTransaction={pendingCreateTx}
-                                  {...formikProps}
-                                  values={formikProps.values as CreateSablierProposalForm}
-                                />
-                              ) : (
-                                <ProposalTransactionsForm
-                                  pendingTransaction={pendingCreateTx}
-                                  safeNonce={safe?.nextNonce}
-                                  isProposalMode={isProposalMode}
-                                  {...formikProps}
-                                />
-                              )}
-                              {!isAzorius && (
-                                <Flex
-                                  alignItems="center"
-                                  justifyContent="space-between"
-                                  marginBottom="2rem"
-                                  rounded="lg"
-                                  p="1.5rem"
-                                  bg="neutral-2"
-                                >
-                                  <CustomNonceInput
-                                    nonce={nonce}
-                                    onChange={newNonce =>
-                                      formikProps.setFieldValue('nonce', newNonce)
-                                    }
-                                    align="end"
-                                    renderTrimmed={false}
-                                  />
-                                </Flex>
-                              )}
-                            </>
-                          }
-                        />
+                        {contentRoute(formikProps, pendingCreateTx, nonce)}
                         <Route
                           path="*"
                           element={

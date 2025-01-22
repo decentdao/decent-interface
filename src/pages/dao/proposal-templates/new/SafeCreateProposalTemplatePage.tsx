@@ -1,13 +1,19 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { ProposalBuilder } from '../../../../components/ProposalBuilder';
+import { useEffect, useMemo, useState } from 'react';
+import { Route, useSearchParams } from 'react-router-dom';
+import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
+import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { logError } from '../../../../helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../hooks/DAO/proposal/useCreateProposalTemplate';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import useIPFSClient from '../../../../providers/App/hooks/useIPFSClient';
-import { ProposalBuilderMode, ProposalTemplate } from '../../../../types/proposalBuilder';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
+import {
+  CreateProposalSteps,
+  ProposalBuilderMode,
+  ProposalTemplate,
+} from '../../../../types/proposalBuilder';
 
 export function SafeCreateProposalTemplatePage() {
   useEffect(() => {
@@ -26,6 +32,7 @@ export function SafeCreateProposalTemplatePage() {
     () => searchParams?.get('templateIndex'),
     [searchParams],
   );
+  const { safe } = useDaoInfoStore();
 
   useEffect(() => {
     const loadInitialTemplate = async () => {
@@ -63,6 +70,27 @@ export function SafeCreateProposalTemplatePage() {
       mode={ProposalBuilderMode.TEMPLATE}
       initialValues={initialProposalTemplate}
       prepareProposalData={prepareProposalTemplateProposal}
+      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+        return (
+          <Route
+            path={CreateProposalSteps.TRANSACTIONS}
+            element={
+              <>
+                <ProposalTransactionsForm
+                  pendingTransaction={pendingCreateTx}
+                  safeNonce={safe?.nextNonce}
+                  isProposalMode={true}
+                  {...formikProps}
+                />
+                <ShowNonceInputOnMultisig
+                  nonce={nonce}
+                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                />
+              </>
+            }
+          />
+        );
+      }}
     />
   );
 }

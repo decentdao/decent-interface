@@ -1,7 +1,9 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Center } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { ProposalBuilder } from '../../../../components/ProposalBuilder';
+import { Route } from 'react-router-dom';
+import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
+import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../constants/common';
@@ -9,7 +11,7 @@ import { usePrepareProposal } from '../../../../hooks/DAO/proposal/usePreparePro
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
-import { ProposalBuilderMode } from '../../../../types';
+import { CreateProposalSteps, ProposalBuilderMode } from '../../../../types';
 
 export function SafeProposalCreatePage() {
   useEffect(() => {
@@ -36,6 +38,27 @@ export function SafeProposalCreatePage() {
       initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nextNonce }}
       mode={ProposalBuilderMode.PROPOSAL}
       prepareProposalData={prepareProposal}
+      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+        return (
+          <Route
+            path={CreateProposalSteps.TRANSACTIONS}
+            element={
+              <>
+                <ProposalTransactionsForm
+                  pendingTransaction={pendingCreateTx}
+                  safeNonce={safe?.nextNonce}
+                  isProposalMode={true}
+                  {...formikProps}
+                />
+                <ShowNonceInputOnMultisig
+                  nonce={nonce}
+                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                />
+              </>
+            }
+          />
+        );
+      }}
     />
   );
 }

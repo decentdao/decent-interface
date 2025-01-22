@@ -2,9 +2,14 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Center } from '@chakra-ui/react';
 import groupBy from 'lodash.groupby';
 import { useCallback, useEffect } from 'react';
+import { Route } from 'react-router-dom';
 import { Address, encodeFunctionData, erc20Abi, getAddress, Hash, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../../../../assets/abi/SablierV2Batch';
-import { ProposalBuilder } from '../../../../../components/ProposalBuilder';
+import {
+  ProposalBuilder,
+  ShowNonceInputOnMultisig,
+} from '../../../../../components/ProposalBuilder';
+import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';
 import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
@@ -14,6 +19,7 @@ import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/us
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import {
   CreateProposalForm,
+  CreateProposalSteps,
   CreateSablierProposalForm,
   ProposalBuilderMode,
 } from '../../../../../types';
@@ -115,6 +121,26 @@ export function SafeSablierProposalCreatePage() {
       initialValues={{ ...DEFAULT_SABLIER_PROPOSAL, nonce: safe.nextNonce }}
       mode={ProposalBuilderMode.SABLIER}
       prepareProposalData={prepareProposalData}
+      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+        return (
+          <Route
+            path={CreateProposalSteps.STREAMS}
+            element={
+              <>
+                <ProposalStreams
+                  pendingTransaction={pendingCreateTx}
+                  {...formikProps}
+                  values={formikProps.values as CreateSablierProposalForm}
+                />
+                <ShowNonceInputOnMultisig
+                  nonce={nonce}
+                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                />
+              </>
+            }
+          />
+        );
+      }}
     />
   );
 }
