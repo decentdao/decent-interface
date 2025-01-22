@@ -2,7 +2,10 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
+import {
+  ProposalBuilder,
+  ShowNonceInputOnMultisig,
+} from '../../../../components/ProposalBuilder/ProposalBuilder';
 import {
   TemplateDetails,
   TransactionsDetails,

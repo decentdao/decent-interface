@@ -9,7 +9,7 @@ import SablierV2BatchAbi from '../../../../../assets/abi/SablierV2Batch';
 import {
   ProposalBuilder,
   ShowNonceInputOnMultisig,
-} from '../../../../../components/ProposalBuilder';
+} from '../../../../../components/ProposalBuilder/ProposalBuilder';
 import { StreamsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';

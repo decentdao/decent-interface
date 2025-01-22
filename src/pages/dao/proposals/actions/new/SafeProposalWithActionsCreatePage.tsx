@@ -3,11 +3,11 @@ import { Center, Flex, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useLocation, useNavigate } from 'react-router-dom';
+import { ProposalActionCard } from '../../../../../components/ProposalBuilder/ProposalActionCard';
 import {
   ProposalBuilder,
   ShowNonceInputOnMultisig,
-} from '../../../../../components/ProposalBuilder';
-import { ProposalActionCard } from '../../../../../components/ProposalBuilder/ProposalActionCard';
+} from '../../../../../components/ProposalBuilder/ProposalBuilder';
 import { TransactionsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../../components/ProposalBuilder/ProposalTransactionsForm';
