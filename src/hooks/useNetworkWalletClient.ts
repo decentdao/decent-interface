@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Account,
   Chain,
@@ -31,6 +32,7 @@ type WalletClientExtension = {
 
 export const useNetworkWalletClient = (props?: { chainId?: number }) => {
   const { chain } = useNetworkConfigStore();
+  const { t } = useTranslation('common');
   const chainId = props?.chainId ?? chain.id;
 
   const walletClient = useWalletClient({ chainId });
@@ -41,7 +43,11 @@ export const useNetworkWalletClient = (props?: { chainId?: number }) => {
         TRequest extends SendTransactionRequest<Chain, TChainOverride>,
         TChainOverride extends Chain | undefined = undefined,
       >(args: SendTransactionParameters<Chain, Account, TChainOverride, TRequest>) {
-        await client.switchChain({ id: chainId });
+        try {
+          await client.switchChain({ id: chainId });
+        } catch (e) {
+          throw new Error(t('wrongNetwork'));
+        }
         return client.sendTransaction(args);
       },
 
@@ -51,7 +57,11 @@ export const useNetworkWalletClient = (props?: { chainId?: number }) => {
         TArgs extends ContractFunctionArgs<TAbi, 'nonpayable' | 'payable', TFunctionName>,
         TChain extends Chain | undefined = Chain,
       >(args: WriteContractParameters<TAbi, TFunctionName, TArgs, Chain, Account, TChain>) {
-        await client.switchChain({ id: chainId });
+        try {
+          await client.switchChain({ id: chainId });
+        } catch (e) {
+          throw new Error(t('wrongNetwork'));
+        }
         return client.writeContract(args);
       },
     }),

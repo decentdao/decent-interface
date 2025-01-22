@@ -63,6 +63,10 @@ const useTransaction = () => {
             toast.info(t('errorUserDeniedTransaction', { id: toastId }));
             return;
           }
+          if (error.message === t('wrongNetwork', { ns: 'common' })) {
+            toast.error(error.message, { id: toastId });
+            return;
+          }
 
           toast.error(t('errorGeneral', { ns: 'common' }), { id: toastId });
         });
