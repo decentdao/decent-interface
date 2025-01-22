@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
@@ -12,21 +12,16 @@ import useCreateProposalSchema from '../../hooks/schemas/proposalBuilder/useCrea
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
-import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalSteps, ProposalExecuteData } from '../../types';
 import {
   CreateProposalForm,
   CreateSablierProposalForm,
-  ProposalActionType,
   ProposalBuilderMode,
 } from '../../types/proposalBuilder';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
-import { AddActions } from '../ui/modals/AddActions';
-import { SendAssetsData } from '../ui/modals/SendAssetsModal';
 import { Crumb } from '../ui/page/Header/Breadcrumbs';
 import PageHeader from '../ui/page/Header/PageHeader';
-import { ProposalActionCard } from './ProposalActionCard';
 import ProposalDetails, {
   StreamsDetails,
   TemplateDetails,
@@ -75,6 +70,7 @@ interface ProposalBuilderProps {
   pageHeaderBreadcrumbs: Crumb[];
   pageHeaderButtonClickHandler: () => void;
   proposalMetadataTypeProps: ProposalMetadataTypeProps;
+  actionsExperience: JSX.Element | null;
   prevStepUrl: string;
   nextStepUrl: string;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
@@ -92,6 +88,7 @@ export function ProposalBuilder({
   pageHeaderBreadcrumbs,
   pageHeaderButtonClickHandler,
   proposalMetadataTypeProps,
+  actionsExperience,
   prevStepUrl,
   nextStepUrl,
   initialValues,
@@ -113,28 +110,6 @@ export function ProposalBuilder({
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { createProposalValidation } = useCreateProposalSchema();
-  const { addAction, actions } = useProposalActionsStore();
-
-  const handleAddSendAssetsAction = (data: SendAssetsData) => {
-    addAction({
-      actionType: ProposalActionType.TRANSFER,
-      content: <></>,
-      transactions: [
-        {
-          targetAddress: data.asset.tokenAddress,
-          ethValue: {
-            bigintValue: 0n,
-            value: '0',
-          },
-          functionName: 'transfer',
-          parameters: [
-            { signature: 'address', value: data.destinationAddress },
-            { signature: 'uint256', value: data.transferAmount.toString() },
-          ],
-        },
-      ],
-    });
-  };
 
   const successCallback = () => {
     if (safeAddress) {
@@ -253,38 +228,7 @@ export function ProposalBuilder({
                         />
                       </Routes>
                     </Box>
-                    {mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS && (
-                      <Flex
-                        flexDirection="column"
-                        gap="1.5rem"
-                      >
-                        <Flex
-                          flexDirection="column"
-                          gap="0.5rem"
-                        >
-                          <Flex
-                            mt={6}
-                            mb={2}
-                            alignItems="center"
-                          >
-                            <Text ml={2}>{t('actions', { ns: 'actions' })}</Text>
-                          </Flex>
-                          {actions.map((action, index) => {
-                            return (
-                              <ProposalActionCard
-                                key={index}
-                                action={action}
-                                index={index}
-                                canBeDeleted={actions.length > 1}
-                              />
-                            );
-                          })}
-                        </Flex>
-                        <Flex>
-                          <AddActions addSendAssetsAction={handleAddSendAssetsAction} />
-                        </Flex>
-                      </Flex>
-                    )}
+                    {actionsExperience}
                     <StepButtons
                       metadataStepButtons={(() => {
                         if (mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS) {

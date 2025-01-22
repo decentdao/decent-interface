@@ -98,6 +98,7 @@ export function SafeCreateProposalTemplatePage() {
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       proposalMetadataTypeProps={TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS(t)}
+      actionsExperience={null}
       prevStepUrl={prevStepUrl}
       nextStepUrl={nextStepUrl}
       initialValues={initialProposalTemplate}
