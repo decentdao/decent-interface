@@ -241,11 +241,10 @@ export function RoleFormCreateProposal({ close }: { close: () => void }) {
         <SendAssetsAction
           action={action}
           key={index}
-          index={index}
-          onRemove={idx => {
+          onRemove={() => {
             setFieldValueTopLevel(
               'actions',
-              values.actions.filter((_, i) => i !== idx),
+              values.actions.filter((_, i) => i !== index),
             );
           }}
         />

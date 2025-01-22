@@ -2,20 +2,34 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Center } from '@chakra-ui/react';
 import groupBy from 'lodash.groupby';
 import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Route, useLocation, useNavigate } from 'react-router-dom';
 import { Address, encodeFunctionData, erc20Abi, getAddress, Hash, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../../../../assets/abi/SablierV2Batch';
-import { ProposalBuilder } from '../../../../../components/ProposalBuilder';
+import {
+  ProposalBuilder,
+  ShowNonceInputOnMultisig,
+} from '../../../../../components/ProposalBuilder/ProposalBuilder';
+import { StreamsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
+import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
+import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';
+import StepButtons, {
+  CreateProposalButton,
+  NextButton,
+  PreviousButton,
+} from '../../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
+import { DAO_ROUTES } from '../../../../../constants/routes';
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import {
   CreateProposalForm,
+  CreateProposalSteps,
   CreateSablierProposalForm,
-  ProposalBuilderMode,
 } from '../../../../../types';
 
 export function SafeSablierProposalCreatePage() {
@@ -26,9 +40,12 @@ export function SafeSablierProposalCreatePage() {
     governance: { type },
   } = useFractal();
   const {
+    addressPrefix,
     contracts: { sablierV2Batch, sablierV2LockupTranched },
   } = useNetworkConfigStore();
   const { safe } = useDaoInfoStore();
+  const { t } = useTranslation('proposal');
+  const navigate = useNavigate();
 
   const prepareProposalData = useCallback(
     async (values: CreateProposalForm | CreateSablierProposalForm) => {
@@ -101,6 +118,7 @@ export function SafeSablierProposalCreatePage() {
   );
 
   const HEADER_HEIGHT = useHeaderHeight();
+  const location = useLocation();
 
   if (!type || !safe?.address || !safe) {
     return (
@@ -110,11 +128,82 @@ export function SafeSablierProposalCreatePage() {
     );
   }
 
+  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.STREAMS, CreateProposalSteps.METADATA)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.STREAMS)}${location.search}`;
+
+  const pageHeaderBreadcrumbs = [
+    {
+      terminus: t('proposals', { ns: 'breadcrumbs' }),
+      path: DAO_ROUTES.proposals.relative(addressPrefix, safe.address),
+    },
+    {
+      terminus: t('proposalNew', { ns: 'breadcrumbs' }),
+      path: '',
+    },
+  ];
+
+  const pageHeaderButtonClickHandler = () => {
+    navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
+  };
+
+  const stepButtons = ({
+    formErrors,
+    createProposalBlocked,
+  }: {
+    formErrors: boolean;
+    createProposalBlocked: boolean;
+  }) => {
+    return (
+      <StepButtons
+        metadataStepButtons={
+          <NextButton
+            nextStepUrl={nextStepUrl}
+            isDisabled={formErrors}
+          />
+        }
+        transactionsStepButtons={
+          <>
+            <PreviousButton prevStepUrl={prevStepUrl} />
+            <CreateProposalButton isDisabled={createProposalBlocked} />
+          </>
+        }
+      />
+    );
+  };
+
   return (
     <ProposalBuilder
       initialValues={{ ...DEFAULT_SABLIER_PROPOSAL, nonce: safe.nextNonce }}
-      mode={ProposalBuilderMode.SABLIER}
+      pageHeaderTitle={t('createProposal', { ns: 'proposal' })}
+      pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
+      pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
+      proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
+      actionsExperience={null}
+      stepButtons={stepButtons}
+      transactionsDetails={null}
+      templateDetails={null}
+      streamsDetails={streams => <StreamsDetails streams={streams} />}
       prepareProposalData={prepareProposalData}
+      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+        return (
+          <Route
+            path={CreateProposalSteps.STREAMS}
+            element={
+              <>
+                <ProposalStreams
+                  pendingTransaction={pendingCreateTx}
+                  {...formikProps}
+                  values={formikProps.values as CreateSablierProposalForm}
+                />
+                <ShowNonceInputOnMultisig
+                  nonce={nonce}
+                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                />
+              </>
+            }
+          />
+        );
+      }}
     />
   );
 }

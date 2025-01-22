@@ -14,14 +14,14 @@ import {
 import { CaretDown, CaretRight, MinusCircle, Plus } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CreateProposalTransaction, ProposalBuilderMode } from '../../types/proposalBuilder';
+import { CreateProposalTransaction } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
 import ABISelector, { ABIElement } from '../ui/forms/ABISelector';
 import ExampleLabel from '../ui/forms/ExampleLabel';
 import { BigIntComponent, InputComponent } from '../ui/forms/InputComponent';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
 import Divider from '../ui/utils/Divider';
-import { builderInProposalMode, DEFAULT_PROPOSAL_TRANSACTION } from './constants';
+import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
 interface ProposalTransactionProps {
   transaction: CreateProposalTransaction;
@@ -30,7 +30,7 @@ interface ProposalTransactionProps {
   txAddressError?: string;
   txFunctionError?: string;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void;
-  mode: ProposalBuilderMode;
+  isProposalMode: boolean;
 }
 
 export default function ProposalTransaction({
@@ -40,9 +40,8 @@ export default function ProposalTransaction({
   txAddressError,
   txFunctionError,
   setFieldValue,
-  mode,
+  isProposalMode,
 }: ProposalTransactionProps) {
-  const isProposalMode = builderInProposalMode(mode);
   const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
 

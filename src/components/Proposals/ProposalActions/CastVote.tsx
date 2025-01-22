@@ -44,12 +44,7 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
     snapshotWeightedChoice,
   } = useCastSnapshotVote(extendedSnapshotProposal);
 
-  const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
-
-  // if the user is not a signer or has no delegated tokens, don't show anything
-  if (!canVote) {
-    return null;
-  }
+  const { canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
   // If user is lucky enough - he could create a proposal and proceed to vote on it
   // even before the block, in which proposal was created, was mined.

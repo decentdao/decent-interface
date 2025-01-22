@@ -24,15 +24,6 @@ export type CreateProposalMetadata = {
   documentationUrl?: string;
 };
 
-export enum ProposalBuilderMode {
-  // @dev - this is temporary mode.
-  // Probably will be removed in the future and actions are will be there by default.
-  // UI / UX for this globally is in flux.
-  PROPOSAL_WITH_ACTIONS = 'PROPOSAL_WITH_ACTIONS',
-  PROPOSAL = 'PROPOSAL',
-  TEMPLATE = 'TEMPLATE',
-  SABLIER = 'SABLIER',
-}
 export type CreateProposalForm = {
   transactions: CreateProposalTransaction[];
   proposalMetadata: CreateProposalMetadata;
