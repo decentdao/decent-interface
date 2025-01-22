@@ -16,7 +16,7 @@ import { CaretDown, CaretRight, MinusCircle, Plus } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, formatUnits, getContract, isAddress } from 'viem';
-import { usePublicClient } from 'wagmi';
+import useNetworkPublicClient from '../../hooks/useNetworkPublicClient';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { Stream } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
@@ -37,7 +37,7 @@ export function ProposalStream({
   index: number;
   pendingTransaction: boolean;
 }) {
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
   const [tokenDecimals, setTokenDecimals] = useState(0);
   const [rawTokenBalance, setRawTokenBalnace] = useState(0n);
   const [tokenBalanceFormatted, setTokenBalanceFormatted] = useState('');
@@ -49,7 +49,7 @@ export function ProposalStream({
 
   useEffect(() => {
     const fetchFormattedTokenBalance = async () => {
-      if (publicClient && safeAddress && stream.tokenAddress && isAddress(stream.tokenAddress)) {
+      if (safeAddress && stream.tokenAddress && isAddress(stream.tokenAddress)) {
         const tokenContract = getContract({
           abi: erc20Abi,
           client: publicClient,
