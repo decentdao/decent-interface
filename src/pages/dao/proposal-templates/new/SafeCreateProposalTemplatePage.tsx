@@ -5,6 +5,7 @@ import { Route, useLocation, useNavigate, useSearchParams } from 'react-router-d
 import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
 import { TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
+import { NextButton } from '../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { logError } from '../../../../helpers/errorLogging';
@@ -73,6 +74,7 @@ export function SafeCreateProposalTemplatePage() {
   const location = useLocation();
   const { t } = useTranslation('proposalTemplate');
   const navigate = useNavigate();
+
   const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
   const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
 
@@ -91,6 +93,15 @@ export function SafeCreateProposalTemplatePage() {
     navigate(DAO_ROUTES.proposalTemplates.relative(addressPrefix, safe?.address ?? ''));
   };
 
+  const metadataStepButtons = (isDisabled: boolean) => {
+    return (
+      <NextButton
+        nextStepUrl={nextStepUrl}
+        isDisabled={isDisabled}
+      />
+    );
+  };
+
   return (
     <ProposalBuilder
       mode={ProposalBuilderMode.TEMPLATE}
@@ -99,8 +110,8 @@ export function SafeCreateProposalTemplatePage() {
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       proposalMetadataTypeProps={TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS(t)}
       actionsExperience={null}
+      metadataStepButtons={metadataStepButtons}
       prevStepUrl={prevStepUrl}
-      nextStepUrl={nextStepUrl}
       initialValues={initialProposalTemplate}
       prepareProposalData={prepareProposalTemplateProposal}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {

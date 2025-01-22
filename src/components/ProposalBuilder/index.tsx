@@ -28,7 +28,7 @@ import ProposalDetails, {
   TransactionsDetails,
 } from './ProposalDetails';
 import ProposalMetadata, { ProposalMetadataTypeProps } from './ProposalMetadata';
-import StepButtons, { CreateProposalButton, NextButton, PreviousButton } from './StepButtons';
+import StepButtons, { CreateProposalButton, PreviousButton } from './StepButtons';
 
 export function ShowNonceInputOnMultisig({
   nonce,
@@ -71,8 +71,8 @@ interface ProposalBuilderProps {
   pageHeaderButtonClickHandler: () => void;
   proposalMetadataTypeProps: ProposalMetadataTypeProps;
   actionsExperience: JSX.Element | null;
+  metadataStepButtons: (isDisabled: boolean) => JSX.Element;
   prevStepUrl: string;
-  nextStepUrl: string;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
   contentRoute: (
@@ -89,8 +89,8 @@ export function ProposalBuilder({
   pageHeaderButtonClickHandler,
   proposalMetadataTypeProps,
   actionsExperience,
+  metadataStepButtons,
   prevStepUrl,
-  nextStepUrl,
   initialValues,
   prepareProposalData,
   contentRoute,
@@ -230,18 +230,13 @@ export function ProposalBuilder({
                     </Box>
                     {actionsExperience}
                     <StepButtons
-                      metadataStepButtons={(() => {
-                        if (mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS) {
-                          return <CreateProposalButton isDisabled={createProposalButtonDisabled} />;
-                        } else {
-                          return (
-                            <NextButton
-                              nextStepUrl={nextStepUrl}
-                              isDisabled={!!formikProps.errors.proposalMetadata}
-                            />
-                          );
-                        }
-                      })()}
+                      metadataStepButtons={metadataStepButtons(
+                        // TODO: This is a hack. This is specifically what this PR is trying to fix/avoid.
+                        // We need to figure out a better way to handle this.
+                        actionsExperience === null
+                          ? !!formikProps.errors.proposalMetadata
+                          : createProposalButtonDisabled,
+                      )}
                       transactionsStepButtons={
                         <>
                           <PreviousButton prevStepUrl={prevStepUrl} />

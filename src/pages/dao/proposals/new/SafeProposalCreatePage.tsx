@@ -6,6 +6,7 @@ import { Route, useLocation, useNavigate } from 'react-router-dom';
 import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
+import { NextButton } from '../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../constants/common';
@@ -60,6 +61,15 @@ export function SafeProposalCreatePage() {
     navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
   };
 
+  const metadataStepButtons = (isDisabled: boolean) => {
+    return (
+      <NextButton
+        nextStepUrl={nextStepUrl}
+        isDisabled={isDisabled}
+      />
+    );
+  };
+
   return (
     <ProposalBuilder
       initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nextNonce }}
@@ -69,8 +79,8 @@ export function SafeProposalCreatePage() {
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       actionsExperience={null}
+      metadataStepButtons={metadataStepButtons}
       prevStepUrl={prevStepUrl}
-      nextStepUrl={nextStepUrl}
       prepareProposalData={prepareProposal}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {
         return (

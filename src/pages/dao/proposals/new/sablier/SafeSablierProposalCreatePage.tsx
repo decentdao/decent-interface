@@ -12,6 +12,7 @@ import {
 } from '../../../../../components/ProposalBuilder';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';
+import { NextButton } from '../../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
@@ -141,6 +142,15 @@ export function SafeSablierProposalCreatePage() {
     navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
   };
 
+  const metadataStepButtons = (isDisabled: boolean) => {
+    return (
+      <NextButton
+        nextStepUrl={nextStepUrl}
+        isDisabled={isDisabled}
+      />
+    );
+  };
+
   return (
     <ProposalBuilder
       initialValues={{ ...DEFAULT_SABLIER_PROPOSAL, nonce: safe.nextNonce }}
@@ -150,8 +160,8 @@ export function SafeSablierProposalCreatePage() {
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       actionsExperience={null}
+      metadataStepButtons={metadataStepButtons}
       prevStepUrl={prevStepUrl}
-      nextStepUrl={nextStepUrl}
       prepareProposalData={prepareProposalData}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {
         return (

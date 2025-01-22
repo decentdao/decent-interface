@@ -10,6 +10,7 @@ import {
 import { ProposalActionCard } from '../../../../../components/ProposalBuilder/ProposalActionCard';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../../components/ProposalBuilder/ProposalTransactionsForm';
+import { CreateProposalButton } from '../../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { AddActions } from '../../../../../components/ui/modals/AddActions';
@@ -111,7 +112,6 @@ export function SafeProposalWithActionsCreatePage() {
   }
 
   const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
-  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
 
   const pageHeaderBreadcrumbs = [
     {
@@ -129,6 +129,10 @@ export function SafeProposalWithActionsCreatePage() {
     navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
   };
 
+  const metadataStepButtons = (isDisabled: boolean) => {
+    return <CreateProposalButton isDisabled={isDisabled} />;
+  };
+
   return (
     <ProposalBuilder
       initialValues={{
@@ -141,9 +145,9 @@ export function SafeProposalWithActionsCreatePage() {
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       actionsExperience={<ActionsExperience />}
+      metadataStepButtons={metadataStepButtons}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       prevStepUrl={prevStepUrl}
-      nextStepUrl={nextStepUrl}
       prepareProposalData={prepareProposal}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {
         return (
