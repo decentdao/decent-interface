@@ -7,7 +7,11 @@ import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../component
 import { TransactionsDetails } from '../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
-import { NextButton } from '../../../../components/ProposalBuilder/StepButtons';
+import StepButtons, {
+  CreateProposalButton,
+  NextButton,
+  PreviousButton,
+} from '../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../constants/common';
@@ -62,11 +66,27 @@ export function SafeProposalCreatePage() {
     navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
   };
 
-  const metadataStepButtons = ({ formErrors }: { formErrors: boolean }) => {
+  const stepButtons = ({
+    formErrors,
+    createProposalBlocked,
+  }: {
+    formErrors: boolean;
+    createProposalBlocked: boolean;
+  }) => {
     return (
-      <NextButton
-        nextStepUrl={nextStepUrl}
-        isDisabled={formErrors}
+      <StepButtons
+        metadataStepButtons={
+          <NextButton
+            nextStepUrl={nextStepUrl}
+            isDisabled={formErrors}
+          />
+        }
+        transactionsStepButtons={
+          <>
+            <PreviousButton prevStepUrl={prevStepUrl} />
+            <CreateProposalButton isDisabled={createProposalBlocked} />
+          </>
+        }
       />
     );
   };
@@ -79,11 +99,10 @@ export function SafeProposalCreatePage() {
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       actionsExperience={null}
-      metadataStepButtons={metadataStepButtons}
+      stepButtons={stepButtons}
       transactionsDetails={transactions => <TransactionsDetails transactions={transactions} />}
       templateDetails={null}
       streamsDetails={null}
-      prevStepUrl={prevStepUrl}
       prepareProposalData={prepareProposal}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {
         return (

@@ -11,7 +11,10 @@ import { ProposalActionCard } from '../../../../../components/ProposalBuilder/Pr
 import { TransactionsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../../components/ProposalBuilder/ProposalTransactionsForm';
-import { CreateProposalButton } from '../../../../../components/ProposalBuilder/StepButtons';
+import StepButtons, {
+  CreateProposalButton,
+  PreviousButton,
+} from '../../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { AddActions } from '../../../../../components/ui/modals/AddActions';
@@ -130,8 +133,18 @@ export function SafeProposalWithActionsCreatePage() {
     navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
   };
 
-  const metadataStepButtons = ({ createProposalBlocked }: { createProposalBlocked: boolean }) => {
-    return <CreateProposalButton isDisabled={createProposalBlocked} />;
+  const stepButtons = ({ createProposalBlocked }: { createProposalBlocked: boolean }) => {
+    return (
+      <StepButtons
+        metadataStepButtons={<CreateProposalButton isDisabled={createProposalBlocked} />}
+        transactionsStepButtons={
+          <>
+            <PreviousButton prevStepUrl={prevStepUrl} />
+            <CreateProposalButton isDisabled={createProposalBlocked} />
+          </>
+        }
+      />
+    );
   };
 
   return (
@@ -145,12 +158,11 @@ export function SafeProposalWithActionsCreatePage() {
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       actionsExperience={<ActionsExperience />}
-      metadataStepButtons={metadataStepButtons}
+      stepButtons={stepButtons}
       transactionsDetails={transactions => <TransactionsDetails transactions={transactions} />}
       templateDetails={null}
       streamsDetails={null}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
-      prevStepUrl={prevStepUrl}
       prepareProposalData={prepareProposal}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {
         return (

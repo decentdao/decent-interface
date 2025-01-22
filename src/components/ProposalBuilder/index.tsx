@@ -25,7 +25,6 @@ import { Crumb } from '../ui/page/Header/Breadcrumbs';
 import PageHeader from '../ui/page/Header/PageHeader';
 import ProposalDetails from './ProposalDetails';
 import ProposalMetadata, { ProposalMetadataTypeProps } from './ProposalMetadata';
-import StepButtons, { CreateProposalButton, PreviousButton } from './StepButtons';
 
 export function ShowNonceInputOnMultisig({
   nonce,
@@ -67,7 +66,7 @@ interface ProposalBuilderProps {
   pageHeaderButtonClickHandler: () => void;
   proposalMetadataTypeProps: ProposalMetadataTypeProps;
   actionsExperience: JSX.Element | null;
-  metadataStepButtons: ({
+  stepButtons: ({
     formErrors,
     createProposalBlocked,
   }: {
@@ -79,7 +78,6 @@ interface ProposalBuilderProps {
     | null;
   templateDetails: ((title: string) => JSX.Element) | null;
   streamsDetails: ((streams: Stream[]) => JSX.Element) | null;
-  prevStepUrl: string;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
   contentRoute: (
@@ -95,11 +93,10 @@ export function ProposalBuilder({
   pageHeaderButtonClickHandler,
   proposalMetadataTypeProps,
   actionsExperience,
-  metadataStepButtons,
+  stepButtons,
   transactionsDetails,
   templateDetails,
   streamsDetails,
-  prevStepUrl,
   initialValues,
   prepareProposalData,
   contentRoute,
@@ -238,18 +235,10 @@ export function ProposalBuilder({
                       </Routes>
                     </Box>
                     {actionsExperience}
-                    <StepButtons
-                      metadataStepButtons={metadataStepButtons({
-                        formErrors: !!formikProps.errors.proposalMetadata,
-                        createProposalBlocked: createProposalButtonDisabled,
-                      })}
-                      transactionsStepButtons={
-                        <>
-                          <PreviousButton prevStepUrl={prevStepUrl} />
-                          <CreateProposalButton isDisabled={createProposalButtonDisabled} />
-                        </>
-                      }
-                    />
+                    {stepButtons({
+                      formErrors: !!formikProps.errors.proposalMetadata,
+                      createProposalBlocked: createProposalButtonDisabled,
+                    })}
                   </Flex>
                 </GridItem>
                 <GridItem
