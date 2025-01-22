@@ -8,6 +8,7 @@ import {
   ShowNonceInputOnMultisig,
 } from '../../../../../components/ProposalBuilder';
 import { ProposalActionCard } from '../../../../../components/ProposalBuilder/ProposalActionCard';
+import { TransactionsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../../components/ProposalBuilder/ProposalTransactionsForm';
 import { CreateProposalButton } from '../../../../../components/ProposalBuilder/StepButtons';
@@ -23,7 +24,7 @@ import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useProposalActionsStore } from '../../../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
-import { CreateProposalSteps, ProposalActionType, ProposalBuilderMode } from '../../../../../types';
+import { CreateProposalSteps, ProposalActionType } from '../../../../../types';
 
 function ActionsExperience() {
   const { t } = useTranslation('actions');
@@ -140,12 +141,14 @@ export function SafeProposalWithActionsCreatePage() {
         transactions: getTransactions(),
         nonce: safe.nextNonce,
       }}
-      mode={ProposalBuilderMode.PROPOSAL_WITH_ACTIONS}
       pageHeaderTitle={t('createProposal', { ns: 'proposal' })}
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       actionsExperience={<ActionsExperience />}
       metadataStepButtons={metadataStepButtons}
+      transactionsDetails={transactions => <TransactionsDetails transactions={transactions} />}
+      templateDetails={null}
+      streamsDetails={null}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       prevStepUrl={prevStepUrl}
       prepareProposalData={prepareProposal}

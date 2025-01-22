@@ -3,6 +3,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
+import {
+  TemplateDetails,
+  TransactionsDetails,
+} from '../../../../components/ProposalBuilder/ProposalDetails';
 import { TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
 import { NextButton } from '../../../../components/ProposalBuilder/StepButtons';
@@ -14,11 +18,7 @@ import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import useIPFSClient from '../../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
-import {
-  CreateProposalSteps,
-  ProposalBuilderMode,
-  ProposalTemplate,
-} from '../../../../types/proposalBuilder';
+import { CreateProposalSteps, ProposalTemplate } from '../../../../types/proposalBuilder';
 
 export function SafeCreateProposalTemplatePage() {
   useEffect(() => {
@@ -104,13 +104,15 @@ export function SafeCreateProposalTemplatePage() {
 
   return (
     <ProposalBuilder
-      mode={ProposalBuilderMode.TEMPLATE}
       pageHeaderTitle={t('createProposalTemplate', { ns: 'proposalTemplate' })}
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       proposalMetadataTypeProps={TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS(t)}
       actionsExperience={null}
       metadataStepButtons={metadataStepButtons}
+      transactionsDetails={transactions => <TransactionsDetails transactions={transactions} />}
+      templateDetails={title => <TemplateDetails title={title} />}
+      streamsDetails={null}
       prevStepUrl={prevStepUrl}
       initialValues={initialProposalTemplate}
       prepareProposalData={prepareProposalTemplateProposal}

@@ -10,6 +10,7 @@ import {
   ProposalBuilder,
   ShowNonceInputOnMultisig,
 } from '../../../../../components/ProposalBuilder';
+import { StreamsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';
 import { NextButton } from '../../../../../components/ProposalBuilder/StepButtons';
@@ -25,7 +26,6 @@ import {
   CreateProposalForm,
   CreateProposalSteps,
   CreateSablierProposalForm,
-  ProposalBuilderMode,
 } from '../../../../../types';
 
 export function SafeSablierProposalCreatePage() {
@@ -154,13 +154,15 @@ export function SafeSablierProposalCreatePage() {
   return (
     <ProposalBuilder
       initialValues={{ ...DEFAULT_SABLIER_PROPOSAL, nonce: safe.nextNonce }}
-      mode={ProposalBuilderMode.SABLIER}
       pageHeaderTitle={t('createProposal', { ns: 'proposal' })}
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       actionsExperience={null}
       metadataStepButtons={metadataStepButtons}
+      transactionsDetails={null}
+      templateDetails={null}
+      streamsDetails={streams => <StreamsDetails streams={streams} />}
       prevStepUrl={prevStepUrl}
       prepareProposalData={prepareProposalData}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {

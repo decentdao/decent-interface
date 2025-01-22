@@ -13,20 +13,17 @@ import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProp
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { CreateProposalSteps, ProposalExecuteData } from '../../types';
+import { BigIntValuePair, CreateProposalSteps, ProposalExecuteData } from '../../types';
 import {
   CreateProposalForm,
+  CreateProposalTransaction,
   CreateSablierProposalForm,
-  ProposalBuilderMode,
+  Stream,
 } from '../../types/proposalBuilder';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 import { Crumb } from '../ui/page/Header/Breadcrumbs';
 import PageHeader from '../ui/page/Header/PageHeader';
-import ProposalDetails, {
-  StreamsDetails,
-  TemplateDetails,
-  TransactionsDetails,
-} from './ProposalDetails';
+import ProposalDetails from './ProposalDetails';
 import ProposalMetadata, { ProposalMetadataTypeProps } from './ProposalMetadata';
 import StepButtons, { CreateProposalButton, PreviousButton } from './StepButtons';
 
@@ -65,13 +62,17 @@ export function ShowNonceInputOnMultisig({
 }
 
 interface ProposalBuilderProps {
-  mode: ProposalBuilderMode;
   pageHeaderTitle: string;
   pageHeaderBreadcrumbs: Crumb[];
   pageHeaderButtonClickHandler: () => void;
   proposalMetadataTypeProps: ProposalMetadataTypeProps;
   actionsExperience: JSX.Element | null;
   metadataStepButtons: (isDisabled: boolean) => JSX.Element;
+  transactionsDetails:
+    | ((transactions: CreateProposalTransaction<BigIntValuePair>[]) => JSX.Element)
+    | null;
+  templateDetails: ((title: string) => JSX.Element) | null;
+  streamsDetails: ((streams: Stream[]) => JSX.Element) | null;
   prevStepUrl: string;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
@@ -83,13 +84,15 @@ interface ProposalBuilderProps {
 }
 
 export function ProposalBuilder({
-  mode,
   pageHeaderTitle,
   pageHeaderBreadcrumbs,
   pageHeaderButtonClickHandler,
   proposalMetadataTypeProps,
   actionsExperience,
   metadataStepButtons,
+  transactionsDetails,
+  templateDetails,
+  streamsDetails,
   prevStepUrl,
   initialValues,
   prepareProposalData,
@@ -253,28 +256,15 @@ export function ProposalBuilder({
                   <ProposalDetails
                     title={trimmedTitle}
                     description={description}
-                    transactionsDetails={(() => {
-                      if (mode !== ProposalBuilderMode.SABLIER) {
-                        return <TransactionsDetails transactions={transactions} />;
-                      }
-                      return null;
-                    })()}
-                    templateDetails={(() => {
-                      if (mode === ProposalBuilderMode.TEMPLATE) {
-                        return <TemplateDetails title={trimmedTitle} />;
-                      }
-                      return null;
-                    })()}
-                    streamsDetails={(() => {
-                      if (mode === ProposalBuilderMode.SABLIER) {
-                        return (
-                          <StreamsDetails
-                            streams={(formikProps.values as CreateSablierProposalForm).streams}
-                          />
-                        );
-                      }
-                      return null;
-                    })()}
+                    transactionsDetails={
+                      transactionsDetails ? transactionsDetails(transactions) : null
+                    }
+                    templateDetails={templateDetails ? templateDetails(trimmedTitle) : null}
+                    streamsDetails={
+                      streamsDetails
+                        ? streamsDetails((formikProps.values as CreateSablierProposalForm).streams)
+                        : null
+                    }
                   />
                 </GridItem>
               </Grid>
