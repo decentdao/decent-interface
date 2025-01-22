@@ -28,8 +28,6 @@ const useTransaction = () => {
 
   const contractCall = useCallback(
     (params: ContractCallParams) => {
-      if (!publicClient) return;
-
       let toastId = toast.loading(params.pendingMessage, {
         duration: Infinity,
       });
@@ -63,6 +61,10 @@ const useTransaction = () => {
 
           if (error.code === 4001) {
             toast.info(t('errorUserDeniedTransaction', { id: toastId }));
+            return;
+          }
+          if (error.message === t('wrongNetwork', { ns: 'common' })) {
+            toast.error(error.message, { id: toastId });
             return;
           }
 
