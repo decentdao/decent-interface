@@ -65,26 +65,26 @@ interface ProposalBuilderProps {
   pageHeaderBreadcrumbs: Crumb[];
   pageHeaderButtonClickHandler: () => void;
   proposalMetadataTypeProps: ProposalMetadataTypeProps;
-  actionsExperience: JSX.Element | null;
+  actionsExperience: React.ReactNode | null;
   stepButtons: ({
     formErrors,
     createProposalBlocked,
   }: {
     formErrors: boolean;
     createProposalBlocked: boolean;
-  }) => JSX.Element;
+  }) => React.ReactNode;
   transactionsDetails:
-    | ((transactions: CreateProposalTransaction<BigIntValuePair>[]) => JSX.Element)
+    | ((transactions: CreateProposalTransaction<BigIntValuePair>[]) => React.ReactNode)
     | null;
-  templateDetails: ((title: string) => JSX.Element) | null;
-  streamsDetails: ((streams: Stream[]) => JSX.Element) | null;
+  templateDetails: ((title: string) => React.ReactNode) | null;
+  streamsDetails: ((streams: Stream[]) => React.ReactNode) | null;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
   contentRoute: (
     formikProps: FormikProps<CreateProposalForm>,
     pendingCreateTx: boolean,
     nonce: number | undefined,
-  ) => JSX.Element;
+  ) => React.ReactNode;
 }
 
 export function ProposalBuilder({

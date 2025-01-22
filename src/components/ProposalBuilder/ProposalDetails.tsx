@@ -135,9 +135,9 @@ export default function ProposalDetails({
 }: {
   title: string;
   description: string;
-  transactionsDetails: JSX.Element | null;
-  templateDetails: JSX.Element | null;
-  streamsDetails: JSX.Element | null;
+  transactionsDetails: React.ReactNode;
+  templateDetails: React.ReactNode;
+  streamsDetails: React.ReactNode;
 }) {
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const [descriptionCollapsed, setDescriptionCollapsed] = useState(true);

@@ -6,8 +6,8 @@ import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalSteps } from '../../types';
 
 interface StepButtonsProps {
-  metadataStepButtons: JSX.Element;
-  transactionsStepButtons: JSX.Element;
+  metadataStepButtons: React.ReactNode;
+  transactionsStepButtons: React.ReactNode;
 }
 
 export function PreviousButton({ prevStepUrl }: { prevStepUrl: string }) {
