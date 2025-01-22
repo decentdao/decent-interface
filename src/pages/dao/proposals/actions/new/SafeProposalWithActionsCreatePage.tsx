@@ -1,6 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Center, Flex, Text } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useLocation, useNavigate } from 'react-router-dom';
 import { ProposalActionCard } from '../../../../../components/ProposalBuilder/ProposalActionCard';
@@ -99,6 +99,7 @@ export function SafeProposalWithActionsCreatePage() {
 
   const { prepareProposal } = usePrepareProposal();
   const { getTransactions } = useProposalActionsStore();
+  const transactions = useMemo(() => getTransactions(), [getTransactions]);
   const { addressPrefix } = useNetworkConfigStore();
 
   const HEADER_HEIGHT = useHeaderHeight();
@@ -151,7 +152,7 @@ export function SafeProposalWithActionsCreatePage() {
     <ProposalBuilder
       initialValues={{
         ...DEFAULT_PROPOSAL,
-        transactions: getTransactions(),
+        transactions,
         nonce: safe.nextNonce,
       }}
       pageHeaderTitle={t('createProposal', { ns: 'proposal' })}
@@ -159,7 +160,7 @@ export function SafeProposalWithActionsCreatePage() {
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       actionsExperience={<ActionsExperience />}
       stepButtons={stepButtons}
-      transactionsDetails={transactions => <TransactionsDetails transactions={transactions} />}
+      transactionsDetails={_transactions => <TransactionsDetails transactions={_transactions} />}
       templateDetails={null}
       streamsDetails={null}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
