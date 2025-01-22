@@ -1,7 +1,7 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Center } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, useLocation } from 'react-router-dom';
 import {
   ProposalBuilder,
   ShowNonceInputOnMultisig,
@@ -30,6 +30,7 @@ export function SafeProposalWithActionsCreatePage() {
   const { getTransactions } = useProposalActionsStore();
 
   const HEADER_HEIGHT = useHeaderHeight();
+  const location = useLocation();
 
   if (!type || !safe?.address || !safe) {
     return (
@@ -39,6 +40,9 @@ export function SafeProposalWithActionsCreatePage() {
     );
   }
 
+  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
+
   return (
     <ProposalBuilder
       initialValues={{
@@ -47,6 +51,8 @@ export function SafeProposalWithActionsCreatePage() {
         nonce: safe.nextNonce,
       }}
       mode={ProposalBuilderMode.PROPOSAL_WITH_ACTIONS}
+      prevStepUrl={prevStepUrl}
+      nextStepUrl={nextStepUrl}
       prepareProposalData={prepareProposal}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {
         return (

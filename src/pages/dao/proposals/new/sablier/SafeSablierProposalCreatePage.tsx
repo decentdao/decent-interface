@@ -2,7 +2,7 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Center } from '@chakra-ui/react';
 import groupBy from 'lodash.groupby';
 import { useCallback, useEffect } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, useLocation } from 'react-router-dom';
 import { Address, encodeFunctionData, erc20Abi, getAddress, Hash, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../../../../assets/abi/SablierV2Batch';
 import {
@@ -107,6 +107,7 @@ export function SafeSablierProposalCreatePage() {
   );
 
   const HEADER_HEIGHT = useHeaderHeight();
+  const location = useLocation();
 
   if (!type || !safe?.address || !safe) {
     return (
@@ -116,10 +117,15 @@ export function SafeSablierProposalCreatePage() {
     );
   }
 
+  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.STREAMS, CreateProposalSteps.METADATA)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.STREAMS)}${location.search}`;
+
   return (
     <ProposalBuilder
       initialValues={{ ...DEFAULT_SABLIER_PROPOSAL, nonce: safe.nextNonce }}
       mode={ProposalBuilderMode.SABLIER}
+      prevStepUrl={prevStepUrl}
+      nextStepUrl={nextStepUrl}
       prepareProposalData={prepareProposalData}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {
         return (

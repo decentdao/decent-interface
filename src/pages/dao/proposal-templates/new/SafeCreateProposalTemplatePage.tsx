@@ -1,6 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { useEffect, useMemo, useState } from 'react';
-import { Route, useSearchParams } from 'react-router-dom';
+import { Route, useLocation, useSearchParams } from 'react-router-dom';
 import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
@@ -65,9 +65,16 @@ export function SafeCreateProposalTemplatePage() {
     loadInitialTemplate();
   }, [defaultProposalTemplatesHash, defaultProposalTemplateIndex, ipfsClient]);
 
+  const location = useLocation();
+
+  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
+
   return (
     <ProposalBuilder
       mode={ProposalBuilderMode.TEMPLATE}
+      prevStepUrl={prevStepUrl}
+      nextStepUrl={nextStepUrl}
       initialValues={initialProposalTemplate}
       prepareProposalData={prepareProposalTemplateProposal}
       contentRoute={(formikProps, pendingCreateTx, nonce) => {

@@ -71,6 +71,8 @@ export function ShowNonceInputOnMultisig({
 
 interface ProposalBuilderProps {
   mode: ProposalBuilderMode;
+  prevStepUrl: string;
+  nextStepUrl: string;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
   contentRoute: (
@@ -82,6 +84,8 @@ interface ProposalBuilderProps {
 
 export function ProposalBuilder({
   mode,
+  prevStepUrl,
+  nextStepUrl,
   initialValues,
   prepareProposalData,
   contentRoute,
@@ -187,10 +191,6 @@ export function ProposalBuilder({
           !!formikProps.errors.transactions ||
           !!formikProps.errors.nonce ||
           pendingCreateTx;
-
-        // @dev these prevStepUrl and nextStepUrl calculation is done this way to universally build URL for the next/prev steps both for proposal builder and proposal template builder
-        const prevStepUrl = `${location.pathname.replace(`${mode === ProposalBuilderMode.SABLIER ? CreateProposalSteps.STREAMS : CreateProposalSteps.TRANSACTIONS}`, `${CreateProposalSteps.METADATA}`)}${location.search}`;
-        const nextStepUrl = `${location.pathname.replace(`${CreateProposalSteps.METADATA}`, `${mode === ProposalBuilderMode.SABLIER ? CreateProposalSteps.STREAMS : CreateProposalSteps.TRANSACTIONS}`)}${location.search}`;
 
         return (
           <form onSubmit={handleSubmit}>
