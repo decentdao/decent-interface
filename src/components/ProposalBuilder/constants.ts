@@ -1,14 +1,4 @@
-import {
-  CreateProposalTransaction,
-  ProposalBuilderMode,
-  Stream,
-  Tranche,
-} from '../../types/proposalBuilder';
-
-export const builderInProposalMode = (mode: ProposalBuilderMode) =>
-  mode === ProposalBuilderMode.PROPOSAL ||
-  mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS ||
-  mode === ProposalBuilderMode.SABLIER;
+import { CreateProposalTransaction, Stream, Tranche } from '../../types/proposalBuilder';
 
 export const DEFAULT_PROPOSAL_TRANSACTION: CreateProposalTransaction = {
   targetAddress: '',

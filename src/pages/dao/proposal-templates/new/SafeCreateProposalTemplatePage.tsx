@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
+import { TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -96,6 +97,7 @@ export function SafeCreateProposalTemplatePage() {
       pageHeaderTitle={t('createProposalTemplate', { ns: 'proposalTemplate' })}
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
+      proposalMetadataTypeProps={TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS(t)}
       prevStepUrl={prevStepUrl}
       nextStepUrl={nextStepUrl}
       initialValues={initialProposalTemplate}

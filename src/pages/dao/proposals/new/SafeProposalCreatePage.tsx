@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useLocation, useNavigate } from 'react-router-dom';
 import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
+import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
@@ -66,6 +67,7 @@ export function SafeProposalCreatePage() {
       pageHeaderTitle={t('createProposal', { ns: 'proposal' })}
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
+      proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       prevStepUrl={prevStepUrl}
       nextStepUrl={nextStepUrl}
       prepareProposalData={prepareProposal}

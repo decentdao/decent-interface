@@ -10,6 +10,7 @@ import {
   ProposalBuilder,
   ShowNonceInputOnMultisig,
 } from '../../../../../components/ProposalBuilder';
+import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';
 import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
@@ -147,6 +148,7 @@ export function SafeSablierProposalCreatePage() {
       pageHeaderTitle={t('createProposal', { ns: 'proposal' })}
       pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
       pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
+      proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       prevStepUrl={prevStepUrl}
       nextStepUrl={nextStepUrl}
       prepareProposalData={prepareProposalData}

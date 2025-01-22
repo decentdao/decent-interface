@@ -32,7 +32,7 @@ import ProposalDetails, {
   TemplateDetails,
   TransactionsDetails,
 } from './ProposalDetails';
-import ProposalMetadata from './ProposalMetadata';
+import ProposalMetadata, { ProposalMetadataTypeProps } from './ProposalMetadata';
 import StepButtons, { CreateProposalButton, NextButton, PreviousButton } from './StepButtons';
 
 export function ShowNonceInputOnMultisig({
@@ -74,6 +74,7 @@ interface ProposalBuilderProps {
   pageHeaderTitle: string;
   pageHeaderBreadcrumbs: Crumb[];
   pageHeaderButtonClickHandler: () => void;
+  proposalMetadataTypeProps: ProposalMetadataTypeProps;
   prevStepUrl: string;
   nextStepUrl: string;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
@@ -90,6 +91,7 @@ export function ProposalBuilder({
   pageHeaderTitle,
   pageHeaderBreadcrumbs,
   pageHeaderButtonClickHandler,
+  proposalMetadataTypeProps,
   prevStepUrl,
   nextStepUrl,
   initialValues,
@@ -234,7 +236,7 @@ export function ProposalBuilder({
                           path={CreateProposalSteps.METADATA}
                           element={
                             <ProposalMetadata
-                              mode={mode}
+                              typeProps={proposalMetadataTypeProps}
                               {...formikProps}
                             />
                           }
