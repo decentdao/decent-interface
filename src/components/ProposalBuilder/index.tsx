@@ -67,7 +67,13 @@ interface ProposalBuilderProps {
   pageHeaderButtonClickHandler: () => void;
   proposalMetadataTypeProps: ProposalMetadataTypeProps;
   actionsExperience: JSX.Element | null;
-  metadataStepButtons: (isDisabled: boolean) => JSX.Element;
+  metadataStepButtons: ({
+    formErrors,
+    createProposalBlocked,
+  }: {
+    formErrors: boolean;
+    createProposalBlocked: boolean;
+  }) => JSX.Element;
   transactionsDetails:
     | ((transactions: CreateProposalTransaction<BigIntValuePair>[]) => JSX.Element)
     | null;
@@ -233,13 +239,10 @@ export function ProposalBuilder({
                     </Box>
                     {actionsExperience}
                     <StepButtons
-                      metadataStepButtons={metadataStepButtons(
-                        // TODO: This is a hack. This is specifically what this PR is trying to fix/avoid.
-                        // We need to figure out a better way to handle this.
-                        actionsExperience === null
-                          ? !!formikProps.errors.proposalMetadata
-                          : createProposalButtonDisabled,
-                      )}
+                      metadataStepButtons={metadataStepButtons({
+                        formErrors: !!formikProps.errors.proposalMetadata,
+                        createProposalBlocked: createProposalButtonDisabled,
+                      })}
                       transactionsStepButtons={
                         <>
                           <PreviousButton prevStepUrl={prevStepUrl} />

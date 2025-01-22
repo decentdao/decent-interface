@@ -130,8 +130,8 @@ export function SafeProposalWithActionsCreatePage() {
     navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
   };
 
-  const metadataStepButtons = (isDisabled: boolean) => {
-    return <CreateProposalButton isDisabled={isDisabled} />;
+  const metadataStepButtons = ({ createProposalBlocked }: { createProposalBlocked: boolean }) => {
+    return <CreateProposalButton isDisabled={createProposalBlocked} />;
   };
 
   return (

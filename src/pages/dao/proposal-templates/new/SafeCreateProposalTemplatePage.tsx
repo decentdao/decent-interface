@@ -93,11 +93,11 @@ export function SafeCreateProposalTemplatePage() {
     navigate(DAO_ROUTES.proposalTemplates.relative(addressPrefix, safe?.address ?? ''));
   };
 
-  const metadataStepButtons = (isDisabled: boolean) => {
+  const metadataStepButtons = ({ formErrors }: { formErrors: boolean }) => {
     return (
       <NextButton
         nextStepUrl={nextStepUrl}
-        isDisabled={isDisabled}
+        isDisabled={formErrors}
       />
     );
   };
