@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
+import { DAO_ROUTES } from '../../constants/routes';
 import { logError } from '../../helpers/errorLogging';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import useCreateProposalSchema from '../../hooks/schemas/proposalBuilder/useCreateProposalSchema';
@@ -24,6 +24,7 @@ import {
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 import { AddActions } from '../ui/modals/AddActions';
 import { SendAssetsData } from '../ui/modals/SendAssetsModal';
+import { Crumb } from '../ui/page/Header/Breadcrumbs';
 import PageHeader from '../ui/page/Header/PageHeader';
 import { ProposalActionCard } from './ProposalActionCard';
 import ProposalDetails, {
@@ -33,7 +34,6 @@ import ProposalDetails, {
 } from './ProposalDetails';
 import ProposalMetadata from './ProposalMetadata';
 import StepButtons, { CreateProposalButton, NextButton, PreviousButton } from './StepButtons';
-import { builderInProposalMode } from './constants';
 
 export function ShowNonceInputOnMultisig({
   nonce,
@@ -71,6 +71,9 @@ export function ShowNonceInputOnMultisig({
 
 interface ProposalBuilderProps {
   mode: ProposalBuilderMode;
+  pageHeaderTitle: string;
+  pageHeaderBreadcrumbs: Crumb[];
+  pageHeaderButtonClickHandler: () => void;
   prevStepUrl: string;
   nextStepUrl: string;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
@@ -84,6 +87,9 @@ interface ProposalBuilderProps {
 
 export function ProposalBuilder({
   mode,
+  pageHeaderTitle,
+  pageHeaderBreadcrumbs,
+  pageHeaderButtonClickHandler,
   prevStepUrl,
   nextStepUrl,
   initialValues,
@@ -98,7 +104,6 @@ export function ProposalBuilder({
   const step = (paths[paths.length - 1] || paths[paths.length - 2]) as
     | CreateProposalSteps
     | undefined;
-  const isProposalMode = builderInProposalMode(mode);
   const { safe } = useDaoInfoStore();
   const safeAddress = safe?.address;
 
@@ -106,7 +111,7 @@ export function ProposalBuilder({
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { createProposalValidation } = useCreateProposalSchema();
-  const { addAction, actions, resetActions } = useProposalActionsStore();
+  const { addAction, actions } = useProposalActionsStore();
 
   const handleAddSendAssetsAction = (data: SendAssetsData) => {
     addAction({
@@ -196,50 +201,13 @@ export function ProposalBuilder({
           <form onSubmit={handleSubmit}>
             <Box>
               <PageHeader
-                title={
-                  isProposalMode
-                    ? t('createProposal', { ns: 'proposal' })
-                    : t('createProposalTemplate', { ns: 'proposalTemplate' })
-                }
-                breadcrumbs={
-                  isProposalMode
-                    ? [
-                        {
-                          terminus: t('proposals', { ns: 'breadcrumbs' }),
-                          path: DAO_ROUTES.proposals.relative(addressPrefix, safeAddress),
-                        },
-                        {
-                          terminus: t('proposalNew', { ns: 'breadcrumbs' }),
-                          path: '',
-                        },
-                      ]
-                    : [
-                        {
-                          terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
-                          path: DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress),
-                        },
-                        {
-                          terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
-                          path: '',
-                        },
-                      ]
-                }
+                title={pageHeaderTitle}
+                breadcrumbs={pageHeaderBreadcrumbs}
                 ButtonIcon={ArrowLeft}
                 buttonProps={{
                   isDisabled: pendingCreateTx,
                   variant: 'secondary',
-                  onClick: () => {
-                    if (mode === ProposalBuilderMode.PROPOSAL_WITH_ACTIONS && actions.length > 0) {
-                      resetActions();
-                    }
-                    navigate(
-                      safeAddress
-                        ? isProposalMode
-                          ? DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)
-                          : DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress)
-                        : BASE_ROUTES.landing,
-                    );
-                  },
+                  onClick: pageHeaderButtonClickHandler,
                 }}
               />
               <Grid

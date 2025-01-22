@@ -1,13 +1,16 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { useEffect, useMemo, useState } from 'react';
-import { Route, useLocation, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Route, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ProposalBuilder, ShowNonceInputOnMultisig } from '../../../../components/ProposalBuilder';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import { logError } from '../../../../helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../hooks/DAO/proposal/useCreateProposalTemplate';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import useIPFSClient from '../../../../providers/App/hooks/useIPFSClient';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
   CreateProposalSteps,
@@ -33,6 +36,7 @@ export function SafeCreateProposalTemplatePage() {
     [searchParams],
   );
   const { safe } = useDaoInfoStore();
+  const { addressPrefix } = useNetworkConfigStore();
 
   useEffect(() => {
     const loadInitialTemplate = async () => {
@@ -66,13 +70,32 @@ export function SafeCreateProposalTemplatePage() {
   }, [defaultProposalTemplatesHash, defaultProposalTemplateIndex, ipfsClient]);
 
   const location = useLocation();
-
+  const { t } = useTranslation('proposalTemplate');
+  const navigate = useNavigate();
   const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
   const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
+
+  const pageHeaderBreadcrumbs = [
+    {
+      terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
+      path: DAO_ROUTES.proposalTemplates.relative(addressPrefix, safe?.address ?? ''),
+    },
+    {
+      terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
+      path: '',
+    },
+  ];
+
+  const pageHeaderButtonClickHandler = () => {
+    navigate(DAO_ROUTES.proposalTemplates.relative(addressPrefix, safe?.address ?? ''));
+  };
 
   return (
     <ProposalBuilder
       mode={ProposalBuilderMode.TEMPLATE}
+      pageHeaderTitle={t('createProposalTemplate', { ns: 'proposalTemplate' })}
+      pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
+      pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       prevStepUrl={prevStepUrl}
       nextStepUrl={nextStepUrl}
       initialValues={initialProposalTemplate}

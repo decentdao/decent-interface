@@ -2,7 +2,8 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Center } from '@chakra-ui/react';
 import groupBy from 'lodash.groupby';
 import { useCallback, useEffect } from 'react';
-import { Route, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Route, useLocation, useNavigate } from 'react-router-dom';
 import { Address, encodeFunctionData, erc20Abi, getAddress, Hash, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../../../../assets/abi/SablierV2Batch';
 import {
@@ -13,6 +14,7 @@ import { ProposalStreams } from '../../../../../components/ProposalBuilder/Propo
 import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
+import { DAO_ROUTES } from '../../../../../constants/routes';
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
@@ -32,9 +34,12 @@ export function SafeSablierProposalCreatePage() {
     governance: { type },
   } = useFractal();
   const {
+    addressPrefix,
     contracts: { sablierV2Batch, sablierV2LockupTranched },
   } = useNetworkConfigStore();
   const { safe } = useDaoInfoStore();
+  const { t } = useTranslation('proposal');
+  const navigate = useNavigate();
 
   const prepareProposalData = useCallback(
     async (values: CreateProposalForm | CreateSablierProposalForm) => {
@@ -120,10 +125,28 @@ export function SafeSablierProposalCreatePage() {
   const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.STREAMS, CreateProposalSteps.METADATA)}${location.search}`;
   const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.STREAMS)}${location.search}`;
 
+  const pageHeaderBreadcrumbs = [
+    {
+      terminus: t('proposals', { ns: 'breadcrumbs' }),
+      path: DAO_ROUTES.proposals.relative(addressPrefix, safe.address),
+    },
+    {
+      terminus: t('proposalNew', { ns: 'breadcrumbs' }),
+      path: '',
+    },
+  ];
+
+  const pageHeaderButtonClickHandler = () => {
+    navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
+  };
+
   return (
     <ProposalBuilder
       initialValues={{ ...DEFAULT_SABLIER_PROPOSAL, nonce: safe.nextNonce }}
       mode={ProposalBuilderMode.SABLIER}
+      pageHeaderTitle={t('createProposal', { ns: 'proposal' })}
+      pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
+      pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
       prevStepUrl={prevStepUrl}
       nextStepUrl={nextStepUrl}
       prepareProposalData={prepareProposalData}
