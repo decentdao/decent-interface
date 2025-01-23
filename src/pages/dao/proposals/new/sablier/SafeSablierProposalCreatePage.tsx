@@ -128,8 +128,8 @@ export function SafeSablierProposalCreatePage() {
     );
   }
 
-  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.STREAMS, CreateProposalSteps.METADATA)}${location.search}`;
-  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.STREAMS)}${location.search}`;
+  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
 
   const pageHeaderBreadcrumbs = [
     {
@@ -187,7 +187,7 @@ export function SafeSablierProposalCreatePage() {
       contentRoute={(formikProps, pendingCreateTx, nonce) => {
         return (
           <Route
-            path={CreateProposalSteps.STREAMS}
+            path={CreateProposalSteps.TRANSACTIONS}
             element={
               <>
                 <ProposalStreams

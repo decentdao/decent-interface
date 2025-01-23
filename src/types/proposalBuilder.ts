@@ -3,8 +3,7 @@ import { BigIntValuePair } from './common';
 
 export enum CreateProposalSteps {
   METADATA = 'metadata',
-  TRANSACTIONS = 'transactions',
-  STREAMS = 'streams',
+  TRANSACTIONS = 'transactions'
 }
 
 export interface CreateProposalTransaction<T = BigIntValuePair> {

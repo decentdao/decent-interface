@@ -19,7 +19,7 @@ export const getSafeName = async (
 
   const mainnetPublicClient = createPublicClient({
     chain: mainnet.chain,
-    transport: http(mainnet.rpcEndpoint, { batch: true }),
+    transport: http(mainnet.rpcEndpoint),
   });
   const ensName = await mainnetPublicClient.getEnsName({ address });
   if (ensName) {
