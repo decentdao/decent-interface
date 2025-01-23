@@ -1,4 +1,3 @@
-import { mainnet } from 'viem/chains';
 import { useEnsAvatar } from 'wagmi';
 import {
   supportedEnsNetworks,
@@ -12,9 +11,11 @@ interface UseNetworkEnsAvatarProps {
 
 export function useNetworkEnsAvatar(props?: UseNetworkEnsAvatarProps) {
   const { chain } = useNetworkConfigStore();
-  const ensNetworkOrMainnet = supportedEnsNetworks.includes(props?.chainId ?? chain.id)
-    ? chain.id
-    : mainnet.id;
+  const propsOrFallbackChainId = props?.chainId ?? chain.id;
 
-  return useEnsAvatar({ name: props?.name, chainId: ensNetworkOrMainnet });
+  if (!supportedEnsNetworks.includes(propsOrFallbackChainId)) {
+    throw new Error(`ENS is not supported for chain ${propsOrFallbackChainId}`);
+  }
+
+  return useEnsAvatar({ name: props?.name, chainId: propsOrFallbackChainId });
 }
