@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, TokenCreationType } from '../../../types';
+import { InputSection } from '../../input/InputSection';
+import { TextInput, BigIntTextInput } from '../../input/TextInput';
 import { CreateDAOPresenter } from '../presenters/CreateDAOPresenter';
-import { InputSection } from './input/InputSection';
-import { BigIntTextInput, TextInput } from './input/TextInput';
 
 export function VotesToken(props: ICreationStepProps) {
   const { values, handleChange, setFieldValue } = props;

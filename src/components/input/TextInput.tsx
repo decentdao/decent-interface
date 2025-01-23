@@ -1,17 +1,12 @@
 import { Flex, IconButton, Input } from '@chakra-ui/react';
 import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
-import { useFormHelpers } from '../../../../hooks/utils/useFormHelpers';
-import { BigIntInput } from '../../../ui/forms/BigIntInput';
-import { AddressInput } from '../../../ui/forms/EthAddressInput';
-import { LabelComponent } from '../../../ui/forms/InputComponent';
-import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import {
-  ILabeledBigIntTextInput,
-  ILabeledTextInput,
-  IRemoval,
-  ITextInput,
-} from '../../presenters/CreateDAOPresenter';
+import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
+import { BigIntInput } from '../ui/forms/BigIntInput';
+import { AddressInput } from '../ui/forms/EthAddressInput';
+import { LabelComponent } from '../ui/forms/InputComponent';
+import LabelWrapper from '../ui/forms/LabelWrapper';
+import { ITextInput, IRemoval, ILabeledTextInput, ILabeledBigIntTextInput } from './Interfaces';
 
 export function EmbeddedAddressInput({
   id,

@@ -1,10 +1,10 @@
 import { Flex } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import ContentBoxTitle from '../../../ui/containers/ContentBox/ContentBoxTitle';
-import { IInputSection } from '../../presenters/CreateDAOPresenter';
+import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
+import { IInputSection } from './Interfaces';
 
-export function InputSection({ label }: IInputSection, { children }: PropsWithChildren<{}>) {
+export function InputSection({ label,  children }: PropsWithChildren<IInputSection>) {
   const { t } = useTranslation('daoCreate');
   return (
     <Flex

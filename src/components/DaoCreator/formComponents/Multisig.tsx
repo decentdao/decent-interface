@@ -4,6 +4,10 @@ import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import { ICreationStepProps } from '../../../types';
+import { MultiInputs } from '../../input/CompositeInput';
+import { InputSection } from '../../input/InputSection';
+import { IInputSection } from '../../input/Interfaces';
+import { EmbeddedAddressInput } from '../../input/TextInput';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
@@ -11,11 +15,8 @@ import { NumberStepperInput } from '../../ui/forms/NumberStepperInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
-import { CreateDAOPresenter, IInputSection } from '../presenters/CreateDAOPresenter';
+import { CreateDAOPresenter } from '../presenters/CreateDAOPresenter';
 import { DAOCreateMode } from './EstablishEssentials';
-import { MultiInputs } from './input/CompositeInput';
-import { InputSection } from './input/InputSection';
-import { EmbeddedAddressInput } from './input/TextInput';
 
 export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;

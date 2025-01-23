@@ -14,6 +14,9 @@ import { useTranslation } from 'react-i18next';
 import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
+import { InputSection } from '../../input/InputSection';
+import { StepperInput } from '../../input/StepperInput';
+import { BigIntTextInput } from '../../input/TextInput';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -23,9 +26,6 @@ import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
 import { CreateDAOPresenter } from '../presenters/CreateDAOPresenter';
 import { DAOCreateMode } from './EstablishEssentials';
-import { InputSection } from './input/InputSection';
-import { StepperInput } from './input/StepperInput';
-import { BigIntTextInput } from './input/TextInput';
 
 function DayStepperInput({
   inputValue,

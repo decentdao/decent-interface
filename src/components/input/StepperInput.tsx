@@ -1,7 +1,7 @@
 import { Flex, InputGroup } from '@chakra-ui/react';
-import { LabelComponent } from '../../../ui/forms/InputComponent';
-import { NumberStepperInput } from '../../../ui/forms/NumberStepperInput';
-import { IStepperInput } from '../../presenters/CreateDAOPresenter';
+import { LabelComponent } from '../ui/forms/InputComponent';
+import { NumberStepperInput } from '../ui/forms/NumberStepperInput';
+import { IStepperInput } from './Interfaces';
 
 export function StepperInput({
   id,

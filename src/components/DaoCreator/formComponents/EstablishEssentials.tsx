@@ -12,21 +12,17 @@ import {
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import { getNetworkIcon } from '../../../utils/url';
+import { InputSection } from '../../input/InputSection';
+import { ILabeledTextInput, ISelectionInput, IInputSection } from '../../input/Interfaces';
+import { DropdownMenuSelection, RadioSelection } from '../../input/SelectionInput';
+import { TextInput } from '../../input/TextInput';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { DropdownMenu } from '../../ui/menus/DropdownMenu';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import {
-  CreateDAOPresenter,
-  IInputSection,
-  ILabeledTextInput,
-  ISelectionInput,
-} from '../presenters/CreateDAOPresenter';
-import { InputSection } from './input/InputSection';
-import { DropdownMenuSelection, RadioSelection } from './input/SelectionInput';
-import { TextInput } from './input/TextInput';
+import { CreateDAOPresenter } from '../presenters/CreateDAOPresenter';
 
 export enum DAOCreateMode {
   ROOTDAO,
@@ -105,31 +101,45 @@ export function EstablishEssentials(props: ICreationStepProps) {
   }));
 
   if (isFeatureEnabled('flag_higher_components')) {
-    const daoName: ILabeledTextInput = CreateDAOPresenter.daoname(t, daoNameDisabled, value =>
-      setFieldValue('essentials.daoName', value, true),
-    );
-
-    const chainOptions: ISelectionInput = CreateDAOPresenter.chainOptions(
+    const { daoname, chainOptions, governanceOptions, snapshot } = CreateDAOPresenter.essential(
       t,
+      daoNameDisabled,
       supportedNetworks,
       chain.id,
-      chainId => {
-        setCurrentConfig(getConfigByChainId(Number(chainId)));
-      },
-    );
-
-    const governanceOptions: ISelectionInput = CreateDAOPresenter.governanceOptions(
-      t,
       values.essentials.governance,
-      handleGovernanceChange,
-    );
-
-    const snapshot: ILabeledTextInput = CreateDAOPresenter.snapshot(
-      t,
       snapshotENSDisabled,
       errors?.essentials?.snapshotENS,
+      value => setFieldValue('essentials.daoName', value, true),
+      chainId => setCurrentConfig(getConfigByChainId(Number(chainId))),
+      handleGovernanceChange,
       value => setFieldValue('essentials.snapshotENS', value, true),
-    );
+    )
+
+    // const daoName: ILabeledTextInput = CreateDAOPresenter.daoname(t, daoNameDisabled, value =>
+    //   setFieldValue('essentials.daoName', value, true),
+    // );
+
+    // const chainOptions: ISelectionInput = CreateDAOPresenter.chainOptions(
+    //   t,
+    //   supportedNetworks,
+    //   chain.id,
+    //   chainId => {
+    //     setCurrentConfig(getConfigByChainId(Number(chainId)));
+    //   },
+    // );
+
+    // const governanceOptions: ISelectionInput = CreateDAOPresenter.governanceOptions(
+    //   t,
+    //   values.essentials.governance,
+    //   handleGovernanceChange,
+    // );
+
+    // const snapshot: ILabeledTextInput = CreateDAOPresenter.snapshot(
+    //   t,
+    //   snapshotENSDisabled,
+    //   errors?.essentials?.snapshotENS,
+    //   value => setFieldValue('essentials.snapshotENS', value, true),
+    // );
 
     const section: IInputSection = CreateDAOPresenter.section(undefined);
 
@@ -143,7 +153,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           stepNumber={1}
         >
           <InputSection {...section}>
-            <TextInput {...daoName} />
+            <TextInput {...daoname} />
             <DropdownMenuSelection {...chainOptions} />
             <RadioSelection {...governanceOptions} />
             <TextInput {...snapshot} />
