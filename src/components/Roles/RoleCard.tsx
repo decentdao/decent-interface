@@ -3,7 +3,7 @@ import { CaretCircleRight, CaretRight } from '@phosphor-icons/react';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
-import useAvatar from '../../hooks/utils/useAvatar';
+import { useNetworkEnsAvatar } from '../../hooks/useNetworkEnsAvatar';
 import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import {
@@ -28,7 +28,7 @@ export function AvatarAndRoleName({
 }) {
   const { displayName } = useGetAccountName(wearerAddress);
 
-  const avatarURL = useAvatar(wearerAddress || zeroAddress);
+  const { data: avatarURL } = useNetworkEnsAvatar({ name: wearerAddress || zeroAddress });
   const { t } = useTranslation(['roles']);
   const copyToClipboard = useCopyText();
 
