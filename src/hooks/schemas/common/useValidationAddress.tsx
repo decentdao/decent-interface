@@ -230,5 +230,6 @@ export const useValidationAddress = () => {
     uniqueAddressValidationTest,
     uniqueNFTAddressValidationTest,
     isValidating,
+    validateAddress,
   };
 };
