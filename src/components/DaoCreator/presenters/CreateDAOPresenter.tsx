@@ -38,14 +38,14 @@ export const CreateDAOPresenter = {
     snapshot: ILabeledTextInput,
   } {
     return { 
-      daoname: this.daoname(t, daonameDisabled, onDaoNameChange),
-      chainOptions: this.chainOptions(t, networks, selectedNetwork, onChainOptionChange),
-      governanceOptions: this.governanceOptions(t, selectedGovernance, onGovernanceChange),
-      snapshot: this.snapshot(t, snapshotDisabled, snapshotError, onSnapshotChange)
+      daoname: this._daoname(t, daonameDisabled, onDaoNameChange),
+      chainOptions: this._chainOptions(t, networks, selectedNetwork, onChainOptionChange),
+      governanceOptions: this._governanceOptions(t, selectedGovernance, onGovernanceChange),
+      snapshot: this._snapshot(t, snapshotDisabled, snapshotError, onSnapshotChange)
     }
   },
 
-  daoname(
+  _daoname(
     t: TFunction<[string, string], undefined>,
     isDisabled: boolean,
     onValueChange: (value: string) => void,
@@ -63,7 +63,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  chainOptions(
+  _chainOptions(
     t: TFunction<[string, string], undefined>,
     networks: NetworkConfig[],
     selected: Number,
@@ -89,7 +89,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  governanceOptions(
+  _governanceOptions(
     t: TFunction<[string, string], undefined>,
     selected: GovernanceType,
     onValueChange: (value: GovernanceType) => void,
@@ -127,7 +127,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  snapshot(
+  _snapshot(
     t: TFunction<[string, string], undefined>,
     isDisabled: boolean,
     error: string | undefined,
@@ -147,7 +147,55 @@ export const CreateDAOPresenter = {
     };
   },
 
-  tokenOptions(
+  token(
+    t: TFunction<[string, string], undefined>,
+    selectedTokenOptions: TokenCreationType,
+    importAddressPlaceHolder: string,
+    importAddressError: string | undefined,
+    supply: bigint | undefined,
+    onTokenOptionsChange: (value: TokenCreationType) => void,
+    onImportAddressChange: (event: ChangeEvent<HTMLInputElement>) => void,
+    onNameChange: (value: string) => void,
+    onSymbolChange: (event: ChangeEvent<HTMLInputElement>) => void,
+    onSupplyChange: (value: BigIntValuePair) => void,
+  ): { 
+    options: ISelectionInput,
+    importAddress: ILabeledTextInput | undefined,
+    tokenName: ILabeledTextInput,
+    tokenSymbol: ILabeledTextInput,
+    tokenSupply: ILabeledBigIntTextInput,
+  } {
+    const { tokenName, tokenSymbol, tokenSupply } = this.tokenConfig(t, selectedTokenOptions, supply, onNameChange, onSymbolChange, onSupplyChange);
+
+    return {
+      options: this._tokenOptions(t, selectedTokenOptions, onTokenOptionsChange),
+      importAddress: (selectedTokenOptions == TokenCreationType.IMPORTED) ? this._tokenImportAddress(t, importAddressPlaceHolder, importAddressError, onImportAddressChange) : undefined,
+      tokenName: tokenName,
+      tokenSymbol: tokenSymbol,
+      tokenSupply: tokenSupply,
+    }
+  },
+
+  tokenConfig(
+    t: TFunction<[string, string], undefined>,
+    selectedTokenOptions: TokenCreationType,
+    supply: bigint | undefined,
+    onNameChange: (value: string) => void,
+    onSymbolChange: (event: ChangeEvent<HTMLInputElement>) => void,
+    onSupplyChange: (value: BigIntValuePair) => void,
+  ): { 
+    tokenName: ILabeledTextInput,
+    tokenSymbol: ILabeledTextInput,
+    tokenSupply: ILabeledBigIntTextInput,
+  } {
+    return {
+      tokenName: this._tokenName(t, selectedTokenOptions == TokenCreationType.IMPORTED, onNameChange),
+      tokenSymbol: this._tokenSymbol(t, selectedTokenOptions == TokenCreationType.IMPORTED, onSymbolChange),
+      tokenSupply: this._tokenSupply(t, supply, selectedTokenOptions == TokenCreationType.IMPORTED, onSupplyChange),
+    }
+  },
+
+  _tokenOptions(
     t: TFunction<[string, string], undefined>,
     selected: TokenCreationType,
     onValueChange: (value: TokenCreationType) => void,
@@ -178,7 +226,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  tokenImportAddress(
+  _tokenImportAddress(
     t: TFunction<[string, string], undefined>,
     placeholder: string,
     error: string | undefined,
@@ -195,17 +243,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  tokenNew(t: TFunction<[string, string], undefined>): ILabeledTextInput {
-    return {
-      id: 'erc20Token.tokenName',
-      label: t('labelTokenName'),
-      description: t('helperTokenName'),
-      placeholder: 'Name',
-      isRequired: true,
-    };
-  },
-
-  tokenName(
+  _tokenName(
     t: TFunction<[string, string], undefined>,
     isDisabled: boolean,
     onValueChange: (value: string) => void,
@@ -223,7 +261,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  tokenSymbol(
+  _tokenSymbol(
     t: TFunction<[string, string], undefined>,
     isDisabled: boolean,
     onChange: (event: ChangeEvent<HTMLInputElement>) => void,
@@ -241,7 +279,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  tokenSupply(
+  _tokenSupply(
     t: TFunction<[string, string], undefined>,
     value: bigint | undefined,
     isDisabled: boolean,

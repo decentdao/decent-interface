@@ -10,26 +10,26 @@ export function VotesToken(props: ICreationStepProps) {
 
   const newToken = values.erc20Token.tokenCreationType == TokenCreationType.NEW;
 
-  const tokenName = CreateDAOPresenter.tokenName(t, !newToken, value => {
-    if (newToken) {
-      setFieldValue('erc20Token.tokenName', value);
-    }
-  });
-  const tokenSymbol = CreateDAOPresenter.tokenSymbol(t, !newToken, event => {
-    if (newToken) {
-      handleChange(event);
-    }
-  });
-  const tokenSupply = CreateDAOPresenter.tokenSupply(
+  const { tokenName, tokenSymbol, tokenSupply } = CreateDAOPresenter.tokenConfig(
     t,
+    values.erc20Token.tokenCreationType,
     values.erc20Token.tokenSupply.bigintValue,
-    !newToken,
-    value => {
+    name => {
       if (newToken) {
-        setFieldValue('erc20Token.tokenSupply', value);
+        setFieldValue('erc20Token.tokenName', name);
       }
     },
-  );
+    event => {
+      if (newToken) {
+        handleChange(event);
+      }
+    },
+    supply => {
+      if (newToken) {
+        setFieldValue('erc20Token.tokenSupply', supply);
+      }
+    }
+  )
 
   const section = CreateDAOPresenter.section(t('titleTokenParams'));
   return (
