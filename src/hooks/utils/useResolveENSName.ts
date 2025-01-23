@@ -12,7 +12,7 @@ export const useResolveENSName = () => {
   const { getEnsAddress } = useNetworkEnsAddressAsync();
 
   const resolveENSName = useCallback(
-    async (input: string): Promise<ResolveENSNameReturnType> => {
+    async (input: string, chainId?: number): Promise<ResolveENSNameReturnType> => {
       setIsLoading(true);
 
       const returnedResult: ResolveENSNameReturnType = {
@@ -41,7 +41,7 @@ export const useResolveENSName = () => {
         return returnedResult;
       }
 
-      const resolvedAddress = await getEnsAddress({ name: normalizedName });
+      const resolvedAddress = await getEnsAddress({ name: normalizedName, chainId });
       if (resolvedAddress) {
         returnedResult.resolvedAddress = resolvedAddress;
         returnedResult.isValid = true;
