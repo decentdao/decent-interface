@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Address, isAddress, getAddress, zeroAddress } from 'viem';
 import { normalize } from 'viem/ens';
-import { supportedNetworks } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useNetworkEnsAddressAsync } from '../useNetworkEnsAddress';
 
 type ResolveENSNameReturnType = {
@@ -40,10 +39,6 @@ export const useResolveENSName = () => {
       } catch {
         setIsLoading(false);
         return returnedResult;
-      }
-      const mainnet = supportedNetworks.find(network => network.chain.id === 1);
-      if (!mainnet) {
-        throw new Error('Mainnet not found');
       }
 
       const resolvedAddress = await getEnsAddress({ name: normalizedName });
