@@ -37,12 +37,17 @@ export function SendAssetsAction({
     return null;
   }
 
-  return <SendAssetsActionCard action={{
-    destinationAddress,
-    transferAmount,
-    asset: actionAsset,
-    nonceInput: undefined,
-  }} onRemove={onRemove} />
+  return (
+    <SendAssetsActionCard
+      action={{
+        destinationAddress,
+        transferAmount,
+        asset: actionAsset,
+        nonceInput: undefined,
+      }}
+      onRemove={onRemove}
+    />
+  );
 }
 
 export function AirdropAction({
