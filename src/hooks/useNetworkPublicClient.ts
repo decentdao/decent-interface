@@ -1,13 +1,17 @@
 import { useMemo } from 'react';
 import { createPublicClient, http } from 'viem';
 import { useNetworkConfigStore } from '../providers/NetworkConfig/useNetworkConfigStore';
+interface UseNetworkPublicClientProps {
+  chainId?: number;
+}
+export default function useNetworkPublicClient(props?: UseNetworkPublicClientProps) {
+  const { chain, rpcEndpoint, getConfigByChainId } = useNetworkConfigStore();
+  const chainToUse = props?.chainId ? getConfigByChainId(props.chainId).chain : chain;
 
-export default function useNetworkPublicClient() {
-  const { chain, rpcEndpoint } = useNetworkConfigStore();
   const publicClient = useMemo(
     () =>
       createPublicClient({
-        chain,
+        chain: chainToUse,
         batch: {
           multicall: {
             wait: 200,
@@ -15,7 +19,7 @@ export default function useNetworkPublicClient() {
         },
         transport: http(rpcEndpoint),
       }),
-    [chain, rpcEndpoint],
+    [chainToUse, rpcEndpoint],
   );
   return publicClient;
 }
