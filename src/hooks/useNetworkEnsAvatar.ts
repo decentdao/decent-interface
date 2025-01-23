@@ -10,7 +10,7 @@ interface UseNetworkEnsAvatarProps {
   chainId?: number;
 }
 
-export function useNetworkEnsAvatar(props: UseNetworkEnsAvatarProps | undefined) {
+export function useNetworkEnsAvatar(props?: UseNetworkEnsAvatarProps) {
   const { chain } = useNetworkConfigStore();
   const ensNetworkOrMainnet = supportedEnsNetworks.includes(props?.chainId ?? chain.id)
     ? chain.id

@@ -10,7 +10,7 @@ interface UseNetworkEnsAddressProps {
   chainId?: number;
 }
 
-export function useNetworkEnsAddress(props: UseNetworkEnsAddressProps | undefined) {
+export function useNetworkEnsAddress(props?: UseNetworkEnsAddressProps) {
   const { chain } = useNetworkConfigStore();
   const ensNetworkOrMainnet = supportedEnsNetworks.includes(props?.chainId ?? chain.id)
     ? chain.id

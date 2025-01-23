@@ -11,7 +11,7 @@ interface UseNetworkEnsNameProps {
   chainId?: number;
 }
 
-export function useNetworkEnsName(props: UseNetworkEnsNameProps | undefined) {
+export function useNetworkEnsName(props?: UseNetworkEnsNameProps) {
   const { chain } = useNetworkConfigStore();
   const ensNetworkOrMainnet = supportedEnsNetworks.includes(props?.chainId ?? chain.id)
     ? chain.id
