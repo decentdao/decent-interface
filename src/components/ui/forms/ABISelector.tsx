@@ -49,10 +49,15 @@ export default function ABISelector({ target, onChange }: IABISelector) {
           if (responseData.status === '1') {
             const fetchedABI = JSON.parse(responseData.result);
             setABI(fetchedABI);
+          } else {
+            setABI([]);
           }
         } catch (e) {
+          setABI([]);
           logError(e, 'Error fetching ABI for smart contract');
         }
+      } else {
+        setABI([]);
       }
     };
     loadABI();
