@@ -37,7 +37,7 @@ export const getSafeName = async (
 
 export const useGetSafeName = (chainId?: number) => {
   const { getConfigByChainId } = useNetworkConfigStore();
-  const { getEnsName } = useNetworkEnsNameAsync({ chainId });
+  const { getEnsName } = useNetworkEnsNameAsync();
   return {
     getSafeName: useCallback(
       (address: Address) => {
