@@ -113,7 +113,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       chainId => setCurrentConfig(getConfigByChainId(Number(chainId))),
       handleGovernanceChange,
       value => setFieldValue('essentials.snapshotENS', value, true),
-    )
+    );
 
     // const daoName: ILabeledTextInput = CreateDAOPresenter.daoname(t, daoNameDisabled, value =>
     //   setFieldValue('essentials.daoName', value, true),

@@ -105,29 +105,27 @@ export function AzoriusGovernance(props: ICreationStepProps) {
   }, [setFieldValue, executionPeriodDays]);
 
   if (isFeatureEnabled('flag_higher_components')) {
-    const quorum =
+    const { quorum, votingPeriod, timelockPeriod, executionPeriod } = CreateDAOPresenter.governance(
+      t,
+      values.azorius.votingStrategyType,
       values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
-        ? CreateDAOPresenter.erc20Quorum(
-            t,
-            values.azorius.quorumPercentage.bigintValue,
-            valuePair => setFieldValue('azorius.quorumPercentage', valuePair),
-          )
-        : CreateDAOPresenter.erc721Quorum(
-            t,
-            values.erc721Token.quorumThreshold.bigintValue,
-            valuePair => setFieldValue('erc721Token.quorumThreshold', valuePair),
-          );
-    const votingPeriod = CreateDAOPresenter.votingPeriod(t, votingPeriodDays, setVotingPeriodDays);
-    const timelockPeriod = CreateDAOPresenter.timelockPeriod(
-      t,
+        ? values.azorius.quorumPercentage.bigintValue
+        : values.erc721Token.quorumThreshold.bigintValue,
+      votingPeriodDays,
       timelockPeriodDays,
-      setTimelockPeriodDays,
-    );
-    const executionPeriod = CreateDAOPresenter.executionPeriod(
-      t,
       executionPeriodDays,
+      value =>
+        setFieldValue(
+          values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
+            ? 'azorius.quorumPercentage'
+            : 'erc721Token.quorumThreshold',
+          value,
+        ),
+      setVotingPeriodDays,
+      setTimelockPeriodDays,
       setExecutionPeriodDays,
     );
+
     const section = CreateDAOPresenter.section();
 
     return (

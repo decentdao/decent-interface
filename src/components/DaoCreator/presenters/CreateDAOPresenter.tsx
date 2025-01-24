@@ -3,7 +3,12 @@
 
 import { TFunction } from 'i18next/typescript/t';
 import { ChangeEvent } from 'react';
-import { BigIntValuePair, GovernanceType, TokenCreationType } from '../../../types';
+import {
+  BigIntValuePair,
+  GovernanceType,
+  TokenCreationType,
+  VotingStrategyType,
+} from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 import { getNetworkIcon } from '../../../utils/url';
 import {
@@ -31,18 +36,18 @@ export const CreateDAOPresenter = {
     onChainOptionChange: (value: Number) => void,
     onGovernanceChange: (value: GovernanceType) => void,
     onSnapshotChange: (value: string) => void,
-  ): { 
-    daoname: ILabeledTextInput, 
-    chainOptions: ISelectionInput, 
-    governanceOptions: ISelectionInput,
-    snapshot: ILabeledTextInput,
+  ): {
+    daoname: ILabeledTextInput;
+    chainOptions: ISelectionInput;
+    governanceOptions: ISelectionInput;
+    snapshot: ILabeledTextInput;
   } {
-    return { 
+    return {
       daoname: this._daoname(t, daonameDisabled, onDaoNameChange),
       chainOptions: this._chainOptions(t, networks, selectedNetwork, onChainOptionChange),
       governanceOptions: this._governanceOptions(t, selectedGovernance, onGovernanceChange),
-      snapshot: this._snapshot(t, snapshotDisabled, snapshotError, onSnapshotChange)
-    }
+      snapshot: this._snapshot(t, snapshotDisabled, snapshotError, onSnapshotChange),
+    };
   },
 
   _daoname(
@@ -158,22 +163,37 @@ export const CreateDAOPresenter = {
     onNameChange: (value: string) => void,
     onSymbolChange: (event: ChangeEvent<HTMLInputElement>) => void,
     onSupplyChange: (value: BigIntValuePair) => void,
-  ): { 
-    options: ISelectionInput,
-    importAddress: ILabeledTextInput | undefined,
-    tokenName: ILabeledTextInput,
-    tokenSymbol: ILabeledTextInput,
-    tokenSupply: ILabeledBigIntTextInput,
+  ): {
+    options: ISelectionInput;
+    importAddress: ILabeledTextInput | undefined;
+    tokenName: ILabeledTextInput;
+    tokenSymbol: ILabeledTextInput;
+    tokenSupply: ILabeledBigIntTextInput;
   } {
-    const { tokenName, tokenSymbol, tokenSupply } = this.tokenConfig(t, selectedTokenOptions, supply, onNameChange, onSymbolChange, onSupplyChange);
+    const { tokenName, tokenSymbol, tokenSupply } = this.tokenConfig(
+      t,
+      selectedTokenOptions,
+      supply,
+      onNameChange,
+      onSymbolChange,
+      onSupplyChange,
+    );
 
     return {
       options: this._tokenOptions(t, selectedTokenOptions, onTokenOptionsChange),
-      importAddress: (selectedTokenOptions == TokenCreationType.IMPORTED) ? this._tokenImportAddress(t, importAddressPlaceHolder, importAddressError, onImportAddressChange) : undefined,
+      importAddress:
+        selectedTokenOptions == TokenCreationType.IMPORTED
+          ? this._tokenImportAddress(
+              t,
+              importAddressPlaceHolder,
+              importAddressError,
+              onImportAddressChange,
+            )
+          : undefined,
       tokenName: tokenName,
       tokenSymbol: tokenSymbol,
       tokenSupply: tokenSupply,
-    }
+    };
   },
 
   tokenConfig(
@@ -183,16 +203,29 @@ export const CreateDAOPresenter = {
     onNameChange: (value: string) => void,
     onSymbolChange: (event: ChangeEvent<HTMLInputElement>) => void,
     onSupplyChange: (value: BigIntValuePair) => void,
-  ): { 
-    tokenName: ILabeledTextInput,
-    tokenSymbol: ILabeledTextInput,
-    tokenSupply: ILabeledBigIntTextInput,
+  ): {
+    tokenName: ILabeledTextInput;
+    tokenSymbol: ILabeledTextInput;
+    tokenSupply: ILabeledBigIntTextInput;
   } {
     return {
-      tokenName: this._tokenName(t, selectedTokenOptions == TokenCreationType.IMPORTED, onNameChange),
-      tokenSymbol: this._tokenSymbol(t, selectedTokenOptions == TokenCreationType.IMPORTED, onSymbolChange),
-      tokenSupply: this._tokenSupply(t, supply, selectedTokenOptions == TokenCreationType.IMPORTED, onSupplyChange),
-    }
+      tokenName: this._tokenName(
+        t,
+        selectedTokenOptions == TokenCreationType.IMPORTED,
+        onNameChange,
+      ),
+      tokenSymbol: this._tokenSymbol(
+        t,
+        selectedTokenOptions == TokenCreationType.IMPORTED,
+        onSymbolChange,
+      ),
+      tokenSupply: this._tokenSupply(
+        t,
+        supply,
+        selectedTokenOptions == TokenCreationType.IMPORTED,
+        onSupplyChange,
+      ),
+    };
   },
 
   _tokenOptions(
@@ -304,7 +337,35 @@ export const CreateDAOPresenter = {
     };
   },
 
-  erc20Quorum(
+  governance(
+    t: TFunction<[string, string], undefined>,
+    votingStrategyType: VotingStrategyType,
+    quorum: bigint | undefined,
+    votingPeriod: number,
+    timelockPeriod: number,
+    executionPeriod: number,
+    onQuorumChanged: (value: BigIntValuePair) => void,
+    onVotingPeriodChange: (value: number) => void,
+    onTimelockPeriodChange: (value: number) => void,
+    onExecutionPeriodChange: (value: number) => void,
+  ): {
+    quorum: ILabeledBigIntTextInput;
+    votingPeriod: IStepperInput;
+    timelockPeriod: IStepperInput;
+    executionPeriod: IStepperInput;
+  } {
+    return {
+      quorum:
+        votingStrategyType === VotingStrategyType.LINEAR_ERC20
+          ? this._erc20Quorum(t, quorum, onQuorumChanged)
+          : this._erc721Quorum(t, quorum, onQuorumChanged),
+      votingPeriod: this._votingPeriod(t, votingPeriod, onVotingPeriodChange),
+      timelockPeriod: this._timelockPeriod(t, timelockPeriod, onTimelockPeriodChange),
+      executionPeriod: this._executionPeriod(t, executionPeriod, onExecutionPeriodChange),
+    };
+  },
+
+  _erc20Quorum(
     t: TFunction<[string, string], undefined>,
     value: bigint | undefined,
     onValueChange: (value: BigIntValuePair) => void,
@@ -325,13 +386,13 @@ export const CreateDAOPresenter = {
     };
   },
 
-  erc721Quorum(
+  _erc721Quorum(
     t: TFunction<[string, string], undefined>,
     value: bigint | undefined,
     onValueChange: (value: BigIntValuePair) => void,
   ): ILabeledBigIntTextInput {
     return {
-      id: 'erc20Token.quorum',
+      id: 'erc721Token.quorum',
       label: t('quorum', { ns: 'common' }),
       description: t('helperQuorumERC721'),
       placeholder: '',
@@ -345,7 +406,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  votingPeriod(
+  _votingPeriod(
     t: TFunction<[string, string], undefined>,
     value: number,
     onValueChange: (value: number) => void,
@@ -360,7 +421,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  timelockPeriod(
+  _timelockPeriod(
     t: TFunction<[string, string], undefined>,
     value: number,
     onValueChange: (value: number) => void,
@@ -375,7 +436,7 @@ export const CreateDAOPresenter = {
     };
   },
 
-  executionPeriod(
+  _executionPeriod(
     t: TFunction<[string, string], undefined>,
     value: number,
     onValueChange: (value: number) => void,

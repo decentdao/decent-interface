@@ -28,8 +28,8 @@ export function VotesToken(props: ICreationStepProps) {
       if (newToken) {
         setFieldValue('erc20Token.tokenSupply', supply);
       }
-    }
-  )
+    },
+  );
 
   const section = CreateDAOPresenter.section(t('titleTokenParams'));
   return (
