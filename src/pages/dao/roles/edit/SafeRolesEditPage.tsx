@@ -143,7 +143,6 @@ export function SafeRolesEditPage() {
                   showRoleEditDetails(hat.id);
                 }}
                 payments={hat.payments}
-                isTermed={!!hat.isTermed}
                 isCurrentTermActive={isCurrentTermActive}
                 isMemberTermPending={isMemberTermPending}
               />
