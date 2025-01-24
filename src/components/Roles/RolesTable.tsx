@@ -95,11 +95,9 @@ function RoleNameEditColumn({
 function MemberColumn({
   wearerAddress,
   isCurrentTermActive,
-  isTermed,
-  isPending,
+  isMemberTermPending,
 }: {
-  isTermed?: boolean;
-  isPending?: boolean;
+  isMemberTermPending?: boolean;
   wearerAddress?: Address;
   isCurrentTermActive?: boolean;
 }) {
@@ -107,6 +105,13 @@ function MemberColumn({
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');
+  const memberTextColor = isCurrentTermActive === false ? 'neutral-6' : 'white-0';
+  const isPendingText = isMemberTermPending === true ? t('wearerPending') : '';
+
+  const wearerAddressText = wearerAddress
+    ? `${accountDisplayName} ${isPendingText}`
+    : t('unassigned');
+
   return (
     <Td width="60%">
       <Flex alignItems="center">
@@ -124,12 +129,10 @@ function MemberColumn({
           />
         )}
         <Text
-          color={isTermed && !isCurrentTermActive ? 'neutral-6' : 'white-0'}
+          color={memberTextColor}
           ml="0.5rem"
         >
-          {wearerAddress
-            ? `${accountDisplayName} ${isPending ? ` ${t('wearerPending')}` : ''}`
-            : t('unassigned')}
+          {wearerAddressText}
         </Text>
       </Flex>
     </Td>
@@ -175,7 +178,6 @@ export function RolesRow({
   paymentsCount,
   handleRoleClick,
   isCurrentTermActive,
-  isTermed,
 }: RoleProps) {
   return (
     <Tr
@@ -201,7 +203,6 @@ export function RolesRow({
       <MemberColumn
         wearerAddress={wearerAddress}
         isCurrentTermActive={isCurrentTermActive}
-        isTermed={isTermed}
       />
       <PaymentsColumn paymentsCount={paymentsCount} />
     </Tr>
@@ -211,10 +212,11 @@ export function RolesRow({
 export function RolesRowEdit({
   name,
   wearerAddress,
-  isTermed,
   editStatus,
   payments,
   handleRoleClick,
+  isCurrentTermActive,
+  isMemberTermPending,
 }: RoleEditProps) {
   const isRemovedRole = editStatus === EditBadgeStatus.Removed;
   return (
@@ -237,8 +239,8 @@ export function RolesRowEdit({
       />
       <MemberColumn
         wearerAddress={wearerAddress}
-        isTermed={isTermed}
-        isPending={isTermed}
+        isMemberTermPending={isMemberTermPending}
+        isCurrentTermActive={isCurrentTermActive}
       />
       <PaymentsColumn paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined} />
     </Tr>
@@ -274,21 +276,24 @@ export function RolesTable({
               },
             }}
           >
-            {hatsTree.roleHats.map(role => (
-              <RolesRow
-                key={role.id.toString()}
-                name={role.name}
-                wearerAddress={role.wearerAddress}
-                handleRoleClick={() => handleRoleClick(role.id)}
-                isCurrentTermActive={role.roleTerms.currentTerm?.isActive}
-                isTermed={role.isTermed}
-                paymentsCount={
-                  role.payments === undefined
-                    ? undefined
-                    : role.payments.filter(p => p.isStreaming()).length || undefined
-                }
-              />
-            ))}
+            {hatsTree.roleHats.map(role => {
+              const isCurrentTermActive = role?.roleTerms.currentTerm?.isActive;
+
+              return (
+                <RolesRow
+                  key={role.id.toString()}
+                  name={role.name}
+                  wearerAddress={role.wearerAddress}
+                  handleRoleClick={() => handleRoleClick(role.id)}
+                  isCurrentTermActive={isCurrentTermActive}
+                  paymentsCount={
+                    role.payments === undefined
+                      ? undefined
+                      : role.payments.filter(p => p.isStreaming()).length || undefined
+                  }
+                />
+              );
+            })}
           </Tbody>
         </Table>
       )}
@@ -297,7 +302,7 @@ export function RolesTable({
 }
 
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
-  const { hatsTree } = useRolesStore();
+  const { hatsTree, getHat } = useRolesStore();
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   if (hatsTree === undefined) {
     return <RoleCardLoading />;
@@ -332,26 +337,34 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
             },
           }}
         >
-          {values.hats.map(role => (
-            <RolesRowEdit
-              key={role.id}
-              name={role.name}
-              wearerAddress={
-                role.isTermed
-                  ? role.roleTerms?.[0].nominee
-                    ? getAddress(role.roleTerms?.[0].nominee)
-                    : undefined
-                  : role.resolvedWearer
-              }
-              isTermed={!!role.isTermed}
-              handleRoleClick={() => {
-                setFieldValue('roleEditing', role);
-                handleRoleClick(role.id);
-              }}
-              editStatus={role.editedRole?.status}
-              payments={role.payments}
-            />
-          ))}
+          {values.hats.map(role => {
+            const existingRole = getHat(role.id);
+            const isCurrentTermActive = existingRole?.roleTerms.currentTerm?.isActive;
+            const isMemberTermPending =
+              !isCurrentTermActive && existingRole?.wearerAddress !== role.roleTerms?.[0].nominee;
+
+            return (
+              <RolesRowEdit
+                key={role.id}
+                name={role.name}
+                wearerAddress={
+                  role.isTermed
+                    ? role.roleTerms?.[0].nominee
+                      ? getAddress(role.roleTerms?.[0].nominee)
+                      : undefined
+                    : role.resolvedWearer
+                }
+                handleRoleClick={() => {
+                  setFieldValue('roleEditing', role);
+                  handleRoleClick(role.id);
+                }}
+                editStatus={role.editedRole?.status}
+                payments={role.payments}
+                isCurrentTermActive={isCurrentTermActive}
+                isMemberTermPending={role.isTermed ? isMemberTermPending : undefined}
+              />
+            );
+          })}
         </Tbody>
       </Table>
     </Box>

@@ -81,8 +81,9 @@ export interface RoleProps {
   name: string;
   wearerAddress?: Address;
   paymentsCount?: number;
-  isTermed: boolean;
-  isCurrentTermActive?: boolean;
+  isTermed?: boolean;
+  isCurrentTermActive: boolean | undefined;
+  isMemberTermPending?: boolean;
 }
 
 export interface RoleEditProps
