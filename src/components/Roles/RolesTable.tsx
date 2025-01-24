@@ -105,8 +105,10 @@ function MemberColumn({
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');
-  const memberTextColor = isCurrentTermActive === false ? 'neutral-6' : 'white-0';
-  const isPendingText = isMemberTermPending === true ? t('wearerPending') : '';
+
+  // @dev undefined = not termed
+  const memberTextColor = !isCurrentTermActive ? 'neutral-6' : 'white-0';
+  const isPendingText = isMemberTermPending ? t('wearerPending') : '';
 
   const wearerAddressText = wearerAddress
     ? `${accountDisplayName} ${isPendingText}`
