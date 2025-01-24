@@ -81,7 +81,7 @@ export interface RoleProps {
   name: string;
   wearerAddress?: Address;
   paymentsCount?: number;
-  isCurrentTermActive?: boolean | undefined;
+  isCurrentTermActive?: boolean;
   isMemberTermPending?: boolean;
 }
 
