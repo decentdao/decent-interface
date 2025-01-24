@@ -25,6 +25,7 @@ export const sepoliaConfig: NetworkConfig = {
   etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
   addressPrefix: 'sep',
   nativeTokenIcon: '/images/coin-icon-sep.svg',
+  isENSSupported: true,
   subgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
