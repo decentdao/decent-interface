@@ -97,6 +97,7 @@ export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) 
       alignItems="flex-start"
       gap="1.5rem"
       boxShadow={DETAILS_BOX_SHADOW}
+      mt={2}
     >
       <GasslessVotingToggleContent {...props} />
 

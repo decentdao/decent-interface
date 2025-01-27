@@ -3,6 +3,7 @@ import { MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps } from '../../../types';
+import { GasslessVotingToggleDAOCreate } from '../../ui/GasslessVotingToggle';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
@@ -151,6 +152,14 @@ export function Multisig(props: ICreationStepProps) {
           </LabelComponent>
         </Flex>
       </StepWrapper>
+
+      <GasslessVotingToggleDAOCreate
+        isEnabled={values.essentials.gasslessVoting}
+        onToggle={() =>
+          setFieldValue('essentials.gasslessVoting', !values.essentials.gasslessVoting)
+        }
+        address="0x01168475f8b9e46f710ff3654cbd9405e8adb421"
+      />
       <StepButtons
         {...props}
         isEdit={mode === DAOCreateMode.EDIT}
