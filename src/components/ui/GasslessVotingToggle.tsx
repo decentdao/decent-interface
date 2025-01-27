@@ -3,7 +3,9 @@ import { GasPump, WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
+import { isFeatureEnabled } from '../../helpers/featureFlags';
 import EtherscanLink from './links/EtherscanLink';
+import Divider from './utils/Divider';
 
 interface GasslessVotingToggleProps {
   address?: Address;
@@ -83,6 +85,8 @@ function GasslessVotingToggleContent({
 export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) {
   const { t } = useTranslation('daoCreate');
 
+  if (!isFeatureEnabled('flag_gassless_voting')) return null;
+
   return (
     <Box
       borderRadius="0.75rem"
@@ -132,20 +136,27 @@ export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) 
 export function GasslessVotingToggleDAOSettings(props: GasslessVotingToggleProps) {
   const { t } = useTranslation('daoEdit');
 
+  if (!isFeatureEnabled('flag_gassless_voting')) return null;
+
   return (
     <Box
-      py="1.5rem"
       gap="1.5rem"
       display="flex"
       flexDirection="column"
     >
+      <Divider
+        my="1rem"
+        w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+        mx={{ base: '-0.75rem', md: '-1.5rem' }}
+      />
+
       <GasslessVotingToggleContent
         {...props}
         isSettings
       />
 
       <Flex
-        alignItems="center"
+        mt="-0.55rem"
         justifyContent="space-between"
       >
         <Text textStyle="body-small">
