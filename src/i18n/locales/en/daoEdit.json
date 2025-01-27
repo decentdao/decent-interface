@@ -1,5 +1,6 @@
 {
   "cannotModifyGovernance": "You do not have permissions to modify this Safe's governance.",
   "gasslessVotingLabelSettings": "Sponsor Gas",
-  "gasslessVotingDescriptionSettings": "Fund transaction fees for DAO voters from a shared DAO gas tank."
+  "gasslessVotingDescriptionSettings": "Fund transaction fees for DAO voters from a shared DAO gas tank.",
+  "addGas": "Add Gas"
 }

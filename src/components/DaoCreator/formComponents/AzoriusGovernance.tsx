@@ -258,6 +258,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         onToggle={() =>
           setFieldValue('essentials.gasslessVoting', !values.essentials.gasslessVoting)
         }
+        address="0x01168475f8b9e46f710ff3654cbd9405e8adb421"
       />
       <StepButtons
         {...props}

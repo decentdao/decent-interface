@@ -1,11 +1,12 @@
-import { Box, Text, HStack, Switch, Flex, Icon } from '@chakra-ui/react';
-import { WarningCircle } from '@phosphor-icons/react';
+import { Box, Text, HStack, Switch, Flex, Icon, Button } from '@chakra-ui/react';
+import { GasPump, WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { Address } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import EtherscanLink from './links/EtherscanLink';
 
 interface GasslessVotingToggleProps {
-  address?: string;
+  address?: Address;
   balance?: string;
   isEnabled: boolean;
   onToggle: () => void;
@@ -15,7 +16,6 @@ function GasslessVotingToggleContent({
   isEnabled,
   onToggle,
   address,
-  balance = '0 ETH',
   isSettings,
 }: GasslessVotingToggleProps & { isSettings?: boolean }) {
   const { t } = useTranslation('daoCreate');
@@ -36,13 +36,13 @@ function GasslessVotingToggleContent({
           flexDirection="column"
           gap="0.25rem"
         >
-          <Text textStyle="helper-text">
+          <Text textStyle={isSettings ? 'heading-small' : 'helper-text'}>
             {isSettings
               ? t('gasslessVotingLabelSettings', { ns: 'daoEdit' })
               : t('gasslessVotingLabel')}
           </Text>
           <Text
-            textStyle="helper-text"
+            textStyle={isSettings ? 'label-large' : 'helper-text'}
             color="neutral-7"
             w="17.25rem"
           >
@@ -76,16 +76,6 @@ function GasslessVotingToggleContent({
           </EtherscanLink>
         </Box>
       )}
-
-      <Text textStyle="body-small">
-        {t('titleBalance', { ns: 'modals' })}:{' '}
-        <Text
-          as="span"
-          color={isSettings ? 'neutral-7' : 'lilac-0'}
-        >
-          {balance}
-        </Text>
-      </Text>
     </Box>
   );
 }
@@ -105,6 +95,16 @@ export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) 
       boxShadow={DETAILS_BOX_SHADOW}
     >
       <GasslessVotingToggleContent {...props} />
+
+      <Text textStyle="body-small">
+        {t('titleBalance', { ns: 'modals' })}:{' '}
+        <Text
+          as="span"
+          color="neutral-7"
+        >
+          {props.balance || '0 ETH'}
+        </Text>
+      </Text>
       <Box
         p="1rem"
         bg="neutral-3"
@@ -130,10 +130,40 @@ export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) 
 }
 
 export function GasslessVotingToggleDAOSettings(props: GasslessVotingToggleProps) {
+  const { t } = useTranslation('daoEdit');
+
   return (
-    <GasslessVotingToggleContent
-      {...props}
-      isSettings
-    />
+    <Box
+      py="1.5rem"
+      gap="1.5rem"
+      display="flex"
+      flexDirection="column"
+    >
+      <GasslessVotingToggleContent
+        {...props}
+        isSettings
+      />
+
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Text textStyle="body-small">
+          {t('titleBalance', { ns: 'modals' })}:{' '}
+          <Text
+            as="span"
+            color="neutral-7"
+          >
+            {props.balance || '0 ETH'}
+          </Text>
+        </Text>
+        <Button
+          variant="secondary"
+          leftIcon={<Icon as={GasPump} />}
+        >
+          {t('addGas')}
+        </Button>
+      </Flex>
+    </Box>
   );
 }
