@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { encodeFunctionData, zeroAddress } from 'viem';
 import { SettingsContentBox } from '../../../../components/SafeSettings/SettingsContentBox';
+import { GasslessVotingToggleDAOSettings } from '../../../../components/ui/cards/GasslessVotingToggleCard';
 import { InputComponent } from '../../../../components/ui/forms/InputComponent';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
@@ -205,6 +206,20 @@ export function SafeGeneralSettingsPage() {
               </Button>
             </>
           )}
+
+          <Divider
+            my="1rem"
+            w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+            mx={{ base: '-0.75rem', md: '-1.5rem' }}
+          />
+
+          <GasslessVotingToggleDAOSettings
+            isEnabled={false}
+            onToggle={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            address="0x01168475F8B9e46F710Ff3654cbD9405e8ADb421"
+          />
         </SettingsContentBox>
       ) : (
         <Flex

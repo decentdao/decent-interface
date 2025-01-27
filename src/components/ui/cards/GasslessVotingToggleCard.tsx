@@ -4,46 +4,51 @@ import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import EtherscanLink from '../links/EtherscanLink';
 
-interface GasslessVotingToggleCardProps {
+interface GasslessVotingToggleProps {
   address?: string;
   balance?: string;
   isEnabled: boolean;
   onToggle: () => void;
 }
 
-export function GasslessVotingToggleCard({
-  address = '0x01168475F8B9e46F710Ff3654cbD9405e8ADb421',
-  balance = '0 ETH',
+function GasslessVotingToggleContent({
   isEnabled,
   onToggle,
-}: GasslessVotingToggleCardProps) {
+  address,
+  balance = '0 ETH',
+  isSettings,
+}: GasslessVotingToggleProps & { isSettings?: boolean }) {
   const { t } = useTranslation('daoCreate');
 
   return (
     <Box
-      borderRadius="0.75rem"
-      bg="neutral-2"
-      p="1.5rem"
       display="flex"
       flexDirection="column"
-      alignItems="flex-start"
       gap="1.5rem"
-      boxShadow={DETAILS_BOX_SHADOW}
+      w="100%"
     >
       <HStack
         justify="space-between"
         width="100%"
+        alignItems="flex-start"
       >
         <Flex
           flexDirection="column"
           gap="0.25rem"
         >
-          <Text textStyle="helper-text">{t('gasslessVotingLabel')}</Text>
+          <Text textStyle="helper-text">
+            {isSettings
+              ? t('gasslessVotingLabelSettings', { ns: 'daoEdit' })
+              : t('gasslessVotingLabel')}
+          </Text>
           <Text
             textStyle="helper-text"
             color="neutral-7"
+            w="17.25rem"
           >
-            {t('gasslessVotingDescription')}
+            {isSettings
+              ? t('gasslessVotingDescriptionSettings', { ns: 'daoEdit' })
+              : t('gasslessVotingDescription')}
           </Text>
         </Flex>
         <Switch
@@ -76,12 +81,30 @@ export function GasslessVotingToggleCard({
         {t('titleBalance', { ns: 'modals' })}:{' '}
         <Text
           as="span"
-          color="lilac-0"
+          color={isSettings ? 'neutral-7' : 'lilac-0'}
         >
           {balance}
         </Text>
       </Text>
+    </Box>
+  );
+}
 
+export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) {
+  const { t } = useTranslation('daoCreate');
+
+  return (
+    <Box
+      borderRadius="0.75rem"
+      bg="neutral-2"
+      p="1.5rem"
+      display="flex"
+      flexDirection="column"
+      alignItems="flex-start"
+      gap="1.5rem"
+      boxShadow={DETAILS_BOX_SHADOW}
+    >
+      <GasslessVotingToggleContent {...props} />
       <Box
         p="1rem"
         bg="neutral-3"
@@ -103,5 +126,14 @@ export function GasslessVotingToggleCard({
         </Flex>
       </Box>
     </Box>
+  );
+}
+
+export function GasslessVotingToggleDAOSettings(props: GasslessVotingToggleProps) {
+  return (
+    <GasslessVotingToggleContent
+      {...props}
+      isSettings
+    />
   );
 }
