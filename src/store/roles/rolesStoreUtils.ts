@@ -517,7 +517,7 @@ export const sanitize = async (
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
-      name: hatMetadata.name,
+      name: hatMetadata.name.replace('Tokenomisc', 'Tokenomics'),
       description: hatMetadata.description,
       wearerAddress: getAddress(rawHat.wearers[0].id),
       smartAddress: roleHatSmartAccountAddress,
