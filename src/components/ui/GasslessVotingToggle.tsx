@@ -1,8 +1,8 @@
 import { Box, Text, HStack, Switch, Flex, Icon } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { DETAILS_BOX_SHADOW } from '../../../constants/common';
-import EtherscanLink from '../links/EtherscanLink';
+import { DETAILS_BOX_SHADOW } from '../../constants/common';
+import EtherscanLink from './links/EtherscanLink';
 
 interface GasslessVotingToggleProps {
   address?: string;
