@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
+import { GasslessVotingToggleCard } from '../../ui/cards/GasslessVotingToggleCard';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -252,6 +253,12 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           />
         </Box>
       )}
+      <GasslessVotingToggleCard
+        isEnabled={values.essentials.gasslessVoting}
+        onToggle={() =>
+          setFieldValue('essentials.gasslessVoting', !values.essentials.gasslessVoting)
+        }
+      />
       <StepButtons
         {...props}
         isEdit={mode === DAOCreateMode.EDIT}
