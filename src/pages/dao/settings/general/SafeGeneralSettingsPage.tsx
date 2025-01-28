@@ -207,12 +207,6 @@ export function SafeGeneralSettingsPage() {
             </>
           )}
 
-          {/* <Divider
-            my="1rem"
-            w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
-            mx={{ base: '-0.75rem', md: '-1.5rem' }}
-          /> */}
-
           <GaslessVotingToggleDAOSettings
             isEnabled={false}
             onToggle={function (): void {
