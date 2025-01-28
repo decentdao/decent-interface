@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { encodeFunctionData, zeroAddress } from 'viem';
 import { SettingsContentBox } from '../../../../components/SafeSettings/SettingsContentBox';
-import { GasslessVotingToggleDAOSettings } from '../../../../components/ui/GasslessVotingToggle';
+import { GaslessVotingToggleDAOSettings } from '../../../../components/ui/GaslessVotingToggle';
 import { InputComponent } from '../../../../components/ui/forms/InputComponent';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import NestedPageHeader from '../../../../components/ui/page/Header/NestedPageHeader';
@@ -213,7 +213,7 @@ export function SafeGeneralSettingsPage() {
             mx={{ base: '-0.75rem', md: '-1.5rem' }}
           /> */}
 
-          <GasslessVotingToggleDAOSettings
+          <GaslessVotingToggleDAOSettings
             isEnabled={false}
             onToggle={function (): void {
               throw new Error('Function not implemented.');

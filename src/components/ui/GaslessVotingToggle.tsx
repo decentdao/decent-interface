@@ -7,19 +7,19 @@ import { isFeatureEnabled } from '../../helpers/featureFlags';
 import EtherscanLink from './links/EtherscanLink';
 import Divider from './utils/Divider';
 
-interface GasslessVotingToggleProps {
+interface GaslessVotingToggleProps {
   address?: Address;
   balance?: string;
   isEnabled: boolean;
   onToggle: () => void;
 }
 
-function GasslessVotingToggleContent({
+function GaslessVotingToggleContent({
   isEnabled,
   onToggle,
   address,
   isSettings,
-}: GasslessVotingToggleProps & { isSettings?: boolean }) {
+}: GaslessVotingToggleProps & { isSettings?: boolean }) {
   const { t } = useTranslation('daoCreate');
 
   return (
@@ -40,8 +40,8 @@ function GasslessVotingToggleContent({
         >
           <Text textStyle={isSettings ? 'heading-small' : 'helper-text'}>
             {isSettings
-              ? t('gasslessVotingLabelSettings', { ns: 'daoEdit' })
-              : t('gasslessVotingLabel')}
+              ? t('gaslessVotingLabelSettings', { ns: 'daoEdit' })
+              : t('gaslessVotingLabel')}
           </Text>
           <Text
             textStyle={isSettings ? 'label-large' : 'helper-text'}
@@ -49,8 +49,8 @@ function GasslessVotingToggleContent({
             w="17.25rem"
           >
             {isSettings
-              ? t('gasslessVotingDescriptionSettings', { ns: 'daoEdit' })
-              : t('gasslessVotingDescription')}
+              ? t('gaslessVotingDescriptionSettings', { ns: 'daoEdit' })
+              : t('gaslessVotingDescription')}
           </Text>
         </Flex>
         <Switch
@@ -82,10 +82,10 @@ function GasslessVotingToggleContent({
   );
 }
 
-export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) {
+export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoCreate');
 
-  if (!isFeatureEnabled('flag_gassless_voting')) return null;
+  if (!isFeatureEnabled('flag_gasless_voting')) return null;
 
   return (
     <Box
@@ -99,7 +99,7 @@ export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) 
       boxShadow={DETAILS_BOX_SHADOW}
       mt={2}
     >
-      <GasslessVotingToggleContent {...props} />
+      <GaslessVotingToggleContent {...props} />
 
       <Text textStyle="body-small">
         {t('titleBalance', { ns: 'modals' })}:{' '}
@@ -126,7 +126,7 @@ export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) 
             color="lilac-0"
             marginLeft="1rem"
           >
-            {t('gasslessVotingGettingStarted')}
+            {t('gaslessVotingGettingStarted')}
           </Text>
         </Flex>
       </Box>
@@ -134,10 +134,10 @@ export function GasslessVotingToggleDAOCreate(props: GasslessVotingToggleProps) 
   );
 }
 
-export function GasslessVotingToggleDAOSettings(props: GasslessVotingToggleProps) {
+export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoEdit');
 
-  if (!isFeatureEnabled('flag_gassless_voting')) return null;
+  if (!isFeatureEnabled('flag_gasless_voting')) return null;
 
   return (
     <Box
@@ -151,7 +151,7 @@ export function GasslessVotingToggleDAOSettings(props: GasslessVotingToggleProps
         mx={{ base: '-0.75rem', md: '-1.5rem' }}
       />
 
-      <GasslessVotingToggleContent
+      <GaslessVotingToggleContent
         {...props}
         isSettings
       />

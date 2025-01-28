@@ -68,7 +68,7 @@ export type DAOEssentials = {
   daoName: string;
   governance: GovernanceType;
   snapshotENS: string;
-  gasslessVoting: boolean;
+  gaslessVoting: boolean;
 };
 
 export type DAOGovernorERC20Token<T = bigint> = {
