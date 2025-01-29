@@ -17,13 +17,9 @@ interface GaslessVotingToggleProps {
 function GaslessVotingToggleContent({
   isEnabled,
   onToggle,
-  address,
   isSettings,
 }: GaslessVotingToggleProps & { isSettings?: boolean }) {
   const { t } = useTranslation('daoCreate');
-
-  // @todo: Remove this once we have a real address
-  if (!address) address = '0x01168475F8B9e46F710Ff3654cbD9405e8ADb421';
 
   return (
     <Box
@@ -63,31 +59,12 @@ function GaslessVotingToggleContent({
           variant="secondary"
         />
       </HStack>
-
-      {address && (
-        <Box
-          borderRadius="0.75rem"
-          border="1px solid"
-          borderColor="neutral-3"
-          p="1rem 0.5rem"
-          w="100%"
-        >
-          <EtherscanLink
-            type="address"
-            value={address}
-            isTextLink
-          >
-            <Text as="span">{address}</Text>
-          </EtherscanLink>
-        </Box>
-      )}
     </Box>
   );
 }
 
 export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoCreate');
-  const { formattedNativeTokenBalance } = useNativeToken();
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
 
@@ -105,15 +82,6 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
     >
       <GaslessVotingToggleContent {...props} />
 
-      <Text textStyle="body-small">
-        {t('titleBalance', { ns: 'modals' })}:{' '}
-        <Text
-          as="span"
-          color="neutral-7"
-        >
-          {formattedNativeTokenBalance ?? '0'}
-        </Text>
-      </Text>
       <Box
         p="1rem"
         bg="neutral-3"
@@ -144,6 +112,9 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
 
+  // @todo: Remove this once we have a real address
+  const address = props.address || '0x01168475F8B9e46F710Ff3654cbD9405e8ADb421';
+
   return (
     <Box
       gap="1.5rem"
@@ -161,6 +132,24 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
         isSettings
       />
 
+      {address && (
+        <Box
+          borderRadius="0.75rem"
+          border="1px solid"
+          borderColor="neutral-3"
+          p="1rem 0.5rem"
+          w="100%"
+        >
+          <EtherscanLink
+            type="address"
+            value={address}
+            isTextLink
+          >
+            <Text as="span">{address}</Text>
+          </EtherscanLink>
+        </Box>
+      )}
+
       <Flex
         mt="-0.55rem"
         justifyContent="space-between"
@@ -171,6 +160,7 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
             as="span"
             color="neutral-7"
           >
+            {/* @todo: Should this not be the paymaster balance instead?? */}
             {formattedNativeTokenBalance ?? '0'}
           </Text>
         </Text>
