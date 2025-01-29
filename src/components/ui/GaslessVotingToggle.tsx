@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { isFeatureEnabled } from '../../helpers/featureFlags';
+import { useNativeToken } from '../../hooks/useNativeToken';
 import EtherscanLink from './links/EtherscanLink';
 import Divider from './utils/Divider';
 
 interface GaslessVotingToggleProps {
   address?: Address;
-  balance?: string;
   isEnabled: boolean;
   onToggle: () => void;
 }
@@ -87,6 +87,7 @@ function GaslessVotingToggleContent({
 
 export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoCreate');
+  const { formattedNativeTokenBalance } = useNativeToken();
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
 
@@ -110,7 +111,7 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
           as="span"
           color="neutral-7"
         >
-          {props.balance || '0 ETH'}
+          {formattedNativeTokenBalance ?? '0'}
         </Text>
       </Text>
       <Box
@@ -139,6 +140,7 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
 
 export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoEdit');
+  const { formattedNativeTokenBalance } = useNativeToken();
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
 
@@ -169,7 +171,7 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
             as="span"
             color="neutral-7"
           >
-            {props.balance || '0 ETH'}
+            {formattedNativeTokenBalance ?? '0'}
           </Text>
         </Text>
         <Button
