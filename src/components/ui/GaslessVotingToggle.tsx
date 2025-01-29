@@ -22,6 +22,9 @@ function GaslessVotingToggleContent({
 }: GaslessVotingToggleProps & { isSettings?: boolean }) {
   const { t } = useTranslation('daoCreate');
 
+  // @todo: Remove this once we have a real address
+  if (!address) address = '0x01168475F8B9e46F710Ff3654cbD9405e8ADb421';
+
   return (
     <Box
       display="flex"

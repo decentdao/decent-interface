@@ -212,7 +212,6 @@ export function SafeGeneralSettingsPage() {
             onToggle={function (): void {
               throw new Error('Function not implemented.');
             }}
-            address="0x01168475F8B9e46F710Ff3654cbD9405e8ADb421"
           />
         </SettingsContentBox>
       ) : (

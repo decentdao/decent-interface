@@ -155,7 +155,6 @@ export function Multisig(props: ICreationStepProps) {
       <GaslessVotingToggleDAOCreate
         isEnabled={values.essentials.gaslessVoting}
         onToggle={() => setFieldValue('essentials.gaslessVoting', !values.essentials.gaslessVoting)}
-        address="0x01168475f8b9e46f710ff3654cbd9405e8adb421"
       />
       <StepButtons
         {...props}
