@@ -14,10 +14,12 @@ export const useNativeToken = () => {
       asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase(),
   );
 
+  const formattedNativeTokenBalance = nativeToken
+    ? formatCoin(nativeToken?.balance, true, nativeToken?.decimals, nativeToken?.symbol)
+    : null;
+
   return {
     nativeToken,
-    formattedNativeTokenBalance:
-      nativeToken &&
-      formatCoin(nativeToken?.balance, true, nativeToken?.decimals, nativeToken?.symbol),
+    formattedNativeTokenBalance,
   };
 };

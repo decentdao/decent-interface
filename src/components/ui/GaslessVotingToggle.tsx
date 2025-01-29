@@ -161,7 +161,7 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
             color="neutral-7"
           >
             {/* @todo: Should this not be the paymaster balance instead?? */}
-            {formattedNativeTokenBalance ?? '0'}
+            {formattedNativeTokenBalance}
           </Text>
         </Text>
         <Button
