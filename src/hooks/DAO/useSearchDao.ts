@@ -25,7 +25,6 @@ export const useSearchDao = () => {
 
   const findSafes = useCallback(
     async (resolvedAddressesWithChainId: { address: Address; chainId: number }[]) => {
-      setIsSafeLookupLoading(true);
       for await (const resolved of resolvedAddressesWithChainId) {
         const safeAPI = new SafeApiKit({ chainId: BigInt(resolved.chainId) });
         safeAPI.getSafeCreationInfo(resolved.address);
@@ -38,36 +37,45 @@ export const useSearchDao = () => {
           continue;
         }
       }
-      setIsSafeLookupLoading(false);
     },
     [],
   );
 
   const resolveInput = useCallback(
     async (input: string) => {
-      const resolvedAddresses: Address[] = [];
-      for (const chainId of supportedEnsNetworks) {
-        const { resolvedAddress, isValid } = await resolveENSName(input, chainId);
-        if (isValid) {
-          resolvedAddresses.push(resolvedAddress);
-        }
-      }
-      if (resolvedAddresses.length === 0) {
-        setErrorMessage('Invalid search');
-        return;
-      }
+      setIsSafeLookupLoading(true);
+      try {
+        const resolvePromises = supportedEnsNetworks.map(async chainId => {
+          const { resolvedAddress, isValid } = await resolveENSName(input, chainId);
+          return isValid ? resolvedAddress : null;
+        });
 
-      const resolvedAddressesSet = new Set(resolvedAddresses);
-      const mappedAddressesWithChainIds: ResolvedAddressWithChainId[] = [];
-      for (const network of supportedNetworks) {
-        for (const address of resolvedAddressesSet) {
-          mappedAddressesWithChainIds.push({ address, chainId: network.chain.id });
-        }
-      }
+        const resolvedAddresses = (await Promise.all(resolvePromises)).filter(
+          (address): address is Address => address !== null,
+        );
 
-      await findSafes(mappedAddressesWithChainIds);
+        if (resolvedAddresses.length === 0) {
+          setErrorMessage('Invalid search');
+          return;
+        }
+
+        const resolvedAddressesSet = new Set(resolvedAddresses);
+        const mappedAddressesWithChainIds: ResolvedAddressWithChainId[] = [];
+
+        for (const network of supportedNetworks) {
+          for (const address of resolvedAddressesSet) {
+            mappedAddressesWithChainIds.push({ address, chainId: network.chain.id });
+          }
+        }
+
+        await findSafes(mappedAddressesWithChainIds);
+      } catch (error) {
+        setErrorMessage(t('errorInvalidSearch'));
+      } finally {
+        setIsSafeLookupLoading(false);
+      }
     },
-    [findSafes, resolveENSName],
+    [findSafes, resolveENSName, t],
   );
 
   useEffect(() => {
