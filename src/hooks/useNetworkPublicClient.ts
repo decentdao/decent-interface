@@ -9,11 +9,6 @@ export default function useNetworkPublicClient() {
     () =>
       createPublicClient({
         chain,
-        batch: {
-          multicall: {
-            wait: 200,
-          },
-        },
         transport: http(rpcEndpoint),
       }),
     [chain, rpcEndpoint],
