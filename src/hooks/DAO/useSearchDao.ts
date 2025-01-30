@@ -51,7 +51,7 @@ export const useSearchDao = () => {
         });
 
         const resolvedAddresses = (await Promise.all(resolvePromises)).filter(
-          (address): address is Address => address !== null,
+          address => address !== null,
         );
 
         if (resolvedAddresses.length === 0) {
