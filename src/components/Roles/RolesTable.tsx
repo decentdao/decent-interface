@@ -3,7 +3,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, Hex } from 'viem';
 import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
-import useAvatar from '../../hooks/utils/useAvatar';
+import { useNetworkEnsAvatar } from '../../hooks/useNetworkEnsAvatar';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useRolesStore } from '../../store/roles/useRolesStore';
 import {
@@ -102,7 +102,7 @@ function MemberColumn({
   isCurrentTermActive?: boolean;
 }) {
   const { displayName: accountDisplayName } = useGetAccountName(wearerAddress);
-  const avatarURL = useAvatar(accountDisplayName);
+  const { data: avatarURL } = useNetworkEnsAvatar({ name: accountDisplayName });
 
   const { t } = useTranslation('roles');
 

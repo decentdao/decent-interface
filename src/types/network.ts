@@ -10,6 +10,7 @@ export type NetworkConfig = {
   etherscanAPIUrl: string;
   addressPrefix: string; // copy whatever Safe uses
   nativeTokenIcon: string;
+  isENSSupported: boolean;
   subgraph: {
     space: number;
     slug: string;
