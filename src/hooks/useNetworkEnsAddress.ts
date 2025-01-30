@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import { createPublicClient, http } from 'viem';
 import { useEnsAddress } from 'wagmi';
 import {
   supportedEnsNetworks,
@@ -5,8 +7,8 @@ import {
 } from '../providers/NetworkConfig/useNetworkConfigStore';
 
 interface UseNetworkEnsAddressProps {
-  name?: string;
   chainId?: number;
+  name?: string;
 }
 
 export function useNetworkEnsAddress(props?: UseNetworkEnsAddressProps) {
@@ -18,4 +20,27 @@ export function useNetworkEnsAddress(props?: UseNetworkEnsAddressProps) {
   }
 
   return useEnsAddress({ name: props?.name, chainId: propsOrFallbackChainId });
+}
+
+export function useNetworkEnsAddressAsync() {
+  const { chain, getConfigByChainId } = useNetworkConfigStore();
+
+  const getEnsAddress = useCallback(
+    (args: { name: string; chainId?: number }) => {
+      const propsOrFallbackChainId = args?.chainId ?? chain.id;
+      if (!supportedEnsNetworks.includes(propsOrFallbackChainId)) {
+        throw new Error(`ENS is not supported for chain ${propsOrFallbackChainId}`);
+      }
+
+      const networkConfig = getConfigByChainId(propsOrFallbackChainId);
+      const publicClient = createPublicClient({
+        chain: networkConfig.chain,
+        transport: http(networkConfig.rpcEndpoint),
+      });
+      return publicClient.getEnsAddress({ name: args.name });
+    },
+    [chain, getConfigByChainId],
+  );
+
+  return { getEnsAddress };
 }

@@ -1,27 +1,17 @@
 import { useCallback } from 'react';
-import { Address, http, createPublicClient } from 'viem';
+import { Address, GetEnsNameReturnType } from 'viem';
 import { DAOQueryDocument } from '../../../.graphclient';
 import graphQLClient from '../../graphql';
-import {
-  supportedNetworks,
-  useNetworkConfigStore,
-} from '../../providers/NetworkConfig/useNetworkConfigStore';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
+import { useNetworkEnsNameAsync } from '../useNetworkEnsName';
 import { createAccountSubstring } from './useGetAccountName';
 
 export const getSafeName = async (
   subgraph: { space: number; slug: string; version: string },
   address: Address,
+  getEnsName: (args: { address: Address }) => Promise<GetEnsNameReturnType>,
 ) => {
-  const mainnet = supportedNetworks.find(network => network.chain.id === 1);
-  if (!mainnet) {
-    throw new Error('Mainnet not found');
-  }
-
-  const mainnetPublicClient = createPublicClient({
-    chain: mainnet.chain,
-    transport: http(mainnet.rpcEndpoint),
-  });
-  const ensName = await mainnetPublicClient.getEnsName({ address });
+  const ensName = await getEnsName({ address });
   if (ensName) {
     return ensName;
   }
@@ -47,13 +37,13 @@ export const getSafeName = async (
 
 export const useGetSafeName = (chainId?: number) => {
   const { getConfigByChainId } = useNetworkConfigStore();
-
+  const { getEnsName } = useNetworkEnsNameAsync();
   return {
     getSafeName: useCallback(
       (address: Address) => {
-        return getSafeName(getConfigByChainId(chainId).subgraph, address);
+        return getSafeName(getConfigByChainId(chainId).subgraph, address, getEnsName);
       },
-      [chainId, getConfigByChainId],
+      [chainId, getConfigByChainId, getEnsName],
     ),
   };
 };
