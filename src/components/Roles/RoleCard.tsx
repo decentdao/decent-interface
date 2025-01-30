@@ -188,7 +188,6 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
 export function RoleCard({
   name,
   wearerAddress,
-  isTermed,
   paymentsCount,
   handleRoleClick,
   isCurrentTermActive,
@@ -205,9 +204,7 @@ export function RoleCard({
           name={name}
           paymentsCount={paymentsCount}
         />
-        {isTermed && (
-          <EditBadge editStatus={!isCurrentTermActive ? EditBadgeStatus.Inactive : undefined} />
-        )}
+        <EditBadge editStatus={!isCurrentTermActive ? EditBadgeStatus.Inactive : undefined} />
       </Flex>
     </Card>
   );

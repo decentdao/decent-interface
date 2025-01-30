@@ -13,7 +13,7 @@ import {
   RoleDetailsDrawerEditingRoleHatProp,
   RoleFormValues,
 } from '../../../types/roles';
-import { SendAssetsAction } from '../../ProposalBuilder/ProposalActionCard';
+import { SendAssetsActionCard } from '../../ui/cards/SendAssetsActionCard';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
 import { AddActions } from '../../ui/modals/AddActions';
@@ -238,14 +238,13 @@ export function RoleFormCreateProposal({ close }: { close: () => void }) {
         );
       })}
       {values.actions.map((action, index) => (
-        <SendAssetsAction
+        <SendAssetsActionCard
           action={action}
           key={index}
-          index={index}
-          onRemove={idx => {
+          onRemove={() => {
             setFieldValueTopLevel(
               'actions',
-              values.actions.filter((_, i) => i !== idx),
+              values.actions.filter((_, i) => i !== index),
             );
           }}
         />

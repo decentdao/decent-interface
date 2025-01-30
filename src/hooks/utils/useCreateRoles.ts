@@ -219,20 +219,13 @@ export default function useCreateRoles() {
         }
 
         const strategyNonce = getRandomBytes();
-        const linearERC721VotingMasterCopyContract = getContract({
-          abi: abis.LinearERC20Voting,
-          address: linearVotingErc721HatsWhitelistingMasterCopy,
-          client: publicClient,
-        });
         const votingStrategyContract = getContract({
-          abi: abis.LinearERC20Voting,
+          abi: abis.LinearERC721Voting,
           address: linearVotingErc721Address,
           client: publicClient,
         });
         const existingVotingPeriod = await votingStrategyContract.read.votingPeriod();
 
-        const quorumDenominator =
-          await linearERC721VotingMasterCopyContract.read.QUORUM_DENOMINATOR();
         const encodedStrategyInitParams = encodeAbiParameters(
           parseAbiParameters(
             'address, address[], uint256[], address, uint32, uint256, uint256, address, uint256[]',
@@ -243,7 +236,7 @@ export default function useCreateRoles() {
             erc721Tokens.map(token => token.votingWeight), // governance tokens weights
             moduleAzoriusAddress, // Azorius module
             existingVotingPeriod,
-            (votingStrategy.quorumThreshold.value * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
+            votingStrategy.quorumThreshold.value, // quorom threshold, number of yes + abstain votes has to >= threshold
             500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
             hatsProtocol,
             whitelistedHatsIds,
@@ -1688,11 +1681,7 @@ export default function useCreateRoles() {
 
         // Add "send assets" actions to the proposal data
         values.actions.forEach(action => {
-          const actionData = prepareSendAssetsActionData({
-            transferAmount: action.transferAmount,
-            asset: action.asset,
-            destinationAddress: action.destinationAddress,
-          });
+          const actionData = prepareSendAssetsActionData(action);
           proposalData.targets.push(actionData.target);
           proposalData.values.push(actionData.value);
           proposalData.calldatas.push(actionData.calldata);
