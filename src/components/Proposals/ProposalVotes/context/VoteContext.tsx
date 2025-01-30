@@ -61,9 +61,8 @@ export function VoteContextProvider({
   const { governance } = useFractal();
   const userAccount = useAccount();
   const { safe } = useDaoInfoStore();
-  const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
+  const { loadVotingWeight, snapshotProposal } = useSnapshotProposal(proposal as SnapshotProposal);
   const { remainingTokenIds } = useUserERC721VotingTokens(null, proposal.proposalId, true);
-  const { snapshotProposal } = useSnapshotProposal(proposal);
   const publicClient = useNetworkPublicClient();
 
   const getHasVoted = useCallback(() => {
