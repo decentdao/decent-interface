@@ -1,15 +1,15 @@
 import { Box, Text, HStack, Switch, Flex, Icon, Button } from '@chakra-ui/react';
 import { GasPump, WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Address } from 'viem';
+import { useBalance } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { isFeatureEnabled } from '../../helpers/featureFlags';
-import { useNativeToken } from '../../hooks/useNativeToken';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { formatCoin } from '../../utils';
 import EtherscanLink from './links/EtherscanLink';
 import Divider from './utils/Divider';
 
 interface GaslessVotingToggleProps {
-  address?: Address;
   isEnabled: boolean;
   onToggle: () => void;
 }
@@ -108,12 +108,19 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
 
 export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoEdit');
-  const { formattedNativeTokenBalance } = useNativeToken();
+  const { safe } = useDaoInfoStore();
+
+  // @todo: Use the paymaster address here.
+  const { data: balance } = useBalance({ address: safe?.address });
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
+  if (!safe) return null;
 
-  // @todo: Remove this once we have a real address
-  const address = props.address || '0x01168475F8B9e46F710Ff3654cbD9405e8ADb421';
+  const formattedNativeTokenBalance =
+    balance && formatCoin(balance.value, true, balance.decimals, balance.symbol);
+
+  // @todo: Retrieve the paymaster address here. Replace safe.address with the paymaster address.
+  const gasTankAddress = safe.address;
 
   return (
     <Box
@@ -132,7 +139,7 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
         isSettings
       />
 
-      {address && (
+      {gasTankAddress && (
         <Box
           borderRadius="0.75rem"
           border="1px solid"
@@ -142,10 +149,10 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
         >
           <EtherscanLink
             type="address"
-            value={address}
+            value={gasTankAddress}
             isTextLink
           >
-            <Text as="span">{address}</Text>
+            <Text as="span">{gasTankAddress}</Text>
           </EtherscanLink>
         </Box>
       )}
@@ -160,7 +167,6 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
             as="span"
             color="neutral-7"
           >
-            {/* @todo: Should this not be the paymaster balance instead?? */}
             {formattedNativeTokenBalance}
           </Text>
         </Text>
