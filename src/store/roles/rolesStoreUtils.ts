@@ -517,7 +517,8 @@ export const sanitize = async (
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
-      name: hatMetadata.name,
+      // UI fix for a spelling error on a Decent DAO role
+      name: hatMetadata.name.replace('Tokenomisc', 'Tokenomics'),
       description: hatMetadata.description,
       wearerAddress: getAddress(rawHat.wearers[0].id),
       smartAddress: roleHatSmartAccountAddress,

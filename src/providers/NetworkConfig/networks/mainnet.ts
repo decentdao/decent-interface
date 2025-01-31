@@ -25,6 +25,7 @@ export const mainnetConfig: NetworkConfig = {
   etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_MAINNET_API_KEY}`,
   addressPrefix: 'eth',
   nativeTokenIcon: '/images/coin-icon-eth.svg',
+  isENSSupported: true,
   subgraph: {
     space: 71032,
     slug: 'fractal-mainnet',

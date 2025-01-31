@@ -94,7 +94,6 @@ export function SafeRolesPage() {
                 <RoleCard
                   key={roleHat.id}
                   name={roleHat.name}
-                  isTermed={roleHat.isTermed}
                   wearerAddress={
                     roleHat.roleTerms.currentTerm?.isActive
                       ? roleHat.roleTerms.currentTerm?.nominee

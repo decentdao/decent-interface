@@ -52,24 +52,29 @@ export const useFractalNode = ({
       try {
         const safeInfo = await safeApi.getSafeData(safeAddress);
         setSafeInfo(safeInfo);
+
         const modules = await lookupModules(safeInfo.modules);
+
         const graphRawNodeData = await getDAOInfo({ variables: { safeAddress } });
         const graphDAOData = graphRawNodeData.data?.daos[0];
+
         if (!graphRawNodeData || !graphDAOData) {
-          throw new Error('No data found');
+          console.error('No graph data found');
         }
+
         setDecentModules(modules);
 
         setDaoInfo({
-          parentAddress: isAddress(graphDAOData.parentAddress)
+          parentAddress: isAddress(graphDAOData?.parentAddress)
             ? getAddress(graphDAOData.parentAddress)
             : null,
-          childAddresses: graphDAOData.hierarchy.map(child => getAddress(child.address)),
-          daoName: graphDAOData.name ?? null,
-          daoSnapshotENS: graphDAOData.snapshotENS ?? null,
-          proposalTemplatesHash: graphDAOData.proposalTemplatesHash ?? null,
+          childAddresses: graphDAOData?.hierarchy.map(child => getAddress(child.address)) ?? [],
+          daoName: graphDAOData?.name ?? null,
+          daoSnapshotENS: graphDAOData?.snapshotENS ?? null,
+          proposalTemplatesHash: graphDAOData?.proposalTemplatesHash ?? null,
         });
       } catch (e) {
+        console.error('Error in setDAO:', e);
         reset({ error: true });
         return;
       }
