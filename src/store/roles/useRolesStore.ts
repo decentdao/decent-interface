@@ -63,7 +63,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
   },
 
   setHatsTree: async params => {
-    const hatsTree = await sanitize(
+    let hatsTree = await sanitize(
       params.hatsTree,
       params.hatsAccountImplementation,
       params.hatsElectionsImplementation,
@@ -75,6 +75,25 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       params.sablierSubgraph,
       params.whitelistingVotingStrategy,
     );
+    const streamIdsToHatIdsMap = getStreamIdToHatIdMap();
+    if (hatsTree) {
+      hatsTree = {
+        ...hatsTree,
+        roleHats: hatsTree.roleHats.map(roleHat => {
+          const filteredStreamIds = streamIdsToHatIdsMap
+            .filter(ids => ids.hatId === BigInt(roleHat.id))
+            .map(ids => ids.streamId);
+
+          return {
+            ...roleHat,
+            payments: roleHat.isTermed
+              ? roleHat.payments?.filter(payment => filteredStreamIds.includes(payment.streamId))
+              : roleHat.payments,
+          };
+        }),
+      };
+    }
+
     set(() => ({ hatsTree }));
   },
   refreshWithdrawableAmount: async (hatId: Hex, streamId: string, publicClient: PublicClient) => {
