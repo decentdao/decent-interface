@@ -12,6 +12,7 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isFeatureEnabled } from '../../../helpers/featureFlags';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import { GaslessVotingToggleDAOCreate } from '../../ui/GaslessVotingToggle';
@@ -100,6 +101,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
     const minutes = executionPeriodDays * 24 * 60;
     setFieldValue('azorius.executionPeriod', { bigintValue: minutes, value: minutes.toString() });
   }, [setFieldValue, executionPeriodDays]);
+
+  const { gaslessVotingSupported } = useNetworkConfigStore();
 
   return (
     <>
@@ -253,10 +256,14 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           />
         </Box>
       )}
-      <GaslessVotingToggleDAOCreate
-        isEnabled={values.essentials.gaslessVoting}
-        onToggle={() => setFieldValue('essentials.gaslessVoting', !values.essentials.gaslessVoting)}
-      />
+      {gaslessVotingSupported && (
+        <GaslessVotingToggleDAOCreate
+          isEnabled={values.essentials.gaslessVoting}
+          onToggle={() =>
+            setFieldValue('essentials.gaslessVoting', !values.essentials.gaslessVoting)
+          }
+        />
+      )}
       <StepButtons
         {...props}
         isEdit={mode === DAOCreateMode.EDIT}
