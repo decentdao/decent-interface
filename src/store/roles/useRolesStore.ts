@@ -2,7 +2,7 @@ import { getContract, Hex, PublicClient } from 'viem';
 import { create } from 'zustand';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
-import { DecentRoleHat, RolesStore } from '../../types/roles';
+import { RolesStore } from '../../types/roles';
 import { initialHatsStore, sanitize } from './rolesStoreUtils';
 
 const streamIdToHatIdMap = new Map<string, BigInt>();
@@ -126,29 +126,6 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
         }),
       },
     }));
-  },
-  updateRolesWithStreams: (updatedRoles: DecentRoleHat[]) => {
-    const existingHatsTree = get().hatsTree;
-    if (!existingHatsTree) return;
-    const streamIdsToHatIdsMap = getStreamIdToHatIdMap();
-
-    const updatedDecentTree = {
-      ...existingHatsTree,
-      roleHats: updatedRoles.map(roleHat => {
-        const filteredStreamIds = streamIdsToHatIdsMap
-          .filter(ids => ids.hatId === BigInt(roleHat.id))
-          .map(ids => ids.streamId);
-
-        return {
-          ...roleHat,
-          payments: roleHat.isTermed
-            ? roleHat.payments?.filter(payment => filteredStreamIds.includes(payment.streamId))
-            : roleHat.payments,
-        };
-      }),
-    };
-
-    set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
   },
   updateCurrentTermStatus: (hatId: Hex, termStatus: 'inactive' | 'active') => {
     const currentHatsTree = get().hatsTree;
