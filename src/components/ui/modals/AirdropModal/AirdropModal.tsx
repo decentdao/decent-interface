@@ -17,7 +17,8 @@ import { CustomNonceInput } from '../../forms/CustomNonceInput';
 import { AddressInput } from '../../forms/EthAddressInput';
 import LabelWrapper from '../../forms/LabelWrapper';
 import Divider from '../../utils/Divider';
-import { DnDFileInput } from './DnDFileInput';
+import { DnDFileInput, parseRecipients } from './DnDFileInput';
+
 export interface AirdropFormValues {
   selectedAsset: TokenBalance;
   recipients: {
@@ -107,6 +108,7 @@ export function AirdropModal({
 
     close();
   };
+
   return (
     <Box>
       <Formik<AirdropFormValues>
@@ -137,6 +139,36 @@ export function AirdropModal({
           const selectedAssetIndex = fungibleAssetsWithBalance.findIndex(
             asset => asset.tokenAddress === values.selectedAsset.tokenAddress,
           );
+
+          const handleAddressInputPaste = (
+            e: React.ClipboardEvent,
+            index: number,
+            currentRecipients: AirdropFormValues['recipients'],
+          ) => {
+            e.preventDefault();
+            const pastedText = e.clipboardData.getData('text');
+
+            try {
+              const newRecipients = parseRecipients(pastedText, values.selectedAsset.decimals);
+
+              if (newRecipients.length > 0) {
+                // Replace the current empty recipient and add the rest
+                const updatedRecipients = [...currentRecipients];
+
+                // Replace the current recipient with the first new one
+                updatedRecipients[index] = newRecipients[0];
+
+                // Add the rest of the recipients
+                if (newRecipients.length > 1) {
+                  updatedRecipients.push(...newRecipients.slice(1));
+                }
+
+                setFieldValue('recipients', updatedRecipients);
+              }
+            } catch (error) {
+              console.error('Error processing pasted text:', error);
+            }
+          };
 
           return (
             <Form onSubmit={handleSubmit}>
@@ -239,6 +271,8 @@ export function AirdropModal({
                               );
                             }}
                             value={recipient.address}
+                            onPaste={e => handleAddressInputPaste(e, index, field.value)}
+                            placeholder={index === 0 ? t('pasteMultipleRecipients') : ''}
                           />
                         </LabelWrapper>
                         <LabelWrapper

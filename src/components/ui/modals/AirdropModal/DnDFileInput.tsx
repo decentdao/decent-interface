@@ -3,7 +3,30 @@ import { useFormikContext } from 'formik';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
+import { isAddress } from 'viem';
 import { AirdropFormValues } from './AirdropModal';
+
+export const parseRecipients = (csvText: string, decimals: number) => {
+  const rows = csvText
+    .split('\n')
+    .map(row => row.trim())
+    .filter(row => {
+      if (!row) return false;
+      const [address, amount] = row.split(',').map(cell => cell.trim());
+      return isAddress(address) && parseFloat(amount) > 0;
+    });
+
+  return rows.map(row => {
+    const [address, amount] = row.split(',').map(cell => cell.trim());
+    return {
+      address,
+      amount: {
+        value: amount,
+        bigintValue: BigInt(parseFloat(amount)) * BigInt(10 ** decimals),
+      },
+    };
+  });
+};
 
 export function DnDFileInput() {
   const { setFieldValue, values } = useFormikContext<AirdropFormValues>();
@@ -14,27 +37,10 @@ export function DnDFileInput() {
       const file = acceptedFiles[0];
       const reader = new FileReader();
 
-      const processCSV = (csvText: string) => {
-        const rows = csvText
-          .split('\n')
-          .map(row => row.trim())
-          .filter(row => row);
-        return rows.map(row => {
-          const [address, amount] = row.split(',').map(cell => cell.trim());
-          return {
-            address,
-            amount: {
-              value: amount,
-              bigintValue: BigInt(parseFloat(amount)) * BigInt(10 ** values.selectedAsset.decimals),
-            },
-          };
-        });
-      };
-
       reader.onload = e => {
         const text = e.target?.result as string;
         try {
-          const recipients = processCSV(text);
+          const recipients = parseRecipients(text, values.selectedAsset.decimals);
           setFieldValue('recipients', recipients);
         } catch (error) {
           console.error('Error processing CSV:', error);
@@ -43,7 +49,7 @@ export function DnDFileInput() {
 
       reader.readAsText(file);
     },
-    [setFieldValue, values.selectedAsset],
+    [setFieldValue, values.selectedAsset.decimals],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

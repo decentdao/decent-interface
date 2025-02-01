@@ -58,5 +58,6 @@
   "noAssetsWithBalanceNotProposer": "This DAO does not have any assets with balance.",
   "dragDropCSV": "Drag & drop a CSV file here, or click to select",
   "dropCSVHere": "Drop CSV here",
-  "csvFormat": "Format: address,amount in each row"
+  "csvFormat": "Format: address,amount in each row",
+  "pasteMultipleRecipients": "You can paste one or multiple recipients (addresses, amounts separated by commas)"
 }
