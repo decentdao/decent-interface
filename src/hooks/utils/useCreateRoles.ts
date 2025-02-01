@@ -23,7 +23,6 @@ import {
   parseAbiParameters,
   zeroAddress,
 } from 'viem';
-import { usePublicClient } from 'wagmi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
@@ -56,6 +55,7 @@ import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsActionData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
+import useNetworkPublicClient from '../useNetworkPublicClient';
 import {
   isElectionEligibilityModule,
   predictAccountAddress,
@@ -120,12 +120,12 @@ export default function useCreateRoles() {
   const { prepareBatchLinearStreamCreation, prepareFlushStreamTxs, prepareCancelStreamTxs } =
     useCreateSablierStream();
   const ipfsClient = useIPFSClient();
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
   const navigate = useNavigate();
 
   const buildDeployWhitelistingStrategy = useCallback(
     async (whitelistedHatsIds: bigint[]) => {
-      if (!publicClient || !safeAddress || !moduleAzoriusAddress) {
+      if (!safeAddress || !moduleAzoriusAddress) {
         return;
       }
       const azoriusGovernance = governance as AzoriusGovernance;
@@ -470,10 +470,6 @@ export default function useCreateRoles() {
 
   const predictSmartAccount = useCallback(
     async (hatId: bigint) => {
-      if (!publicClient) {
-        throw new Error('Public client is not set');
-      }
-
       return predictAccountAddress({
         implementation: hatsAccount1ofNMasterCopy,
         chainId: BigInt(chain.id),
@@ -670,9 +666,6 @@ export default function useCreateRoles() {
 
   const isDecentAutonomousAdminV1 = useCallback(
     async (address: Address) => {
-      if (!publicClient) {
-        throw new Error('Public client is not set');
-      }
       const decentAutonomousAdminV1Contract = getContract({
         address: address,
         abi: abis.DecentAutonomousAdminV1,
@@ -972,11 +965,10 @@ export default function useCreateRoles() {
       if (roleHatCurrentState.isTermed) {
         throw new Error('Cannot change role type for a termed role');
       }
-      if (!hatsTree || !publicClient || !safeAddress) {
+      if (!hatsTree || !safeAddress) {
         throw new Error('App is not ready', {
           cause: {
             hatsTree,
-            publicClient,
             safeAddress,
           },
         });
@@ -1187,10 +1179,6 @@ export default function useCreateRoles() {
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
       if (!hatsTree || !safeAddress) {
         throw new Error('Cannot prepare transactions without hats tree or DAO address');
-      }
-
-      if (!publicClient) {
-        throw new Error('Cannot prepare transactions without public client');
       }
 
       const topHatAccount = hatsTree.topHat.smartAddress;
@@ -1641,10 +1629,6 @@ export default function useCreateRoles() {
 
   const createEditRolesProposal = useCallback(
     async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
-      if (!publicClient) {
-        throw new Error('Cannot create Roles proposal without public client');
-      }
-
       if (!safe) {
         throw new Error('Cannot create Roles proposal without known Safe');
       }
@@ -1697,11 +1681,7 @@ export default function useCreateRoles() {
 
         // Add "send assets" actions to the proposal data
         values.actions.forEach(action => {
-          const actionData = prepareSendAssetsActionData({
-            transferAmount: action.transferAmount,
-            asset: action.asset,
-            destinationAddress: action.destinationAddress,
-          });
+          const actionData = prepareSendAssetsActionData(action);
           proposalData.targets.push(actionData.target);
           proposalData.values.push(actionData.value);
           proposalData.calldatas.push(actionData.calldata);
@@ -1735,7 +1715,6 @@ export default function useCreateRoles() {
       navigate,
       prepareCreateRolesModificationsProposalData,
       prepareCreateTopHatProposalData,
-      publicClient,
       safe,
       submitProposal,
       t,

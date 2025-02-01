@@ -102,6 +102,7 @@
   "refresh": "Refresh",
   "invalidSafe1": "We couldn't find a Safe at this address on {{chain}}.",
   "invalidSafe2": "Please double check the address then try again.",
+  "wrongNetwork": "There was an error switching the network of the wallet",
   "wrongNetwork1": "You are currently connected to a different network than this Safe.",
   "wrongNetwork2": "Please switch to the correct network for your Safe.",
   "badQueryParam1": "The Safe address in the URL isn't formatted correctly.",
@@ -119,5 +120,7 @@
   "and": "and",
   "days": "Days",
   "owner": "Owner",
+  "recipients": "recipients",
+  "airdrop": "Airdrop",
   "pageXofY": "Page {{current}} of {{total}}"
 }

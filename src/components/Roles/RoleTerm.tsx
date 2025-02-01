@@ -5,10 +5,10 @@ import { format } from 'date-fns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getContract, Hex } from 'viem';
-import { useWalletClient } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { useDateTimeDisplay } from '../../helpers/dateTime';
-import useAvatar from '../../hooks/utils/useAvatar';
+import { useNetworkEnsAvatar } from '../../hooks/useNetworkEnsAvatar';
+import { useNetworkWalletClient } from '../../hooks/useNetworkWalletClient';
 import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useTransaction } from '../../hooks/utils/useTransaction';
@@ -189,7 +189,7 @@ function RoleTermHeader({
 function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
   const { t } = useTranslation(['roles', 'common']);
   const { displayName: accountDisplayName } = useGetAccountName(memberAddress);
-  const avatarURL = useAvatar(memberAddress);
+  const { data: avatarURL } = useNetworkEnsAvatar({ name: memberAddress });
   const copyToClipboard = useCopyText();
   return (
     <Flex flexDir="column">
@@ -280,7 +280,7 @@ export default function RoleTerm({
 }) {
   const [contractCall, contractCallPending] = useTransaction();
   const { hatsTree, getHat, updateCurrentTermStatus } = useRolesStore();
-  const { data: walletClient } = useWalletClient();
+  const { data: walletClient } = useNetworkWalletClient();
   const { t } = useTranslation(['roles']);
   const {
     contracts: { hatsProtocol },

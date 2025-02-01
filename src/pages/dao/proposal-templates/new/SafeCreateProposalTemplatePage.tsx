@@ -1,13 +1,31 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { ProposalBuilder } from '../../../../components/ProposalBuilder';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Route, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  ProposalBuilder,
+  ShowNonceInputOnMultisig,
+} from '../../../../components/ProposalBuilder/ProposalBuilder';
+import {
+  TemplateDetails,
+  TransactionsDetails,
+} from '../../../../components/ProposalBuilder/ProposalDetails';
+import { TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
+import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
+import StepButtons, {
+  CreateProposalButton,
+  NextButton,
+  PreviousButton,
+} from '../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import { logError } from '../../../../helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../hooks/DAO/proposal/useCreateProposalTemplate';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import useIPFSClient from '../../../../providers/App/hooks/useIPFSClient';
-import { ProposalBuilderMode, ProposalTemplate } from '../../../../types/proposalBuilder';
+import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
+import { CreateProposalSteps, ProposalTemplate } from '../../../../types/proposalBuilder';
 
 export function SafeCreateProposalTemplatePage() {
   useEffect(() => {
@@ -26,6 +44,8 @@ export function SafeCreateProposalTemplatePage() {
     () => searchParams?.get('templateIndex'),
     [searchParams],
   );
+  const { safe } = useDaoInfoStore();
+  const { addressPrefix } = useNetworkConfigStore();
 
   useEffect(() => {
     const loadInitialTemplate = async () => {
@@ -58,11 +78,87 @@ export function SafeCreateProposalTemplatePage() {
     loadInitialTemplate();
   }, [defaultProposalTemplatesHash, defaultProposalTemplateIndex, ipfsClient]);
 
+  const location = useLocation();
+  const { t } = useTranslation('proposalTemplate');
+  const navigate = useNavigate();
+
+  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
+
+  const pageHeaderBreadcrumbs = [
+    {
+      terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
+      path: DAO_ROUTES.proposalTemplates.relative(addressPrefix, safe?.address ?? ''),
+    },
+    {
+      terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
+      path: '',
+    },
+  ];
+
+  const pageHeaderButtonClickHandler = () => {
+    navigate(DAO_ROUTES.proposalTemplates.relative(addressPrefix, safe?.address ?? ''));
+  };
+
+  const stepButtons = ({
+    formErrors,
+    createProposalBlocked,
+  }: {
+    formErrors: boolean;
+    createProposalBlocked: boolean;
+  }) => {
+    return (
+      <StepButtons
+        metadataStepButtons={
+          <NextButton
+            nextStepUrl={nextStepUrl}
+            isDisabled={formErrors}
+          />
+        }
+        transactionsStepButtons={
+          <>
+            <PreviousButton prevStepUrl={prevStepUrl} />
+            <CreateProposalButton isDisabled={createProposalBlocked} />
+          </>
+        }
+      />
+    );
+  };
+
   return (
     <ProposalBuilder
-      mode={ProposalBuilderMode.TEMPLATE}
+      pageHeaderTitle={t('createProposalTemplate', { ns: 'proposalTemplate' })}
+      pageHeaderBreadcrumbs={pageHeaderBreadcrumbs}
+      pageHeaderButtonClickHandler={pageHeaderButtonClickHandler}
+      proposalMetadataTypeProps={TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS(t)}
+      actionsExperience={null}
+      stepButtons={stepButtons}
+      transactionsDetails={transactions => <TransactionsDetails transactions={transactions} />}
+      templateDetails={title => <TemplateDetails title={title} />}
+      streamsDetails={null}
       initialValues={initialProposalTemplate}
       prepareProposalData={prepareProposalTemplateProposal}
+      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+        return (
+          <Route
+            path={CreateProposalSteps.TRANSACTIONS}
+            element={
+              <>
+                <ProposalTransactionsForm
+                  pendingTransaction={pendingCreateTx}
+                  safeNonce={safe?.nextNonce}
+                  isProposalMode={true}
+                  {...formikProps}
+                />
+                <ShowNonceInputOnMultisig
+                  nonce={nonce}
+                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                />
+              </>
+            }
+          />
+        );
+      }}
     />
   );
 }

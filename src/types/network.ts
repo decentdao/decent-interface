@@ -10,6 +10,7 @@ export type NetworkConfig = {
   etherscanAPIUrl: string;
   addressPrefix: string; // copy whatever Safe uses
   nativeTokenIcon: string;
+  isENSSupported: boolean;
   subgraph: {
     space: number;
     slug: string;
@@ -68,6 +69,7 @@ export type NetworkConfig = {
     sablierV2LockupDynamic: Address;
     sablierV2LockupTranched: Address;
     sablierV2LockupLinear: Address;
+    disperse: Address;
   };
   staking: {
     lido?: {

@@ -25,6 +25,7 @@ export const baseConfig: NetworkConfig = {
   etherscanAPIUrl: `https://api.basescan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_BASE_API_KEY}`,
   addressPrefix: 'base',
   nativeTokenIcon: '/images/coin-icon-base.svg',
+  isENSSupported: false,
   subgraph: {
     space: 71032,
     slug: 'fractal-base',
@@ -97,6 +98,7 @@ export const baseConfig: NetworkConfig = {
     sablierV2LockupDynamic: '0xF9E9eD67DD2Fab3b3ca024A2d66Fcf0764d36742',
     sablierV2LockupTranched: '0xf4937657Ed8B3f3cB379Eed47b8818eE947BEb1e',
     sablierV2LockupLinear: '0x4CB16D4153123A74Bc724d161050959754f378D8',
+    disperse: '0xD152f549545093347A162Dce210e7293f1452150',
   },
   staking: {},
   moralis: {

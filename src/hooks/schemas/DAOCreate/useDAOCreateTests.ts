@@ -7,7 +7,7 @@ import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetwo
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { validateENSName } from '../../../utils/url';
 import useNetworkPublicClient from '../../useNetworkPublicClient';
-import { validateAddress } from '../common/useValidationAddress';
+import { useValidationAddress } from '../common/useValidationAddress';
 
 /**
  * validatation tests for create DAO workflow; specifically token allocations
@@ -23,6 +23,7 @@ export function useDAOCreateTests() {
   const { t } = useTranslation(['daoCreate', 'common']);
   const publicClient = useNetworkPublicClient();
   const { chain } = useNetworkConfigStore();
+  const { validateAddress } = useValidationAddress();
 
   const minValueValidation = useMemo(
     () => (minValue: number) => {
@@ -45,22 +46,22 @@ export function useDAOCreateTests() {
       name: 'Address Validation',
       message: t('errorInvalidENSAddress', { ns: 'common', chain: chain.name }),
       test: async function (address: string | undefined) {
-        if (!address || !publicClient) return false;
-        const { validation } = await validateAddress({ publicClient, address });
+        if (!address) return false;
+        const { validation } = await validateAddress({ address });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
         return validation.isValidAddress;
       },
     };
-  }, [publicClient, addressValidationMap, t, chain.name]);
+  }, [t, chain.name, validateAddress]);
 
   const uniqueAllocationValidationTest = useMemo(() => {
     return {
       name: 'Unique Addresses',
       message: t('errorDuplicateAddress'),
       test: async function (value: string | undefined, context: AnyObject) {
-        if (!value || !publicClient) return false;
+        if (!value) return false;
         // retreive parent array
         const parentAddressArray = context.from[1].value.tokenAllocations;
         if (parentAddressArray.length === 1) {
@@ -69,7 +70,7 @@ export function useDAOCreateTests() {
         // looks up tested value
         let inputValidation = addressValidationMap.current.get(value);
         if (!!value && !inputValidation) {
-          inputValidation = (await validateAddress({ publicClient, address: value })).validation;
+          inputValidation = (await validateAddress({ address: value })).validation;
         }
         // converts all inputs to addresses to compare
         // uses addressValidationMap to save on requests
@@ -81,8 +82,8 @@ export function useDAOCreateTests() {
               return addressValidation.address;
             }
             // because mapping is not 'state', this catches values that may not be resolved yet
-            if (validateENSName(address) && publicClient) {
-              const { validation } = await validateAddress({ publicClient, address });
+            if (validateENSName(address)) {
+              const { validation } = await validateAddress({ address });
               return validation.address;
             }
             return address;
@@ -95,7 +96,7 @@ export function useDAOCreateTests() {
         return uniqueFilter.length === 1;
       },
     };
-  }, [publicClient, t]);
+  }, [t, validateAddress]);
   const maxAllocationValidation = useMemo(() => {
     return {
       name: 'Token Supply validation',
@@ -133,7 +134,7 @@ export function useDAOCreateTests() {
       name: 'ERC20 Address Validation',
       message: t('errorInvalidERC20Address', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (address && isAddress(address) && publicClient) {
+        if (address && isAddress(address)) {
           try {
             const tokenContract = getContract({
               address,
@@ -160,7 +161,7 @@ export function useDAOCreateTests() {
       name: 'ERC721 Address Validation',
       message: t('errorInvalidERC721Address', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (address && isAddress(address) && publicClient) {
+        if (address && isAddress(address)) {
           try {
             const abi = [
               {

@@ -1,9 +1,10 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { getContract } from 'viem';
-import { useAccount, usePublicClient } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import useNetworkPublicClient from '../../../useNetworkPublicClient';
 
 export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) => {
   const isTokenLoaded = useRef(false);
@@ -15,10 +16,10 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
   } = useFractal();
   const user = useAccount();
   const account = user.address;
-  const publicClient = usePublicClient();
+  const publicClient = useNetworkPublicClient();
 
   const loadERC20Token = useCallback(async () => {
-    if (!votesTokenAddress || !publicClient) {
+    if (!votesTokenAddress) {
       return;
     }
 
@@ -46,7 +47,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
   }, [action, publicClient, votesTokenAddress]);
 
   const loadERC20TokenAccountData = useCallback(async () => {
-    if (!account || !votesTokenAddress || !publicClient) {
+    if (!account || !votesTokenAddress) {
       action.dispatch({ type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA });
       return;
     }
@@ -57,16 +58,14 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       client: publicClient,
     });
 
-    const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
+    const [tokenBalance, tokenDelegatee] = await Promise.all([
       tokenContract.read.balanceOf([account]),
       tokenContract.read.delegates([account]),
-      tokenContract.read.getVotes([account]),
     ]);
 
     const tokenAccountData = {
       balance: tokenBalance,
       delegatee: tokenDelegatee,
-      votingWeight: tokenVotingWeight,
     };
 
     action.dispatch({
@@ -92,7 +91,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       return;
     }
 
-    if (!votesTokenAddress || !publicClient) {
+    if (!votesTokenAddress) {
       return;
     }
 
@@ -117,7 +116,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       return;
     }
 
-    if (!votesTokenAddress || !publicClient) {
+    if (!votesTokenAddress) {
       return;
     }
 
@@ -152,7 +151,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       return;
     }
 
-    if (!votesTokenAddress || !publicClient) {
+    if (!votesTokenAddress) {
       return;
     }
 

@@ -4,9 +4,9 @@ import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
-import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../hooks/schemas/common/useValidationAddress';
+import { useNetworkEnsAddressAsync } from '../../../../hooks/useNetworkEnsAddress';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { validateENSName } from '../../../../utils/url';
 import SupportTooltip from '../../../ui/badges/SupportTooltip';
@@ -31,7 +31,7 @@ function AddSignerModal({
   }
 
   const { t } = useTranslation(['modals', 'common']);
-  const publicClient = usePublicClient();
+  const { getEnsAddress } = useNetworkEnsAddressAsync();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
 
@@ -41,8 +41,8 @@ function AddSignerModal({
     async (values: { address: string; threshold: number; nonce: number }) => {
       const { address, nonce, threshold } = values;
       let validAddress = address;
-      if (validateENSName(validAddress) && publicClient) {
-        const maybeEnsAddress = await publicClient.getEnsAddress({ name: address });
+      if (validateENSName(validAddress)) {
+        const maybeEnsAddress = await getEnsAddress({ name: address });
         if (maybeEnsAddress) {
           validAddress = maybeEnsAddress;
         }
@@ -56,7 +56,7 @@ function AddSignerModal({
         close: close,
       });
     },
-    [addSigner, close, safe, publicClient],
+    [addSigner, safe.address, close, getEnsAddress],
   );
 
   const addSignerValidationSchema = Yup.object().shape({

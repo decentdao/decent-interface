@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
 import { Hex, getAddress } from 'viem';
-import { usePublicClient } from 'wagmi';
 import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { encodeFunction } from '../../../utils/crypto';
 import { validateENSName, isValidUrl } from '../../../utils/url';
+import { useNetworkEnsAddressAsync } from '../../useNetworkEnsAddress';
 
 export function usePrepareProposal() {
-  const publicClient = usePublicClient();
-
+  const { getEnsAddress } = useNetworkEnsAddressAsync();
   const prepareProposal = useCallback(
     async (values: CreateProposalForm) => {
       const { transactions, proposalMetadata } = values;
@@ -35,8 +34,8 @@ export function usePrepareProposal() {
       });
       const targets = await Promise.all(
         transactionsWithEncoding.map(async tx => {
-          if (tx.targetAddress && validateENSName(tx.targetAddress) && publicClient) {
-            const address = await publicClient.getEnsAddress({ name: tx.targetAddress });
+          if (tx.targetAddress && validateENSName(tx.targetAddress)) {
+            const address = await getEnsAddress({ name: tx.targetAddress });
             if (address) {
               return address;
             }
@@ -56,7 +55,7 @@ export function usePrepareProposal() {
         },
       };
     },
-    [publicClient],
+    [getEnsAddress],
   );
   return { prepareProposal };
 }
