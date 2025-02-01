@@ -107,8 +107,10 @@ export const useFractalGovernance = () => {
       linearVotingErc20WithHatsWhitelistingAddress,
       linearVotingErc721WithHatsWhitelistingAddress,
     } = governanceContracts;
+    if (isLoaded) {
+      // Reset loadKey to guarantee re-loading proposals after setting / updating governance type
+      loadKey.current = undefined;
 
-    if (isLoaded && !type) {
       if (moduleAzoriusAddress) {
         if (linearVotingErc20Address || linearVotingErc20WithHatsWhitelistingAddress) {
           action.dispatch({
@@ -143,7 +145,6 @@ export const useFractalGovernance = () => {
     loadERC721Strategy,
     loadERC721Tokens,
     action,
-    type,
   ]);
 
   useEffect(() => {
