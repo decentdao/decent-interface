@@ -53,5 +53,10 @@
   "recipientsLabel": "Recipient",
   "recipientsSublabel": "Enter the recipient's wallet address",
   "airdropAmountSublabel": "Enter the amount of tokens to be airdropped to the recipient",
-  "addRecipient": "Add Recipient"
+  "addRecipient": "Add Recipient",
+  "noAssetsWithBalance": "No assets with balance. Send assets to your Safe first.",
+  "noAssetsWithBalanceNotProposer": "This DAO does not have any assets with balance.",
+  "dragDropCSV": "Drag & drop a CSV file here, or click to select",
+  "dropCSVHere": "Drop CSV here",
+  "csvFormat": "Format: address,amount in each row"
 }

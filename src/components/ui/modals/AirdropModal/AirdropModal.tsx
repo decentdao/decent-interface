@@ -6,18 +6,19 @@ import { useTranslation } from 'react-i18next';
 import { Address, getAddress, isAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
-import { useFractal } from '../../../providers/App/AppProvider';
-import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
-import { BigIntValuePair, TokenBalance } from '../../../types';
-import { formatCoinFromAsset } from '../../../utils';
-import { validateENSName } from '../../../utils/url';
-import { BigIntInput } from '../forms/BigIntInput';
-import { CustomNonceInput } from '../forms/CustomNonceInput';
-import { AddressInput } from '../forms/EthAddressInput';
-import LabelWrapper from '../forms/LabelWrapper';
-import Divider from '../utils/Divider';
-
-interface AirdropFormValues {
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
+import { BigIntValuePair, TokenBalance } from '../../../../types';
+import { formatCoinFromAsset } from '../../../../utils';
+import { validateENSName } from '../../../../utils/url';
+import NoDataCard from '../../containers/NoDataCard';
+import { BigIntInput } from '../../forms/BigIntInput';
+import { CustomNonceInput } from '../../forms/CustomNonceInput';
+import { AddressInput } from '../../forms/EthAddressInput';
+import LabelWrapper from '../../forms/LabelWrapper';
+import Divider from '../../utils/Divider';
+import { DnDFileInput } from './DnDFileInput';
+export interface AirdropFormValues {
   selectedAsset: TokenBalance;
   recipients: {
     address: string;
@@ -117,6 +118,16 @@ export function AirdropModal({
         validationSchema={airdropValidationSchema}
       >
         {({ errors, values, setFieldValue, handleSubmit }) => {
+          if (!fungibleAssetsWithBalance.length) {
+            return (
+              <NoDataCard
+                emptyText="noAssetsWithBalance"
+                emptyTextNotProposer="noAssetsWithBalanceNotProposer"
+                translationNameSpace="modals"
+              />
+            );
+          }
+
           const totalAmount = values.recipients.reduce(
             (acc, recipient) => acc + (recipient.amount.bigintValue || 0n),
             0n,
@@ -181,6 +192,11 @@ export function AirdropModal({
                   })}
                 </Text>
               </HStack>
+
+              <Divider my="1.5rem" />
+
+              {/* CSV INPUT */}
+              <DnDFileInput />
 
               <Divider my="1.5rem" />
 
