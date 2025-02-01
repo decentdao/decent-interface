@@ -148,6 +148,18 @@ export function AirdropModal({
             e.preventDefault();
             const pastedText = e.clipboardData.getData('text');
 
+            if (!pastedText || !pastedText.includes(',')) {
+              setFieldValue(
+                'recipients',
+                currentRecipients.map((r, i) => {
+                  if (i === index) {
+                    return { ...r, address: pastedText };
+                  }
+                  return r;
+                }),
+              );
+            }
+
             try {
               const newRecipients = parseRecipients(pastedText, values.selectedAsset.decimals);
 
@@ -247,6 +259,9 @@ export function AirdropModal({
                         mb="2.5rem"
                       >
                         <LabelWrapper
+                          tooltipContent={
+                            index === 0 ? <Text>{t('pasteMultipleRecipients')}</Text> : undefined
+                          }
                           label={t('recipientsLabel')}
                           subLabel={t('recipientsSublabel')}
                           errorMessage={
@@ -272,7 +287,6 @@ export function AirdropModal({
                             }}
                             value={recipient.address}
                             onPaste={e => handleAddressInputPaste(e, index, field.value)}
-                            placeholder={index === 0 ? t('pasteMultipleRecipients') : ''}
                           />
                         </LabelWrapper>
                         <LabelWrapper
