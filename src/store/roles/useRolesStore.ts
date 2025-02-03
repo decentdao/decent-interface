@@ -71,7 +71,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       params.hatsProtocol,
       params.chainId,
       params.publicClient,
-      params.apolloClient,
+      params.client,
       params.sablierSubgraph,
       params.whitelistingVotingStrategy,
     );

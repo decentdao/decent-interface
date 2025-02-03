@@ -1,18 +1,18 @@
-import { useLazyQuery } from '@apollo/client';
 import { Center, Flex, Icon, Link, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
+import { useQuery } from 'urql';
 import { Address, getContract, zeroAddress } from 'viem';
-import { DAOQueryDocument } from '../../../.graphclient';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
+import { DAOQueryDocument } from '../../graphql/DAOQuery';
 import { useDecentModules } from '../../hooks/DAO/loaders/useDecentModules';
 import useNetworkPublicClient from '../../hooks/useNetworkPublicClient';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
-import { setValue, getValue } from '../../hooks/utils/cache/useLocalStorage';
+import { getValue, setValue } from '../../hooks/utils/cache/useLocalStorage';
 import { useAddressContractType } from '../../hooks/utils/useAddressContractType';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
@@ -31,6 +31,36 @@ import { BarLoader } from '../ui/loaders/BarLoader';
  * From this initial DAO info, the component will get the DAO's children
  * and display another DaoNode for each child, and so on for their children.
  */
+
+interface DAOHierarchyNode {
+  id: string;
+  address: string;
+  parentAddress: string | null;
+  name: string | null;
+  snapshotENS: string | null;
+  hierarchy: DAOHierarchyNode[];
+}
+
+interface DAOQueryResult {
+  daos: {
+    id: string;
+    address: string;
+    parentAddress: string | null;
+    name: string | null;
+    snapshotENS: string | null;
+    hierarchy: DAOHierarchyNode[];
+    proposalTemplatesHash: string | null;
+  }[];
+}
+
+interface DAOQueryVariables {
+  safeAddress: string;
+}
+
+export interface HierarchyChild {
+  address: string;
+}
+
 export function DaoHierarchyNode({
   safeAddress,
   depth,
@@ -49,7 +79,10 @@ export function DaoHierarchyNode({
   const { getAddressContractType } = useAddressContractType();
   const lookupModules = useDecentModules();
 
-  const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
+  const [queryResult, executeQuery] = useQuery<DAOQueryResult, DAOQueryVariables>({
+    query: DAOQueryDocument,
+    variables: { safeAddress: safeAddress || '' },
+    pause: !safeAddress,
     context: {
       subgraphSpace: subgraph.space,
       subgraphSlug: subgraph.slug,
@@ -127,21 +160,39 @@ export function DaoHierarchyNode({
       }
       try {
         const safe = await safeApi.getSafeInfo(_safeAddress);
-        const graphRawNodeData = await getDAOInfo({ variables: { safeAddress: _safeAddress } });
+
+        // Trigger a new query execution if needed
+        if (queryResult.data?.daos[0]?.address !== _safeAddress) {
+          executeQuery({ variables: { safeAddress: _safeAddress } });
+          return; // The effect will handle the new data when it arrives
+        }
+
+        if (queryResult.error) {
+          throw new Error('Query failed');
+        }
+
+        if (!queryResult.data) {
+          throw new Error('No data found');
+        }
+
         const modules = await lookupModules(safe.modules);
-        const graphDAOData = graphRawNodeData.data?.daos[0];
+        const graphDAOData = queryResult.data.daos[0];
         const azoriusModule = getAzoriusModuleFromModules(modules ?? []);
         const votingStrategies: DaoHierarchyStrategyType[] = azoriusModule
           ? await getGovernanceTypes(azoriusModule)
           : ['MULTISIG'];
-        if (!graphRawNodeData || !graphDAOData) {
+
+        if (!graphDAOData) {
           throw new Error('No data found');
         }
+
         return {
           daoName: graphDAOData.name ?? null,
           safeAddress: _safeAddress,
-          parentAddress: graphDAOData.parentAddress ?? null,
-          childAddresses: graphDAOData.hierarchy.map(child => child.address),
+          parentAddress: graphDAOData.parentAddress as Address | null,
+          childAddresses: graphDAOData.hierarchy.map(
+            (child: HierarchyChild) => child.address as Address,
+          ),
           daoSnapshotENS: graphDAOData.snapshotENS ?? null,
           proposalTemplatesHash: graphDAOData.proposalTemplatesHash ?? null,
           modules,
@@ -152,11 +203,12 @@ export function DaoHierarchyNode({
         return;
       }
     },
-    [getDAOInfo, getGovernanceTypes, lookupModules, safeApi],
+    [executeQuery, queryResult.data, queryResult.error, getGovernanceTypes, lookupModules, safeApi],
   );
 
+  // Effect to handle query result changes
   useEffect(() => {
-    if (safeAddress) {
+    if (safeAddress && queryResult.data) {
       const cachedNode = getValue({
         cacheName: CacheKeys.HIERARCHY_DAO_INFO,
         chainId: chain.id,
@@ -166,9 +218,11 @@ export function DaoHierarchyNode({
         setHierarchyNode(cachedNode);
         return;
       }
+
       loadDao(safeAddress).then(_node => {
         if (!_node) {
           setErrorLoading(true);
+          return;
         }
         setValue(
           {
@@ -181,8 +235,7 @@ export function DaoHierarchyNode({
         setHierarchyNode(_node);
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [chain.id, loadDao, queryResult.data, safeAddress]);
   if (!hierarchyNode) {
     // node hasn't loaded yet
     return (

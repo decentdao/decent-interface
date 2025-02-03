@@ -1,6 +1,6 @@
-import { useQuery } from '@apollo/client';
 import { useEffect, useRef } from 'react';
-import { DAOQueryDocument } from '../../../../.graphclient';
+import { useQuery } from 'urql';
+import { DAOQueryDocument } from '../../../graphql/DAOQuery';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -36,15 +36,25 @@ export const useFractalGovernance = () => {
   const loadERC721Tokens = useERC721Tokens();
   const ipfsClient = useIPFSClient();
 
-  const ONE_MINUTE = 60 * 1000;
-
   const { subgraph } = useNetworkConfigStore();
 
-  useQuery(DAOQueryDocument, {
+  const [result] = useQuery({
+    query: DAOQueryDocument,
     variables: { safeAddress },
-    onCompleted: async data => {
-      if (!safeAddress) return;
-      const { daos } = data;
+    pause: !safeAddress || !type,
+    context: {
+      subgraphSpace: subgraph.space,
+      subgraphSlug: subgraph.slug,
+      subgraphVersion: subgraph.version,
+    },
+    requestPolicy: 'cache-and-network',
+  });
+
+  useEffect(() => {
+    const processData = async () => {
+      if (!safeAddress || !result.data) return;
+
+      const { daos } = result.data;
       const dao = daos[0];
 
       // `dao` might be undefined despite what the type says
@@ -87,15 +97,10 @@ export const useFractalGovernance = () => {
         type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
         payload: mappedProposalTemplates,
       });
-    },
-    context: {
-      subgraphSpace: subgraph.space,
-      subgraphSlug: subgraph.slug,
-      subgraphVersion: subgraph.version,
-    },
-    pollInterval: ONE_MINUTE,
-    skip: !safeAddress || !type,
-  });
+    };
+
+    processData();
+  }, [safeAddress, result.data, ipfsClient, action]);
 
   useEffect(() => {
     const {

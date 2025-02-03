@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+// import { gql } from '@apollo/client';
 import { useCallback, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { logError } from '../../../../helpers/errorLogging';
@@ -33,9 +33,8 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   const loadSnapshotProposal = useCallback(async () => {
     if (!!snapshotProposal && snaphshotGraphQlClient) {
       const proposalQueryResult = await snaphshotGraphQlClient
-        .query({
-          query: gql`
-          query ExtendedSnapshotProposal {
+        .query(
+          `query ExtendedSnapshotProposal {
             proposal(id: "${snapshotProposal.snapshotProposalId}") {
               snapshot
               type
@@ -50,9 +49,10 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
               choices
               ipfs
             }
-          }
-        `,
-        })
+          }`,
+          undefined,
+        )
+        .toPromise()
         .then(
           ({
             data: {
@@ -73,19 +73,21 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         );
 
       const votesQueryResult = await snaphshotGraphQlClient
-        .query({
-          query: gql`query SnapshotProposalVotes {
-          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 500) {
-            id
-            voter
-            vp
-            vp_by_strategy
-            vp_state
-            created
-            choice
-          }
-        }`,
-        })
+        .query(
+          `query SnapshotProposalVotes {
+            votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 500) {
+              id
+              voter
+              vp
+              vp_by_strategy
+              vp_state
+              created
+              choice
+            }
+          }`,
+          undefined,
+        )
+        .toPromise()
         .then(({ data: { votes } }) => {
           return votes.map(({ id, voter, vp, vp_by_strategy, vp_state, created, choice }: any) => ({
             id,
@@ -206,20 +208,21 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     };
     if (snapshotProposal?.snapshotProposalId && snaphshotGraphQlClient) {
       const queryResult = await snaphshotGraphQlClient
-        .query({
-          query: gql`
-      query UserVotingWeight {
-          vp(
+        .query(
+          `query UserVotingWeight {
+            vp(
               voter: "${address}"
               space: "${subgraphInfo?.daoSnapshotENS}"
               proposal: "${snapshotProposal.snapshotProposalId}"
-          ) {
+            ) {
               vp
               vp_by_strategy
               vp_state
-          }
-      }`,
-        })
+            }
+          }`,
+          undefined,
+        )
+        .toPromise()
         .then(({ data: { vp } }) => {
           if (!vp) {
             logError('Error while retrieving Snapshot voting weight', vp);

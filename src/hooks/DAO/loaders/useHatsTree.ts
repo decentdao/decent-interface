@@ -1,8 +1,8 @@
-import { useApolloClient } from '@apollo/client';
 import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useClient } from 'urql';
 import { PublicClient } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -37,7 +37,7 @@ const useHatsTree = () => {
     },
   } = useNetworkConfigStore();
   const publicClient = useNetworkPublicClient();
-  const apolloClient = useApolloClient();
+  const client = useClient();
 
   const getHatsTree = useCallback(
     async (params: { hatsTreeId: number; contextChainId: number; publicClient: PublicClient }) => {
@@ -106,7 +106,7 @@ const useHatsTree = () => {
             whitelistingVotingStrategy:
               linearVotingErc20WithHatsWhitelistingAddress ||
               linearVotingErc721WithHatsWhitelistingAddress,
-            apolloClient,
+            client,
             sablierSubgraph,
           });
         } catch (e) {
@@ -123,7 +123,7 @@ const useHatsTree = () => {
           hatsAccountImplementation,
           hatsElectionsImplementation,
           publicClient: params.publicClient,
-          apolloClient,
+          client,
           sablierSubgraph,
         });
         const message = t('invalidHatsTreeIdMessage');
@@ -138,7 +138,7 @@ const useHatsTree = () => {
       }
     },
     [
-      apolloClient,
+      client,
       erc6551Registry,
       hatsAccountImplementation,
       hatsElectionsImplementation,

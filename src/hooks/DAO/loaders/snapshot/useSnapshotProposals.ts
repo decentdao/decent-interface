@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -15,34 +14,34 @@ export const useSnapshotProposals = () => {
   const loadSnapshotProposals = useCallback(async () => {
     if (snaphshotGraphQlClient && !!subgraphInfo) {
       snaphshotGraphQlClient
-        .query({
-          query: gql`
-      query Proposals {
-        proposals(
-          first: 50,
-          where: {
-            space_in: ["${subgraphInfo.daoSnapshotENS}"]
-          },
-          orderBy: "created",
-          orderDirection: desc
-        ) {
-          id
-          title
-          body
-          choices
-          start
-          end
-          snapshot
-          state
-          author
-          space {
-            id
-            name
-          }
-        }
-      }
-      `,
-        })
+        .query(
+          `query Proposals {
+             proposals(
+               first: 50,
+               where: {
+                 space_in: ["${subgraphInfo.daoSnapshotENS}"]
+               },
+               orderBy: "created",
+               orderDirection: desc
+             ) {
+               id
+               title
+               body
+               choices
+               start
+               end
+               snapshot
+               state
+               author
+               space {
+                 id
+                 name
+               }
+             }
+          }`,
+          undefined,
+        )
+        .toPromise()
         .then(result => {
           const proposals: SnapshotProposal[] = result.data.proposals.map((proposal: any) => {
             return {

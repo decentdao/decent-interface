@@ -1,5 +1,5 @@
-import { ApolloClient } from '@apollo/client';
 import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
+import { Client } from 'urql';
 import { Address, Hex, PublicClient } from 'viem';
 import { SendAssetsData } from '../components/ui/modals/SendAssetsModal';
 import { BigIntValuePair } from './common';
@@ -254,7 +254,7 @@ export interface RolesStore extends RolesStoreData {
     hatsAccountImplementation: Address;
     hatsElectionsImplementation: Address;
     publicClient: PublicClient;
-    apolloClient: ApolloClient<object>;
+    client: Client;
     sablierSubgraph?: {
       space: number;
       slug: string;

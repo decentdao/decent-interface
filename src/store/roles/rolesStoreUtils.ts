@@ -1,13 +1,13 @@
-import { ApolloClient } from '@apollo/client';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { HatsModulesClient } from '@hatsprotocol/modules-sdk';
 import { Hat, Tree } from '@hatsprotocol/sdk-v1-subgraph';
+import { Client } from 'urql';
 import { Address, Hex, PublicClient, formatUnits, getAddress, getContract } from 'viem';
-import { StreamsQueryDocument } from '../../../.graphclient';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
+import { StreamsQueryDocument } from '../../graphql/StreamsQuery';
 import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { getValue } from '../../hooks/utils/cache/useLocalStorage';
@@ -268,7 +268,7 @@ const getRoleHatTerms = async (
 const getPaymentStreams = async (
   paymentRecipient: Address,
   publicClient: PublicClient,
-  apolloClient: ApolloClient<object>,
+  client: Client,
   sablierSubgraph: {
     space: number;
     slug: string;
@@ -277,21 +277,30 @@ const getPaymentStreams = async (
   if (!sablierSubgraph) {
     return [];
   }
-  const streamQueryResult = await apolloClient.query({
-    query: StreamsQueryDocument,
-    variables: { recipientAddress: paymentRecipient },
-    context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
-  });
+
+  const streamQueryResult = await client.query(
+    StreamsQueryDocument,
+    {
+      recipientAddress: paymentRecipient,
+    },
+    {
+      requestPolicy: 'network-only',
+      context: {
+        subgraphSpace: sablierSubgraph.space,
+        subgraphSlug: sablierSubgraph.slug,
+      },
+    },
+  );
 
   if (!streamQueryResult.error) {
-    if (!streamQueryResult.data.streams.length) {
+    if (!streamQueryResult.data?.streams.length) {
       return [];
     }
     const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
     const lockupLinearStreams = streamQueryResult.data.streams.filter(
-      stream => stream.category === 'LockupLinear',
+      (stream: { category: string }) => stream.category === 'LockupLinear',
     );
-    const formattedLinearStreams = lockupLinearStreams.map(lockupLinearStream => {
+    const formattedLinearStreams = lockupLinearStreams.map((lockupLinearStream: any) => {
       const parsedAmount = formatUnits(
         BigInt(lockupLinearStream.depositAmount),
         lockupLinearStream.asset.decimals,
@@ -346,7 +355,7 @@ const getPaymentStreams = async (
     });
 
     const streamsWithCurrentWithdrawableAmounts: SablierPayment[] = await Promise.all(
-      formattedLinearStreams.map(async stream => {
+      formattedLinearStreams.map(async (stream: any) => {
         const streamContract = getContract({
           abi: SablierV2LockupLinearAbi,
           address: stream.contractAddress,
@@ -373,7 +382,7 @@ export const sanitize = async (
   hats: Address,
   chainId: bigint,
   publicClient: PublicClient,
-  apolloClient: ApolloClient<object>,
+  client: Client,
   sablierSubgraph?: {
     space: number;
     slug: string;
@@ -494,7 +503,7 @@ export const sanitize = async (
         const uniqueRecipients = [...new Set(roleTerms.allTerms.map(term => term.nominee))];
         for (const recipient of uniqueRecipients) {
           payments.push(
-            ...(await getPaymentStreams(recipient, publicClient, apolloClient, sablierSubgraph)),
+            ...(await getPaymentStreams(recipient, publicClient, client, sablierSubgraph)),
           );
         }
       } else {
@@ -505,7 +514,7 @@ export const sanitize = async (
           ...(await getPaymentStreams(
             roleHatSmartAccountAddress,
             publicClient,
-            apolloClient,
+            client,
             sablierSubgraph,
           )),
         );
