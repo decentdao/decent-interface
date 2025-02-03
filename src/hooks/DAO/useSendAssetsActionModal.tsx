@@ -9,6 +9,7 @@ import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkC
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { ProposalActionType } from '../../types/proposalBuilder';
+import { formatCoin } from '../../utils';
 import {
   isNativeAsset,
   prepareSendAssetsActionData,
@@ -27,8 +28,18 @@ export default function useSendAssetsActionModal() {
     if (!safe?.address) {
       return;
     }
+
     const isNative = isNativeAsset(sendAssetsData.asset);
     const transactionData = prepareSendAssetsActionData(sendAssetsData);
+
+    const formattedNativeTokenValue = formatCoin(
+      transactionData.value,
+      true,
+      sendAssetsData.asset.decimals,
+      sendAssetsData.asset.symbol,
+      false,
+    );
+
     addAction({
       actionType: ProposalActionType.TRANSFER,
       content: <></>,
@@ -37,7 +48,7 @@ export default function useSendAssetsActionModal() {
           targetAddress: transactionData.target,
           ethValue: {
             bigintValue: transactionData.value,
-            value: transactionData.value.toString(),
+            value: formattedNativeTokenValue,
           },
           functionName: isNative ? '' : 'transfer',
           parameters: isNative
