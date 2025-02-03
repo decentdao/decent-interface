@@ -1,7 +1,7 @@
 import { Button, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { ArrowsDownUp, CheckSquare, Trash } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { formatUnits, getAddress, zeroAddress } from 'viem';
+import { formatUnits, getAddress, isAddress } from 'viem';
 import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
@@ -9,7 +9,7 @@ import { CreateProposalAction, ProposalActionType } from '../../types/proposalBu
 import { Card } from '../ui/cards/Card';
 import { SendAssetsActionCard } from '../ui/cards/SendAssetsActionCard';
 
-export function SendAssetsAction({
+function SendAssetsAction({
   action,
   onRemove,
 }: {
@@ -19,16 +19,30 @@ export function SendAssetsAction({
   const {
     treasury: { assetsFungible },
   } = useFractal();
-  const destinationAddress = action.transactions[0].parameters[0].value
-    ? getAddress(action.transactions[0].parameters[0].value)
-    : zeroAddress;
-  const transferAmount = BigInt(action.transactions[0].parameters[1].value || '0');
 
-  if (!destinationAddress || !transferAmount) {
+  // Parse destination address
+  const destinationParam = action.transactions[0].parameters[0];
+  const destinationAddress =
+    destinationParam && destinationParam.value
+      ? destinationParam.value
+      : action.transactions[0].targetAddress;
+
+  if (!destinationAddress || !isAddress(destinationAddress)) {
     return null;
   }
 
-  // @todo: This does not work for native asset
+  // Parse transfer amount
+  const transferAmountParam = action.transactions[0].parameters[1];
+  const transferAmount =
+    transferAmountParam && transferAmountParam.value
+      ? BigInt(transferAmountParam.value)
+      : action.transactions[0].ethValue.bigintValue;
+
+  if (transferAmount === undefined) {
+    return null;
+  }
+
+  // @todo: This should be made to work for native asset
   const actionAsset = assetsFungible.find(
     asset => getAddress(asset.tokenAddress) === getAddress(action.transactions[0].targetAddress),
   );
