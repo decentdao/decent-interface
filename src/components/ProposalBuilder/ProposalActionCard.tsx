@@ -6,6 +6,7 @@ import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIc
 import { useFractal } from '../../providers/App/AppProvider';
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
 import { CreateProposalAction, ProposalActionType } from '../../types/proposalBuilder';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../../utils/address';
 import { Card } from '../ui/cards/Card';
 import { SendAssetsActionCard } from '../ui/cards/SendAssetsActionCard';
 
@@ -20,34 +21,33 @@ function SendAssetsAction({
     treasury: { assetsFungible },
   } = useFractal();
 
-  // Parse destination address
-  const destinationParam = action.transactions[0].parameters[0];
-  const destinationAddress =
-    destinationParam && destinationParam.value
-      ? destinationParam.value
-      : action.transactions[0].targetAddress;
+  const isNativeAsset = action.transactions[0].parameters.length === 0;
+
+  const destinationAddress = isNativeAsset
+    ? action.transactions[0].targetAddress
+    : action.transactions[0].parameters[0].value;
 
   if (!destinationAddress || !isAddress(destinationAddress)) {
     return null;
   }
 
-  // Parse transfer amount
-  const transferAmountParam = action.transactions[0].parameters[1];
-  const transferAmount =
-    transferAmountParam && transferAmountParam.value
-      ? BigInt(transferAmountParam.value)
-      : action.transactions[0].ethValue.bigintValue;
+  let transferAmount: bigint;
 
-  if (transferAmount === undefined) {
+  if (isNativeAsset && action.transactions[0].ethValue.bigintValue !== undefined) {
+    transferAmount = action.transactions[0].ethValue.bigintValue;
+  } else if (action.transactions[0].parameters[1].value !== undefined) {
+    transferAmount = BigInt(action.transactions[0].parameters[1].value);
+  } else {
     return null;
   }
 
-  // @todo: This should be made to work for native asset
-  const actionAsset = assetsFungible.find(
-    asset => getAddress(asset.tokenAddress) === getAddress(action.transactions[0].targetAddress),
-  );
+  const transferringAssetAddress = isNativeAsset
+    ? MOCK_MORALIS_ETH_ADDRESS
+    : getAddress(action.transactions[0].targetAddress);
 
-  if (!actionAsset) {
+  const asset = assetsFungible.find(a => getAddress(a.tokenAddress) === transferringAssetAddress);
+
+  if (!asset) {
     return null;
   }
 
@@ -56,7 +56,7 @@ function SendAssetsAction({
       action={{
         destinationAddress,
         transferAmount,
-        asset: actionAsset,
+        asset,
         nonceInput: undefined,
       }}
       onRemove={onRemove}
