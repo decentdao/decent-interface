@@ -61,17 +61,6 @@ export enum ProposalActionType {
   AIRDROP = 'airdrop',
 }
 
-export interface ProposalActionsStoreData {
-  actions: CreateProposalAction[];
-}
-
-export interface ProposalActionsStore extends ProposalActionsStoreData {
-  addAction: (action: CreateProposalAction) => void;
-  removeAction: (actionIndex: number) => void;
-  resetActions: () => void;
-  getTransactions: () => CreateProposalTransaction[];
-}
-
 export type CreateProposalAction<T = BigIntValuePair> = {
   actionType: ProposalActionType;
   content: ReactNode;
