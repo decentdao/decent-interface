@@ -6,6 +6,7 @@ import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { isFeatureEnabled } from '../../helpers/featureFlags';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { BigIntValuePair } from '../../types';
 import { formatCoin } from '../../utils';
 import EtherscanLink from './links/EtherscanLink';
 import Divider from './utils/Divider';
@@ -107,7 +108,11 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   );
 }
 
-export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) {
+export function GaslessVotingToggleDAOSettings(
+  props: GaslessVotingToggleProps & {
+    onGasTankTopupAmountChange: (amount: BigIntValuePair) => void;
+  },
+) {
   const { t } = useTranslation('daoEdit');
   const { safe } = useDaoInfoStore();
   const { chain } = useNetworkConfigStore();
@@ -179,6 +184,12 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
             console.log(
               'addGas. Add this action to the proposal, to be submitted via propose changes button.',
             );
+
+            // @todo: Add UI to set the amount, then call onGasTankTopupAmountChange.
+            props.onGasTankTopupAmountChange({
+              value: '1',
+              bigintValue: 1n,
+            });
           }}
         >
           {t('addGas')}

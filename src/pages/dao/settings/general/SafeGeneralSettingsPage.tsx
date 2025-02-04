@@ -16,7 +16,7 @@ import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubm
 import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
 import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
-import { ProposalExecuteData } from '../../../../types';
+import { BigIntValuePair, ProposalExecuteData } from '../../../../types';
 import { validateENSName } from '../../../../utils/url';
 
 export function SafeGeneralSettingsPage() {
@@ -24,11 +24,19 @@ export function SafeGeneralSettingsPage() {
   const [name, setName] = useState('');
   const [snapshotENS, setSnapshotENS] = useState('');
   const [snapshotENSValid, setSnapshotENSValid] = useState<boolean>();
+
+  const [isGaslessVotingEnabled, setIsGaslessVotingEnabled] = useState<boolean>(false);
+  const [gasTankTopupAmount, setGasTankTopupAmount] = useState<BigIntValuePair>();
+
   const navigate = useNavigate();
 
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { subgraphInfo, safe } = useDaoInfoStore();
+  const {
+    subgraphInfo,
+    safe,
+    gaslessVotingEnabled: currentIsGaslessVotingEnabled,
+  } = useDaoInfoStore();
   const {
     addressPrefix,
     contracts: { keyValuePairs },
@@ -71,6 +79,9 @@ export function SafeGeneralSettingsPage() {
 
   const nameChanged = name !== subgraphInfo?.daoName;
   const snapshotChanged = snapshotENSValid && snapshotENS !== subgraphInfo?.daoSnapshotENS;
+  const gaslessVotingChanged = isGaslessVotingEnabled !== currentIsGaslessVotingEnabled;
+  const gasTankTopupAmountSet =
+    gasTankTopupAmount?.bigintValue !== undefined && gasTankTopupAmount.bigintValue > 0n;
 
   const handleEditGeneralGovernance = () => {
     const changeTitles = [];
@@ -91,6 +102,20 @@ export function SafeGeneralSettingsPage() {
     if (snapshotChanged) {
       keyArgs.push('snapshotENS');
       valueArgs.push(snapshotENS);
+    }
+
+    if (gaslessVotingChanged) {
+      changeTitles.push(t('enableGaslessVoting', { ns: 'proposalMetadata' }));
+
+      // @todo Is KV pairs the place we're storing this flag?
+      keyArgs.push('gaslessVotingEnabled');
+      valueArgs.push(`${isGaslessVotingEnabled}`);
+    }
+
+    if (gasTankTopupAmountSet) {
+      changeTitles.push(t('topupGasTank', { ns: 'proposalMetadata' }));
+
+      // @todo add tx to send `gasTankTopupAmount` to gas tank address
     }
 
     const proposalData: ProposalExecuteData = {
@@ -190,12 +215,14 @@ export function SafeGeneralSettingsPage() {
           </Flex>
 
           <GaslessVotingToggleDAOSettings
-            isEnabled={false}
+            isEnabled={isGaslessVotingEnabled}
             onToggle={() => {
               console.log(
                 'onToggle. Add this action to the proposal, to be submitted via propose changes button.',
               );
+              setIsGaslessVotingEnabled(!isGaslessVotingEnabled);
             }}
+            onGasTankTopupAmountChange={setGasTankTopupAmount}
           />
           {canUserCreateProposal && (
             <>
