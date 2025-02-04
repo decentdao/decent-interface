@@ -13,7 +13,7 @@
   "successDelegateVote": "Delegation successful",
   "sendAssetsTitle": "Request Payment",
   "selectLabel": "Select Asset",
-  "selectSublabel": "Available balance {{balance}}",
+  "selectSublabel": "Available balance: {{balance}}",
   "amountLabel": "How much?",
   "destinationLabel": "Where would you like to send this?",
   "destinationSublabel": "Ethereum wallet address or ENS only",
@@ -56,8 +56,8 @@
   "addRecipient": "Add Recipient",
   "noAssetsWithBalance": "No assets with balance. Send assets to your Safe first.",
   "noAssetsWithBalanceNotProposer": "This DAO does not have any assets with balance.",
-  "dragDropCSV": "Drag & drop a CSV file here, or click to select",
+  "dragDropCSV": "Drag & drop a .csv file here, or click to select one",
   "dropCSVHere": "Drop CSV here",
-  "csvFormat": "Format: address,amount in each row",
-  "pasteMultipleRecipients": "You can paste one or multiple recipients (addresses, amounts separated by commas)"
+  "csvFormat": "address,amount one entry per row",
+  "pasteMultipleRecipients": "You can paste one or multiple recipients (address,amount one entry per row)"
 }
