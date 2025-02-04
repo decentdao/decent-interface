@@ -4,7 +4,6 @@ import { GovernanceType } from './fractal';
 export type TheGraphConfig = {
   space: number; // for dev
   slug: string; // for dev
-  version: string; // for dev
   id: string; // for prod
 };
 

@@ -29,13 +29,11 @@ export const baseConfig: NetworkConfig = {
   decentSubgraph: {
     space: 71032,
     slug: 'fractal-base',
-    version: 'v0.1.2',
     id: 'BWv5n6PPqv99y6vAez5M9jNvmKagpSpKprYPoKMb8z4o',
   },
   sablierSubgraph: {
     space: 57079,
     slug: 'sablier-v2-base',
-    version: '2.3_1.0.0',
     id: '778GfecD9tsyB4xNnz4wfuAyfHU6rqGr79VCPZKu3t2F',
   },
   contracts: {

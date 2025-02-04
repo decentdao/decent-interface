@@ -29,13 +29,11 @@ export const polygonConfig: NetworkConfig = {
   decentSubgraph: {
     space: 71032,
     slug: 'fractal-base-polygon',
-    version: 'v0.1.2',
     id: 'E7GsrUKtVS2sd5DUaAF29JasYWF81gjmFUWndNf4jYqr',
   },
   sablierSubgraph: {
     space: 57079,
     slug: 'sablier-v2-polygon',
-    version: '2.3_1.0.0',
     id: '8fgeQMEQ8sskVeWE5nvtsVL2VpezDrAkx2d1VeiHiheu',
   },
   contracts: {
