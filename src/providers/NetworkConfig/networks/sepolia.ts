@@ -29,7 +29,7 @@ export const sepoliaConfig: NetworkConfig = {
   decentSubgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
-    id: '9Ebc9kBbLQU6VVZg5g7gzUJ6GydDkbAAmgFBwaEMMht7',
+    id: 'GNsEo1grZ1dUyyPbPnAutkDtx51t1XN8DhgMHThgo7b2',
   },
   sablierSubgraph: {
     space: 57079,
