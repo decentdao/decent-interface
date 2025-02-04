@@ -342,7 +342,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
           {values.hats.map(role => {
             const existingRole = getHat(role.id);
             const isCurrentTermActive = existingRole?.roleTerms.currentTerm?.isActive;
-            const roleTermNominee = role.roleTerms?.[0].nominee;
+            const roleTermNominee = role.roleTerms?.[0]?.nominee;
             const isMemberTermPending =
               !isCurrentTermActive && existingRole?.wearerAddress !== roleTermNominee;
             return (

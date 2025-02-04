@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { createPublicClient, http } from 'viem';
+import { mainnet } from 'viem/chains';
 import { useEnsAddress } from 'wagmi';
 import {
   supportedEnsNetworks,
@@ -13,13 +14,18 @@ interface UseNetworkEnsAddressProps {
 
 export function useNetworkEnsAddress(props?: UseNetworkEnsAddressProps) {
   const { chain } = useNetworkConfigStore();
-  const propsOrFallbackChainId = props?.chainId ?? chain.id;
 
-  if (!supportedEnsNetworks.includes(propsOrFallbackChainId)) {
-    throw new Error(`ENS is not supported for chain ${propsOrFallbackChainId}`);
+  let effectiveChainId: number;
+  if (props?.chainId !== undefined) {
+    if (!supportedEnsNetworks.includes(props.chainId)) {
+      throw new Error(`ENS is not supported for chain ${props.chainId}`);
+    }
+    effectiveChainId = props.chainId;
+  } else {
+    effectiveChainId = supportedEnsNetworks.includes(chain.id) ? chain.id : mainnet.id;
   }
 
-  return useEnsAddress({ name: props?.name, chainId: propsOrFallbackChainId });
+  return useEnsAddress({ name: props?.name, chainId: effectiveChainId });
 }
 
 export function useNetworkEnsAddressAsync() {
@@ -27,12 +33,17 @@ export function useNetworkEnsAddressAsync() {
 
   const getEnsAddress = useCallback(
     (args: { name: string; chainId?: number }) => {
-      const propsOrFallbackChainId = args?.chainId ?? chain.id;
-      if (!supportedEnsNetworks.includes(propsOrFallbackChainId)) {
-        throw new Error(`ENS is not supported for chain ${propsOrFallbackChainId}`);
+      let effectiveChainId: number;
+      if (args.chainId !== undefined) {
+        if (!supportedEnsNetworks.includes(args.chainId)) {
+          throw new Error(`ENS is not supported for chain ${args.chainId}`);
+        }
+        effectiveChainId = args.chainId;
+      } else {
+        effectiveChainId = supportedEnsNetworks.includes(chain.id) ? chain.id : mainnet.id;
       }
 
-      const networkConfig = getConfigByChainId(propsOrFallbackChainId);
+      const networkConfig = getConfigByChainId(effectiveChainId);
       const publicClient = createPublicClient({
         chain: networkConfig.chain,
         transport: http(networkConfig.rpcEndpoint),
