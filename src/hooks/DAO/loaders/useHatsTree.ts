@@ -2,7 +2,6 @@ import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { PublicClient } from 'viem';
 import { createSablierGraphClient } from '../../../graphql';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -22,6 +21,7 @@ const useHatsTree = () => {
     governanceContracts: {
       linearVotingErc20WithHatsWhitelistingAddress,
       linearVotingErc721WithHatsWhitelistingAddress,
+      isLoaded: governanceContractsLoaded,
     },
   } = useFractal();
   const { hatsTreeId, contextChainId, setHatsTree } = useRolesStore();
@@ -40,7 +40,7 @@ const useHatsTree = () => {
   const publicClient = useNetworkPublicClient();
 
   const getHatsTree = useCallback(
-    async (params: { hatsTreeId: number; contextChainId: number; publicClient: PublicClient }) => {
+    async (params: { hatsTreeId: number; contextChainId: number }) => {
       try {
         const tree = await hatsSubgraphClient.getTree({
           chainId: params.contextChainId,
@@ -93,7 +93,6 @@ const useHatsTree = () => {
         );
 
         const treeWithFetchedDetails: Tree = { ...tree, hats: hatsWithFetchedDetails };
-
         try {
           const config = getConfigByChainId(chain.id);
           const sablierSubgraphClient = createSablierGraphClient(config);
@@ -104,7 +103,7 @@ const useHatsTree = () => {
             erc6551Registry,
             hatsAccountImplementation,
             hatsElectionsImplementation,
-            publicClient: params.publicClient,
+            publicClient,
             whitelistingVotingStrategy:
               linearVotingErc20WithHatsWhitelistingAddress ||
               linearVotingErc721WithHatsWhitelistingAddress,
@@ -125,7 +124,7 @@ const useHatsTree = () => {
           erc6551Registry,
           hatsAccountImplementation,
           hatsElectionsImplementation,
-          publicClient: params.publicClient,
+          publicClient,
           sablierSubgraphClient,
         });
         const message = t('invalidHatsTreeIdMessage');
@@ -150,6 +149,7 @@ const useHatsTree = () => {
       linearVotingErc20WithHatsWhitelistingAddress,
       linearVotingErc721WithHatsWhitelistingAddress,
       setHatsTree,
+      publicClient,
       t,
     ],
   );
@@ -157,11 +157,17 @@ const useHatsTree = () => {
   const node = useDaoInfoStore();
   const safeAddress = node.safe?.address;
   const daoHatTreeloadKey = useRef<string | null>();
+
   useEffect(() => {
     const key = safeAddress && hatsTreeId ? `${safeAddress}:${hatsTreeId}` : null;
 
     const previousSafeAddress = daoHatTreeloadKey.current?.split(':')[0];
     const previousHatsTreeId = daoHatTreeloadKey.current?.split(':')[1];
+
+    // Whitelisting contracts might be not loaded yet which might lead to wrong permissions loading
+    if (!governanceContractsLoaded) {
+      return;
+    }
 
     if (
       !!hatsTreeId &&
@@ -173,7 +179,6 @@ const useHatsTree = () => {
       getHatsTree({
         hatsTreeId,
         contextChainId,
-        publicClient,
       });
 
       daoHatTreeloadKey.current = key;
@@ -181,7 +186,7 @@ const useHatsTree = () => {
       // If the safe address changes, reset the load key
       daoHatTreeloadKey.current = key;
     }
-  }, [contextChainId, getHatsTree, hatsTreeId, publicClient, safeAddress]);
+  }, [contextChainId, getHatsTree, hatsTreeId, safeAddress, governanceContractsLoaded]);
 };
 
 export { useHatsTree };
