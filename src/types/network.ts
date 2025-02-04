@@ -1,7 +1,7 @@
 import { Address, Chain } from 'viem';
 import { GovernanceType } from './fractal';
 
-export type SubgraphConfig = {
+export type TheGraphConfig = {
   space: number; // for dev
   slug: string; // for dev
   version: string; // for dev
@@ -18,8 +18,8 @@ export type NetworkConfig = {
   addressPrefix: string; // copy whatever Safe uses
   nativeTokenIcon: string;
   isENSSupported: boolean;
-  subgraph: SubgraphConfig;
-  sablierSubgraph: SubgraphConfig;
+  decentSubgraph: TheGraphConfig;
+  sablierSubgraph: TheGraphConfig;
   moralis: {
     chainSupported: boolean;
     deFiSupported: boolean;

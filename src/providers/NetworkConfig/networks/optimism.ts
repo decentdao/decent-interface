@@ -26,7 +26,7 @@ export const optimismConfig: NetworkConfig = {
   addressPrefix: 'oeth',
   nativeTokenIcon: '/images/coin-icon-op.svg',
   isENSSupported: false,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-optimism',
     version: 'v0.1.2',

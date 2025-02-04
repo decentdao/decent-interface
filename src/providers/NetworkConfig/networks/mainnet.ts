@@ -26,7 +26,7 @@ export const mainnetConfig: NetworkConfig = {
   addressPrefix: 'eth',
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   isENSSupported: true,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-mainnet',
     version: 'v0.1.2',

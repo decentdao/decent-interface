@@ -26,7 +26,7 @@ export const baseConfig: NetworkConfig = {
   addressPrefix: 'base',
   nativeTokenIcon: '/images/coin-icon-base.svg',
   isENSSupported: false,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-base',
     version: 'v0.1.2',

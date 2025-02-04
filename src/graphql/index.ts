@@ -1,10 +1,10 @@
 import { cacheExchange, createClient, fetchExchange } from 'urql';
-import { NetworkConfig, SubgraphConfig } from '../types/network';
+import { NetworkConfig, TheGraphConfig } from '../types/network';
 
 // Cache to store client instances by their unique URL
 const clientCache = new Map<string, ReturnType<typeof createClient>>();
 
-const createTheGraphClient = (config: SubgraphConfig) => {
+const createTheGraphClient = (config: TheGraphConfig) => {
   const subgraphAPIKey = import.meta.env.VITE_APP_SUBGRAPH_API_KEY;
 
   const url = import.meta.env.DEV
@@ -29,7 +29,7 @@ const createTheGraphClient = (config: SubgraphConfig) => {
 };
 
 export const createDecentSubgraphClient = (networkConfig: NetworkConfig) => {
-  return createTheGraphClient(networkConfig.subgraph);
+  return createTheGraphClient(networkConfig.decentSubgraph);
 };
 
 export const createSablierSubgraphClient = (networkConfig: NetworkConfig) => {

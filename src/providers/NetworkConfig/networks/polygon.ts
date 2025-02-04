@@ -26,7 +26,7 @@ export const polygonConfig: NetworkConfig = {
   addressPrefix: 'matic',
   nativeTokenIcon: '/images/coin-icon-pol.svg',
   isENSSupported: false,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-base-polygon',
     version: 'v0.1.2',

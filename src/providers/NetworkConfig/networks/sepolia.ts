@@ -26,7 +26,7 @@ export const sepoliaConfig: NetworkConfig = {
   addressPrefix: 'sep',
   nativeTokenIcon: '/images/coin-icon-sep.svg',
   isENSSupported: true,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
     version: 'v0.1.2',
