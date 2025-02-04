@@ -14,13 +14,20 @@ interface UseNetworkEnsNameProps {
 
 export function useNetworkEnsName(props?: UseNetworkEnsNameProps) {
   const { chain } = useNetworkConfigStore();
-  const propsOrFallbackChainId = props?.chainId ?? chain.id;
 
-  if (!supportedEnsNetworks.includes(propsOrFallbackChainId)) {
-    throw new Error(`ENS is not supported for chain ${propsOrFallbackChainId}`);
+  let effectiveChainId: number;
+
+  if (props?.chainId !== undefined) {
+    if (!supportedEnsNetworks.includes(props.chainId)) {
+      throw new Error(`ENS is not supported for chain ${props.chainId}`);
+    }
+    effectiveChainId = props.chainId;
+  } else {
+    // No explicit chainId: use network chain id if supported, otherwise fallback to mainnet.
+    effectiveChainId = supportedEnsNetworks.includes(chain.id) ? chain.id : mainnet.id;
   }
 
-  return useEnsName({ address: props?.address, chainId: propsOrFallbackChainId });
+  return useEnsName({ address: props?.address, chainId: effectiveChainId });
 }
 
 export function useNetworkEnsNameAsync() {
