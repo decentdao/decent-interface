@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
-import { createSnapshotGraphClient } from '../../../../graphql';
+import { createSnapshotSubgraphClient } from '../../../../graphql';
 import {
   ExtendedSnapshotProposalQuery,
   SnapshotProposalVotesQuery,
@@ -23,7 +23,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   const { address } = useAccount();
 
   const { subgraphInfo } = useDaoInfoStore();
-  const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphClient(), []);
+  const snaphshotGraphQlClient = useMemo(() => createSnapshotSubgraphClient(), []);
 
   const snapshotProposal = useMemo(() => {
     const possiblySnaphsotProposal = proposal as SnapshotProposal;

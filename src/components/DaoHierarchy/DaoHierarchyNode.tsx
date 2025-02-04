@@ -7,7 +7,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Address, getContract, zeroAddress } from 'viem';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
-import { createDecentGraphClient } from '../../graphql';
+import { createDecentSubgraphClient } from '../../graphql';
 import { DAOQuery } from '../../graphql/DAOQueries';
 import { useDecentModules } from '../../hooks/DAO/loaders/useDecentModules';
 import useNetworkPublicClient from '../../hooks/useNetworkPublicClient';
@@ -121,7 +121,7 @@ export function DaoHierarchyNode({
       try {
         const safe = await safeApi.getSafeInfo(_safeAddress);
 
-        const client = createDecentGraphClient(getConfigByChainId(chain.id));
+        const client = createDecentSubgraphClient(getConfigByChainId(chain.id));
         const queryResult = await client.query(DAOQuery, { safeAddress: _safeAddress });
 
         if (queryResult.error) {

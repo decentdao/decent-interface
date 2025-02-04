@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { createDecentGraphClient } from '../../../graphql';
+import { createDecentSubgraphClient } from '../../../graphql';
 import { DAOQuery } from '../../../graphql/DAOQueries';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
@@ -40,7 +40,7 @@ export const useFractalGovernance = () => {
       if (!safeAddress) return;
 
       try {
-        const client = createDecentGraphClient(getConfigByChainId(chain.id));
+        const client = createDecentSubgraphClient(getConfigByChainId(chain.id));
         const result = await client.query(DAOQuery, { safeAddress });
 
         if (result.error) {

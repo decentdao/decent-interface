@@ -2,7 +2,7 @@ import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { createSablierGraphClient } from '../../../graphql';
+import { createSablierSubgraphClient } from '../../../graphql';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
@@ -95,7 +95,7 @@ const useHatsTree = () => {
         const treeWithFetchedDetails: Tree = { ...tree, hats: hatsWithFetchedDetails };
         try {
           const config = getConfigByChainId(chain.id);
-          const sablierSubgraphClient = createSablierGraphClient(config);
+          const sablierSubgraphClient = createSablierSubgraphClient(config);
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
             chainId: BigInt(params.contextChainId),
@@ -116,7 +116,7 @@ const useHatsTree = () => {
         }
       } catch (e) {
         const config = getConfigByChainId(chain.id);
-        const sablierSubgraphClient = createSablierGraphClient(config);
+        const sablierSubgraphClient = createSablierSubgraphClient(config);
         setHatsTree({
           hatsTree: null,
           chainId: BigInt(params.contextChainId),

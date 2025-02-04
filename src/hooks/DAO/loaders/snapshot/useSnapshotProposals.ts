@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { createSnapshotGraphClient } from '../../../../graphql';
+import { createSnapshotSubgraphClient } from '../../../../graphql';
 import { ProposalsQuery } from '../../../../graphql/SnapshotQueries';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -10,7 +10,7 @@ export const useSnapshotProposals = () => {
   const { action } = useFractal();
   const { subgraphInfo } = useDaoInfoStore();
   const currentSnapshotENS = useRef<string | undefined>();
-  const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphClient(), []);
+  const snaphshotGraphQlClient = useMemo(() => createSnapshotSubgraphClient(), []);
 
   const loadSnapshotProposals = useCallback(async () => {
     if (snaphshotGraphQlClient && !!subgraphInfo) {

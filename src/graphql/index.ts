@@ -4,7 +4,7 @@ import { NetworkConfig, SubgraphConfig } from '../types/network';
 // Cache to store client instances by their unique URL
 const clientCache = new Map<string, ReturnType<typeof createClient>>();
 
-const createSubgraphClient = (config: SubgraphConfig) => {
+const createTheGraphClient = (config: SubgraphConfig) => {
   const subgraphAPIKey = import.meta.env.VITE_APP_SUBGRAPH_API_KEY;
 
   const url = import.meta.env.DEV
@@ -28,17 +28,17 @@ const createSubgraphClient = (config: SubgraphConfig) => {
   return client;
 };
 
-export const createDecentGraphClient = (networkConfig: NetworkConfig) => {
-  return createSubgraphClient(networkConfig.subgraph);
+export const createDecentSubgraphClient = (networkConfig: NetworkConfig) => {
+  return createTheGraphClient(networkConfig.subgraph);
 };
 
-export const createSablierGraphClient = (networkConfig: NetworkConfig) => {
-  return createSubgraphClient(networkConfig.sablierSubgraph);
+export const createSablierSubgraphClient = (networkConfig: NetworkConfig) => {
+  return createTheGraphClient(networkConfig.sablierSubgraph);
 };
 
 const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql';
 
-export const createSnapshotGraphClient = () => {
+export const createSnapshotSubgraphClient = () => {
   // Check if we already have a Snapshot client
   const cachedClient = clientCache.get(SNAPSHOT_URL);
   if (cachedClient) {
