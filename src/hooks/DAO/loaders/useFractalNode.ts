@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Address, getAddress, isAddress } from 'viem';
 import { createDecentGraphClient } from '../../../graphql';
-import { DAOQueryDocument } from '../../../graphql/DAOQuery';
+import { DAOQueryDocument } from '../../../graphql/DAOQueries';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';

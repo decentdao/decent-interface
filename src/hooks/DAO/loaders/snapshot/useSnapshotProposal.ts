@@ -1,6 +1,11 @@
-// import { gql } from '@apollo/client';
 import { useCallback, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
+import { createSnapshotGraphClient } from '../../../../graphql';
+import {
+  ExtendedSnapshotProposalQuery,
+  SnapshotProposalVotesQuery,
+  UserVotingWeightQuery,
+} from '../../../../graphql/SnapshotQueries';
 import { logError } from '../../../../helpers/errorLogging';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import {
@@ -11,7 +16,6 @@ import {
   SnapshotProposal,
   SnapshotWeightedVotingChoice,
 } from '../../../../types';
-import { createSnapshotGraphQlClient } from './';
 
 export default function useSnapshotProposal(proposal: FractalProposal | null | undefined) {
   const [extendedSnapshotProposal, setExtendedSnapshotProposal] =
@@ -19,7 +23,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   const { address } = useAccount();
 
   const { subgraphInfo } = useDaoInfoStore();
-  const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
+  const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphClient(), []);
 
   const snapshotProposal = useMemo(() => {
     const possiblySnaphsotProposal = proposal as SnapshotProposal;
@@ -33,25 +37,9 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   const loadSnapshotProposal = useCallback(async () => {
     if (!!snapshotProposal && snaphshotGraphQlClient) {
       const proposalQueryResult = await snaphshotGraphQlClient
-        .query(
-          `query ExtendedSnapshotProposal {
-            proposal(id: "${snapshotProposal.snapshotProposalId}") {
-              snapshot
-              type
-              quorum
-              privacy
-              strategies {
-                name
-                network
-                params
-              }
-              plugins
-              choices
-              ipfs
-            }
-          }`,
-          undefined,
-        )
+        .query(ExtendedSnapshotProposalQuery, {
+          snapshotProposalId: snapshotProposal.snapshotProposalId,
+        })
         .toPromise()
         .then(
           ({
@@ -73,20 +61,9 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         );
 
       const votesQueryResult = await snaphshotGraphQlClient
-        .query(
-          `query SnapshotProposalVotes {
-            votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 500) {
-              id
-              voter
-              vp
-              vp_by_strategy
-              vp_state
-              created
-              choice
-            }
-          }`,
-          undefined,
-        )
+        .query(SnapshotProposalVotesQuery, {
+          snapshotProposalId: snapshotProposal.snapshotProposalId,
+        })
         .toPromise()
         .then(({ data: { votes } }) => {
           return votes.map(({ id, voter, vp, vp_by_strategy, vp_state, created, choice }: any) => ({
@@ -206,22 +183,14 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       votingWeightByStrategy: [0],
       votingState: '',
     };
+
     if (snapshotProposal?.snapshotProposalId && snaphshotGraphQlClient) {
       const queryResult = await snaphshotGraphQlClient
-        .query(
-          `query UserVotingWeight {
-            vp(
-              voter: "${address}"
-              space: "${subgraphInfo?.daoSnapshotENS}"
-              proposal: "${snapshotProposal.snapshotProposalId}"
-            ) {
-              vp
-              vp_by_strategy
-              vp_state
-            }
-          }`,
-          undefined,
-        )
+        .query(UserVotingWeightQuery, {
+          voter: address,
+          space: subgraphInfo?.daoSnapshotENS,
+          proposal: snapshotProposal.snapshotProposalId,
+        })
         .toPromise()
         .then(({ data: { vp } }) => {
           if (!vp) {

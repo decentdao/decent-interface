@@ -2,10 +2,10 @@ import { Address, Chain } from 'viem';
 import { GovernanceType } from './fractal';
 
 export type SubgraphConfig = {
-  space: number;
-  slug: string;
-  version: string;
-  id: string;
+  space: number; // for dev
+  slug: string; // for dev
+  version: string; // for dev
+  id: string; // for prod
 };
 
 export type NetworkConfig = {

@@ -1,46 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { createSnapshotGraphClient } from '../../../../graphql';
+import { ProposalsQuery } from '../../../../graphql/SnapshotQueries';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
 import { FractalProposalState, SnapshotProposal } from '../../../../types';
-import { createSnapshotGraphQlClient } from './';
 
 export const useSnapshotProposals = () => {
   const { action } = useFractal();
   const { subgraphInfo } = useDaoInfoStore();
   const currentSnapshotENS = useRef<string | undefined>();
-  const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
+  const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphClient(), []);
 
   const loadSnapshotProposals = useCallback(async () => {
     if (snaphshotGraphQlClient && !!subgraphInfo) {
       snaphshotGraphQlClient
-        .query(
-          `query Proposals {
-             proposals(
-               first: 50,
-               where: {
-                 space_in: ["${subgraphInfo.daoSnapshotENS}"]
-               },
-               orderBy: "created",
-               orderDirection: desc
-             ) {
-               id
-               title
-               body
-               choices
-               start
-               end
-               snapshot
-               state
-               author
-               space {
-                 id
-                 name
-               }
-             }
-          }`,
-          undefined,
-        )
+        .query(ProposalsQuery, { spaceIn: [subgraphInfo.daoSnapshotENS] })
         .toPromise()
         .then(result => {
           const proposals: SnapshotProposal[] = result.data.proposals.map((proposal: any) => {

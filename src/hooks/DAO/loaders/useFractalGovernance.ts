@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createDecentGraphClient } from '../../../graphql';
-import { DAOQueryDocument } from '../../../graphql/DAOQuery';
+import { DAOQueryDocument } from '../../../graphql/DAOQueries';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';

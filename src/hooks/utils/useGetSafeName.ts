@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Address, GetEnsNameReturnType } from 'viem';
 import { createDecentGraphClient } from '../../graphql';
-import { DAOQueryDocument } from '../../graphql/DAOQuery';
+import { DAOQueryDocument } from '../../graphql/DAOQueries';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { NetworkConfig } from '../../types/network';
 import { useNetworkEnsNameAsync } from '../useNetworkEnsName';

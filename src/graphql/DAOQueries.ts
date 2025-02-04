@@ -39,5 +39,4 @@ export const DAOQueryDocument = `query DAOQuery($safeAddress: Bytes) {
     }
     proposalTemplatesHash
   }
-}
-`;
+}`;

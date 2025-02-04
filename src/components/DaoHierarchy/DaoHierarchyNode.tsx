@@ -8,7 +8,7 @@ import { Address, getContract, zeroAddress } from 'viem';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { createDecentGraphClient } from '../../graphql';
-import { DAOQueryDocument } from '../../graphql/DAOQuery';
+import { DAOQueryDocument } from '../../graphql/DAOQueries';
 import { useDecentModules } from '../../hooks/DAO/loaders/useDecentModules';
 import useNetworkPublicClient from '../../hooks/useNetworkPublicClient';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';

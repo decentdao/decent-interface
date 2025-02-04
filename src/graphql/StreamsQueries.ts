@@ -46,5 +46,4 @@ export const StreamsQueryDocument = `query StreamsQuery($recipientAddress: Bytes
       decimals
     }
   }
-}
-`;
+}`;
