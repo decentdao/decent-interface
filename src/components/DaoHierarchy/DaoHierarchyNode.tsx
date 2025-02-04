@@ -122,13 +122,7 @@ export function DaoHierarchyNode({
         const safe = await safeApi.getSafeInfo(_safeAddress);
 
         const client = createDecentGraphClient(getConfigByChainId(chain.id));
-        const queryResult = await client.query(
-          DAOQueryDocument,
-          { safeAddress: _safeAddress },
-          {
-            requestPolicy: 'network-only',
-          },
-        );
+        const queryResult = await client.query(DAOQueryDocument, { safeAddress: _safeAddress });
 
         if (queryResult.error) {
           throw new Error('Query failed');

@@ -270,15 +270,9 @@ const getPaymentStreams = async (
   publicClient: PublicClient,
   client: Client,
 ): Promise<SablierPayment[]> => {
-  const streamQueryResult = await client.query(
-    StreamsQueryDocument,
-    {
-      recipientAddress: paymentRecipient,
-    },
-    {
-      requestPolicy: 'network-only',
-    },
-  );
+  const streamQueryResult = await client.query(StreamsQueryDocument, {
+    recipientAddress: paymentRecipient,
+  });
 
   if (!streamQueryResult.error) {
     if (!streamQueryResult.data?.streams.length) {

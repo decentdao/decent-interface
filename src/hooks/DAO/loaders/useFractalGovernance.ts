@@ -41,13 +41,7 @@ export const useFractalGovernance = () => {
 
       try {
         const client = createDecentGraphClient(getConfigByChainId(chain.id));
-        const result = await client.query(
-          DAOQueryDocument,
-          { safeAddress },
-          {
-            requestPolicy: 'network-only',
-          },
-        );
+        const result = await client.query(DAOQueryDocument, { safeAddress });
 
         if (result.error) {
           throw new Error('Query failed');

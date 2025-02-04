@@ -49,13 +49,7 @@ export const useFractalNode = ({
         const modules = await lookupModules(safeInfo.modules);
 
         const client = createDecentGraphClient(getConfigByChainId(chain.id));
-        const graphRawNodeData = await client.query(
-          DAOQueryDocument,
-          { safeAddress },
-          {
-            requestPolicy: 'network-only',
-          },
-        );
+        const graphRawNodeData = await client.query(DAOQueryDocument, { safeAddress });
 
         if (graphRawNodeData.error) {
           throw new Error('Failed to fetch DAO data');

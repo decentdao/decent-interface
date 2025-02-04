@@ -18,13 +18,7 @@ export const getSafeName = async (
   }
 
   const client = createDecentGraphClient(networkConfig);
-  const queryResult = await client.query(
-    DAOQueryDocument,
-    { safeAddress: address },
-    {
-      requestPolicy: 'network-only',
-    },
-  );
+  const queryResult = await client.query(DAOQueryDocument, { safeAddress: address });
 
   const subgraphName = queryResult.data?.daos[0]?.name;
 
