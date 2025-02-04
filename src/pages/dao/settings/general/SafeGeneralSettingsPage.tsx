@@ -188,6 +188,15 @@ export function SafeGeneralSettingsPage() {
               }}
             />
           </Flex>
+
+          <GaslessVotingToggleDAOSettings
+            isEnabled={false}
+            onToggle={() => {
+              console.log(
+                'onToggle. Add this action to the proposal, to be submitted via propose changes button.',
+              );
+            }}
+          />
           {canUserCreateProposal && (
             <>
               <Divider
@@ -206,13 +215,6 @@ export function SafeGeneralSettingsPage() {
               </Button>
             </>
           )}
-
-          <GaslessVotingToggleDAOSettings
-            isEnabled={false}
-            onToggle={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
         </SettingsContentBox>
       ) : (
         <Flex

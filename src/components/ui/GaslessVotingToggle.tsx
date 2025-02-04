@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useBalance } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { isFeatureEnabled } from '../../helpers/featureFlags';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { formatCoin } from '../../utils';
 import EtherscanLink from './links/EtherscanLink';
@@ -109,9 +110,10 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
 export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoEdit');
   const { safe } = useDaoInfoStore();
+  const { chain } = useNetworkConfigStore();
 
   // @todo: Use the paymaster address here.
-  const { data: balance } = useBalance({ address: safe?.address });
+  const { data: balance } = useBalance({ address: safe?.address, chainId: chain.id });
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
   if (!safe) return null;
@@ -129,7 +131,7 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
       flexDirection="column"
     >
       <Divider
-        my="1rem"
+        mt="1rem"
         w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
         mx={{ base: '-0.75rem', md: '-1.5rem' }}
       />
@@ -173,6 +175,11 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
         <Button
           variant="secondary"
           leftIcon={<Icon as={GasPump} />}
+          onClick={() => {
+            console.log(
+              'addGas. Add this action to the proposal, to be submitted via propose changes button.',
+            );
+          }}
         >
           {t('addGas')}
         </Button>
