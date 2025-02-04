@@ -15,11 +15,13 @@ export type NetworkConfig = {
     space: number;
     slug: string;
     version: string;
+    id: string;
   };
-  // @dev - might be not supported on some chains
-  sablierSubgraph?: {
+  sablierSubgraph: {
     space: number;
     slug: string;
+    version: string;
+    id: string;
   };
   moralis: {
     chainSupported: boolean;

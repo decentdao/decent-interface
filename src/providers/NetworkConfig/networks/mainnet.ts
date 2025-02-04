@@ -30,10 +30,13 @@ export const mainnetConfig: NetworkConfig = {
     space: 71032,
     slug: 'fractal-mainnet',
     version: 'v0.1.2',
+    id: 'EwAjJixmcVMcxoj1qt1o2oae1rbvvZNdfshkfovLrbxp',
   },
   sablierSubgraph: {
     space: 57079,
     slug: 'sablier-v2',
+    version: '2.3_1.0.0',
+    id: 'AvDAMYYHGaEwn9F9585uqq6MM5CfvRtYcb7KjK7LKPCt',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
