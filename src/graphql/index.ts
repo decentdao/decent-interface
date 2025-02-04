@@ -1,18 +1,23 @@
 import { cacheExchange, createClient, fetchExchange } from 'urql';
+import { NetworkConfig, SubgraphConfig } from '../types/network';
 
-const subgraphSpace = import.meta.env.VITE_DECENT_SUBGRAPH_SPACE;
-const subgraphSlug = import.meta.env.VITE_DECENT_SUBGRAPH_SLUG;
-const subgraphVersion = import.meta.env.VITE_DECENT_SUBGRAPH_VERSION;
+const createSubgraphClient = (config: SubgraphConfig) => {
+  const subgraphAPIKey = import.meta.env.VITE_APP_SUBGRAPH_API_KEY;
 
-const subgraphAPIKey = import.meta.env.VITE_DECENT_SUBGRAPH_API_KEY;
-const subgraphID = import.meta.env.VITE_DECENT_SUBGRAPH_ID;
+  const url = import.meta.env.DEV
+    ? `https://api.studio.thegraph.com/query/${config.space}/${config.slug}/${config.version}`
+    : `https://gateway.thegraph.com/api/${subgraphAPIKey}/subgraphs/id/${config.id}`;
 
-const DECNT_SUBGRAPH_ENDPOINT_DEV = `https://api.studio.thegraph.com/query/${subgraphSpace}/${subgraphSlug}/${subgraphVersion}`;
-const DECNT_SUBGRAPH_ENDPOINT_PROD = `https://gateway.thegraph.com/api/${subgraphAPIKey}/subgraphs/id/${subgraphID}`;
+  return createClient({
+    url,
+    exchanges: [cacheExchange, fetchExchange],
+  });
+};
 
-const client = createClient({
-  url: DECNT_SUBGRAPH_ENDPOINT_DEV,
-  exchanges: [cacheExchange, fetchExchange],
-});
+export const createDecentGraphClient = (networkConfig: NetworkConfig) => {
+  return createSubgraphClient(networkConfig.subgraph);
+};
 
-export default client;
+export const createSablierGraphClient = (networkConfig: NetworkConfig) => {
+  return createSubgraphClient(networkConfig.sablierSubgraph);
+};

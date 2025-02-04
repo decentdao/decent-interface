@@ -254,11 +254,7 @@ export interface RolesStore extends RolesStoreData {
     hatsAccountImplementation: Address;
     hatsElectionsImplementation: Address;
     publicClient: PublicClient;
-    client: Client;
-    sablierSubgraph?: {
-      space: number;
-      slug: string;
-    };
+    sablierSubgraphClient: Client;
     whitelistingVotingStrategy?: Address;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;

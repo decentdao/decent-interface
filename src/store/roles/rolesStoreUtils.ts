@@ -269,15 +269,7 @@ const getPaymentStreams = async (
   paymentRecipient: Address,
   publicClient: PublicClient,
   client: Client,
-  sablierSubgraph: {
-    space: number;
-    slug: string;
-  },
 ): Promise<SablierPayment[]> => {
-  if (!sablierSubgraph) {
-    return [];
-  }
-
   const streamQueryResult = await client.query(
     StreamsQueryDocument,
     {
@@ -285,10 +277,6 @@ const getPaymentStreams = async (
     },
     {
       requestPolicy: 'network-only',
-      context: {
-        subgraphSpace: sablierSubgraph.space,
-        subgraphSlug: sablierSubgraph.slug,
-      },
     },
   );
 
@@ -382,11 +370,7 @@ export const sanitize = async (
   hats: Address,
   chainId: bigint,
   publicClient: PublicClient,
-  client: Client,
-  sablierSubgraph?: {
-    space: number;
-    slug: string;
-  },
+  sablierSubgraphClient: Client,
   whitelistingVotingStrategy?: Address,
 ): Promise<undefined | null | DecentTree> => {
   if (hatsTree === undefined || hatsTree === null) {
@@ -498,29 +482,23 @@ export const sanitize = async (
     }
 
     const payments: SablierPayment[] = [];
-    if (sablierSubgraph !== undefined) {
-      if (isTermed) {
-        const uniqueRecipients = [...new Set(roleTerms.allTerms.map(term => term.nominee))];
-        for (const recipient of uniqueRecipients) {
-          payments.push(
-            ...(await getPaymentStreams(recipient, publicClient, client, sablierSubgraph)),
-          );
-        }
-      } else {
-        if (!roleHatSmartAccountAddress) {
-          throw new Error('Smart account address not found');
-        }
-        payments.push(
-          ...(await getPaymentStreams(
-            roleHatSmartAccountAddress,
-            publicClient,
-            client,
-            sablierSubgraph,
-          )),
-        );
+
+    if (isTermed) {
+      const uniqueRecipients = [...new Set(roleTerms.allTerms.map(term => term.nominee))];
+      for (const recipient of uniqueRecipients) {
+        payments.push(...(await getPaymentStreams(recipient, publicClient, sablierSubgraphClient)));
       }
     } else {
-      // @todo - fallback if sablier subgraph is not supported on network
+      if (!roleHatSmartAccountAddress) {
+        throw new Error('Smart account address not found');
+      }
+      payments.push(
+        ...(await getPaymentStreams(
+          roleHatSmartAccountAddress,
+          publicClient,
+          sablierSubgraphClient,
+        )),
+      );
     }
 
     roleHats.push({

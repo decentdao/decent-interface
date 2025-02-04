@@ -1,7 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import * as Sentry from '@sentry/react';
 import { useEffect, useState } from 'react';
-import { useClient } from 'urql';
 import { useAccount } from 'wagmi';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import { useNetworkEnsNameAsync } from '../../../../hooks/useNetworkEnsName';
@@ -36,7 +35,6 @@ const useUserTracking = () => {
 const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
   const { favoritesList } = useAccountFavorites();
   const { getEnsName } = useNetworkEnsNameAsync();
-  const client = useClient();
 
   useEffect(() => {
     (async () => {
@@ -58,10 +56,7 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
 
           const networkConfig = getNetworkConfig(favoriteChain.id);
 
-          return Promise.all([
-            favorite,
-            getSafeName(networkConfig.subgraph, favorite.address, getEnsName, client),
-          ]);
+          return Promise.all([favorite, getSafeName(networkConfig, favorite.address, getEnsName)]);
         }),
       );
 
@@ -93,7 +88,7 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
         onFavoritesUpdated();
       }
     })();
-  }, [favoritesList, getEnsName, onFavoritesUpdated, client]);
+  }, [favoritesList, getEnsName, onFavoritesUpdated]);
 
   return null;
 };

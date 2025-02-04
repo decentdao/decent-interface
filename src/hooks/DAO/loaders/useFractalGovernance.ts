@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useQuery } from 'urql';
+import { createDecentGraphClient } from '../../../graphql';
 import { DAOQueryDocument } from '../../../graphql/DAOQuery';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
@@ -15,9 +15,6 @@ import { useLockRelease } from './governance/useLockRelease';
 import { useLoadDAOProposals } from './useLoadDAOProposals';
 
 export const useFractalGovernance = () => {
-  // load key for component; helps prevent unnecessary calls
-  const loadKey = useRef<string>();
-
   const {
     governanceContracts,
     action,
@@ -25,6 +22,7 @@ export const useFractalGovernance = () => {
     guardContracts: { isGuardLoaded },
   } = useFractal();
   const { safe } = useDaoInfoStore();
+  const { getConfigByChainId, chain } = useNetworkConfigStore();
 
   const safeAddress = safe?.address;
 
@@ -36,71 +34,86 @@ export const useFractalGovernance = () => {
   const loadERC721Tokens = useERC721Tokens();
   const ipfsClient = useIPFSClient();
 
-  const { subgraph } = useNetworkConfigStore();
-
-  const [result] = useQuery({
-    query: DAOQueryDocument,
-    variables: { safeAddress },
-    pause: !safeAddress || !type,
-    context: {
-      subgraphSpace: subgraph.space,
-      subgraphSlug: subgraph.slug,
-      subgraphVersion: subgraph.version,
-    },
-    requestPolicy: 'cache-and-network',
-  });
-
+  const subgraphLoadKey = useRef<string>();
   useEffect(() => {
-    const processData = async () => {
-      if (!safeAddress || !result.data) return;
+    const getSubgraphData = async () => {
+      if (!safeAddress) return;
 
-      const { daos } = result.data;
-      const dao = daos[0];
-
-      // `dao` might be undefined despite what the type says
-      if (!dao) return;
-
-      const { proposalTemplatesHash } = dao;
-
-      if (!proposalTemplatesHash) {
-        action.dispatch({
-          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-          payload: [],
-        });
-        return;
-      }
-
-      const proposalTemplates: ProposalTemplate[] | undefined =
-        await ipfsClient.cat(proposalTemplatesHash);
-
-      if (!proposalTemplates) {
-        action.dispatch({
-          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-          payload: [],
-        });
-        return;
-      }
-
-      const mappedProposalTemplates = proposalTemplates.map(proposalTemplate => ({
-        ...proposalTemplate,
-        transactions: proposalTemplate.transactions.map(transaction => ({
-          ...transaction,
-          ethValue: {
-            // bigintValue was serialized as a string, so we need to convert it back to a bigint
-            bigintValue: BigInt(transaction.ethValue.bigintValue || 0n),
-            value: transaction.ethValue.value ?? '0',
+      try {
+        const client = createDecentGraphClient(getConfigByChainId(chain.id));
+        const result = await client.query(
+          DAOQueryDocument,
+          { safeAddress },
+          {
+            requestPolicy: 'network-only',
           },
-        })),
-      }));
+        );
 
-      action.dispatch({
-        type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-        payload: mappedProposalTemplates,
-      });
+        if (result.error) {
+          throw new Error('Query failed');
+        }
+
+        const { daos } = result.data;
+        const dao = daos[0];
+
+        // `dao` might be undefined despite what the type says
+        if (!dao) return;
+
+        const { proposalTemplatesHash } = dao;
+
+        if (!proposalTemplatesHash) {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+            payload: [],
+          });
+          return;
+        }
+
+        const proposalTemplates: ProposalTemplate[] | undefined =
+          await ipfsClient.cat(proposalTemplatesHash);
+
+        if (!proposalTemplates) {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+            payload: [],
+          });
+          return;
+        }
+
+        const mappedProposalTemplates = proposalTemplates.map(proposalTemplate => ({
+          ...proposalTemplate,
+          transactions: proposalTemplate.transactions.map(transaction => ({
+            ...transaction,
+            ethValue: {
+              // bigintValue was serialized as a string, so we need to convert it back to a bigint
+              bigintValue: BigInt(transaction.ethValue.bigintValue || 0n),
+              value: transaction.ethValue.value ?? '0',
+            },
+          })),
+        }));
+
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+          payload: mappedProposalTemplates,
+        });
+      } catch (error) {
+        console.error('Error processing DAO data:', error);
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+          payload: [],
+        });
+      }
     };
 
-    processData();
-  }, [safeAddress, result.data, ipfsClient, action]);
+    const newLoadKey = safeAddress || '0x';
+    if (safeAddress && safeAddress !== subgraphLoadKey.current) {
+      subgraphLoadKey.current = newLoadKey;
+      getSubgraphData();
+    }
+    if (!safeAddress) {
+      subgraphLoadKey.current = undefined;
+    }
+  }, [action, chain.id, getConfigByChainId, ipfsClient, safeAddress]);
 
   useEffect(() => {
     const {
@@ -151,14 +164,15 @@ export const useFractalGovernance = () => {
     type,
   ]);
 
+  const proposalsLoadKey = useRef<string>();
   useEffect(() => {
     const newLoadKey = safeAddress || '0x';
-    if (type && safeAddress && safeAddress !== loadKey.current && isGuardLoaded) {
-      loadKey.current = newLoadKey;
+    if (type && safeAddress && safeAddress !== proposalsLoadKey.current && isGuardLoaded) {
+      proposalsLoadKey.current = newLoadKey;
       loadDAOProposals();
     }
     if (!type || !safeAddress) {
-      loadKey.current = undefined;
+      proposalsLoadKey.current = undefined;
     }
   }, [type, loadDAOProposals, isGuardLoaded, safeAddress]);
 };

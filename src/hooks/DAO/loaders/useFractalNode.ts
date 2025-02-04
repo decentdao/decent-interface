@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useClient } from 'urql';
 import { Address, getAddress, isAddress } from 'viem';
+import { createDecentGraphClient } from '../../../graphql';
 import { DAOQueryDocument } from '../../../graphql/DAOQuery';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -22,8 +22,7 @@ export const useFractalNode = ({
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
-  const { subgraph } = useNetworkConfigStore();
-  const client = useClient();
+  const { getConfigByChainId, chain } = useNetworkConfigStore();
 
   const { action } = useFractal();
 
@@ -49,16 +48,12 @@ export const useFractalNode = ({
 
         const modules = await lookupModules(safeInfo.modules);
 
+        const client = createDecentGraphClient(getConfigByChainId(chain.id));
         const graphRawNodeData = await client.query(
           DAOQueryDocument,
           { safeAddress },
           {
             requestPolicy: 'network-only',
-            context: {
-              subgraphSpace: subgraph.space,
-              subgraphSlug: subgraph.slug,
-              subgraphVersion: subgraph.version,
-            },
           },
         );
 
@@ -98,10 +93,8 @@ export const useFractalNode = ({
     safeApi,
     setSafeInfo,
     lookupModules,
-    client,
-    subgraph.space,
-    subgraph.slug,
-    subgraph.version,
+    getConfigByChainId,
+    chain.id,
     setDecentModules,
     setDaoInfo,
     reset,

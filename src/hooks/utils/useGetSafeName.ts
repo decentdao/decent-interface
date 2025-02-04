@@ -1,32 +1,28 @@
 import { useCallback } from 'react';
-import { useClient } from 'urql';
 import { Address, GetEnsNameReturnType } from 'viem';
+import { createDecentGraphClient } from '../../graphql';
 import { DAOQueryDocument } from '../../graphql/DAOQuery';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
+import { NetworkConfig } from '../../types/network';
 import { useNetworkEnsNameAsync } from '../useNetworkEnsName';
 import { createAccountSubstring } from './useGetAccountName';
 
 export const getSafeName = async (
-  subgraph: { space: number; slug: string; version: string },
+  networkConfig: NetworkConfig,
   address: Address,
   getEnsName: (args: { address: Address }) => Promise<GetEnsNameReturnType>,
-  client: ReturnType<typeof useClient>,
 ) => {
   const ensName = await getEnsName({ address });
   if (ensName) {
     return ensName;
   }
 
+  const client = createDecentGraphClient(networkConfig);
   const queryResult = await client.query(
     DAOQueryDocument,
     { safeAddress: address },
     {
       requestPolicy: 'network-only',
-      context: {
-        subgraphSpace: subgraph.space,
-        subgraphSlug: subgraph.slug,
-        subgraphVersion: subgraph.version,
-      },
     },
   );
 
@@ -42,14 +38,14 @@ export const getSafeName = async (
 export const useGetSafeName = (chainId?: number) => {
   const { getConfigByChainId } = useNetworkConfigStore();
   const { getEnsName } = useNetworkEnsNameAsync();
-  const client = useClient();
 
   return {
     getSafeName: useCallback(
       (address: Address) => {
-        return getSafeName(getConfigByChainId(chainId).subgraph, address, getEnsName, client);
+        const config = getConfigByChainId(chainId);
+        return getSafeName(config, address, getEnsName);
       },
-      [chainId, getConfigByChainId, getEnsName, client],
+      [chainId, getConfigByChainId, getEnsName],
     ),
   };
 };

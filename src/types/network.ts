@@ -1,6 +1,13 @@
 import { Address, Chain } from 'viem';
 import { GovernanceType } from './fractal';
 
+export type SubgraphConfig = {
+  space: number;
+  slug: string;
+  version: string;
+  id: string;
+};
+
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown
   chain: Chain;
@@ -11,18 +18,8 @@ export type NetworkConfig = {
   addressPrefix: string; // copy whatever Safe uses
   nativeTokenIcon: string;
   isENSSupported: boolean;
-  subgraph: {
-    space: number;
-    slug: string;
-    version: string;
-    id: string;
-  };
-  sablierSubgraph: {
-    space: number;
-    slug: string;
-    version: string;
-    id: string;
-  };
+  subgraph: SubgraphConfig;
+  sablierSubgraph: SubgraphConfig;
   moralis: {
     chainSupported: boolean;
     deFiSupported: boolean;

@@ -4,10 +4,10 @@ import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
-import { useQuery } from 'urql';
 import { Address, getContract, zeroAddress } from 'viem';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
+import { createDecentGraphClient } from '../../graphql';
 import { DAOQueryDocument } from '../../graphql/DAOQuery';
 import { useDecentModules } from '../../hooks/DAO/loaders/useDecentModules';
 import useNetworkPublicClient from '../../hooks/useNetworkPublicClient';
@@ -32,35 +32,6 @@ import { BarLoader } from '../ui/loaders/BarLoader';
  * and display another DaoNode for each child, and so on for their children.
  */
 
-interface DAOHierarchyNode {
-  id: string;
-  address: string;
-  parentAddress: string | null;
-  name: string | null;
-  snapshotENS: string | null;
-  hierarchy: DAOHierarchyNode[];
-}
-
-interface DAOQueryResult {
-  daos: {
-    id: string;
-    address: string;
-    parentAddress: string | null;
-    name: string | null;
-    snapshotENS: string | null;
-    hierarchy: DAOHierarchyNode[];
-    proposalTemplatesHash: string | null;
-  }[];
-}
-
-interface DAOQueryVariables {
-  safeAddress: string;
-}
-
-export interface HierarchyChild {
-  address: string;
-}
-
 export function DaoHierarchyNode({
   safeAddress,
   depth,
@@ -73,22 +44,11 @@ export function DaoHierarchyNode({
   const safeApi = useSafeAPI();
   const [hierarchyNode, setHierarchyNode] = useState<DaoHierarchyInfo>();
   const [hasErrorLoading, setErrorLoading] = useState<boolean>(false);
-  const { addressPrefix, subgraph, chain } = useNetworkConfigStore();
+  const { addressPrefix, getConfigByChainId, chain } = useNetworkConfigStore();
   const publicClient = useNetworkPublicClient();
 
   const { getAddressContractType } = useAddressContractType();
   const lookupModules = useDecentModules();
-
-  const [queryResult, executeQuery] = useQuery<DAOQueryResult, DAOQueryVariables>({
-    query: DAOQueryDocument,
-    variables: { safeAddress: safeAddress || '' },
-    pause: !safeAddress,
-    context: {
-      subgraphSpace: subgraph.space,
-      subgraphSlug: subgraph.slug,
-      subgraphVersion: subgraph.version,
-    },
-  });
 
   const getVotingStrategies = useCallback(
     async (azoriusModule: DecentModule) => {
@@ -161,11 +121,14 @@ export function DaoHierarchyNode({
       try {
         const safe = await safeApi.getSafeInfo(_safeAddress);
 
-        // Trigger a new query execution if needed
-        if (queryResult.data?.daos[0]?.address !== _safeAddress) {
-          executeQuery({ variables: { safeAddress: _safeAddress } });
-          return; // The effect will handle the new data when it arrives
-        }
+        const client = createDecentGraphClient(getConfigByChainId(chain.id));
+        const queryResult = await client.query(
+          DAOQueryDocument,
+          { safeAddress: _safeAddress },
+          {
+            requestPolicy: 'network-only',
+          },
+        );
 
         if (queryResult.error) {
           throw new Error('Query failed');
@@ -191,7 +154,7 @@ export function DaoHierarchyNode({
           safeAddress: _safeAddress,
           parentAddress: graphDAOData.parentAddress as Address | null,
           childAddresses: graphDAOData.hierarchy.map(
-            (child: HierarchyChild) => child.address as Address,
+            (child: { address: string }) => child.address as Address,
           ),
           daoSnapshotENS: graphDAOData.snapshotENS ?? null,
           proposalTemplatesHash: graphDAOData.proposalTemplatesHash ?? null,
@@ -203,12 +166,12 @@ export function DaoHierarchyNode({
         return;
       }
     },
-    [executeQuery, queryResult.data, queryResult.error, getGovernanceTypes, lookupModules, safeApi],
+    [getConfigByChainId, chain.id, getGovernanceTypes, lookupModules, safeApi],
   );
 
   // Effect to handle query result changes
   useEffect(() => {
-    if (safeAddress && queryResult.data) {
+    if (safeAddress) {
       const cachedNode = getValue({
         cacheName: CacheKeys.HIERARCHY_DAO_INFO,
         chainId: chain.id,
@@ -235,7 +198,8 @@ export function DaoHierarchyNode({
         setHierarchyNode(_node);
       });
     }
-  }, [chain.id, loadDao, queryResult.data, safeAddress]);
+  }, [chain.id, loadDao, safeAddress]);
+
   if (!hierarchyNode) {
     // node hasn't loaded yet
     return (

@@ -71,8 +71,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       params.hatsProtocol,
       params.chainId,
       params.publicClient,
-      params.client,
-      params.sablierSubgraph,
+      params.sablierSubgraphClient,
       params.whitelistingVotingStrategy,
     );
     const streamIdsToHatIdsMap = getStreamIdToHatIdMap();
