@@ -1,15 +1,17 @@
 import { Box, Text, HStack, Switch, Flex, Icon, Button } from '@chakra-ui/react';
 import { GasPump, WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Address } from 'viem';
+import { useBalance } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
 import { isFeatureEnabled } from '../../helpers/featureFlags';
-import { useNativeToken } from '../../hooks/useNativeToken';
+import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
+import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import { BigIntValuePair } from '../../types';
+import { formatCoin } from '../../utils';
 import EtherscanLink from './links/EtherscanLink';
 import Divider from './utils/Divider';
 
 interface GaslessVotingToggleProps {
-  address?: Address;
   isEnabled: boolean;
   onToggle: () => void;
 }
@@ -65,6 +67,7 @@ function GaslessVotingToggleContent({
 
 export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoCreate');
+  const { chain } = useNetworkConfigStore();
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
 
@@ -98,7 +101,9 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
             color="lilac-0"
             marginLeft="1rem"
           >
-            {t('gaslessVotingGettingStarted')}
+            {t('gaslessVotingGettingStarted', {
+              symbol: chain.nativeCurrency.symbol,
+            })}
           </Text>
         </Flex>
       </Box>
@@ -106,14 +111,26 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   );
 }
 
-export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) {
+export function GaslessVotingToggleDAOSettings(
+  props: GaslessVotingToggleProps & {
+    onGasTankTopupAmountChange: (amount: BigIntValuePair) => void;
+  },
+) {
   const { t } = useTranslation('daoEdit');
-  const { formattedNativeTokenBalance } = useNativeToken();
+  const { safe } = useDaoInfoStore();
+  const { chain } = useNetworkConfigStore();
+
+  // @todo: Use the paymaster address here.
+  const { data: balance } = useBalance({ address: safe?.address, chainId: chain.id });
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
+  if (!safe) return null;
 
-  // @todo: Remove this once we have a real address
-  const address = props.address || '0x01168475F8B9e46F710Ff3654cbD9405e8ADb421';
+  const formattedNativeTokenBalance =
+    balance && formatCoin(balance.value, true, balance.decimals, balance.symbol);
+
+  // @todo: Retrieve the paymaster address here. Replace safe.address with the paymaster address.
+  const gasTankAddress = safe.address;
 
   return (
     <Box
@@ -122,7 +139,7 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
       flexDirection="column"
     >
       <Divider
-        my="1rem"
+        mt="1rem"
         w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
         mx={{ base: '-0.75rem', md: '-1.5rem' }}
       />
@@ -132,7 +149,7 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
         isSettings
       />
 
-      {address && (
+      {gasTankAddress && (
         <Box
           borderRadius="0.75rem"
           border="1px solid"
@@ -142,10 +159,10 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
         >
           <EtherscanLink
             type="address"
-            value={address}
+            value={gasTankAddress}
             isTextLink
           >
-            <Text as="span">{address}</Text>
+            <Text as="span">{gasTankAddress}</Text>
           </EtherscanLink>
         </Box>
       )}
@@ -160,13 +177,23 @@ export function GaslessVotingToggleDAOSettings(props: GaslessVotingToggleProps) 
             as="span"
             color="neutral-7"
           >
-            {/* @todo: Should this not be the paymaster balance instead?? */}
             {formattedNativeTokenBalance}
           </Text>
         </Text>
         <Button
           variant="secondary"
           leftIcon={<Icon as={GasPump} />}
+          onClick={() => {
+            console.log(
+              'addGas. Add this action to the proposal, to be submitted via propose changes button.',
+            );
+
+            // @todo: Add UI to set the amount, then call onGasTankTopupAmountChange.
+            props.onGasTankTopupAmountChange({
+              value: '1',
+              bigintValue: 1n,
+            });
+          }}
         >
           {t('addGas')}
         </Button>

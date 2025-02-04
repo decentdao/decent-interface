@@ -25,6 +25,7 @@ export const polygonConfig: NetworkConfig = {
   etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
   addressPrefix: 'matic',
   nativeTokenIcon: '/images/coin-icon-pol.svg',
+  isENSSupported: false,
   subgraph: {
     space: 71032,
     slug: 'fractal-base-polygon',
@@ -109,6 +110,7 @@ export const polygonConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC20,
     GovernanceType.AZORIUS_ERC721,
   ],
+  gaslessVotingSupported: false,
 };
 
 export default polygonConfig;

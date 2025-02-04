@@ -2,6 +2,7 @@ import { Text, Flex, Grid, IconButton, Icon, Button } from '@chakra-ui/react';
 import { MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { ICreationStepProps } from '../../../types';
 import { GaslessVotingToggleDAOCreate } from '../../ui/GaslessVotingToggle';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
@@ -12,6 +13,7 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
 import { DAOCreateMode } from './EstablishEssentials';
+
 export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const { t } = useTranslation('daoCreate');
@@ -30,6 +32,8 @@ export function Multisig(props: ICreationStepProps) {
 
     return updatedNum !== num;
   };
+
+  const { gaslessVotingSupported } = useNetworkConfigStore();
 
   return (
     <>
@@ -152,10 +156,14 @@ export function Multisig(props: ICreationStepProps) {
         </Flex>
       </StepWrapper>
 
-      <GaslessVotingToggleDAOCreate
-        isEnabled={values.essentials.gaslessVoting}
-        onToggle={() => setFieldValue('essentials.gaslessVoting', !values.essentials.gaslessVoting)}
-      />
+      {gaslessVotingSupported && (
+        <GaslessVotingToggleDAOCreate
+          isEnabled={values.essentials.gaslessVoting}
+          onToggle={() =>
+            setFieldValue('essentials.gaslessVoting', !values.essentials.gaslessVoting)
+          }
+        />
+      )}
       <StepButtons
         {...props}
         isEdit={mode === DAOCreateMode.EDIT}

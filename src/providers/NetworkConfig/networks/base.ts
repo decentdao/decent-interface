@@ -25,6 +25,7 @@ export const baseConfig: NetworkConfig = {
   etherscanAPIUrl: `https://api.basescan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_BASE_API_KEY}`,
   addressPrefix: 'base',
   nativeTokenIcon: '/images/coin-icon-base.svg',
+  isENSSupported: false,
   subgraph: {
     space: 71032,
     slug: 'fractal-base',
@@ -109,6 +110,7 @@ export const baseConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC20,
     GovernanceType.AZORIUS_ERC721,
   ],
+  gaslessVotingSupported: false,
 };
 
 export default baseConfig;

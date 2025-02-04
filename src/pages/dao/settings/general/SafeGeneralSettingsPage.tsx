@@ -16,7 +16,7 @@ import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubm
 import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
 import { useNetworkConfigStore } from '../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
-import { ProposalExecuteData } from '../../../../types';
+import { BigIntValuePair, ProposalExecuteData } from '../../../../types';
 import { validateENSName } from '../../../../utils/url';
 
 export function SafeGeneralSettingsPage() {
@@ -24,11 +24,19 @@ export function SafeGeneralSettingsPage() {
   const [name, setName] = useState('');
   const [snapshotENS, setSnapshotENS] = useState('');
   const [snapshotENSValid, setSnapshotENSValid] = useState<boolean>();
+
+  const [isGaslessVotingEnabled, setIsGaslessVotingEnabled] = useState<boolean>(false);
+  const [gasTankTopupAmount, setGasTankTopupAmount] = useState<BigIntValuePair>();
+
   const navigate = useNavigate();
 
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { subgraphInfo, safe } = useDaoInfoStore();
+  const {
+    subgraphInfo,
+    safe,
+    gaslessVotingEnabled: currentIsGaslessVotingEnabled,
+  } = useDaoInfoStore();
   const {
     addressPrefix,
     contracts: { keyValuePairs },
@@ -71,27 +79,42 @@ export function SafeGeneralSettingsPage() {
 
   const nameChanged = name !== subgraphInfo?.daoName;
   const snapshotChanged = snapshotENSValid && snapshotENS !== subgraphInfo?.daoSnapshotENS;
+  const gaslessVotingChanged = isGaslessVotingEnabled !== currentIsGaslessVotingEnabled;
+  const gasTankTopupAmountSet =
+    gasTankTopupAmount?.bigintValue !== undefined && gasTankTopupAmount.bigintValue > 0n;
 
   const handleEditGeneralGovernance = () => {
     const changeTitles = [];
-    if (nameChanged) {
-      changeTitles.push(t('updatesSafeName', { ns: 'proposalMetadata' }));
-    }
-    if (snapshotChanged) {
-      changeTitles.push(t('updateSnapshotSpace', { ns: 'proposalMetadata' }));
-    }
-    const title = changeTitles.join(` ${t('and', { ns: 'common' })} `);
-
     const keyArgs = [];
     const valueArgs = [];
+
     if (nameChanged) {
+      changeTitles.push(t('updatesSafeName', { ns: 'proposalMetadata' }));
       keyArgs.push('daoName');
       valueArgs.push(name);
     }
+
     if (snapshotChanged) {
+      changeTitles.push(t('updateSnapshotSpace', { ns: 'proposalMetadata' }));
       keyArgs.push('snapshotENS');
       valueArgs.push(snapshotENS);
     }
+
+    if (gaslessVotingChanged) {
+      changeTitles.push(t('enableGaslessVoting', { ns: 'proposalMetadata' }));
+
+      // @todo Is KV pairs the place we're storing this flag?
+      keyArgs.push('gaslessVotingEnabled');
+      valueArgs.push(`${isGaslessVotingEnabled}`);
+    }
+
+    if (gasTankTopupAmountSet) {
+      changeTitles.push(t('topupGasTank', { ns: 'proposalMetadata' }));
+
+      // @todo add tx to send `gasTankTopupAmount` to gas tank address
+    }
+
+    const title = changeTitles.join(`; `);
 
     const proposalData: ProposalExecuteData = {
       metaData: {
@@ -188,6 +211,17 @@ export function SafeGeneralSettingsPage() {
               }}
             />
           </Flex>
+
+          <GaslessVotingToggleDAOSettings
+            isEnabled={isGaslessVotingEnabled}
+            onToggle={() => {
+              console.log(
+                'onToggle. Add this action to the proposal, to be submitted via propose changes button.',
+              );
+              setIsGaslessVotingEnabled(!isGaslessVotingEnabled);
+            }}
+            onGasTankTopupAmountChange={setGasTankTopupAmount}
+          />
           {canUserCreateProposal && (
             <>
               <Divider
@@ -206,13 +240,6 @@ export function SafeGeneralSettingsPage() {
               </Button>
             </>
           )}
-
-          <GaslessVotingToggleDAOSettings
-            isEnabled={false}
-            onToggle={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
         </SettingsContentBox>
       ) : (
         <Flex

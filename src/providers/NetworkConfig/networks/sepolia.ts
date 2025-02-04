@@ -25,6 +25,7 @@ export const sepoliaConfig: NetworkConfig = {
   etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
   addressPrefix: 'sep',
   nativeTokenIcon: '/images/coin-icon-sep.svg',
+  isENSSupported: true,
   subgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
@@ -109,6 +110,7 @@ export const sepoliaConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC20,
     GovernanceType.AZORIUS_ERC721,
   ],
+  gaslessVotingSupported: true,
 };
 
 export default sepoliaConfig;

@@ -20,6 +20,7 @@ const getPaymentValidationContextData = (cxt: any) => {
 
   return {
     currentRoleHat,
+    currentPayment: currentPayment as SablierPaymentFormValues,
     parentAssetAddress,
     formContextHats: formContext.hats as RoleHatFormValue[],
   };
@@ -42,8 +43,10 @@ export const useRolesSchema = () => {
         test: (value, cxt) => {
           if (!value || !cxt.from) return false;
 
-          const { parentAssetAddress } = getPaymentValidationContextData(cxt);
+          const { parentAssetAddress, currentPayment } = getPaymentValidationContextData(cxt);
 
+          // @dev if payment isn't new validation is skipped
+          if (currentPayment?.streamId) return true;
           if (!parentAssetAddress) return false;
           const asset = assetsFungible.find(
             _asset => getAddress(_asset.tokenAddress) === parentAssetAddress,
@@ -59,9 +62,11 @@ export const useRolesSchema = () => {
         message: t('roleInfoErrorPaymentInsufficientAmount'),
         test: (value, cxt) => {
           if (!value || !cxt.from) return false;
-          const { parentAssetAddress, currentRoleHat, formContextHats } =
+          const { parentAssetAddress, currentRoleHat, formContextHats, currentPayment } =
             getPaymentValidationContextData(cxt);
 
+          // @dev if payment isn't new validation is skipped
+          if (currentPayment?.streamId) return true;
           if (!parentAssetAddress) return false;
 
           const currentPaymentIndex = currentRoleHat.roleEditingPaymentIndex;
