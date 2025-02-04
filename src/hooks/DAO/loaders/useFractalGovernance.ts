@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createDecentGraphClient } from '../../../graphql';
-import { DAOQueryDocument } from '../../../graphql/DAOQueries';
+import { DAOQuery } from '../../../graphql/DAOQueries';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -41,7 +41,7 @@ export const useFractalGovernance = () => {
 
       try {
         const client = createDecentGraphClient(getConfigByChainId(chain.id));
-        const result = await client.query(DAOQueryDocument, { safeAddress });
+        const result = await client.query(DAOQuery, { safeAddress });
 
         if (result.error) {
           throw new Error('Query failed');

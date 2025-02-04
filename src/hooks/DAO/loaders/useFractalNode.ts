@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Address, getAddress, isAddress } from 'viem';
 import { createDecentGraphClient } from '../../../graphql';
-import { DAOQueryDocument } from '../../../graphql/DAOQueries';
+import { DAOQuery } from '../../../graphql/DAOQueries';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
@@ -49,7 +49,7 @@ export const useFractalNode = ({
         const modules = await lookupModules(safeInfo.modules);
 
         const client = createDecentGraphClient(getConfigByChainId(chain.id));
-        const graphRawNodeData = await client.query(DAOQueryDocument, { safeAddress });
+        const graphRawNodeData = await client.query(DAOQuery, { safeAddress });
 
         if (graphRawNodeData.error) {
           throw new Error('Failed to fetch DAO data');

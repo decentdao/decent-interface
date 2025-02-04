@@ -1,4 +1,4 @@
-export const StreamsQueryDocument = `query StreamsQuery($recipientAddress: Bytes) {
+export const StreamsQuery = `query StreamsQuery($recipientAddress: Bytes) {
   streams(where: { recipient: $recipientAddress }) {
     id
     startTime

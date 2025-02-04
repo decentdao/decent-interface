@@ -1,4 +1,4 @@
-export const DAOQueryDocument = `query DAOQuery($safeAddress: Bytes) {
+export const DAOQuery = `query DAOQuery($safeAddress: Bytes) {
   daos(where: { id: $safeAddress }) {
     id
     address
