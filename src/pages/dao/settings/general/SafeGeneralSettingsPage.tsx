@@ -85,21 +85,17 @@ export function SafeGeneralSettingsPage() {
 
   const handleEditGeneralGovernance = () => {
     const changeTitles = [];
-    if (nameChanged) {
-      changeTitles.push(t('updatesSafeName', { ns: 'proposalMetadata' }));
-    }
-    if (snapshotChanged) {
-      changeTitles.push(t('updateSnapshotSpace', { ns: 'proposalMetadata' }));
-    }
-    const title = changeTitles.join(` ${t('and', { ns: 'common' })} `);
-
     const keyArgs = [];
     const valueArgs = [];
+
     if (nameChanged) {
+      changeTitles.push(t('updatesSafeName', { ns: 'proposalMetadata' }));
       keyArgs.push('daoName');
       valueArgs.push(name);
     }
+
     if (snapshotChanged) {
+      changeTitles.push(t('updateSnapshotSpace', { ns: 'proposalMetadata' }));
       keyArgs.push('snapshotENS');
       valueArgs.push(snapshotENS);
     }
@@ -117,6 +113,8 @@ export function SafeGeneralSettingsPage() {
 
       // @todo add tx to send `gasTankTopupAmount` to gas tank address
     }
+
+    const title = changeTitles.join(`; `);
 
     const proposalData: ProposalExecuteData = {
       metaData: {
