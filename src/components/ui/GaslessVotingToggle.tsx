@@ -67,6 +67,7 @@ function GaslessVotingToggleContent({
 
 export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoCreate');
+  const { chain } = useNetworkConfigStore();
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
 
@@ -100,7 +101,9 @@ export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
             color="lilac-0"
             marginLeft="1rem"
           >
-            {t('gaslessVotingGettingStarted')}
+            {t('gaslessVotingGettingStarted', {
+              symbol: chain.nativeCurrency.symbol,
+            })}
           </Text>
         </Flex>
       </Box>
