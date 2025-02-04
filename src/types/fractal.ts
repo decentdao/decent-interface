@@ -156,6 +156,11 @@ export enum DecentModuleType {
 export interface IDAO {
   // replaces DaoInfo
   safe: GnosisSafe | null;
+
+  // @todo: where's the best place for these 2 props to exist?
+  gaslessVotingEnabled: boolean;
+  gasTankAddress: Address | null;
+
   subgraphInfo: DAOSubgraph | null;
   modules: DecentModule[] | null;
 }
