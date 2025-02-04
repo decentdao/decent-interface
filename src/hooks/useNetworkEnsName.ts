@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { Address, createPublicClient, http } from 'viem';
+import { mainnet } from 'viem/chains';
 import { useEnsName } from 'wagmi';
 import {
   supportedEnsNetworks,
@@ -34,12 +35,19 @@ export function useNetworkEnsNameAsync() {
 
   const getEnsName = useCallback(
     (args: { address: Address; chainId?: number }) => {
-      const propsOrFallbackChainId = args?.chainId ?? chain.id;
-      if (!supportedEnsNetworks.includes(propsOrFallbackChainId)) {
-        throw new Error(`ENS is not supported for chain ${propsOrFallbackChainId}`);
+      let effectiveChainId: number;
+
+      if (args.chainId !== undefined) {
+        if (!supportedEnsNetworks.includes(args.chainId)) {
+          throw new Error(`ENS is not supported for chain ${args.chainId}`);
+        }
+        effectiveChainId = args.chainId;
+      } else {
+        // No chain id provided: try to use network chain id, otherwise fallback to mainnet.
+        effectiveChainId = supportedEnsNetworks.includes(chain.id) ? chain.id : mainnet.id;
       }
 
-      const networkConfig = getConfigByChainId(propsOrFallbackChainId);
+      const networkConfig = getConfigByChainId(effectiveChainId);
       const publicClient = createPublicClient({
         chain: networkConfig.chain,
         transport: http(networkConfig.rpcEndpoint),
