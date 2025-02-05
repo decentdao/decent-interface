@@ -96,7 +96,7 @@ export function AirdropAction({
           </Text>
           <Text>{t('to').toLowerCase()}</Text>
           <Text color="lilac-0">
-            {recipientsCount} {t('recipients')}
+            {recipientsCount} {t('recipients', { count: recipientsCount })}
           </Text>
         </Flex>
         <Button
