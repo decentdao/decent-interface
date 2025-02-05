@@ -183,17 +183,11 @@ export function SafeSablierProposalCreatePage() {
       mainContent={(formikProps, pendingCreateTx, nonce, currentStep) => {
         if (currentStep !== CreateProposalSteps.TRANSACTIONS) return null;
         return (
-          <>
-            <ProposalStreams
-              pendingTransaction={pendingCreateTx}
-              {...formikProps}
-              values={formikProps.values as CreateSablierProposalForm}
-            />
-            <ShowNonceInputOnMultisig
-              nonce={nonce}
-              nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-            />
-          </>
+          <ProposalStreams
+            pendingTransaction={pendingCreateTx}
+            {...formikProps}
+            values={formikProps.values as CreateSablierProposalForm}
+          />
         );
       }}
     />

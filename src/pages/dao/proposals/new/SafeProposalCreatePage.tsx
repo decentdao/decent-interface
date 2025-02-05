@@ -107,18 +107,12 @@ export function SafeProposalCreatePage() {
       mainContent={(formikProps, pendingCreateTx, nonce, currentStep) => {
         if (currentStep !== CreateProposalSteps.TRANSACTIONS) return null;
         return (
-          <>
-            <ProposalTransactionsForm
-              pendingTransaction={pendingCreateTx}
-              safeNonce={safe?.nextNonce}
-              isProposalMode={true}
-              {...formikProps}
-            />
-            <ShowNonceInputOnMultisig
-              nonce={nonce}
-              nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-            />
-          </>
+          <ProposalTransactionsForm
+            pendingTransaction={pendingCreateTx}
+            safeNonce={safe?.nextNonce}
+            isProposalMode={true}
+            {...formikProps}
+          />
         );
       }}
     />

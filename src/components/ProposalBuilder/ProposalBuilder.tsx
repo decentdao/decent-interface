@@ -227,7 +227,13 @@ export function ProposalBuilder({
                           {...formikProps}
                         />
                       ) : (
-                        mainContent(formikProps, pendingCreateTx, nonce, currentStep)
+                        <>
+                          {mainContent(formikProps, pendingCreateTx, nonce, currentStep)}
+                          <ShowNonceInputOnMultisig
+                            nonce={nonce}
+                            nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                          />
+                        </>
                       )}
                     </Box>
                     {actionsExperience}
