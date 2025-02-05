@@ -1,48 +1,56 @@
+import { Address } from 'viem';
+
+// Define the base asset structure with only used properties
+interface StreamAsset {
+  name: string;
+  symbol: string;
+  address: string;
+  decimals: number;
+}
+
+// Define the contract structure with only used properties
+interface StreamContract {
+  address: Address;
+}
+
+// Define the main stream structure with only used properties
+export interface Stream {
+  id: string;
+  startTime: string;
+  endTime: string;
+  canceled: boolean;
+  category: string;
+  cliff: boolean;
+  cliffTime: string;
+  depositAmount: string;
+  recipient: string;
+  contract: StreamContract;
+  asset: StreamAsset;
+}
+
+// Define the top-level query response
+export interface StreamsQueryResponse {
+  streams: Stream[];
+}
+
 export const StreamsQuery = `query StreamsQuery($recipientAddress: Bytes) {
   streams(where: { recipient: $recipientAddress }) {
     id
     startTime
     endTime
     canceled
-    duration
     category
     cliff
     cliffTime
-    cliffAmount
     depositAmount
-    withdrawnAmount
-    intactAmount
-    chainId
     recipient
-    parties
     contract {
       address
-      id
-    }
-    timestamp
-    segments {
-      id
-      startTime
-      endTime
-      amount
-      endAmount
-      position
-    }
-    tranches {
-      id
-      position
-      startTime
-      startAmount
-      amount
-      endTime
-      endAmount
     }
     asset {
       name
       symbol
       address
-      id
-      chainId
       decimals
     }
   }

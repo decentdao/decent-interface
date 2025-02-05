@@ -1,3 +1,66 @@
+import { Address } from 'viem';
+import { SnapshotPlugin, SnapshotProposalType } from '../types';
+
+// Types for Extended Snapshot Proposal
+interface Strategy {
+  name: string;
+  network: string;
+  params: Record<string, unknown>;
+}
+
+export interface ExtendedSnapshotProposalResponse {
+  proposal: {
+    snapshot: number;
+    type: SnapshotProposalType;
+    quorum: number;
+    privacy: string;
+    strategies: Strategy[];
+    plugins: SnapshotPlugin[];
+    choices: string[];
+    ipfs: string;
+  };
+}
+
+export interface SnapshotVote {
+  id: string;
+  voter: Address;
+  vp: number;
+  vp_by_strategy: number[];
+  vp_state: string;
+  created: number;
+  choice: number | Record<string, number>;
+}
+
+export interface SnapshotProposalVotesResponse {
+  votes: SnapshotVote[];
+}
+
+// Types for User Voting Weight
+interface VotingPower {
+  vp: number;
+  vp_by_strategy: number[];
+  vp_state: string;
+}
+
+export interface UserVotingWeightResponse {
+  vp: VotingPower;
+}
+
+// Types for Proposals Query
+interface SnapshotProposal {
+  id: string;
+  title: string;
+  body: string;
+  start: number;
+  end: number;
+  state: string;
+  author: Address;
+}
+
+export interface ProposalsResponse {
+  proposals: SnapshotProposal[];
+}
+
 export const ExtendedSnapshotProposalQuery = `query ExtendedSnapshotProposal($snapshotProposalId: String!) {
   proposal(id: $snapshotProposalId) {
     snapshot
@@ -41,21 +104,15 @@ export const ProposalsQuery = `query Proposals($spaceIn: [String!]) {
     where: {
       space_in: $spaceIn
     },
-     orderBy: "created",
-     orderDirection: desc
+    orderBy: "created",
+    orderDirection: desc
   ) {
     id
     title
     body
-    choices
     start
     end
-    snapshot
     state
     author
-    space {
-      id
-      name
-    }
   }
 }`;

@@ -8,7 +8,7 @@ import { Address, getContract, zeroAddress } from 'viem';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { createDecentSubgraphClient } from '../../graphql';
-import { DAOQuery } from '../../graphql/DAOQueries';
+import { DAOQuery, DAOQueryResponse } from '../../graphql/DAOQueries';
 import { useDecentModules } from '../../hooks/DAO/loaders/useDecentModules';
 import useNetworkPublicClient from '../../hooks/useNetworkPublicClient';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
@@ -122,7 +122,9 @@ export function DaoHierarchyNode({
         const safe = await safeApi.getSafeInfo(_safeAddress);
 
         const client = createDecentSubgraphClient(getConfigByChainId(chain.id));
-        const queryResult = await client.query(DAOQuery, { safeAddress: _safeAddress });
+        const queryResult = await client.query<DAOQueryResponse>(DAOQuery, {
+          safeAddress: _safeAddress,
+        });
 
         if (queryResult.error) {
           throw new Error('Query failed');

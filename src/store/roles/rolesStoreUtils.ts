@@ -7,7 +7,7 @@ import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
-import { StreamsQuery } from '../../graphql/StreamsQueries';
+import { StreamsQuery, StreamsQueryResponse, Stream } from '../../graphql/StreamsQueries';
 import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { getValue } from '../../hooks/utils/cache/useLocalStorage';
@@ -270,7 +270,7 @@ const getPaymentStreams = async (
   publicClient: PublicClient,
   client: Client,
 ): Promise<SablierPayment[]> => {
-  const streamQueryResult = await client.query(StreamsQuery, {
+  const streamQueryResult = await client.query<StreamsQueryResponse>(StreamsQuery, {
     recipientAddress: paymentRecipient,
   });
 
@@ -280,9 +280,9 @@ const getPaymentStreams = async (
     }
     const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
     const lockupLinearStreams = streamQueryResult.data.streams.filter(
-      (stream: { category: string }) => stream.category === 'LockupLinear',
+      (stream: Stream) => stream.category === 'LockupLinear',
     );
-    const formattedLinearStreams = lockupLinearStreams.map((lockupLinearStream: any) => {
+    const formattedLinearStreams = lockupLinearStreams.map(lockupLinearStream => {
       const parsedAmount = formatUnits(
         BigInt(lockupLinearStream.depositAmount),
         lockupLinearStream.asset.decimals,
@@ -337,7 +337,7 @@ const getPaymentStreams = async (
     });
 
     const streamsWithCurrentWithdrawableAmounts: SablierPayment[] = await Promise.all(
-      formattedLinearStreams.map(async (stream: any) => {
+      formattedLinearStreams.map(async stream => {
         const streamContract = getContract({
           abi: SablierV2LockupLinearAbi,
           address: stream.contractAddress,

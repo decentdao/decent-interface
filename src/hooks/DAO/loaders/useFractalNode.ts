@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Address, getAddress, isAddress } from 'viem';
 import { createDecentSubgraphClient } from '../../../graphql';
-import { DAOQuery } from '../../../graphql/DAOQueries';
+import { DAOQuery, DAOQueryResponse } from '../../../graphql/DAOQueries';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
@@ -49,7 +49,7 @@ export const useFractalNode = ({
         const modules = await lookupModules(safeInfo.modules);
 
         const client = createDecentSubgraphClient(getConfigByChainId(chain.id));
-        const graphRawNodeData = await client.query(DAOQuery, { safeAddress });
+        const graphRawNodeData = await client.query<DAOQueryResponse>(DAOQuery, { safeAddress });
 
         if (graphRawNodeData.error) {
           throw new Error('Failed to fetch DAO data');
@@ -64,9 +64,10 @@ export const useFractalNode = ({
         setDecentModules(modules);
 
         setDaoInfo({
-          parentAddress: isAddress(graphDAOData?.parentAddress)
-            ? getAddress(graphDAOData.parentAddress)
-            : null,
+          parentAddress:
+            graphDAOData?.parentAddress && isAddress(graphDAOData.parentAddress)
+              ? getAddress(graphDAOData.parentAddress)
+              : null,
           childAddresses:
             graphDAOData?.hierarchy?.map((child: { address: string }) =>
               getAddress(child.address),
