@@ -96,7 +96,6 @@ export default function useCreateRoles() {
   const {
     addressPrefix,
     chain,
-    nativeAssetAddress,
     contracts: {
       hatsProtocol,
       decentHatsCreationModule,
@@ -1682,10 +1681,7 @@ export default function useCreateRoles() {
 
         // Add "send assets" actions to the proposal data
         values.actions.forEach(action => {
-          const { tokenAddress, transferAmount, calldata } = prepareSendAssetsActionData(
-            action,
-            nativeAssetAddress,
-          );
+          const { tokenAddress, transferAmount, calldata } = prepareSendAssetsActionData(action);
 
           proposalData.targets.push(tokenAddress ?? action.recipientAddress);
           proposalData.values.push(transferAmount);
@@ -1720,7 +1716,6 @@ export default function useCreateRoles() {
       prepareCreateTopHatProposalData,
       hatsTree,
       prepareCreateRolesModificationsProposalData,
-      nativeAssetAddress,
       safeAddress,
       navigate,
       addressPrefix,

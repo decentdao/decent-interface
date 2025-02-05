@@ -16,7 +16,7 @@ import {
 
 export default function useSendAssetsActionModal() {
   const { safe } = useDaoInfoStore();
-  const { addressPrefix, nativeAssetAddress } = useNetworkConfigStore();
+  const { addressPrefix } = useNetworkConfigStore();
   const { t } = useTranslation(['modals']);
   const { addAction } = useProposalActionsStore();
   const navigate = useNavigate();
@@ -28,10 +28,7 @@ export default function useSendAssetsActionModal() {
       return;
     }
 
-    const { tokenAddress, transferAmount } = prepareSendAssetsActionData(
-      sendAssetsData,
-      nativeAssetAddress,
-    );
+    const { tokenAddress, transferAmount } = prepareSendAssetsActionData(sendAssetsData);
 
     const isNativeTransfer = tokenAddress === null;
 

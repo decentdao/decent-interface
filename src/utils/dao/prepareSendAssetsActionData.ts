@@ -8,14 +8,6 @@ export interface SendAssetsData {
   nonceInput: number | undefined; // this is only releveant when the caller action results in a proposal
 }
 
-const isNativeAsset = (asset: TokenBalance, nativeAssetAddress: Address) => {
-  return (
-    !asset.tokenAddress ||
-    asset.nativeToken ||
-    asset.tokenAddress.toLowerCase() === nativeAssetAddress.toLowerCase()
-  );
-};
-
 interface SendAssetsActionData {
   tokenAddress: Address | null;
   transferAmount: bigint;
@@ -33,14 +25,13 @@ interface SendAssetsActionData {
  *
  * `.calldata` is the calldata for the transfer function. `0x` if this is a native token transfer.
  */
-export const prepareSendAssetsActionData = (
-  { transferAmount, asset, recipientAddress }: SendAssetsData,
-  nativeAssetAddress: Address,
-): SendAssetsActionData => {
-  const isNative = isNativeAsset(asset, nativeAssetAddress);
-
+export const prepareSendAssetsActionData = ({
+  transferAmount,
+  asset,
+  recipientAddress,
+}: SendAssetsData): SendAssetsActionData => {
   let calldata: Hex = '0x';
-  if (!isNative) {
+  if (!asset.nativeToken) {
     calldata = encodeFunctionData({
       abi: erc20Abi,
       functionName: 'transfer',
@@ -48,7 +39,7 @@ export const prepareSendAssetsActionData = (
     });
   }
 
-  const tokenAddress = isNative ? null : getAddress(asset.tokenAddress);
+  const tokenAddress = asset.nativeToken ? null : getAddress(asset.tokenAddress);
   const actionData = {
     tokenAddress,
     transferAmount,
