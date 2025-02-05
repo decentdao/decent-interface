@@ -3,13 +3,14 @@ import { CaretDown } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress } from 'viem';
+import { getAddress } from 'viem';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useNetworkEnsAddressAsync } from '../../../hooks/useNetworkEnsAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair, TokenBalance } from '../../../types';
+import { SendAssetsData } from '../../../utils/dao/prepareSendAssetsActionData';
 import { formatCoinFromAsset, formatCoinUnits } from '../../../utils/numberFormats';
 import { validateENSName } from '../../../utils/url';
 import { BigIntInput } from '../forms/BigIntInput';
@@ -22,13 +23,6 @@ interface SendAssetsFormValues {
   destinationAddress: string;
   selectedAsset: TokenBalance;
   inputAmount?: BigIntValuePair;
-}
-
-export interface SendAssetsData {
-  recipientAddress: Address;
-  transferAmount: bigint;
-  asset: TokenBalance;
-  nonceInput: number | undefined; // this is only releveant when the caller action results in a proposal
 }
 
 export function SendAssetsModal({

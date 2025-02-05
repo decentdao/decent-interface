@@ -3,7 +3,7 @@ import { ArrowsDownUp, Trash } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { formatUnits } from 'viem';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { SendAssetsData } from '../modals/SendAssetsModal';
+import { SendAssetsData } from '../../../utils/dao/prepareSendAssetsActionData';
 
 export function SendAssetsActionCard({
   action,

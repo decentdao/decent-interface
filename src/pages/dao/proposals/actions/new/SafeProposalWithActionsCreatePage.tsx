@@ -18,7 +18,6 @@ import StepButtons, {
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { AddActions } from '../../../../../components/ui/modals/AddActions';
-import { SendAssetsData } from '../../../../../components/ui/modals/SendAssetsModal';
 import { useHeaderHeight } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { usePrepareProposal } from '../../../../../hooks/DAO/proposal/usePrepareProposal';
@@ -28,6 +27,7 @@ import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/us
 import { useProposalActionsStore } from '../../../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalSteps, ProposalActionType } from '../../../../../types';
+import { SendAssetsData } from '../../../../../utils/dao/prepareSendAssetsActionData';
 
 function ActionsExperience() {
   const { t } = useTranslation('actions');

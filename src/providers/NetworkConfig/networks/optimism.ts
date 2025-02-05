@@ -111,6 +111,7 @@ export const optimismConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC721,
   ],
   gaslessVotingSupported: false,
+  nativeAssetAddress: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
 };
 
 export default optimismConfig;

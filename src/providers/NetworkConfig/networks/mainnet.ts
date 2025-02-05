@@ -117,6 +117,7 @@ export const mainnetConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC721,
   ],
   gaslessVotingSupported: true,
+  nativeAssetAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
 };
 
 export default mainnetConfig;

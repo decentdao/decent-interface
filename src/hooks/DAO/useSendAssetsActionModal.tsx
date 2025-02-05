@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ModalType } from '../../components/ui/modals/ModalProvider';
-import { SendAssetsData } from '../../components/ui/modals/SendAssetsModal';
 import { useDecentModal } from '../../components/ui/modals/useDecentModal';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -10,11 +9,14 @@ import { useProposalActionsStore } from '../../store/actions/useProposalActionsS
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { ProposalActionType } from '../../types/proposalBuilder';
 import { formatCoin } from '../../utils';
-import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsActionData';
+import {
+  prepareSendAssetsActionData,
+  SendAssetsData,
+} from '../../utils/dao/prepareSendAssetsActionData';
 
 export default function useSendAssetsActionModal() {
   const { safe } = useDaoInfoStore();
-  const { addressPrefix } = useNetworkConfigStore();
+  const { addressPrefix, nativeAssetAddress } = useNetworkConfigStore();
   const { t } = useTranslation(['modals']);
   const { addAction } = useProposalActionsStore();
   const navigate = useNavigate();
@@ -26,7 +28,10 @@ export default function useSendAssetsActionModal() {
       return;
     }
 
-    const { tokenAddress, transferAmount } = prepareSendAssetsActionData(sendAssetsData);
+    const { tokenAddress, transferAmount } = prepareSendAssetsActionData(
+      sendAssetsData,
+      nativeAssetAddress,
+    );
 
     const isNativeTransfer = tokenAddress === null;
 
