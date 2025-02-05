@@ -6,7 +6,6 @@ import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIc
 import { useFractal } from '../../providers/App/AppProvider';
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
 import { CreateProposalAction, ProposalActionType } from '../../types/proposalBuilder';
-import { MOCK_MORALIS_ETH_ADDRESS } from '../../utils/address';
 import { Card } from '../ui/cards/Card';
 import { SendAssetsActionCard } from '../ui/cards/SendAssetsActionCard';
 
@@ -47,13 +46,15 @@ function SendAssetsAction({
     return null;
   }
 
-  const assetToTransferAddress = isNativeAssetTransfer
-    ? MOCK_MORALIS_ETH_ADDRESS
-    : getAddress(action.transactions[0].targetAddress);
-
-  const asset = assetsFungible.find(a => getAddress(a.tokenAddress) === assetToTransferAddress);
+  // The asset to transfer is either the native asset, or the asset with the target address
+  const asset = assetsFungible.find(a =>
+    isNativeAssetTransfer
+      ? a.nativeToken
+      : getAddress(a.tokenAddress) === getAddress(action.transactions[0].targetAddress),
+  );
 
   if (!asset) {
+    console.error('Asset to transfer not found', { asset, assetsFungible });
     return null;
   }
 
