@@ -214,14 +214,14 @@ export function ProposalBuilder({
                       rounded="lg"
                       bg="neutral-2"
                     >
-                      {currentStep === CreateProposalSteps.METADATA && (
+                      {currentStep === CreateProposalSteps.METADATA ? (
                         <ProposalMetadata
                           typeProps={proposalMetadataTypeProps}
                           {...formikProps}
                         />
+                      ) : (
+                        mainContent(formikProps, pendingCreateTx, nonce, currentStep)
                       )}
-                      {currentStep !== CreateProposalSteps.METADATA &&
-                        mainContent(formikProps, pendingCreateTx, nonce, currentStep)}
                     </Box>
                     {actionsExperience}
                     <StepButtons
