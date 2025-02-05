@@ -234,6 +234,7 @@ export function ProposalBuilder({
                     <StepButtons
                       renderButtons={renderButtons}
                       currentStep={currentStep}
+                      onStepChange={setCurrentStep}
                     />
                   </Flex>
                 </GridItem>

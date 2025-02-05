@@ -7,6 +7,7 @@ import { CreateProposalSteps } from '../../types';
 interface StepButtonsProps {
   renderButtons: (currentStep: CreateProposalSteps) => React.ReactNode;
   currentStep: CreateProposalSteps;
+  onStepChange: (step: CreateProposalSteps) => void;
 }
 
 interface StepButtonBaseProps {
@@ -63,7 +64,11 @@ export function CreateProposalButton({ isDisabled }: { isDisabled: boolean }) {
   );
 }
 
-export default function StepButtons({ renderButtons, currentStep }: StepButtonsProps) {
+export default function StepButtons({
+  renderButtons,
+  currentStep,
+  onStepChange,
+}: StepButtonsProps) {
   const { safe } = useDaoInfoStore();
 
   if (!safe?.address) {
@@ -78,6 +83,9 @@ export default function StepButtons({ renderButtons, currentStep }: StepButtonsP
       justifyContent="flex-end"
       width="100%"
     >
+      {currentStep === CreateProposalSteps.TRANSACTIONS && (
+        <PreviousButton onStepChange={onStepChange} />
+      )}
       {renderButtons(currentStep)}
     </Flex>
   );

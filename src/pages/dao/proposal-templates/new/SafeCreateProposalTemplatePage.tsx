@@ -15,7 +15,6 @@ import ProposalTransactionsForm from '../../../../components/ProposalBuilder/Pro
 import {
   CreateProposalButton,
   NextButton,
-  PreviousButton,
 } from '../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -112,12 +111,7 @@ export function SafeCreateProposalTemplatePage() {
           onStepChange={onStepChange}
         />
       ),
-      transactionsStepButtons: (
-        <>
-          <PreviousButton onStepChange={onStepChange} />
-          <CreateProposalButton isDisabled={createProposalBlocked} />
-        </>
-      ),
+      transactionsStepButtons: <CreateProposalButton isDisabled={createProposalBlocked} />,
     };
   };
 
