@@ -10,7 +10,7 @@ import { ProposalBuilder } from '../../../../../components/ProposalBuilder/Propo
 import { StreamsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';
-import { NextButton } from '../../../../../components/ProposalBuilder/StepButtons';
+import { GoToTransactionsStepButton } from '../../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
@@ -143,7 +143,7 @@ export function SafeSablierProposalCreatePage() {
     createProposalBlocked: boolean;
     onStepChange: (step: CreateProposalSteps) => void;
   }) => (
-    <NextButton
+    <GoToTransactionsStepButton
       isDisabled={formErrors}
       onStepChange={onStepChange}
     />

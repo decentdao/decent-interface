@@ -16,7 +16,7 @@ interface StepButtonBaseProps {
   onStepChange: (step: CreateProposalSteps) => void;
 }
 
-export function NextButton({ isDisabled, onStepChange }: StepButtonBaseProps) {
+export function GoToTransactionsStepButton({ isDisabled, onStepChange }: StepButtonBaseProps) {
   const { t } = useTranslation('common');
 
   return (
@@ -30,7 +30,7 @@ export function NextButton({ isDisabled, onStepChange }: StepButtonBaseProps) {
   );
 }
 
-export function PreviousButton({ onStepChange }: StepButtonBaseProps) {
+function GoToMetadataStepButton({ onStepChange }: StepButtonBaseProps) {
   const { t } = useTranslation('common');
 
   return (
@@ -86,7 +86,7 @@ export default function StepButtons({
       width="100%"
     >
       {currentStep === CreateProposalSteps.TRANSACTIONS && (
-        <PreviousButton onStepChange={onStepChange} />
+        <GoToMetadataStepButton onStepChange={onStepChange} />
       )}
       {renderButtons(currentStep)}
       {currentStep === CreateProposalSteps.TRANSACTIONS && (

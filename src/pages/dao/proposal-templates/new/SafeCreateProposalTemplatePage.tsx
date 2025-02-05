@@ -9,7 +9,7 @@ import {
 } from '../../../../components/ProposalBuilder/ProposalDetails';
 import { TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
-import { NextButton } from '../../../../components/ProposalBuilder/StepButtons';
+import { GoToTransactionsStepButton } from '../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../components/ProposalBuilder/constants';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { logError } from '../../../../helpers/errorLogging';
@@ -97,7 +97,7 @@ export function SafeCreateProposalTemplatePage() {
     createProposalBlocked: boolean;
     onStepChange: (step: CreateProposalSteps) => void;
   }) => (
-    <NextButton
+    <GoToTransactionsStepButton
       isDisabled={formErrors}
       onStepChange={onStepChange}
     />
