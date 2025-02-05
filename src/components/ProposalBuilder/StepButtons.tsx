@@ -5,8 +5,7 @@ import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalSteps } from '../../types';
 
 interface StepButtonsProps {
-  metadataStepButtons: React.ReactNode;
-  transactionsStepButtons: React.ReactNode;
+  renderButtons: (currentStep: CreateProposalSteps) => React.ReactNode;
   currentStep: CreateProposalSteps;
 }
 
@@ -64,9 +63,8 @@ export function CreateProposalButton({ isDisabled }: { isDisabled: boolean }) {
   );
 }
 
-export default function StepButtons(props: StepButtonsProps) {
+export default function StepButtons({ renderButtons, currentStep }: StepButtonsProps) {
   const { safe } = useDaoInfoStore();
-  const { metadataStepButtons, transactionsStepButtons, currentStep } = props;
 
   if (!safe?.address) {
     return null;
@@ -80,7 +78,7 @@ export default function StepButtons(props: StepButtonsProps) {
       justifyContent="flex-end"
       width="100%"
     >
-      {currentStep === CreateProposalSteps.METADATA ? metadataStepButtons : transactionsStepButtons}
+      {renderButtons(currentStep)}
     </Flex>
   );
 }

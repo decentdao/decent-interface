@@ -162,6 +162,7 @@ export function ProposalBuilder({
             transactions,
             nonce,
           },
+          errors,
         } = formikProps;
 
         if (!safeAddress) {
@@ -176,11 +177,17 @@ export function ProposalBuilder({
           !!formikProps.errors.nonce ||
           pendingCreateTx;
 
-        const { metadataStepButtons, transactionsStepButtons } = stepButtons({
-          formErrors: !!formikProps.errors.proposalMetadata,
-          createProposalBlocked: createProposalButtonDisabled,
-          onStepChange: setCurrentStep,
-        });
+        const renderButtons = (step: CreateProposalSteps) => {
+          const { metadataStepButtons, transactionsStepButtons } = stepButtons({
+            formErrors: !!errors.proposalMetadata,
+            createProposalBlocked: createProposalButtonDisabled,
+            onStepChange: setCurrentStep,
+          });
+
+          return step === CreateProposalSteps.METADATA
+            ? metadataStepButtons
+            : transactionsStepButtons;
+        };
 
         return (
           <form onSubmit={handleSubmit}>
@@ -225,8 +232,7 @@ export function ProposalBuilder({
                     </Box>
                     {actionsExperience}
                     <StepButtons
-                      metadataStepButtons={metadataStepButtons}
-                      transactionsStepButtons={transactionsStepButtons}
+                      renderButtons={renderButtons}
                       currentStep={currentStep}
                     />
                   </Flex>
