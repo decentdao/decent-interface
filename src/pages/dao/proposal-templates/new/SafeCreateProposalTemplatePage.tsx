@@ -1,7 +1,7 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Route, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ProposalBuilder,
   ShowNonceInputOnMultisig,
@@ -12,7 +12,7 @@ import {
 } from '../../../../components/ProposalBuilder/ProposalDetails';
 import { TEMPLATE_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
-import StepButtons, {
+import {
   CreateProposalButton,
   NextButton,
   PreviousButton,
@@ -78,12 +78,8 @@ export function SafeCreateProposalTemplatePage() {
     loadInitialTemplate();
   }, [defaultProposalTemplatesHash, defaultProposalTemplateIndex, ipfsClient]);
 
-  const location = useLocation();
   const { t } = useTranslation('proposalTemplate');
   const navigate = useNavigate();
-
-  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
-  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
 
   const pageHeaderBreadcrumbs = [
     {
@@ -103,26 +99,26 @@ export function SafeCreateProposalTemplatePage() {
   const stepButtons = ({
     formErrors,
     createProposalBlocked,
+    onStepChange,
   }: {
     formErrors: boolean;
     createProposalBlocked: boolean;
+    onStepChange: (step: CreateProposalSteps) => void;
   }) => {
-    return (
-      <StepButtons
-        metadataStepButtons={
-          <NextButton
-            nextStepUrl={nextStepUrl}
-            isDisabled={formErrors}
-          />
-        }
-        transactionsStepButtons={
-          <>
-            <PreviousButton prevStepUrl={prevStepUrl} />
-            <CreateProposalButton isDisabled={createProposalBlocked} />
-          </>
-        }
-      />
-    );
+    return {
+      metadataStepButtons: (
+        <NextButton
+          isDisabled={formErrors}
+          onStepChange={onStepChange}
+        />
+      ),
+      transactionsStepButtons: (
+        <>
+          <PreviousButton onStepChange={onStepChange} />
+          <CreateProposalButton isDisabled={createProposalBlocked} />
+        </>
+      ),
+    };
   };
 
   return (
@@ -138,25 +134,21 @@ export function SafeCreateProposalTemplatePage() {
       streamsDetails={null}
       initialValues={initialProposalTemplate}
       prepareProposalData={prepareProposalTemplateProposal}
-      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+      mainContent={(formikProps, pendingCreateTx, nonce, currentStep) => {
+        if (currentStep !== CreateProposalSteps.TRANSACTIONS) return null;
         return (
-          <Route
-            path={CreateProposalSteps.TRANSACTIONS}
-            element={
-              <>
-                <ProposalTransactionsForm
-                  pendingTransaction={pendingCreateTx}
-                  safeNonce={safe?.nextNonce}
-                  isProposalMode={true}
-                  {...formikProps}
-                />
-                <ShowNonceInputOnMultisig
-                  nonce={nonce}
-                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                />
-              </>
-            }
-          />
+          <>
+            <ProposalTransactionsForm
+              pendingTransaction={pendingCreateTx}
+              safeNonce={safe?.nextNonce}
+              isProposalMode={true}
+              {...formikProps}
+            />
+            <ShowNonceInputOnMultisig
+              nonce={nonce}
+              nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+            />
+          </>
         );
       }}
     />

@@ -2,7 +2,7 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Center } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Route, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   ProposalBuilder,
   ShowNonceInputOnMultisig,
@@ -10,7 +10,7 @@ import {
 import { TransactionsDetails } from '../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../components/ProposalBuilder/ProposalTransactionsForm';
-import StepButtons, {
+import {
   CreateProposalButton,
   NextButton,
   PreviousButton,
@@ -30,6 +30,7 @@ export function SafeProposalCreatePage() {
   useEffect(() => {
     amplitude.track(analyticsEvents.CreateProposalPageOpened);
   }, []);
+
   const {
     governance: { type },
   } = useFractal();
@@ -39,7 +40,6 @@ export function SafeProposalCreatePage() {
   const { addressPrefix } = useNetworkConfigStore();
 
   const HEADER_HEIGHT = useHeaderHeight();
-  const location = useLocation();
   const { t } = useTranslation('proposal');
   const navigate = useNavigate();
 
@@ -50,9 +50,6 @@ export function SafeProposalCreatePage() {
       </Center>
     );
   }
-
-  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
-  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
 
   const pageHeaderBreadcrumbs = [
     {
@@ -72,26 +69,26 @@ export function SafeProposalCreatePage() {
   const stepButtons = ({
     formErrors,
     createProposalBlocked,
+    onStepChange,
   }: {
     formErrors: boolean;
     createProposalBlocked: boolean;
+    onStepChange: (step: CreateProposalSteps) => void;
   }) => {
-    return (
-      <StepButtons
-        metadataStepButtons={
-          <NextButton
-            nextStepUrl={nextStepUrl}
-            isDisabled={formErrors}
-          />
-        }
-        transactionsStepButtons={
-          <>
-            <PreviousButton prevStepUrl={prevStepUrl} />
-            <CreateProposalButton isDisabled={createProposalBlocked} />
-          </>
-        }
-      />
-    );
+    return {
+      metadataStepButtons: (
+        <NextButton
+          isDisabled={formErrors}
+          onStepChange={onStepChange}
+        />
+      ),
+      transactionsStepButtons: (
+        <>
+          <PreviousButton onStepChange={onStepChange} />
+          <CreateProposalButton isDisabled={createProposalBlocked} />
+        </>
+      ),
+    };
   };
 
   return (
@@ -107,25 +104,21 @@ export function SafeProposalCreatePage() {
       templateDetails={null}
       streamsDetails={null}
       prepareProposalData={prepareProposal}
-      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+      mainContent={(formikProps, pendingCreateTx, nonce, currentStep) => {
+        if (currentStep !== CreateProposalSteps.TRANSACTIONS) return null;
         return (
-          <Route
-            path={CreateProposalSteps.TRANSACTIONS}
-            element={
-              <>
-                <ProposalTransactionsForm
-                  pendingTransaction={pendingCreateTx}
-                  safeNonce={safe?.nextNonce}
-                  isProposalMode={true}
-                  {...formikProps}
-                />
-                <ShowNonceInputOnMultisig
-                  nonce={nonce}
-                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                />
-              </>
-            }
-          />
+          <>
+            <ProposalTransactionsForm
+              pendingTransaction={pendingCreateTx}
+              safeNonce={safe?.nextNonce}
+              isProposalMode={true}
+              {...formikProps}
+            />
+            <ShowNonceInputOnMultisig
+              nonce={nonce}
+              nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+            />
+          </>
         );
       }}
     />

@@ -1,25 +1,43 @@
 import { Button, Flex, Icon } from '@chakra-ui/react';
-import { CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { CaretLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalSteps } from '../../types';
 
 interface StepButtonsProps {
   metadataStepButtons: React.ReactNode;
   transactionsStepButtons: React.ReactNode;
+  currentStep: CreateProposalSteps;
 }
 
-export function PreviousButton({ prevStepUrl }: { prevStepUrl: string }) {
-  const navigate = useNavigate();
-  const { t } = useTranslation(['common', 'proposal']);
+interface StepButtonBaseProps {
+  isDisabled?: boolean;
+  onStepChange: (step: CreateProposalSteps) => void;
+}
+
+export function NextButton({ isDisabled, onStepChange }: StepButtonBaseProps) {
+  const { t } = useTranslation('common');
 
   return (
     <Button
       px="2rem"
+      isDisabled={isDisabled}
+      onClick={() => onStepChange(CreateProposalSteps.TRANSACTIONS)}
+    >
+      {t('next')}
+    </Button>
+  );
+}
+
+export function PreviousButton({ onStepChange }: StepButtonBaseProps) {
+  const { t } = useTranslation('common');
+
+  return (
+    <Button
       variant="text"
+      px="2rem"
       color="lilac-0"
-      onClick={() => navigate(prevStepUrl)}
+      onClick={() => onStepChange(CreateProposalSteps.METADATA)}
     >
       <Icon
         bg="transparent"
@@ -28,28 +46,6 @@ export function PreviousButton({ prevStepUrl }: { prevStepUrl: string }) {
         color="lilac-0"
       />
       {t('back', { ns: 'common' })}
-    </Button>
-  );
-}
-
-export function NextButton({
-  nextStepUrl,
-  isDisabled,
-}: {
-  nextStepUrl: string;
-  isDisabled: boolean;
-}) {
-  const navigate = useNavigate();
-  const { t } = useTranslation(['common', 'proposal']);
-
-  return (
-    <Button
-      onClick={() => navigate(nextStepUrl)}
-      isDisabled={isDisabled}
-      px="2rem"
-    >
-      {t('next', { ns: 'common' })}
-      <CaretRight />
     </Button>
   );
 }
@@ -70,7 +66,7 @@ export function CreateProposalButton({ isDisabled }: { isDisabled: boolean }) {
 
 export default function StepButtons(props: StepButtonsProps) {
   const { safe } = useDaoInfoStore();
-  const { metadataStepButtons, transactionsStepButtons } = props;
+  const { metadataStepButtons, transactionsStepButtons, currentStep } = props;
 
   if (!safe?.address) {
     return null;
@@ -84,16 +80,7 @@ export default function StepButtons(props: StepButtonsProps) {
       justifyContent="flex-end"
       width="100%"
     >
-      <Routes>
-        <Route
-          path={CreateProposalSteps.METADATA}
-          element={metadataStepButtons}
-        />
-        <Route
-          path={CreateProposalSteps.TRANSACTIONS}
-          element={transactionsStepButtons}
-        />
-      </Routes>
+      {currentStep === CreateProposalSteps.METADATA ? metadataStepButtons : transactionsStepButtons}
     </Flex>
   );
 }

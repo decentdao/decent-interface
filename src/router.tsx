@@ -133,17 +133,8 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
                   element: <SafeProposalTemplatesPage />,
                 },
                 {
-                  path: 'new/*',
-                  element: <SafeCreateProposalTemplatePage />,
-                },
-                {
                   path: 'new',
-                  loader: () =>
-                    redirect(
-                      daoAddress
-                        ? DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)
-                        : BASE_ROUTES.landing,
-                    ),
+                  element: <SafeCreateProposalTemplatePage />,
                 },
               ],
             },
@@ -164,45 +155,16 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
                   element: <SafeProposalDetailsPage />,
                 },
                 {
-                  path: 'new/*',
+                  path: 'new',
                   element: <SafeProposalCreatePage />,
                 },
                 {
-                  path: 'actions/new/*',
+                  path: 'actions/new',
                   element: <SafeProposalWithActionsCreatePage />,
                 },
                 {
-                  path: 'actions/new',
-                  loader: () =>
-                    redirect(
-                      daoAddress
-                        ? DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, daoAddress)
-                        : BASE_ROUTES.landing,
-                    ),
-                },
-                {
-                  path: 'new',
-                  loader: () =>
-                    redirect(
-                      daoAddress
-                        ? DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)
-                        : BASE_ROUTES.landing,
-                    ),
-                },
-                {
-                  path: 'new/sablier/*',
-                  element: <SafeSablierProposalCreatePage />,
-                },
-                {
                   path: 'new/sablier',
-                  loader: () =>
-                    redirect(
-                      daoAddress
-                        ? DAO_ROUTES.proposalNew
-                            .relative(addressPrefix, daoAddress)
-                            .replace('new', 'new/sablier')
-                        : BASE_ROUTES.landing,
-                    ),
+                  element: <SafeSablierProposalCreatePage />,
                 },
               ],
             },

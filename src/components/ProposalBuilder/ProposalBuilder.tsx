@@ -1,9 +1,9 @@
 import { Box, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { DAO_ROUTES } from '../../constants/routes';
 import { logError } from '../../helpers/errorLogging';
@@ -25,6 +25,7 @@ import { Crumb } from '../ui/page/Header/Breadcrumbs';
 import PageHeader from '../ui/page/Header/PageHeader';
 import ProposalDetails from './ProposalDetails';
 import ProposalMetadata, { ProposalMetadataTypeProps } from './ProposalMetadata';
+import StepButtons from './StepButtons';
 
 export function ShowNonceInputOnMultisig({
   nonce,
@@ -69,10 +70,15 @@ interface ProposalBuilderProps {
   stepButtons: ({
     formErrors,
     createProposalBlocked,
+    onStepChange,
   }: {
     formErrors: boolean;
     createProposalBlocked: boolean;
-  }) => React.ReactNode;
+    onStepChange: (step: CreateProposalSteps) => void;
+  }) => {
+    metadataStepButtons: React.ReactNode;
+    transactionsStepButtons: React.ReactNode;
+  };
   transactionsDetails:
     | ((transactions: CreateProposalTransaction<BigIntValuePair>[]) => React.ReactNode)
     | null;
@@ -80,10 +86,11 @@ interface ProposalBuilderProps {
   streamsDetails: ((streams: Stream[]) => React.ReactNode) | null;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
-  contentRoute: (
+  mainContent: (
     formikProps: FormikProps<CreateProposalForm>,
     pendingCreateTx: boolean,
     nonce: number | undefined,
+    currentStep: CreateProposalSteps,
   ) => React.ReactNode;
 }
 
@@ -99,16 +106,11 @@ export function ProposalBuilder({
   streamsDetails,
   initialValues,
   prepareProposalData,
-  contentRoute,
+  mainContent,
 }: ProposalBuilderProps) {
   const navigate = useNavigate();
-  const location = useLocation();
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
-
-  const paths = location.pathname.split('/');
-  const step = (paths[paths.length - 1] || paths[paths.length - 2]) as
-    | CreateProposalSteps
-    | undefined;
+  const [currentStep, setCurrentStep] = useState<CreateProposalSteps>(CreateProposalSteps.METADATA);
   const { safe } = useDaoInfoStore();
   const safeAddress = safe?.address;
 
@@ -123,12 +125,6 @@ export function ProposalBuilder({
       navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress));
     }
   };
-
-  useEffect(() => {
-    if (safeAddress && (!step || !Object.values(CreateProposalSteps).includes(step))) {
-      navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, safeAddress), { replace: true });
-    }
-  }, [safeAddress, step, navigate, addressPrefix]);
 
   return (
     <Formik<CreateProposalForm>
@@ -180,6 +176,12 @@ export function ProposalBuilder({
           !!formikProps.errors.nonce ||
           pendingCreateTx;
 
+        const { metadataStepButtons, transactionsStepButtons } = stepButtons({
+          formErrors: !!formikProps.errors.proposalMetadata,
+          createProposalBlocked: createProposalButtonDisabled,
+          onStepChange: setCurrentStep,
+        });
+
         return (
           <form onSubmit={handleSubmit}>
             <Box>
@@ -212,33 +214,21 @@ export function ProposalBuilder({
                       rounded="lg"
                       bg="neutral-2"
                     >
-                      <Routes>
-                        <Route
-                          path={CreateProposalSteps.METADATA}
-                          element={
-                            <ProposalMetadata
-                              typeProps={proposalMetadataTypeProps}
-                              {...formikProps}
-                            />
-                          }
+                      {currentStep === CreateProposalSteps.METADATA && (
+                        <ProposalMetadata
+                          typeProps={proposalMetadataTypeProps}
+                          {...formikProps}
                         />
-                        {contentRoute(formikProps, pendingCreateTx, nonce)}
-                        <Route
-                          path="*"
-                          element={
-                            <Navigate
-                              to={`${CreateProposalSteps.METADATA}${location.search}`}
-                              replace
-                            />
-                          }
-                        />
-                      </Routes>
+                      )}
+                      {currentStep !== CreateProposalSteps.METADATA &&
+                        mainContent(formikProps, pendingCreateTx, nonce, currentStep)}
                     </Box>
                     {actionsExperience}
-                    {stepButtons({
-                      formErrors: !!formikProps.errors.proposalMetadata,
-                      createProposalBlocked: createProposalButtonDisabled,
-                    })}
+                    <StepButtons
+                      metadataStepButtons={metadataStepButtons}
+                      transactionsStepButtons={transactionsStepButtons}
+                      currentStep={currentStep}
+                    />
                   </Flex>
                 </GridItem>
                 <GridItem
