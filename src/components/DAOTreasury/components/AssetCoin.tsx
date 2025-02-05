@@ -1,10 +1,10 @@
 import { Box, Divider, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { TokenBalance } from '../../../types';
 import { formatCoin, formatPercentage, formatUSD } from '../../../utils';
-import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { DecentTooltip } from '../../ui/DecentTooltip';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 
@@ -52,10 +52,10 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
   } = useFractal();
 
   const { safe } = useDaoInfoStore();
+  const { nativeAssetAddress } = useNetworkConfigStore();
 
   const isNativeCoin =
-    asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase() ||
-    asset.nativeToken;
+    asset.tokenAddress.toLowerCase() === nativeAssetAddress.toLowerCase() || asset.nativeToken;
 
   const etherscanLinkValue = isNativeCoin ? (safe?.address ?? null) : asset.tokenAddress;
 

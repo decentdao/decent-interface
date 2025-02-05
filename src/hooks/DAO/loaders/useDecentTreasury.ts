@@ -20,7 +20,6 @@ import {
   TransferWithTokenInfo,
 } from '../../../types';
 import { formatCoin } from '../../../utils';
-import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import useNetworkPublicClient from '../../useNetworkPublicClient';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { setValue } from '../../utils/cache/useLocalStorage';
@@ -43,7 +42,7 @@ export const useDecentTreasury = () => {
   const safeAPI = useSafeAPI();
   const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
-  const { chain, nativeTokenIcon } = useNetworkConfigStore();
+  const { chain, nativeTokenIcon, nativeAssetAddress } = useNetworkConfigStore();
   const safeAddress = safe?.address;
 
   const publicClient = useNetworkPublicClient();
@@ -236,7 +235,7 @@ export const useDecentTreasury = () => {
       .forEach(async (transfer, index, _transfers) => {
         // @note assume native token if no token address
         let tokenInfo: TokenInfoResponse = {
-          address: MOCK_MORALIS_ETH_ADDRESS,
+          address: nativeAssetAddress,
           name: chain.nativeCurrency.name,
           symbol: chain.nativeCurrency.symbol,
           decimals: chain.nativeCurrency.decimals,
@@ -264,18 +263,19 @@ export const useDecentTreasury = () => {
         }
       });
   }, [
+    safeAddress,
+    safeAPI,
+    getTokenBalances,
+    getNFTBalances,
+    getDeFiBalances,
     action,
-    chain.nativeCurrency.decimals,
+    publicClient,
+    nativeAssetAddress,
     chain.nativeCurrency.name,
     chain.nativeCurrency.symbol,
-    safeAddress,
-    formatTransfer,
-    getDeFiBalances,
-    getNFTBalances,
-    getTokenBalances,
+    chain.nativeCurrency.decimals,
     nativeTokenIcon,
-    publicClient,
-    safeAPI,
+    formatTransfer,
   ]);
 
   useEffect(() => {
