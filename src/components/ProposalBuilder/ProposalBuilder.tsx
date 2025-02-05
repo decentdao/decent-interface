@@ -75,10 +75,7 @@ interface ProposalBuilderProps {
     formErrors: boolean;
     createProposalBlocked: boolean;
     onStepChange: (step: CreateProposalSteps) => void;
-  }) => {
-    metadataStepButtons: React.ReactNode;
-    transactionsStepButtons: React.ReactNode;
-  };
+  }) => React.ReactNode;
   transactionsDetails:
     | ((transactions: CreateProposalTransaction<BigIntValuePair>[]) => React.ReactNode)
     | null;
@@ -178,15 +175,13 @@ export function ProposalBuilder({
           pendingCreateTx;
 
         const renderButtons = (step: CreateProposalSteps) => {
-          const { metadataStepButtons, transactionsStepButtons } = stepButtons({
+          const buttons = stepButtons({
             formErrors: !!errors.proposalMetadata,
             createProposalBlocked: createProposalButtonDisabled,
             onStepChange: setCurrentStep,
           });
 
-          return step === CreateProposalSteps.METADATA
-            ? metadataStepButtons
-            : transactionsStepButtons;
+          return step === CreateProposalSteps.METADATA ? buttons : null;
         };
 
         return (
@@ -241,6 +236,7 @@ export function ProposalBuilder({
                       renderButtons={renderButtons}
                       currentStep={currentStep}
                       onStepChange={setCurrentStep}
+                      createProposalBlocked={createProposalButtonDisabled}
                     />
                   </Flex>
                 </GridItem>

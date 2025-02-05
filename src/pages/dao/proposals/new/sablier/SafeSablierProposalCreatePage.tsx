@@ -6,18 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, encodeFunctionData, erc20Abi, getAddress, Hash, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../../../../assets/abi/SablierV2Batch';
-import {
-  ProposalBuilder,
-  ShowNonceInputOnMultisig,
-} from '../../../../../components/ProposalBuilder/ProposalBuilder';
+import { ProposalBuilder } from '../../../../../components/ProposalBuilder/ProposalBuilder';
 import { StreamsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';
-import {
-  CreateProposalButton,
-  NextButton,
-  PreviousButton,
-} from '../../../../../components/ProposalBuilder/StepButtons';
+import { NextButton } from '../../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
@@ -144,28 +137,17 @@ export function SafeSablierProposalCreatePage() {
 
   const stepButtons = ({
     formErrors,
-    createProposalBlocked,
     onStepChange,
   }: {
     formErrors: boolean;
     createProposalBlocked: boolean;
     onStepChange: (step: CreateProposalSteps) => void;
-  }) => {
-    return {
-      metadataStepButtons: (
-        <NextButton
-          isDisabled={formErrors}
-          onStepChange={onStepChange}
-        />
-      ),
-      transactionsStepButtons: (
-        <>
-          <PreviousButton onStepChange={onStepChange} />
-          <CreateProposalButton isDisabled={createProposalBlocked} />
-        </>
-      ),
-    };
-  };
+  }) => (
+    <NextButton
+      isDisabled={formErrors}
+      onStepChange={onStepChange}
+    />
+  );
 
   return (
     <ProposalBuilder

@@ -8,6 +8,7 @@ interface StepButtonsProps {
   renderButtons: (currentStep: CreateProposalSteps) => React.ReactNode;
   currentStep: CreateProposalSteps;
   onStepChange: (step: CreateProposalSteps) => void;
+  createProposalBlocked: boolean;
 }
 
 interface StepButtonBaseProps {
@@ -68,6 +69,7 @@ export default function StepButtons({
   renderButtons,
   currentStep,
   onStepChange,
+  createProposalBlocked,
 }: StepButtonsProps) {
   const { safe } = useDaoInfoStore();
 
@@ -87,6 +89,9 @@ export default function StepButtons({
         <PreviousButton onStepChange={onStepChange} />
       )}
       {renderButtons(currentStep)}
+      {currentStep === CreateProposalSteps.TRANSACTIONS && (
+        <CreateProposalButton isDisabled={createProposalBlocked} />
+      )}
     </Flex>
   );
 }
