@@ -10,10 +10,7 @@ import { useProposalActionsStore } from '../../store/actions/useProposalActionsS
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { ProposalActionType } from '../../types/proposalBuilder';
 import { formatCoin } from '../../utils';
-import {
-  isNativeAsset,
-  prepareSendAssetsActionData,
-} from '../../utils/dao/prepareSendAssetsActionData';
+import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsActionData';
 
 export default function useSendAssetsActionModal() {
   const { safe } = useDaoInfoStore();
@@ -29,37 +26,49 @@ export default function useSendAssetsActionModal() {
       return;
     }
 
-    const isNative = isNativeAsset(sendAssetsData.asset);
-    const transactionData = prepareSendAssetsActionData(sendAssetsData);
+    const { tokenAddress, transferAmount } = prepareSendAssetsActionData(sendAssetsData);
+
+    const isNativeTransfer = tokenAddress === null;
 
     const formattedNativeTokenValue = formatCoin(
-      transactionData.value,
+      transferAmount,
       true,
       sendAssetsData.asset.decimals,
       sendAssetsData.asset.symbol,
       false,
     );
 
+    // Don't transfer native tokens if this is not a native token transfer.
+    // Amount to transfer will be the 2nd parameter of the transfer function.
+    const ethValue = isNativeTransfer
+      ? {
+          bigintValue: transferAmount,
+          value: formattedNativeTokenValue,
+        }
+      : { bigintValue: 0n, value: '0' };
+
+    // If the transfer is a native token transfer, we use the destination address as the target address
+    // Otherwise, the target is the token address, on which transfer function is called
+    const targetAddress = isNativeTransfer ? sendAssetsData.recipientAddress : tokenAddress;
+
     addAction({
       actionType: ProposalActionType.TRANSFER,
       content: <></>,
       transactions: [
         {
-          targetAddress: transactionData.target,
-          ethValue: {
-            bigintValue: transactionData.value,
-            value: formattedNativeTokenValue,
-          },
-          functionName: isNative ? '' : 'transfer',
-          parameters: isNative
+          targetAddress,
+          ethValue,
+          functionName: isNativeTransfer ? '' : 'transfer',
+          parameters: isNativeTransfer
             ? []
             : [
-                { signature: 'address', value: sendAssetsData.destinationAddress },
+                { signature: 'address', value: sendAssetsData.recipientAddress },
                 { signature: 'uint256', value: sendAssetsData.transferAmount.toString() },
               ],
         },
       ],
     });
+
     navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safe.address));
   };
 

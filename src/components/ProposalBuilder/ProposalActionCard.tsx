@@ -21,31 +21,37 @@ function SendAssetsAction({
     treasury: { assetsFungible },
   } = useFractal();
 
-  const isNativeAsset = action.transactions[0].parameters.length === 0;
+  // `action` will have at this point been configured to have an empty function name and no parameters for native asset transfers
+  const isNativeAssetTransfer =
+    action.transactions[0].functionName === '' && action.transactions[0].parameters.length === 0;
 
-  const destinationAddress = isNativeAsset
+  // If the transfer is a native asset transfer, `targetAddress` is the recipient address, and `parameters` is an empty array.
+  // Otherwise, the first parameter to the call to `transfer` is the recipient address.
+  const recipientAddress = isNativeAssetTransfer
     ? action.transactions[0].targetAddress
     : action.transactions[0].parameters[0].value;
 
-  if (!destinationAddress || !isAddress(destinationAddress)) {
+  if (!recipientAddress || !isAddress(recipientAddress)) {
+    console.error('Send assets action is invalid without a valid recipient address', action);
     return null;
   }
 
+  // Amount to transfer is either `ethValue` for native asset transfers, or the second parameter to the `transfer` function call for ERC20 transfers
   let transferAmount: bigint;
-
-  if (isNativeAsset && action.transactions[0].ethValue.bigintValue !== undefined) {
+  if (isNativeAssetTransfer && action.transactions[0].ethValue.bigintValue !== undefined) {
     transferAmount = action.transactions[0].ethValue.bigintValue;
   } else if (action.transactions[0].parameters[1].value !== undefined) {
     transferAmount = BigInt(action.transactions[0].parameters[1].value);
   } else {
+    console.error('Send assets action is invalid without an amount to transfer', action);
     return null;
   }
 
-  const transferringAssetAddress = isNativeAsset
+  const assetToTransferAddress = isNativeAssetTransfer
     ? MOCK_MORALIS_ETH_ADDRESS
     : getAddress(action.transactions[0].targetAddress);
 
-  const asset = assetsFungible.find(a => getAddress(a.tokenAddress) === transferringAssetAddress);
+  const asset = assetsFungible.find(a => getAddress(a.tokenAddress) === assetToTransferAddress);
 
   if (!asset) {
     return null;
@@ -54,7 +60,7 @@ function SendAssetsAction({
   return (
     <SendAssetsActionCard
       action={{
-        destinationAddress,
+        recipientAddress,
         transferAmount,
         asset,
         nonceInput: undefined,

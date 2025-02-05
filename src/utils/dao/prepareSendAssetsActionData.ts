@@ -2,38 +2,55 @@ import { Address, encodeFunctionData, erc20Abi, getAddress, Hex } from 'viem';
 import { TokenBalance } from '../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../address';
 
-export const isNativeAsset = (asset: TokenBalance) => {
+const isNativeAsset = (asset: TokenBalance) => {
   return (
     !asset.tokenAddress ||
     asset.nativeToken ||
-    asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase()
+    asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase() // @todo: verify comparing with MOCK_MORALIS_ETH_ADDRESS works for all chains
   );
 };
 
+interface SendAssetsActionData {
+  tokenAddress: Address | null;
+  transferAmount: bigint;
+  calldata: Hex;
+}
+
+/**
+ * Prepare the data for a send assets action.
+ *
+ * @returns Returns a `SendAssetsActionData` object.
+ *
+ * `.tokenAddress` is `null` if this is a native token transfer.
+ *
+ * `.transferAmount` is the amount of tokens to transfer.
+ *
+ * `.calldata` is the calldata for the transfer function. `0x` if this is a native token transfer.
+ */
 export const prepareSendAssetsActionData = ({
   transferAmount,
   asset,
-  destinationAddress,
+  recipientAddress,
 }: {
   transferAmount: bigint;
   asset: TokenBalance;
-  destinationAddress: Address;
-}) => {
+  recipientAddress: Address;
+}): SendAssetsActionData => {
   const isNative = isNativeAsset(asset);
 
   let calldata: Hex = '0x';
-  let target = isNative ? destinationAddress : getAddress(asset.tokenAddress);
   if (!isNative) {
     calldata = encodeFunctionData({
       abi: erc20Abi,
       functionName: 'transfer',
-      args: [destinationAddress, transferAmount],
+      args: [recipientAddress, transferAmount],
     });
   }
 
+  const tokenAddress = isNative ? null : getAddress(asset.tokenAddress);
   const actionData = {
-    target,
-    value: isNative ? transferAmount : 0n,
+    tokenAddress,
+    transferAmount,
     calldata,
   };
 

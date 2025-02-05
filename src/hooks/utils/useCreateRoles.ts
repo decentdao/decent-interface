@@ -1681,10 +1681,11 @@ export default function useCreateRoles() {
 
         // Add "send assets" actions to the proposal data
         values.actions.forEach(action => {
-          const actionData = prepareSendAssetsActionData(action);
-          proposalData.targets.push(actionData.target);
-          proposalData.values.push(actionData.value);
-          proposalData.calldatas.push(actionData.calldata);
+          const { tokenAddress, transferAmount, calldata } = prepareSendAssetsActionData(action);
+
+          proposalData.targets.push(tokenAddress ?? action.recipientAddress);
+          proposalData.values.push(transferAmount);
+          proposalData.calldatas.push(calldata);
         });
 
         // All done, submit the proposal!

@@ -46,7 +46,7 @@ function ActionsExperience() {
           },
           functionName: 'transfer',
           parameters: [
-            { signature: 'address', value: data.destinationAddress },
+            { signature: 'address', value: data.recipientAddress },
             { signature: 'uint256', value: data.transferAmount.toString() },
           ],
         },

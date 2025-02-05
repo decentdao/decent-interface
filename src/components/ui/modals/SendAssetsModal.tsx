@@ -25,7 +25,7 @@ interface SendAssetsFormValues {
 }
 
 export interface SendAssetsData {
-  destinationAddress: Address;
+  recipientAddress: Address;
   transferAmount: bigint;
   asset: TokenBalance;
   nonceInput: number | undefined; // this is only releveant when the caller action results in a proposal
@@ -86,7 +86,7 @@ export function SendAssetsModal({
     sendAssetsData({
       transferAmount: values.inputAmount?.bigintValue || 0n,
       asset: values.selectedAsset,
-      destinationAddress: getAddress(destAddress),
+      recipientAddress: getAddress(destAddress),
       nonceInput,
     });
 

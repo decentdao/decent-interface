@@ -13,7 +13,7 @@ export function SendAssetsActionCard({
   onRemove: () => void;
 }) {
   const { t } = useTranslation('common');
-  const { displayName } = useGetAccountName(action.destinationAddress);
+  const { displayName } = useGetAccountName(action.recipientAddress);
   return (
     <Card my="0.5rem">
       <Flex justifyContent="space-between">
