@@ -89,6 +89,8 @@ class EnhancedSafeApiKit extends SafeApiKit {
     const nextNonce = await this.getNextNonce(checksummedSafeAddress);
     const safeInfo = {
       ...safeInfoResponse,
+      // @dev response from safe; nonce is string, typed as number
+      nonce: Number(safeInfoResponse.nonce),
       nextNonce,
     };
     return safeInfo;
