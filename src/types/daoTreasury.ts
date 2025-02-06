@@ -14,7 +14,7 @@ export interface TokenEvent {
 }
 
 export type TokenBalance = {
-  tokenAddress: string;
+  tokenAddress: Address;
   symbol: string;
   name: string;
   logo?: string;
@@ -102,7 +102,7 @@ export type NFTMedia =
   | undefined;
 
 export type NFTBalance = {
-  tokenAddress: string;
+  tokenAddress: Address;
   media: NFTMedia;
   metadata?: {
     backgroundImage?: string;
