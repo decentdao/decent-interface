@@ -8,7 +8,7 @@ import ExampleTemplateCard from '../../../components/ProposalTemplates/ExampleTe
 import ProposalTemplateCard from '../../../components/ProposalTemplates/ProposalTemplateCard';
 import NoDataCard from '../../../components/ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import { AirdropData } from '../../../components/ui/modals/AirdropModal';
+import { AirdropData } from '../../../components/ui/modals/AirdropModal/AirdropModal';
 import { ModalType } from '../../../components/ui/modals/ModalProvider';
 import { useDecentModal } from '../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
