@@ -129,6 +129,78 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
     />
   );
 }
+interface PaymentDetailsTopProps {
+  payment: {
+    asset: { logo: string; symbol: string; decimals: number };
+    amount: BigIntValuePair;
+    isCancelled: boolean;
+    isCancelling?: boolean;
+    isStreaming: () => boolean;
+  };
+  onClick?: () => void;
+  isActiveStream: boolean;
+}
+function PaymentDetailsTop({ payment, onClick, isActiveStream }: PaymentDetailsTopProps) {
+  const { t } = useTranslation(['roles']);
+  return (
+    <Box
+      onClick={onClick}
+      cursor={onClick ? 'pointer' : 'default'}
+      {...getPaymentContainerProps('top', isActiveStream)}
+    >
+      <Flex
+        flexDir="column"
+        mx={4}
+      >
+        <Flex justifyContent="space-between">
+          <Flex
+            alignItems="center"
+            gap={2}
+          >
+            <Image
+              h="2rem"
+              src={payment.asset.logo}
+              fallbackSrc="/images/coin-icon-default.svg"
+            />
+            <Text
+              textStyle="heading-large"
+              color="white-0"
+            >
+              {payment.amount?.bigintValue
+                ? formatCoin(
+                    payment.amount.bigintValue,
+                    false,
+                    payment.asset.decimals,
+                    payment.asset.symbol,
+                  )
+                : undefined}
+            </Text>
+          </Flex>
+          <Flex
+            gap={6}
+            alignItems="center"
+          >
+            {(payment.isCancelled || payment.isCancelling) && (
+              <Tag
+                variant="outlined"
+                color="red-1"
+                outline="unset"
+                border="1px solid"
+                py={0}
+                px={2}
+                height={6}
+                borderRadius="lg"
+              >
+                {t('cancelled')}
+              </Tag>
+            )}
+            <GreenStreamingDot isStreaming={payment.isStreaming()} />
+          </Flex>
+        </Flex>
+      </Flex>
+    </Box>
+  );
+}
 
 interface RolePaymentDetailsProps {
   roleHatWearerAddress?: Address;
@@ -251,62 +323,11 @@ export function RolePaymentDetails({
         transitionProperty="all"
         transitionTimingFunction="ease-out"
       >
-        <Box
+        <PaymentDetailsTop
+          payment={payment}
           onClick={onClick}
-          cursor={!!onClick ? 'pointer' : 'default'}
-          {...getPaymentContainerProps('top', isActiveStream)}
-        >
-          <Flex
-            flexDir="column"
-            mx={4}
-          >
-            <Flex justifyContent="space-between">
-              <Flex
-                alignItems="center"
-                gap={2}
-              >
-                <Image
-                  h="2rem"
-                  src={payment.asset.logo}
-                  fallbackSrc="/images/coin-icon-default.svg"
-                />
-                <Text
-                  textStyle="heading-large"
-                  color="white-0"
-                >
-                  {payment.amount?.bigintValue
-                    ? formatCoin(
-                        payment.amount.bigintValue,
-                        false,
-                        payment.asset.decimals,
-                        payment.asset.symbol,
-                      )
-                    : undefined}
-                </Text>
-              </Flex>
-              <Flex
-                gap={6}
-                alignItems="center"
-              >
-                {(payment.isCancelled || payment.isCancelling) && (
-                  <Tag
-                    variant="outlined"
-                    color="red-1"
-                    outline="unset"
-                    border="1px solid"
-                    py={0}
-                    px={2}
-                    height={6}
-                    borderRadius="lg"
-                  >
-                    {t('cancelled')}
-                  </Tag>
-                )}
-                <GreenStreamingDot isStreaming={payment.isStreaming()} />
-              </Flex>
-            </Flex>
-          </Flex>
-        </Box>
+          isActiveStream={isActiveStream}
+        />
 
         <Box {...getPaymentContainerProps('bottom', isActiveStream)}>
           <Grid
