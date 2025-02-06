@@ -11,7 +11,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { BigIntValuePair } from '../../../types';
 import { RoleFormValues } from '../../../types/roles';
 import { formatCoin, formatUSD } from '../../../utils';
@@ -25,14 +24,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
   const {
     treasury: { assetsFungible },
   } = useFractal();
-  const { nativeAssetAddress } = useNetworkConfigStore();
 
-  // @todo: this filters out native asset with non-zero balance, is that what we want?
-  const fungibleAssetsWithBalance = assetsFungible.filter(
-    asset =>
-      parseFloat(asset.balance) > 0 &&
-      asset.tokenAddress.toLowerCase() !== nativeAssetAddress.toLowerCase(),
-  );
+  const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
