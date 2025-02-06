@@ -37,7 +37,7 @@ export function SafeCreatePage() {
       if (daoFound) {
         navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress));
       } else {
-        toast.loading(t('failedIndexSafe'));
+        toast.warning(t('failedIndexSafe'), { duration: Infinity });
         navigate(BASE_ROUTES.landing);
       }
     },
