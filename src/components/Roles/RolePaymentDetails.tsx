@@ -18,6 +18,37 @@ import { isDemoMode } from '../../utils/demoMode';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useDecentModal } from '../ui/modals/useDecentModal';
 
+function getPaymentContainerProps(section: 'top' | 'bottom', isActiveStream: boolean) {
+  const borderTopRadius = section === 'top' ? '0.75rem' : '0';
+  const borderBottomRadius = section === 'bottom' ? '0.75rem' : '0';
+  const borderBottom = section === 'bottom' ? '1px solid' : 'none';
+
+  return isActiveStream
+    ? {
+        bg: 'neutral-2',
+        sx: undefined,
+        boxShadow: DETAILS_BOX_SHADOW,
+        borderTopRadius,
+        borderBottomRadius,
+        py: '1rem',
+      }
+    : {
+        sx: {
+          p: {
+            color: 'neutral-6',
+          },
+        },
+        bg: 'none',
+        boxShadow: 'none',
+        border: '1px solid',
+        borderBottom,
+        borderTopRadius,
+        borderBottomRadius,
+        py: '1rem',
+        borderColor: 'neutral-4',
+      };
+}
+
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
   const { t } = useTranslation(['roles']);
   return (
@@ -207,40 +238,6 @@ export function RolePaymentDetails({
   const isActiveStream =
     !payment.isCancelled && Date.now() < payment.endDate.getTime() && !payment.isCancelling;
 
-  const activeStreamProps = useCallback(
-    (section: 'top' | 'bottom') => {
-      const borderTopRadius = section === 'top' ? '0.75rem' : '0';
-      const borderBottomRadius = section === 'bottom' ? '0.75rem' : '0';
-      const borderBottom = section === 'bottom' ? '1px solid' : 'none';
-
-      return isActiveStream
-        ? {
-            bg: 'neutral-2',
-            sx: undefined,
-            boxShadow: DETAILS_BOX_SHADOW,
-            borderTopRadius,
-            borderBottomRadius,
-            py: '1rem',
-          }
-        : {
-            sx: {
-              p: {
-                color: 'neutral-6',
-              },
-            },
-            bg: 'none',
-            boxShadow: 'none',
-            border: '1px solid',
-            borderBottom,
-            borderTopRadius,
-            borderBottomRadius,
-            py: '1rem',
-            borderColor: 'neutral-4',
-          };
-    },
-    [isActiveStream],
-  );
-
   return (
     <Flex
       my="0.75rem"
@@ -257,7 +254,7 @@ export function RolePaymentDetails({
         <Box
           onClick={onClick}
           cursor={!!onClick ? 'pointer' : 'default'}
-          {...activeStreamProps('top')}
+          {...getPaymentContainerProps('top', isActiveStream)}
         >
           <Flex
             flexDir="column"
@@ -311,7 +308,7 @@ export function RolePaymentDetails({
           </Flex>
         </Box>
 
-        <Box {...activeStreamProps('bottom')}>
+        <Box {...getPaymentContainerProps('bottom', isActiveStream)}>
           <Grid
             mx={4}
             templateAreas='"starting dividerOne cliff dividerTwo ending"'
