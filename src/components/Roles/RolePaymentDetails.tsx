@@ -202,6 +202,90 @@ function PaymentDetailsTop({ payment, onClick, isActiveStream }: PaymentDetailsT
   );
 }
 
+interface PaymentDetailsBottomProps {
+  payment: {
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
+    withdrawableAmount?: bigint;
+  };
+  assignedTerm?: { termNumber: number };
+  canWithdraw: boolean;
+  handleClickWithdraw: () => void;
+}
+function PaymentDetailsBottom({
+  payment,
+  assignedTerm,
+  canWithdraw,
+  handleClickWithdraw,
+}: PaymentDetailsBottomProps) {
+  const { t } = useTranslation(['roles']);
+  return (
+    <Box {...getPaymentContainerProps('bottom', !payment.startDate ? false : true)}>
+      <Grid
+        mx={4}
+        templateAreas='"starting dividerOne cliff dividerTwo ending"'
+        templateColumns="1fr 24px 1fr 24px 1fr"
+      >
+        <GridItem area="starting">
+          {assignedTerm ? (
+            <TermedAssigned termNumber={assignedTerm.termNumber} />
+          ) : (
+            <PaymentDate
+              label="starting"
+              date={payment.startDate}
+            />
+          )}
+        </GridItem>
+        <GridItem area="dividerOne">
+          <Box
+            borderLeft="1px solid"
+            borderColor="white-alpha-08"
+            h="full"
+            boxShadow={DETAILS_BOX_SHADOW}
+            w="0"
+          />
+        </GridItem>
+        <GridItem area="cliff">
+          <PaymentDate
+            label="cliff"
+            date={payment.cliffDate}
+          />
+        </GridItem>
+        <GridItem area="dividerTwo">
+          <Box
+            borderLeft="1px solid"
+            borderColor="white-alpha-08"
+            h="full"
+            boxShadow={DETAILS_BOX_SHADOW}
+            w="0"
+          />
+        </GridItem>
+        <GridItem area="ending">
+          <PaymentDate
+            label="ending"
+            date={payment.endDate}
+          />
+        </GridItem>
+      </Grid>
+      {canWithdraw && (
+        <Box
+          mt={4}
+          px={4}
+        >
+          <Button
+            w="full"
+            isDisabled={!((payment?.withdrawableAmount ?? 0n) > 0n)}
+            leftIcon={<Download />}
+            onClick={handleClickWithdraw}
+          >
+            {t('withdraw')}
+          </Button>
+        </Box>
+      )}
+    </Box>
+  );
+}
 interface RolePaymentDetailsProps {
   roleHatWearerAddress?: Address;
   roleHatSmartAccountAddress?: Address;
@@ -239,7 +323,6 @@ export function RolePaymentDetails({
   roleHatId,
   roleTerms,
 }: RolePaymentDetailsProps) {
-  const { t } = useTranslation(['roles']);
   const { safe } = useDaoInfoStore();
   const { address: connectedAccount } = useAccount();
   const { addressPrefix } = useNetworkConfigStore();
@@ -329,69 +412,12 @@ export function RolePaymentDetails({
           isActiveStream={isActiveStream}
         />
 
-        <Box {...getPaymentContainerProps('bottom', isActiveStream)}>
-          <Grid
-            mx={4}
-            templateAreas='"starting dividerOne cliff dividerTwo ending"'
-            templateColumns="1fr 24px 1fr 24px 1fr"
-          >
-            <GridItem area="starting">
-              {assignedTerm ? (
-                <TermedAssigned termNumber={assignedTerm.termNumber} />
-              ) : (
-                <PaymentDate
-                  label="starting"
-                  date={payment.startDate}
-                />
-              )}
-            </GridItem>
-            <GridItem area="dividerOne">
-              <Box
-                borderLeft="1px solid"
-                borderColor="white-alpha-08"
-                h="full"
-                boxShadow={DETAILS_BOX_SHADOW}
-                w="0"
-              />
-            </GridItem>
-            <GridItem area="cliff">
-              <PaymentDate
-                label="cliff"
-                date={payment.cliffDate}
-              />
-            </GridItem>
-            <GridItem area="dividerTwo">
-              <Box
-                borderLeft="1px solid"
-                borderColor="white-alpha-08"
-                h="full"
-                boxShadow={DETAILS_BOX_SHADOW}
-                w="0"
-              />
-            </GridItem>
-            <GridItem area="ending">
-              <PaymentDate
-                label="ending"
-                date={payment.endDate}
-              />
-            </GridItem>
-          </Grid>
-          {canWithdraw && (
-            <Box
-              mt={4}
-              px={4}
-            >
-              <Button
-                w="full"
-                isDisabled={!((payment?.withdrawableAmount ?? 0n) > 0n)}
-                leftIcon={<Download />}
-                onClick={handleClickWithdraw}
-              >
-                {t('withdraw')}
-              </Button>
-            </Box>
-          )}
-        </Box>
+        <PaymentDetailsBottom
+          payment={payment}
+          assignedTerm={assignedTerm}
+          canWithdraw={canWithdraw}
+          handleClickWithdraw={handleClickWithdraw}
+        />
       </Box>
     </Flex>
   );
