@@ -189,7 +189,7 @@ export const useDecentTreasury = () => {
           tokenInfo = await safeAPI.getToken(address);
         } catch (e) {
           const fallbackTokenData = tokenBalances?.find(
-            tokenBalanceData => getAddress(tokenBalanceData.tokenAddress) === address,
+            tokenBalanceData => tokenBalanceData.tokenAddress === address,
           );
           if (!fallbackTokenData) {
             // Fallback to blockchain call if token info not available

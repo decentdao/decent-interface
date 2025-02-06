@@ -88,7 +88,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
 
                   const txData = encodeAbiParameters(
                     parseAbiParameters('address, uint256, bytes, uint8'),
-                    [getAddress(asset.tokenAddress), 0n, clawBackCalldata, 0],
+                    [asset.tokenAddress, 0n, clawBackCalldata, 0],
                   );
 
                   const fractalModuleCalldata = encodeFunctionData({

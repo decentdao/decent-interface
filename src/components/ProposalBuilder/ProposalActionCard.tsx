@@ -50,7 +50,7 @@ function SendAssetsAction({
   const asset = assetsFungible.find(a =>
     isNativeAssetTransfer
       ? a.nativeToken
-      : getAddress(a.tokenAddress) === getAddress(action.transactions[0].targetAddress),
+      : a.tokenAddress === getAddress(action.transactions[0].targetAddress),
   );
 
   if (!asset) {
@@ -92,7 +92,7 @@ export function AirdropAction({
   // Thus we can find the asset by looking at the target address of the first transaction
 
   const actionAsset = assetsFungible.find(
-    asset => getAddress(asset.tokenAddress) === getAddress(action.transactions[0].targetAddress),
+    asset => asset.tokenAddress === getAddress(action.transactions[0].targetAddress),
   );
 
   if (!actionAsset) {

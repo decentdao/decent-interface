@@ -40,7 +40,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
     value: asset.tokenAddress,
     label: asset.symbol,
     icon: asset.logo ?? asset.thumbnail ?? '/images/coin-icon-default.svg',
-    selected: selectedAsset?.address === getAddress(asset.tokenAddress),
+    selected: selectedAsset?.address === asset.tokenAddress,
     assetData: {
       name: asset.name,
       balance: asset.balance,
@@ -71,15 +71,12 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
               selectedItem={dropdownItems.find(item => item.selected)}
               onSelect={item => {
                 const chosenAsset = fungibleAssetsWithBalance.find(
-                  asset => getAddress(asset.tokenAddress) === getAddress(item.value),
+                  asset => asset.tokenAddress === getAddress(item.value),
                 );
                 if (chosenAsset) {
                   setFieldValue(`roleEditing.payments.${formIndex}.asset`, {
-                    name: chosenAsset.name,
-                    address: getAddress(chosenAsset.tokenAddress),
-                    symbol: chosenAsset.symbol,
+                    ...chosenAsset,
                     logo: chosenAsset.logo ?? '',
-                    decimals: chosenAsset.decimals,
                   });
                 } else {
                   setFieldValue(`roleEditing.payments.${formIndex}.asset`, undefined);

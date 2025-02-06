@@ -1,4 +1,4 @@
-import { Address, encodeFunctionData, erc20Abi, getAddress, Hex } from 'viem';
+import { Address, encodeFunctionData, erc20Abi, Hex } from 'viem';
 import { TokenBalance } from '../../types';
 
 export interface SendAssetsData {
@@ -39,7 +39,7 @@ export const prepareSendAssetsActionData = ({
     });
   }
 
-  const tokenAddress = asset.nativeToken ? null : getAddress(asset.tokenAddress);
+  const tokenAddress = asset.nativeToken ? null : asset.tokenAddress;
   const actionData = {
     tokenAddress,
     transferAmount,
