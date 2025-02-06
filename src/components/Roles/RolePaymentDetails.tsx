@@ -158,7 +158,7 @@ function PaymentDetailsTop({ payment, onClick, isActiveStream }: PaymentDetailsT
             gap={2}
           >
             <Image
-              h="2rem"
+              h="1.5rem"
               src={payment.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
             />
