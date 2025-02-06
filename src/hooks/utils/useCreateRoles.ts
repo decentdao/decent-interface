@@ -1683,8 +1683,18 @@ export default function useCreateRoles() {
         values.actions.forEach(action => {
           const { tokenAddress, transferAmount, calldata } = prepareSendAssetsActionData(action);
 
-          proposalData.targets.push(tokenAddress ?? action.recipientAddress);
-          proposalData.values.push(transferAmount);
+          const isNativeTokenTransfer = tokenAddress === null;
+
+          // For native token transfers:
+          //  - `target` is the recipient address
+          //  - `value` is the amount of native tokens to transfer
+          //  - `calldata` is '0x'
+          // For non-native token transfers:
+          //  - `target` is the token address
+          //  - `value` is 0n
+          //  - `calldata` is the encoded function call data for transferring `transferAmount` to `action.recipientAddress`
+          proposalData.targets.push(isNativeTokenTransfer ? action.recipientAddress : tokenAddress);
+          proposalData.values.push(isNativeTokenTransfer ? transferAmount : 0n);
           proposalData.calldatas.push(calldata);
         });
 

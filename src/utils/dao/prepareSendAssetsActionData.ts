@@ -21,7 +21,7 @@ interface SendAssetsActionData {
  *
  * `.tokenAddress` is `null` if this is a native token transfer.
  *
- * `.transferAmount` is the amount of tokens to transfer.
+ * `.transferAmount` is the amount of tokens being transferred.
  *
  * `.calldata` is the calldata for the transfer function. `0x` if this is a native token transfer.
  */

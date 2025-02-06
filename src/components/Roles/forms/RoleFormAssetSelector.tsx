@@ -70,6 +70,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   setFieldValue(`roleEditing.payments.${formIndex}.asset`, {
                     ...chosenAsset,
                     logo: chosenAsset.logo ?? '',
+                    address: chosenAsset.tokenAddress,
                   });
                 } else {
                   setFieldValue(`roleEditing.payments.${formIndex}.asset`, undefined);
