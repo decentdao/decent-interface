@@ -13,7 +13,6 @@ import {
 import { logError } from '../../helpers/errorLogging';
 import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { FractalModuleType, DecentModule } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -32,7 +31,6 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { submitProposal } = useSubmitProposal();
   const { getCanUserCreateProposal } = useCanUserCreateProposal();
   const { getTokenBalances } = useBalancesAPI();
-  const { nativeAssetAddress } = useNetworkConfigStore();
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo.daoAddress && parentAddress && safeAPI) {
@@ -61,8 +59,8 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
             const transactions = childSafeTokenBalance.data
               .filter(tokenBalance => !tokenBalance.possibleSpam)
               .map(asset => {
-                if (!asset.tokenAddress || asset.tokenAddress === nativeAssetAddress) {
-                  // Seems like we're operating with native coin i.e ETH
+                if (!asset.nativeToken) {
+                  // We're operating with native coin e.g. ETH
                   const fractalModuleCalldata = encodeFunctionData({
                     abi: abis.FractalModule,
                     functionName: 'execTx',
@@ -157,7 +155,6 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
     getCanUserCreateProposal,
     t,
     submitProposal,
-    nativeAssetAddress,
   ]);
 
   return { handleClawBack };
