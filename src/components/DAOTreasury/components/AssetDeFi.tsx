@@ -52,9 +52,11 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
 
   const { safe } = useDaoInfoStore();
 
-  // @todo gotta delve into the What and Why of this. In its current compare-with-'' form, it's always going to be `false`.
-  // @todo also need to properly confirm Defi response structure from the API. Not confident in accuracy.
-  const isNativePosition = asset.position?.address?.toLowerCase() === '';
+  // @todo do we need this feature?
+  // Really only used for etherscan link below. Will not work for non-ETH chains
+  const isNativePosition =
+    asset.position?.address?.toLowerCase() ===
+    '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'.toLowerCase();
 
   const tooltipLabel = asset.position?.tokens
     .map(token =>
