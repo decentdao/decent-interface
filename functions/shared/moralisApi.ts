@@ -13,6 +13,7 @@ interface MoralisRequestConfig {
   chain: string;
   apiKey: string;
   params?: Record<string, string>;
+  isPaginated?: boolean;
 }
 
 export async function fetchMoralis<T>({
@@ -20,6 +21,7 @@ export async function fetchMoralis<T>({
   chain,
   apiKey,
   params = {},
+  isPaginated = true,
 }: MoralisRequestConfig): Promise<T[]> {
   let allResults: T[] = [];
   let cursor: string | null = null;
@@ -32,13 +34,13 @@ export async function fetchMoralis<T>({
     // Add chain parameter
     url.searchParams.append('chain', chainHex);
 
-    // Add cursor if available
-    if (cursor) {
-      url.searchParams.append('cursor', cursor);
+    // Add cursor and limit only for paginated endpoints
+    if (isPaginated) {
+      if (cursor) {
+        url.searchParams.append('cursor', cursor);
+      }
+      url.searchParams.append('limit', limit.toString());
     }
-
-    // Add limit
-    url.searchParams.append('limit', limit.toString());
 
     // Add any additional parameters
     Object.entries(params).forEach(([key, value]) => {
@@ -57,16 +59,24 @@ export async function fetchMoralis<T>({
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data: MoralisResponse<T> = await response.json();
+    const data = await response.json();
 
-    // Handle no results
-    if (!data || !data.result) {
-      break;
+    // Handle paginated vs non-paginated responses
+    if (isPaginated) {
+      const paginatedData = data as MoralisResponse<T>;
+      if (!paginatedData || !paginatedData.result) break;
+      allResults = allResults.concat(paginatedData.result);
+      cursor = paginatedData.cursor;
+    } else {
+      // For non-paginated endpoints, data is the direct array
+      return Array.isArray(data) ? data : [];
     }
-
-    allResults = allResults.concat(data.result);
-    cursor = data.cursor;
-  } while (cursor !== null);
+  } while (cursor !== null && isPaginated);
 
   return allResults;
+}
+
+// Thin wrapper for DeFi-specific endpoints which don't use pagination
+export async function fetchMoralisDefi<T>(config: MoralisRequestConfig): Promise<T[]> {
+  return fetchMoralis<T>({ ...config, isPaginated: false });
 }
