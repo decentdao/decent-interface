@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Grid, GridItem, Icon, Image, Show, Tag, Text } from '@chakra-ui/react';
-import { CalendarBlank, Download, Link, Trash } from '@phosphor-icons/react';
+import { Box, Button, Flex, Grid, GridItem, Icon, Image, Tag, Text } from '@chakra-ui/react';
+import { CalendarBlank, Download, Link } from '@phosphor-icons/react';
 import { format } from 'date-fns';
-import { TouchEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress, Hex } from 'viem';
@@ -125,9 +125,7 @@ interface RolePaymentDetailsProps {
     withdrawableAmount?: bigint;
   };
   onClick?: () => void;
-  onCancel?: () => void;
   showWithdraw?: boolean;
-  showCancel?: boolean;
 }
 export function RolePaymentDetails({
   payment,
@@ -136,8 +134,6 @@ export function RolePaymentDetails({
   roleHatWearerAddress,
   roleHatSmartAccountAddress,
   roleHatId,
-  showCancel,
-  onCancel,
   roleTerms,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
@@ -245,61 +241,14 @@ export function RolePaymentDetails({
     [isActiveStream],
   );
 
-  const [showInlineDelete, setShowInlineDelete] = useState(false);
-  const [touchStart, setTouchStart] = useState<number>();
-  const [touchEnd, setTouchEnd] = useState<number>();
-
-  // the required distance between touchStart and touchEnd to be detected as a swipe
-  const minSwipeDistance = 30;
-
-  const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
-    setTouchEnd(undefined); // otherwise the swipe is fired even with usual touch events
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e: TouchEvent<HTMLDivElement>) => setTouchEnd(e.targetTouches[0].clientX);
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-    if (isRightSwipe && showInlineDelete) {
-      setShowInlineDelete(false);
-    } else if (isLeftSwipe && !showInlineDelete) {
-      setShowInlineDelete(true);
-    }
-  };
-
-  const handleConfirmCancelPayment = useCallback(() => {
-    if (onCancel) {
-      onCancel();
-    }
-  }, [onCancel]);
-
-  const confirmCancelPayment = useDecentModal(ModalType.CONFIRM_CANCEL_PAYMENT, {
-    onSubmit: handleConfirmCancelPayment,
-  });
-
-  useEffect(() => {
-    if (payment.isCancelling && showInlineDelete) {
-      setTouchEnd(undefined);
-      setTouchStart(undefined);
-      setShowInlineDelete(false);
-    }
-  }, [payment.isCancelling, showInlineDelete]);
-
   return (
     <Flex
       my="0.75rem"
       w="full"
-      onTouchStart={showCancel ? onTouchStart : undefined}
-      onTouchMove={showCancel ? onTouchMove : undefined}
-      onTouchEnd={showCancel ? onTouchEnd : undefined}
       position="relative"
     >
       <Box
-        w={showInlineDelete ? 'calc(100% - 56px)' : 'full'}
+        w="full"
         zIndex={2}
         transitionDuration="300ms"
         transitionProperty="all"
@@ -426,32 +375,6 @@ export function RolePaymentDetails({
           )}
         </Box>
       </Box>
-      <Show below="md">
-        <Button
-          backgroundColor="red-0"
-          height="100%"
-          zIndex={1}
-          position="absolute"
-          top={0}
-          right={showInlineDelete ? '0.5rem' : 0}
-          transitionDuration="300ms"
-          transitionProperty="all"
-          transitionTimingFunction="ease-out"
-          width={showInlineDelete ? '56px' : '0px'}
-          borderTopRightRadius="0.5rem"
-          borderBottomRightRadius="0.5rem"
-          boxShadow={DETAILS_BOX_SHADOW}
-          overflow="hidden"
-          alignItems="center"
-          justifyContent="center"
-          py="1rem"
-          opacity={showInlineDelete ? '1' : '0'}
-          variant="unstyled"
-          onClick={confirmCancelPayment}
-        >
-          <Trash size="24" />
-        </Button>
-      </Show>
     </Flex>
   );
 }
