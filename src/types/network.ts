@@ -80,5 +80,4 @@ export type NetworkConfig = {
   };
   createOptions: GovernanceType[];
   gaslessVotingSupported: boolean;
-  nativeAssetAddress: Address;
 };

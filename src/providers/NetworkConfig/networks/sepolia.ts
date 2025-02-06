@@ -111,7 +111,6 @@ export const sepoliaConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC721,
   ],
   gaslessVotingSupported: true,
-  nativeAssetAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
 };
 
 export default sepoliaConfig;

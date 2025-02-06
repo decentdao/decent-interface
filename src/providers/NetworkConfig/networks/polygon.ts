@@ -111,7 +111,6 @@ export const polygonConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC721,
   ],
   gaslessVotingSupported: false,
-  nativeAssetAddress: '0x0000000000000000000000000000000000001010',
 };
 
 export default polygonConfig;

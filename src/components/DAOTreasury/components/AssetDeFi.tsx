@@ -1,7 +1,6 @@
 import { Box, Divider, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { DefiBalance } from '../../../types';
 import { formatCoin, formatPercentage, formatUSD } from '../../../utils';
@@ -52,10 +51,10 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
   } = useFractal();
 
   const { safe } = useDaoInfoStore();
-  const { nativeAssetAddress } = useNetworkConfigStore();
 
-  const isNativePosition =
-    asset.position?.address?.toLowerCase() === nativeAssetAddress.toLowerCase();
+  // @todo gotta delve into the What and Why of this. In its current compare-with-'' form, it's always going to be `false`.
+  // @todo also need to properly confirm Defi response structure from the API. Not confident in accuracy.
+  const isNativePosition = asset.position?.address?.toLowerCase() === '';
 
   const tooltipLabel = asset.position?.tokens
     .map(token =>

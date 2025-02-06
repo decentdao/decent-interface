@@ -62,10 +62,11 @@ interface DefiPositionDetails {
   healthFactor?: number;
 }
 
-export type DefiPositionTokenBalance = {
+type DefiPositionTokenBalance = {
   contractAddress?: string;
   tokenType: 'supplied' | 'defi-token';
 } & TokenBalance;
+
 export type DefiPosition = {
   label: string;
   tokens: DefiPositionTokenBalance[];

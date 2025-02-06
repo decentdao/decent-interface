@@ -42,7 +42,7 @@ export const useDecentTreasury = () => {
   const safeAPI = useSafeAPI();
   const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
-  const { chain, nativeTokenIcon, nativeAssetAddress } = useNetworkConfigStore();
+  const { chain, nativeTokenIcon } = useNetworkConfigStore();
   const safeAddress = safe?.address;
 
   const publicClient = useNetworkPublicClient();
@@ -235,7 +235,7 @@ export const useDecentTreasury = () => {
       .forEach(async (transfer, index, _transfers) => {
         // @note assume native token if no token address
         let tokenInfo: TokenInfoResponse = {
-          address: nativeAssetAddress,
+          address: '',
           name: chain.nativeCurrency.name,
           symbol: chain.nativeCurrency.symbol,
           decimals: chain.nativeCurrency.decimals,
@@ -270,7 +270,6 @@ export const useDecentTreasury = () => {
     getDeFiBalances,
     action,
     publicClient,
-    nativeAssetAddress,
     chain.nativeCurrency.name,
     chain.nativeCurrency.symbol,
     chain.nativeCurrency.decimals,
