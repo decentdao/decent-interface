@@ -249,10 +249,7 @@ function ProposalVotingSection({
 
       {address && (
         <VoteContextProvider proposal={proposal}>
-          <AzoriusOrSnapshotProposalAction
-            proposal={proposal}
-            expandedView
-          />
+          <AzoriusOrSnapshotProposalAction proposal={proposal} />
         </VoteContextProvider>
       )}
     </ContentBox>
