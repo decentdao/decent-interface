@@ -75,8 +75,3 @@ export async function fetchMoralis<T>({
 
   return allResults;
 }
-
-// Thin wrapper for DeFi-specific endpoints which don't use pagination
-export async function fetchMoralisDefi<T>(config: MoralisRequestConfig): Promise<T[]> {
-  return fetchMoralis<T>({ ...config, isPaginated: false });
-}

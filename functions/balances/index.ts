@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { TokenBalance } from '../../src/types/daoTreasury';
-import { fetchMoralis, fetchMoralisDefi } from '../shared/moralisApi';
+import { fetchMoralis } from '../shared/moralisApi';
 import { DefiResponse, NFTResponse, TokenResponse } from '../shared/moralisTypes';
 import type { Env } from '../types';
 import { withBalanceCache } from './balanceCache';
@@ -48,7 +48,8 @@ const endpoints = {
     moralisPath: (address: string) => `/wallets/${address}/defi/positions`,
     transform: transformDefiResponse,
     fetch: async ({ chain, address }: { chain: string; address: string }, c: { env: Env }) => {
-      const result = await fetchMoralisDefi<DefiResponse>({
+      const result = await fetchMoralis<DefiResponse>({
+        isPaginated: false,
         endpoint: endpoints.defi.moralisPath(address),
         chain,
         apiKey: c.env.MORALIS_API_KEY,
