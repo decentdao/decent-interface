@@ -195,7 +195,9 @@ export function RoleCard({
           name={name}
           paymentsCount={paymentsCount}
         />
-        <EditBadge editStatus={!isCurrentTermActive ? EditBadgeStatus.Inactive : undefined} />
+        <EditBadge
+          editStatus={isCurrentTermActive === false ? EditBadgeStatus.Inactive : undefined}
+        />
       </Flex>
     </Card>
   );
