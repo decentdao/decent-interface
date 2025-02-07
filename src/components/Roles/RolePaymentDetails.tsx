@@ -153,10 +153,7 @@ function PaymentDetailsTop({ payment, onClick, isActiveStream }: PaymentDetailsT
         mx={4}
       >
         <Flex justifyContent="space-between">
-          <Flex
-            alignItems="center"
-            gap={2}
-          >
+          <Flex gap={2}>
             <Image
               h="1.5rem"
               src={payment.asset.logo}
@@ -176,10 +173,7 @@ function PaymentDetailsTop({ payment, onClick, isActiveStream }: PaymentDetailsT
                 : undefined}
             </Text>
           </Flex>
-          <Flex
-            gap={6}
-            alignItems="center"
-          >
+          <Flex gap={6}>
             {(payment.isCancelled || payment.isCancelling) && (
               <Tag
                 variant="outlined"
