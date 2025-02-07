@@ -4,7 +4,6 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import { useNetworkEnsAvatar } from '../../hooks/useNetworkEnsAvatar';
-import { useCopyText } from '../../hooks/utils/useCopyText';
 import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import {
   EditBadgeStatus,
@@ -30,7 +29,6 @@ export function AvatarAndRoleName({
 
   const { data: avatarURL } = useNetworkEnsAvatar({ name: wearerAddress || zeroAddress });
   const { t } = useTranslation(['roles']);
-  const copyToClipboard = useCopyText();
 
   return (
     <Flex alignItems="top">
@@ -50,7 +48,7 @@ export function AvatarAndRoleName({
       <Flex
         direction="column"
         ml="1.5rem"
-        mt="-0.125rem"
+        gap="0.25rem"
       >
         <Text
           textStyle="heading-small"
@@ -60,26 +58,19 @@ export function AvatarAndRoleName({
         </Text>
         <Text
           textStyle="labels-large"
-          p="0.25rem 0.5rem"
-          ml="-0.75rem"
-          rounded="1rem"
-          bg="neutral-3"
           color="lilac-0"
           _hover={{
             color: 'white-0',
             bg: 'neutral-4',
           }}
-          cursor="pointer"
           maxW="fit-content"
-          onClick={() => copyToClipboard(wearerAddress)}
         >
           {displayName ?? t('unassigned')}
         </Text>
         {paymentsCount !== undefined && (
           <Flex
-            mt="1rem"
             gap="0.25rem"
-            ml="-0.25rem"
+            mt="0.5rem"
           >
             <Text
               textStyle="labels-large"
