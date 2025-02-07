@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -55,9 +55,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     () => 10n ** BigInt(votesToken?.decimals || 0),
     [votesToken?.decimals],
   );
-  const [showVotingPower, setShowVotingPower] = useState(false);
-
-  const toggleShowVotingPower = () => setShowVotingPower(prevState => !prevState);
 
   const publicClient = useNetworkPublicClient();
 
@@ -162,22 +159,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
         100
       : undefined;
 
-  const ShowVotingPowerButton = (
-    <Button
-      px={0}
-      py={0}
-      height="auto"
-      justifyContent="flex-end"
-      alignItems="flex-start"
-      variant="text"
-      color="celery-0"
-      _active={{ color: 'celery--2' }}
-      onClick={toggleShowVotingPower}
-    >
-      {showVotingPower ? proposalVotingWeight : t('show')}
-    </Button>
-  );
-
   return (
     <ContentBox
       containerBoxProps={{
@@ -247,17 +228,18 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
           >
             {t('votingPower')}
           </Text>
-          {showVotingPower ? (
-            <DecentTooltip
-              label={t('votingPowerTooltip')}
-              placement="left"
-              maxW={TOOLTIP_MAXW}
+          <DecentTooltip
+            label={t('votingPowerTooltip')}
+            placement="left"
+            maxW={TOOLTIP_MAXW}
+          >
+            <Text
+              cursor="pointer"
+              color="celery-0"
             >
-              {ShowVotingPowerButton}
-            </DecentTooltip>
-          ) : (
-            ShowVotingPowerButton
-          )}
+              {proposalVotingWeight}
+            </Text>
+          </DecentTooltip>
         </Flex>
         {transactionHash && (
           <Flex
