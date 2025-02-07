@@ -382,11 +382,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
         proposalVotingWeight={proposalVotingWeight}
       />
 
-      <QuorumProgressBarSection
-        proposal={proposal}
-        azoriusGovernance={azoriusGovernance}
-      />
-
       {notEnoughVotingPowerAtTheTimeOfProposalCreation && (
         <AlertBanner
           message={t('proposalSummaryNotEnoughVotingPower')}
@@ -395,6 +390,11 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
           layout="vertical"
         />
       )}
+
+      <QuorumProgressBarSection
+        proposal={proposal}
+        azoriusGovernance={azoriusGovernance}
+      />
     </Flex>
   );
 }
