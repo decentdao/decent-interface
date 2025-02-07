@@ -1,5 +1,6 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
+import { Question } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -24,24 +25,115 @@ import { QuorumProgressBar } from '../ui/utils/ProgressBar';
 import { AzoriusOrSnapshotProposalAction } from './ProposalActions/AzoriusOrSnapshotProposalAction';
 import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
-export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
+function ProposalDetailsSection({
+  proposal,
+  startBlockTimeStamp,
+}: {
+  proposal: AzoriusProposal;
+  startBlockTimeStamp: number;
+}) {
+  const { t } = useTranslation(['proposal', 'common', 'navigation']);
+  const { eventDate, startBlock, deadlineMs, proposer, transactionHash } = proposal;
+
+  return (
+    <ContentBox
+      containerBoxProps={{
+        border: '1px solid',
+        borderColor: 'neutral-3',
+        borderRadius: '0.75rem',
+        my: 0,
+      }}
+      title={t('proposalSummaryTitle')}
+    >
+      <Divider
+        variant="darker"
+        width="calc(100% + 4rem)"
+        mx="-2rem"
+        mt={2}
+      />
+      <Box mx={-2}>
+        <InfoRow
+          property={t('votingSystem')}
+          value={t('singleSnapshotVotingSystem')}
+        />
+        <InfoRow
+          property={t('proposalSummaryStartDate')}
+          value={format(startBlockTimeStamp * 1000, DEFAULT_DATE_TIME_FORMAT)}
+          tooltip={formatInTimeZone(startBlockTimeStamp * 1000, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
+        />
+        <InfoRow
+          property={t('proposalSummaryEndDate')}
+          value={format(deadlineMs, DEFAULT_DATE_TIME_FORMAT)}
+          tooltip={formatInTimeZone(deadlineMs, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
+        />
+        <Flex
+          marginTop={4}
+          flexWrap="wrap"
+          alignItems="center"
+        >
+          <Text
+            color="neutral-7"
+            w="full"
+          >
+            {t('snapshotTaken')}
+          </Text>
+          <EtherscanLink
+            type="block"
+            value={startBlock.toString()}
+            pl={0}
+            isTextLink
+          >
+            <Flex
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {format(eventDate, DEFAULT_DATE_TIME_FORMAT)}
+            </Flex>
+          </EtherscanLink>
+        </Flex>
+        <ProposalCreatedBy proposer={proposer} />
+        {transactionHash && (
+          <Flex
+            marginTop={4}
+            alignItems="center"
+            flexWrap="wrap"
+          >
+            <Text
+              color="neutral-7"
+              w="full"
+            >
+              {t('transactionHash')}
+            </Text>
+            <DisplayTransaction txHash={transactionHash} />
+          </Flex>
+        )}
+      </Box>
+    </ContentBox>
+  );
+}
+
+function ProposalVotingSection({
+  proposal,
+  azoriusGovernance,
+}: {
+  proposal: AzoriusProposal;
+  azoriusGovernance: AzoriusGovernance;
+}) {
+  const { t } = useTranslation(['proposal']);
+  const { address } = useAccount();
+  const publicClient = useNetworkPublicClient();
+  const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
   const {
-    eventDate,
-    startBlock,
     votesSummary: { yes, no, abstain },
-    deadlineMs,
-    proposer,
+    startBlock,
     transactionHash,
   } = proposal;
-  const { governance } = useFractal();
-  const { address } = useAccount();
 
-  const azoriusGovernance = governance as AzoriusGovernance;
-  const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
-  const { t } = useTranslation(['proposal', 'common', 'navigation']);
-  const startBlockTimeStamp = useBlockTimestamp(Number(startBlock));
   const [proposalVotingWeight, setProposalVotingWeight] = useState('0');
   const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
+
+  const isERC20 = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721 = type === GovernanceType.AZORIUS_ERC721;
 
   const totalERC721VotingWeight = useMemo(
     () =>
@@ -51,12 +143,11 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
       ),
     [erc721Tokens],
   );
+
   const votesTokenDecimalsDenominator = useMemo(
     () => 10n ** BigInt(votesToken?.decimals || 0),
     [votesToken?.decimals],
   );
-
-  const publicClient = useNetworkPublicClient();
 
   const getErc721VotingWeight = useCallback(async () => {
     if (!address || !azoriusGovernance.erc721Tokens) {
@@ -70,7 +161,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
             address: tokenAddress,
             client: publicClient,
           });
-          // @todo We should be checking proposal state - if it's active, we should use the latest block, otherwise we should calculate the voting weight based on the startBlock and deadlineMs
           const userBalance = await tokenContract.read.balanceOf([address], {
             blockNumber: startBlock,
           });
@@ -80,9 +170,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     ).reduce((prev, curr) => prev + curr, 0n);
     return userVotingWeight;
   }, [azoriusGovernance.erc721Tokens, publicClient, address, startBlock]);
-
-  const isERC20 = type === GovernanceType.AZORIUS_ERC20;
-  const isERC721 = type === GovernanceType.AZORIUS_ERC721;
 
   useEffect(() => {
     async function loadProposalVotingWeight() {
@@ -122,12 +209,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     startBlock,
   ]);
 
-  // @todo @dev (see below):
-  // Caching has introduced a new "problem" edge case -- a proposal can be loaded before `votingStrategy` is loaded.
-  // I previously fixed this issue in `QuoromBadge` (see lines 36 and 45), but over here it's slightly more nuanced and
-  // will require a bit more thought. A quick patch instead is to add the `votingStrategy?` check in the `if` statement below,
-  // BUT this (and the implications of the previous fix) contradicts the non-null (but suddenly no longer true) typing of `votingStrategy`.
-  // We need to figure out a more type-safe way to handle all of this.
   if (
     (isERC20 && (!votesToken || !votesToken.totalSupply || !votingStrategy?.quorumPercentage)) ||
     (isERC721 && (!erc721Tokens || !votingStrategy?.quorumThreshold))
@@ -162,130 +243,76 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   return (
     <ContentBox
       containerBoxProps={{
-        bg: 'neutral-2',
         border: '1px solid',
         borderColor: 'neutral-3',
-        borderRadius: '0.5rem',
-        my: 0,
+        borderRadius: '0.75rem',
+        py: 0,
       }}
     >
-      <Text textStyle="heading-small">{t('proposalSummaryTitle')}</Text>
-      <Box marginTop={4}>
-        <Divider
-          variant="darker"
-          width="calc(100% + 4rem)"
-          mx="-2rem"
-        />
-        <InfoRow
-          property={t('votingSystem')}
-          value={t('singleSnapshotVotingSystem')}
-        />
-        <InfoRow
-          property={t('proposalSummaryStartDate')}
-          value={format(startBlockTimeStamp * 1000, DEFAULT_DATE_TIME_FORMAT)}
-          tooltip={formatInTimeZone(startBlockTimeStamp * 1000, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
-        />
-        <InfoRow
-          property={t('proposalSummaryEndDate')}
-          value={format(deadlineMs, DEFAULT_DATE_TIME_FORMAT)}
-          tooltip={formatInTimeZone(deadlineMs, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
-        />
-        <ProposalCreatedBy proposer={proposer} />
-        <Flex
-          marginTop={4}
-          flexWrap="wrap"
-          alignItems="center"
-        >
-          <Text
-            color="neutral-7"
-            w="full"
-          >
-            {t('snapshotTaken')}
-          </Text>
-          <EtherscanLink
-            type="block"
-            value={startBlock.toString()}
-            pl={0}
-            isTextLink
-          >
-            <Flex
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              {format(eventDate, DEFAULT_DATE_TIME_FORMAT)}
-            </Flex>
-          </EtherscanLink>
-        </Flex>
-        <Flex
-          marginTop={4}
-          marginBottom={transactionHash ? 0 : 4}
-          flexWrap="wrap"
-          alignItems="center"
-        >
-          <Text
-            color="neutral-7"
-            w="full"
-          >
-            {t('votingPower')}
-          </Text>
-          <DecentTooltip
-            label={t('votingPowerTooltip')}
-            placement="left"
-            maxW={TOOLTIP_MAXW}
-          >
-            <Text
-              cursor="pointer"
-              color="celery-0"
-            >
-              {proposalVotingWeight}
-            </Text>
-          </DecentTooltip>
-        </Flex>
-        {transactionHash && (
+      {/* Voting Power */}
+      <Flex
+        marginBottom={transactionHash ? 0 : 4}
+        flexWrap="wrap"
+        alignItems="center"
+        mx={-2}
+      >
+        <Box>
           <Flex
-            marginTop={4}
-            marginBottom={4}
             alignItems="center"
-            flexWrap="wrap"
+            gap={1}
           >
             <Text
               color="neutral-7"
               w="full"
             >
-              {t('transactionHash')}
+              {t('votingPower')}
             </Text>
-            <DisplayTransaction txHash={transactionHash} />
+            <DecentTooltip
+              label={t('votingPowerTooltip')}
+              placement="left"
+              maxW={TOOLTIP_MAXW}
+            >
+              <Icon
+                as={Question}
+                color="neutral-7"
+              />
+            </DecentTooltip>
           </Flex>
+          <Text
+            color="celery-0"
+            mt={1}
+          >
+            {proposalVotingWeight}
+          </Text>
+        </Box>
+      </Flex>
+
+      <Divider
+        variant="darker"
+        width="calc(100% + 4rem)"
+        mx="-2rem"
+        my={4}
+      />
+      <QuorumProgressBar
+        helperText={t(
+          isERC20
+            ? 'proposalSupportERC20SummaryHelper'
+            : isERC721
+              ? 'proposalSupportERC721SummaryHelper'
+              : '',
+          {
+            quorum: strategyQuorum,
+            total: isERC721
+              ? totalERC721VotingWeight?.toLocaleString()
+              : votesToken
+                ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toLocaleString()
+                : undefined,
+          },
         )}
-        <Divider
-          my="0.5rem"
-          variant="darker"
-          width="calc(100% + 4rem)"
-          mx="-2rem"
-        />
-      </Box>
-      <Box marginTop={4}>
-        <QuorumProgressBar
-          helperText={t(
-            isERC20
-              ? 'proposalSupportERC20SummaryHelper'
-              : isERC721
-                ? 'proposalSupportERC721SummaryHelper'
-                : '',
-            {
-              quorum: strategyQuorum,
-              total: isERC721
-                ? totalERC721VotingWeight?.toLocaleString()
-                : votesToken
-                  ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toLocaleString()
-                  : undefined,
-            },
-          )}
-          reachedQuorum={Number(reachedQuorum)}
-          totalQuorum={totalQuorum}
-          unit={isERC20 ? '%' : ''}
-        />
-      </Box>
+        reachedQuorum={Number(reachedQuorum)}
+        totalQuorum={totalQuorum}
+        unit={isERC20 ? '%' : ''}
+      />
       {address && (
         <>
           <Divider
@@ -303,5 +330,26 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
         </>
       )}
     </ContentBox>
+  );
+}
+
+export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
+  const { governance } = useFractal();
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const startBlockTimeStamp = useBlockTimestamp(Number(proposal.startBlock));
+
+  return (
+    <Box>
+      <ProposalDetailsSection
+        proposal={proposal}
+        startBlockTimeStamp={startBlockTimeStamp}
+      />
+      <Box mt="0.75rem">
+        <ProposalVotingSection
+          proposal={proposal}
+          azoriusGovernance={azoriusGovernance}
+        />
+      </Box>
+    </Box>
   );
 }
