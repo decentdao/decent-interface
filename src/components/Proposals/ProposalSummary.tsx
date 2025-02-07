@@ -123,31 +123,12 @@ function ProposalVotingSection({
   const { address } = useAccount();
   const publicClient = useNetworkPublicClient();
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
-  const {
-    votesSummary: { yes, no, abstain },
-    startBlock,
-    transactionHash,
-  } = proposal;
+  const { startBlock } = proposal;
 
   const [proposalVotingWeight, setProposalVotingWeight] = useState('0');
-  const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;
-
-  const totalERC721VotingWeight = useMemo(
-    () =>
-      erc721Tokens?.reduce(
-        (prev, curr) => prev + (curr.totalSupply ? curr.totalSupply * curr.votingWeight : 0n),
-        0n,
-      ),
-    [erc721Tokens],
-  );
-
-  const votesTokenDecimalsDenominator = useMemo(
-    () => 10n ** BigInt(votesToken?.decimals || 0),
-    [votesToken?.decimals],
-  );
 
   const getErc721VotingWeight = useCallback(async () => {
     if (!address || !azoriusGovernance.erc721Tokens) {
@@ -220,6 +201,108 @@ function ProposalVotingSection({
     );
   }
 
+  return (
+    <ContentBox
+      containerBoxProps={{
+        border: '1px solid',
+        borderColor: 'neutral-3',
+        borderRadius: '0.75rem',
+        py: 4,
+      }}
+    >
+      {/* Voting Power */}
+      <Flex
+        flexWrap="wrap"
+        flexDirection="column"
+        alignItems="flex-start"
+        mx={-2}
+      >
+        <Flex
+          alignItems="center"
+          gap={1}
+        >
+          <Text
+            color="neutral-7"
+            w="full"
+          >
+            {t('votingPower')}
+          </Text>
+          <DecentTooltip
+            label={t('votingPowerTooltip')}
+            placement="left"
+            maxW={TOOLTIP_MAXW}
+          >
+            <Icon
+              as={Question}
+              color="neutral-7"
+            />
+          </DecentTooltip>
+        </Flex>
+
+        <Text
+          color="celery-0"
+          mt={1}
+        >
+          {proposalVotingWeight}
+        </Text>
+      </Flex>
+
+      {address && (
+        <VoteContextProvider proposal={proposal}>
+          <AzoriusOrSnapshotProposalAction
+            proposal={proposal}
+            expandedView
+          />
+        </VoteContextProvider>
+      )}
+    </ContentBox>
+  );
+}
+
+// @todo: QuorumProgressBarSection has been redesigned and moved to the Breakdown section. Need to circle back to this.
+function QuorumProgressBarSection({
+  proposal,
+  azoriusGovernance,
+}: {
+  proposal: AzoriusProposal;
+  azoriusGovernance: AzoriusGovernance;
+}) {
+  const { t } = useTranslation(['proposal']);
+  const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
+  const {
+    votesSummary: { yes, no, abstain },
+  } = proposal;
+
+  const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
+
+  const isERC20 = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721 = type === GovernanceType.AZORIUS_ERC721;
+
+  const totalERC721VotingWeight = useMemo(
+    () =>
+      erc721Tokens?.reduce(
+        (prev, curr) => prev + (curr.totalSupply ? curr.totalSupply * curr.votingWeight : 0n),
+        0n,
+      ),
+    [erc721Tokens],
+  );
+
+  const votesTokenDecimalsDenominator = useMemo(
+    () => 10n ** BigInt(votesToken?.decimals || 0),
+    [votesToken?.decimals],
+  );
+
+  if (
+    (isERC20 && (!votesToken || !votesToken.totalSupply || !votingStrategy?.quorumPercentage)) ||
+    (isERC721 && (!erc721Tokens || !votingStrategy?.quorumThreshold))
+  ) {
+    return (
+      <Box mt={4}>
+        <InfoBoxLoader />
+      </Box>
+    );
+  }
+
   const strategyQuorum =
     isERC20 && votesToken && votingStrategy
       ? votingStrategy.quorumPercentage!.value
@@ -241,95 +324,26 @@ function ProposalVotingSection({
       : undefined;
 
   return (
-    <ContentBox
-      containerBoxProps={{
-        border: '1px solid',
-        borderColor: 'neutral-3',
-        borderRadius: '0.75rem',
-        py: 0,
-      }}
-    >
-      {/* Voting Power */}
-      <Flex
-        marginBottom={transactionHash ? 0 : 4}
-        flexWrap="wrap"
-        alignItems="center"
-        mx={-2}
-      >
-        <Box>
-          <Flex
-            alignItems="center"
-            gap={1}
-          >
-            <Text
-              color="neutral-7"
-              w="full"
-            >
-              {t('votingPower')}
-            </Text>
-            <DecentTooltip
-              label={t('votingPowerTooltip')}
-              placement="left"
-              maxW={TOOLTIP_MAXW}
-            >
-              <Icon
-                as={Question}
-                color="neutral-7"
-              />
-            </DecentTooltip>
-          </Flex>
-          <Text
-            color="celery-0"
-            mt={1}
-          >
-            {proposalVotingWeight}
-          </Text>
-        </Box>
-      </Flex>
-
-      <Divider
-        variant="darker"
-        width="calc(100% + 4rem)"
-        mx="-2rem"
-        my={4}
-      />
-      <QuorumProgressBar
-        helperText={t(
-          isERC20
-            ? 'proposalSupportERC20SummaryHelper'
-            : isERC721
-              ? 'proposalSupportERC721SummaryHelper'
-              : '',
-          {
-            quorum: strategyQuorum,
-            total: isERC721
-              ? totalERC721VotingWeight?.toLocaleString()
-              : votesToken
-                ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toLocaleString()
-                : undefined,
-          },
-        )}
-        reachedQuorum={Number(reachedQuorum)}
-        totalQuorum={totalQuorum}
-        unit={isERC20 ? '%' : ''}
-      />
-      {address && (
-        <>
-          <Divider
-            my="1.5rem"
-            variant="darker"
-            width="calc(100% + 4rem)"
-            mx="-2rem"
-          />
-          <VoteContextProvider proposal={proposal}>
-            <AzoriusOrSnapshotProposalAction
-              proposal={proposal}
-              expandedView
-            />
-          </VoteContextProvider>
-        </>
+    <QuorumProgressBar
+      helperText={t(
+        isERC20
+          ? 'proposalSupportERC20SummaryHelper'
+          : isERC721
+            ? 'proposalSupportERC721SummaryHelper'
+            : '',
+        {
+          quorum: strategyQuorum,
+          total: isERC721
+            ? totalERC721VotingWeight?.toLocaleString()
+            : votesToken
+              ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toLocaleString()
+              : undefined,
+        },
       )}
-    </ContentBox>
+      reachedQuorum={Number(reachedQuorum)}
+      totalQuorum={totalQuorum}
+      unit={isERC20 ? '%' : ''}
+    />
   );
 }
 
@@ -339,17 +353,24 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   const startBlockTimeStamp = useBlockTimestamp(Number(proposal.startBlock));
 
   return (
-    <Box>
+    <Flex
+      flexDirection="column"
+      gap="0.75rem"
+    >
       <ProposalDetailsSection
         proposal={proposal}
         startBlockTimeStamp={startBlockTimeStamp}
       />
-      <Box mt="0.75rem">
-        <ProposalVotingSection
-          proposal={proposal}
-          azoriusGovernance={azoriusGovernance}
-        />
-      </Box>
-    </Box>
+
+      <ProposalVotingSection
+        proposal={proposal}
+        azoriusGovernance={azoriusGovernance}
+      />
+
+      <QuorumProgressBarSection
+        proposal={proposal}
+        azoriusGovernance={azoriusGovernance}
+      />
+    </Flex>
   );
 }
