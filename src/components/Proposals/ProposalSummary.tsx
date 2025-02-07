@@ -10,6 +10,7 @@ import { useAccount } from 'wagmi';
 import { TOOLTIP_MAXW } from '../../constants/common';
 import useNetworkPublicClient from '../../hooks/useNetworkPublicClient';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT, formatCoin } from '../../utils/numberFormats';
@@ -116,80 +117,18 @@ function ProposalDetailsSection({
 function ProposalVotingSection({
   proposal,
   azoriusGovernance,
+  proposalVotingWeight,
 }: {
   proposal: AzoriusProposal;
   azoriusGovernance: AzoriusGovernance;
+  proposalVotingWeight: string;
 }) {
   const { t } = useTranslation(['proposal']);
   const { address } = useAccount();
-  const publicClient = useNetworkPublicClient();
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
-  const { startBlock } = proposal;
-
-  const [proposalVotingWeight, setProposalVotingWeight] = useState('0');
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;
-
-  const getErc721VotingWeight = useCallback(async () => {
-    if (!address || !azoriusGovernance.erc721Tokens) {
-      return 0n;
-    }
-    const userVotingWeight = (
-      await Promise.all(
-        azoriusGovernance.erc721Tokens.map(async ({ address: tokenAddress, votingWeight }) => {
-          const tokenContract = getContract({
-            abi: erc721Abi,
-            address: tokenAddress,
-            client: publicClient,
-          });
-          const userBalance = await tokenContract.read.balanceOf([address], {
-            blockNumber: startBlock,
-          });
-          return userBalance * votingWeight;
-        }),
-      )
-    ).reduce((prev, curr) => prev + curr, 0n);
-    return userVotingWeight;
-  }, [azoriusGovernance.erc721Tokens, publicClient, address, startBlock]);
-
-  useEffect(() => {
-    async function loadProposalVotingWeight() {
-      if (address) {
-        if (isERC20) {
-          const strategyContract = getContract({
-            abi: abis.LinearERC20Voting,
-            address: proposal.votingStrategy,
-            client: publicClient,
-          });
-
-          const pastVotingWeight = await strategyContract.read.getVotingWeight([
-            address,
-            Number(proposal.proposalId),
-          ]);
-
-          setProposalVotingWeight(
-            formatCoin(pastVotingWeight, true, votesToken?.decimals, undefined, false),
-          );
-        } else if (isERC721) {
-          const votingWeight = await getErc721VotingWeight();
-          setProposalVotingWeight(votingWeight.toString());
-        }
-      }
-    }
-
-    loadProposalVotingWeight();
-  }, [
-    address,
-    proposal.proposalId,
-    proposal.votingStrategy,
-    publicClient,
-    votesToken?.decimals,
-    isERC20,
-    isERC721,
-    getErc721VotingWeight,
-    startBlock,
-  ]);
 
   if (
     (isERC20 && (!votesToken || !votesToken.totalSupply || !votingStrategy?.quorumPercentage)) ||
@@ -350,6 +289,83 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   const azoriusGovernance = governance as AzoriusGovernance;
   const startBlockTimeStamp = useBlockTimestamp(Number(proposal.startBlock));
 
+  const { t } = useTranslation(['proposal']);
+
+  const { address } = useAccount();
+  const publicClient = useNetworkPublicClient();
+  const { votesToken, type } = azoriusGovernance;
+  const { startBlock } = proposal;
+
+  const [proposalVotingWeight, setProposalVotingWeight] = useState('0');
+
+  const isERC20 = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721 = type === GovernanceType.AZORIUS_ERC721;
+
+  const getErc721VotingWeight = useCallback(async () => {
+    if (!address || !azoriusGovernance.erc721Tokens) {
+      return 0n;
+    }
+    const userVotingWeight = (
+      await Promise.all(
+        azoriusGovernance.erc721Tokens.map(async ({ address: tokenAddress, votingWeight }) => {
+          const tokenContract = getContract({
+            abi: erc721Abi,
+            address: tokenAddress,
+            client: publicClient,
+          });
+          const userBalance = await tokenContract.read.balanceOf([address], {
+            blockNumber: startBlock,
+          });
+          return userBalance * votingWeight;
+        }),
+      )
+    ).reduce((prev, curr) => prev + curr, 0n);
+    return userVotingWeight;
+  }, [azoriusGovernance.erc721Tokens, publicClient, address, startBlock]);
+
+  useEffect(() => {
+    async function loadProposalVotingWeight() {
+      if (address) {
+        if (isERC20) {
+          const strategyContract = getContract({
+            abi: abis.LinearERC20Voting,
+            address: proposal.votingStrategy,
+            client: publicClient,
+          });
+
+          const pastVotingWeight = await strategyContract.read.getVotingWeight([
+            address,
+            Number(proposal.proposalId),
+          ]);
+
+          setProposalVotingWeight(
+            formatCoin(pastVotingWeight, true, votesToken?.decimals, undefined, false),
+          );
+        } else if (isERC721) {
+          const votingWeight = await getErc721VotingWeight();
+          setProposalVotingWeight(votingWeight.toString());
+        }
+      }
+    }
+
+    loadProposalVotingWeight();
+  }, [
+    address,
+    proposal.proposalId,
+    proposal.votingStrategy,
+    publicClient,
+    votesToken?.decimals,
+    isERC20,
+    isERC721,
+    getErc721VotingWeight,
+    startBlock,
+  ]);
+
+  const { canUserCreateProposal } = useCanUserCreateProposal();
+
+  const notEnoughVotingPowerAtTheTimeOfProposalCreation =
+    proposalVotingWeight === '0' && canUserCreateProposal;
+
   return (
     <Flex
       flexDirection="column"
@@ -363,6 +379,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
       <ProposalVotingSection
         proposal={proposal}
         azoriusGovernance={azoriusGovernance}
+        proposalVotingWeight={proposalVotingWeight}
       />
 
       <QuorumProgressBarSection
@@ -370,11 +387,14 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
         azoriusGovernance={azoriusGovernance}
       />
 
-      <AlertBanner
-        message="This is a test alert banner"
-        variant="warning"
-        layout="vertical"
-      />
+      {notEnoughVotingPowerAtTheTimeOfProposalCreation && (
+        <AlertBanner
+          message={t('proposalSummaryNotEnoughVotingPower')}
+          messageSecondary={t('proposalSummaryNotEnoughVotingPowerSecondary')}
+          variant="warning"
+          layout="vertical"
+        />
+      )}
     </Flex>
   );
 }

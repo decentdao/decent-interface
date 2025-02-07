@@ -41,7 +41,7 @@ export function AzoriusOrSnapshotProposalAction({
     return null;
   }
 
-    if (!snapshotProposal && isActiveProposal && !canVote) return null;
+  if (!snapshotProposal && isActiveProposal && !canVote) return null;
 
-    return <ProposalActions proposal={proposal} />;
+  return <ProposalActions proposal={proposal} />;
 }

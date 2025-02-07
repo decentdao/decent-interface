@@ -5,9 +5,10 @@ interface AlertBannerProps {
   message: string;
   variant: 'warning' | 'error' | 'info';
   layout: 'horizontal' | 'vertical';
+  messageSecondary?: string;
 }
 
-export function AlertBanner({ message, variant, layout }: AlertBannerProps) {
+export function AlertBanner({ message, variant, layout, messageSecondary }: AlertBannerProps) {
   const variantProps = {
     warning: {
       bg: 'yellow--2',
@@ -46,6 +47,14 @@ export function AlertBanner({ message, variant, layout }: AlertBannerProps) {
         >
           {message}
         </Text>
+        {messageSecondary && (
+          <Text
+            color={variantProps.color}
+            textStyle="body-small"
+          >
+            {messageSecondary}
+          </Text>
+        )}
       </Flex>
     </Box>
   );
