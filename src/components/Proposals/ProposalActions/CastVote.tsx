@@ -194,14 +194,15 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
               color: 'lilac--3',
               borderWidth: '6px',
             }}
+            mt={2}
           >
             {t(choice.label, { ns: 'common' })}
           </Radio>
         ))}
         <Button
           marginTop={5}
-          padding="1.5rem 6rem"
-          height="auto"
+          padding="3"
+          height="3.25rem"
           width="full"
           isDisabled={disabled}
           onClick={() => selectedVoteChoice !== undefined && castVote(selectedVoteChoice)}
