@@ -32,6 +32,7 @@
   "permissionsErc20CreateProposalsDescription": "Hold at least {{proposerThreshold}} {{symbol}}",
   "permissionsErc721CreateProposalsDescription_one": "Hold at least {{proposerThreshold}} {{symbol}}",
   "permissionsErc721CreateProposalsDescription_other": "Hold at least {{proposerThreshold}} cumulative voting power",
+  "permissionsWhitelistCreateProposalsDescription": "Hold a role with proposal permission",
   "asset": "Asset",
   "assetTooltip": "The asset that the permission will be applied to",
   "permissionAmountLabel": "Minimum amount",

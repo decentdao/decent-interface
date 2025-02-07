@@ -26,7 +26,13 @@ export function SafePermissionsSettingsPage() {
   const { addressPrefix } = useNetworkConfigStore();
   const {
     governance,
-    governanceContracts: { isLoaded, linearVotingErc20Address, linearVotingErc721Address },
+    governanceContracts: { 
+      isLoaded,
+       linearVotingErc20Address, 
+       linearVotingErc20WithHatsWhitelistingAddress,
+       linearVotingErc721Address, 
+       linearVotingErc721WithHatsWhitelistingAddress
+       },
   } = useFractal();
   const { safe } = useDaoInfoStore();
 
@@ -50,6 +56,7 @@ export function SafePermissionsSettingsPage() {
 
   const proposerThreshold = azoriusGovernance.votingStrategy?.proposerThreshold?.formatted;
 
+  
   return (
     <>
       <Show below="md">
@@ -130,7 +137,8 @@ export function SafePermissionsSettingsPage() {
             }}
           >
             <Flex justifyContent="space-between">
-              <Flex
+            {(linearVotingErc20Address && votesToken) && 
+              (<Flex
                 gap={4}
                 alignItems="flex-start"
               >
@@ -148,19 +156,65 @@ export function SafePermissionsSettingsPage() {
                     textStyle="labels-large"
                     color="neutral-7"
                   >
-                    {votesToken
-                      ? t('permissionsErc20CreateProposalsDescription', {
-                          symbol: votesToken.symbol,
+                    {t('permissionsErc20CreateProposalsDescription', {
+                          symbol: votesToken!.symbol,
                           proposerThreshold,
-                        })
-                      : t('permissionsErc721CreateProposalsDescription', {
-                          proposerThreshold,
-                          symbol: erc721Tokens?.[0]?.symbol,
-                          count: erc721Tokens?.length,
                         })}
                   </Text>
                 </Box>
+              </Flex>)}
+              {(linearVotingErc721Address && erc721Tokens) && 
+              (<Flex
+                gap={4}
+                alignItems="flex-start"
+              >
+                <Box
+                  borderRadius="50%"
+                  bg="neutral-3"
+                  color="lilac-0"
+                  padding={1}
+                >
+                  <Coins fontSize="1.5rem" />
+                </Box>
+                <Box>
+                  <Text>{t('permissionCreateProposalsTitle')}</Text>
+                  <Text
+                    textStyle="labels-large"
+                    color="neutral-7"
+                  >
+                    {t('permissionsErc20CreateProposalsDescription', {
+                           proposerThreshold,
+                          symbol: erc721Tokens?.[0]?.symbol,
+                         count: erc721Tokens?.length,
+                         })}
+                  </Text>
+                </Box>
               </Flex>
+              )}
+              {(linearVotingErc20WithHatsWhitelistingAddress || linearVotingErc721WithHatsWhitelistingAddress) && 
+              (<Flex
+                gap={4}
+                alignItems="flex-start"
+              >
+                <Box
+                  borderRadius="50%"
+                  bg="neutral-3"
+                  color="lilac-0"
+                  padding={1}
+                >
+                  <Coins fontSize="1.5rem" />
+                </Box>
+                <Box>
+                  <Text>{t('permissionCreateProposalsTitle')}</Text>
+                  <Text
+                    textStyle="labels-large"
+                    color="neutral-7"
+                  >
+                  {t('permissionsWhitelistCreateProposalsDescription')}
+                  </Text>
+                </Box>
+              </Flex>
+              )}
               {canUserCreateProposal && (
                 <IconButton
                   variant="secondary"
