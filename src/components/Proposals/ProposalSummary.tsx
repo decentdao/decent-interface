@@ -373,7 +373,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
       <AlertBanner
         message="This is a test alert banner"
         variant="warning"
-        layout="horizontal"
+        layout="vertical"
       />
     </Flex>
   );

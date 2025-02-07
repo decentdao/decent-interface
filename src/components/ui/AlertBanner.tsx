@@ -8,24 +8,40 @@ interface AlertBannerProps {
 }
 
 export function AlertBanner({ message, variant, layout }: AlertBannerProps) {
+  const variantProps = {
+    warning: {
+      bg: 'yellow--2',
+      color: 'yellow-0',
+    },
+    error: {
+      bg: 'red--2',
+      color: 'red-0',
+    },
+    info: {
+      bg: 'neutral-3',
+      color: 'lilac-0',
+    },
+  }[variant];
+
   return (
     <Box
       width="100%"
       borderRadius="0.75rem"
-      bg="neutral-3"
+      bg={variantProps.bg}
       p={6}
     >
       <Flex
-        alignItems="center"
+        alignItems={layout === 'horizontal' ? 'center' : 'flex-start'}
+        flexDirection={layout === 'horizontal' ? 'row' : 'column'}
         gap={4}
       >
         <Icon
           as={WarningCircle}
           boxSize="1.5rem"
-          color="lilac-0"
+          color={variantProps.color}
         />
         <Text
-          color="lilac-0"
+          color={variantProps.color}
           textStyle="body-small"
         >
           {message}
