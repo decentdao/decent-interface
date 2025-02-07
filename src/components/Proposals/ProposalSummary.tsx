@@ -13,6 +13,7 @@ import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT, formatCoin } from '../../utils/numberFormats';
+import { AlertBanner } from '../ui/AlertBanner';
 import { DecentTooltip } from '../ui/DecentTooltip';
 import ContentBox from '../ui/containers/ContentBox';
 import DisplayTransaction from '../ui/links/DisplayTransaction';
@@ -367,6 +368,12 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
       <QuorumProgressBarSection
         proposal={proposal}
         azoriusGovernance={azoriusGovernance}
+      />
+
+      <AlertBanner
+        message="This is a test alert banner"
+        variant="warning"
+        layout="horizontal"
       />
     </Flex>
   );
