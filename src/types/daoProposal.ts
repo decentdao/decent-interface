@@ -62,15 +62,15 @@ export type ERC721ProposalVote = {
 
 export const VOTE_CHOICES = [
   {
-    label: 'yes',
+    label: 'Approve',
     value: 1,
   },
   {
-    label: 'no',
+    label: 'Reject',
     value: 0,
   },
   {
-    label: 'abstain',
+    label: 'Abstain',
     value: 2,
   },
 ] as const;
