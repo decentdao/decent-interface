@@ -28,6 +28,7 @@ type ERC721VotingType = 'erc721' | 'erc721WithHats';
  * @returns {string[]} `remainingTokenIds - list of tokens that `address` can use for proposal under `proposalId` param. This covers the case when user already voted for proposal but received more tokens, that weren't used in this proposal.
  * @returns {string[]} `remainingTokenAddresses` - same as `totalVotingTokenAddresses` - repeats contract address of NFT for each token ID in `remainingTokenIds` array.
  */
+
 export default function useUserERC721VotingTokens(
   safeAddress: Address | null,
   proposalId: string | null,
@@ -207,7 +208,7 @@ export default function useUserERC721VotingTokens(
         return DEFAULT_RETURN;
       }
 
-      const userAddress = '0xAf3ee09F37ead9F28a05AeF0d09841BC9A6Fe8e9';
+      const userAddress = user.address;
       const userERC721Tokens = await getUserERC721Tokens(userAddress, governanceTokens);
 
       const votingContract =
