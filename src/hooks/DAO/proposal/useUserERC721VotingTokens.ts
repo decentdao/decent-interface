@@ -9,6 +9,15 @@ import { AzoriusGovernance, ERC721TokenData } from '../../../types';
 import useNetworkPublicClient from '../../useNetworkPublicClient';
 import useVotingStrategiesAddresses from '../../utils/useVotingStrategiesAddresses';
 
+const DEFAULT_RETURN = {
+  totalVotingTokenAddresses: [],
+  totalVotingTokenIds: [],
+  remainingTokenAddresses: [],
+  remainingTokenIds: [],
+};
+
+type ERC721VotingType = 'erc721' | 'erc721WithHats';
+
 /**
  * Retrieves list of ERC-721 voting tokens for the supplied `address`(aka `user.address`) param
  * @param {string|null} [proposalId] - Proposal ID. When it's provided - calculates `remainingTokenIds` and `remainingTokenAddresses` that user can use for voting on specific proposal.
@@ -44,20 +53,12 @@ export default function useUserERC721VotingTokens(
   const { getVotingStrategies } = useVotingStrategiesAddresses();
 
   const getLinearVotingContract = useCallback(
-    (_address: Address) => {
+    (_address: Address, _voting: ERC721VotingType) => {
       return getContract({
-        abi: abis.LinearERC721Voting,
-        address: _address,
-        client: publicClient,
-      });
-    },
-    [publicClient],
-  );
-
-  const getLinearVotingContractWithHats = useCallback(
-    (_address: Address) => {
-      return getContract({
-        abi: abis.LinearERC721VotingWithHatsProposalCreation,
+        abi:
+          _voting === 'erc721'
+            ? abis.LinearERC721Voting
+            : abis.LinearERC721VotingWithHatsProposalCreation,
         address: _address,
         client: publicClient,
       });
@@ -77,8 +78,8 @@ export default function useUserERC721VotingTokens(
         if (votingStrategy) {
           const linear721VotingAddress = votingStrategy.strategyAddress;
           const votingContract = votingStrategy.isLinearVotingErc721
-            ? getLinearVotingContract(linear721VotingAddress)
-            : getLinearVotingContractWithHats(linear721VotingAddress);
+            ? getLinearVotingContract(linear721VotingAddress, 'erc721')
+            : getLinearVotingContract(linear721VotingAddress, 'erc721WithHats');
 
           const addresses = await votingContract.read.getAllTokenAddresses();
           const governanceTokens = await Promise.all(
@@ -103,16 +104,17 @@ export default function useUserERC721VotingTokens(
             }),
           );
           return {
-            isLinearVotingErc721: votingStrategy.isLinearVotingErc721,
-            isLinearVotingErc721WithHatsProposalCreation:
-              votingStrategy.isLinearVotingErc721WithHatsProposalCreation,
+            votingType: votingStrategy.isLinearVotingErc721
+              ? 'erc721'
+              : ('erc721WithHats' as ERC721VotingType),
             governanceTokens,
+            linear721VotingAddress,
           };
         }
       }
       return undefined;
     },
-    [getLinearVotingContract, getLinearVotingContractWithHats, getVotingStrategies, publicClient],
+    [getLinearVotingContract, getVotingStrategies, publicClient],
   );
 
   const getUserERC721Tokens = useCallback(
@@ -176,100 +178,84 @@ export default function useUserERC721VotingTokens(
 
   const getUserERC721VotingTokens = useCallback(
     async (_safeAddress: Address | null, _proposalId: number | null) => {
-      const totalTokenAddresses: Address[] = [];
-      const totalTokenIds: string[] = [];
-      const tokenAddresses: Address[] = [];
-      const tokenIds: string[] = [];
-
       let governanceTokens = erc721Tokens;
-      let votingType: 'erc721' | 'erc721WithHats';
 
-      if (!globalContextSafeAddress || !safeAPI) {
-        return {
-          totalVotingTokenAddresses: totalTokenAddresses,
-          totalVotingTokenIds: totalTokenIds,
-          remainingTokenAddresses: tokenAddresses,
-          remainingTokenIds: tokenIds,
-        };
+      // @dev global is set as defaults
+      let votingType: ERC721VotingType | undefined = linearVotingErc721Address
+        ? 'erc721'
+        : linearVotingErc721WithHatsWhitelistingAddress
+          ? 'erc721WithHats'
+          : undefined;
+
+      let linearVotingAddress =
+        linearVotingErc721Address ?? linearVotingErc721WithHatsWhitelistingAddress;
+
+      if (!globalContextSafeAddress || !safeAPI || !user.address) {
+        return DEFAULT_RETURN;
       }
 
       if (_safeAddress && globalContextSafeAddress !== _safeAddress) {
         const userVotingTokenData = await getUserVotingTokenData(_safeAddress);
         if (userVotingTokenData) {
           governanceTokens = userVotingTokenData.governanceTokens;
-          votingType = userVotingTokenData.isLinearVotingErc721 ? 'erc721' : 'erc721WithHats';
+          votingType = userVotingTokenData.votingType;
+          linearVotingAddress = userVotingTokenData.linear721VotingAddress;
         }
-      } else if (linearVotingErc721Address) {
-        votingType = 'erc721';
-      } else if (linearVotingErc721WithHatsWhitelistingAddress) {
-        votingType = 'erc721WithHats';
       }
 
-      if (!governanceTokens || !user.address) {
-        return {
-          totalVotingTokenAddresses: totalTokenAddresses,
-          totalVotingTokenIds: totalTokenIds,
-          remainingTokenAddresses: tokenAddresses,
-          remainingTokenIds: tokenIds,
-        };
+      if (!governanceTokens || !votingType || !linearVotingAddress) {
+        return DEFAULT_RETURN;
       }
 
-      const userAddress = user.address;
+      const userAddress = '0xAf3ee09F37ead9F28a05AeF0d09841BC9A6Fe8e9';
       const userERC721Tokens = await getUserERC721Tokens(userAddress, governanceTokens);
 
-      const tokenIdsSets = [...userERC721Tokens.values()];
-      const tokenAddressesKeys = [...userERC721Tokens.keys()];
-      await Promise.all(
-        // Same here
-        tokenIdsSets.map(async (tokenIdsSet, setIndex) => {
-          const tokenAddress = tokenAddressesKeys[setIndex];
-          // Damn, this is so ugly
-          // Probably using Moralis API might improve this
-          // But I also don't want to intruduce another API for this single thing
-          // Maybe, if we will encounter need to wider support of ERC-1155 - we will bring it and improve this piece of crap as well :D
-          await Promise.all(
-            [...tokenIdsSet.values()].map(async tokenId => {
-              const votingContract =
-                votingType === 'erc721'
-                  ? getLinearVotingContract(tokenAddress)
-                  : getLinearVotingContractWithHats(tokenAddress);
+      const votingContract =
+        votingType === 'erc721'
+          ? getLinearVotingContract(linearVotingAddress, 'erc721')
+          : getLinearVotingContract(linearVotingAddress, 'erc721WithHats');
 
-              totalTokenAddresses.push(tokenAddress);
-              totalTokenIds.push(tokenId);
-
-              if (_proposalId !== null) {
-                const tokenVoted = await votingContract.read.hasVoted([
-                  _proposalId,
-                  tokenAddress,
-                  BigInt(tokenId),
-                ]);
-                if (!tokenVoted) {
-                  tokenAddresses.push(tokenAddress);
-                  tokenIds.push(tokenId);
-                }
-              }
-            }),
-          );
-        }),
+      const tokenDataPromises = Array.from(userERC721Tokens.entries()).flatMap(
+        ([tokenAddress, tokenIdsSet]) => {
+          return Array.from(tokenIdsSet).map(async tokenId => {
+            let hasVoted = false;
+            if (_proposalId !== null) {
+              hasVoted = await votingContract.read.hasVoted([
+                _proposalId,
+                tokenAddress,
+                BigInt(tokenId),
+              ]);
+            }
+            return { tokenAddress, tokenId, hasVoted };
+          });
+        },
       );
+
+      const tokenData = await Promise.all(tokenDataPromises);
+
       return {
-        totalVotingTokenAddresses: totalTokenAddresses,
-        totalVotingTokenIds: totalTokenIds,
-        remainingTokenAddresses: tokenAddresses,
-        remainingTokenIds: tokenIds,
+        totalVotingTokenAddresses: tokenData.map(data => data.tokenAddress),
+        totalVotingTokenIds: tokenData.map(data => data.tokenId),
+        remainingTokenAddresses:
+          _proposalId !== null
+            ? tokenData.filter(data => !data.hasVoted).map(data => data.tokenAddress)
+            : [],
+        remainingTokenIds:
+          _proposalId !== null
+            ? tokenData.filter(data => !data.hasVoted).map(data => data.tokenId)
+            : [],
       };
     },
     [
       erc721Tokens,
-      globalContextSafeAddress,
-      safeAPI,
       linearVotingErc721Address,
       linearVotingErc721WithHatsWhitelistingAddress,
+      globalContextSafeAddress,
+      safeAPI,
       user.address,
       getUserERC721Tokens,
-      getUserVotingTokenData,
       getLinearVotingContract,
-      getLinearVotingContractWithHats,
+      getUserVotingTokenData,
     ],
   );
 
