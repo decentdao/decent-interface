@@ -31,6 +31,9 @@ import { SafePermissionsSettingsPage } from './pages/dao/settings/permissions/Sa
 import { SafeTreasuryPage } from './pages/dao/treasury/SafeTreasuryPage';
 import HomePage from './pages/home/HomePage';
 
+interface LoaderFunctionArgs {
+  request: Request;
+}
 export const router = (addressPrefix: string, daoAddress: string | undefined) =>
   wrapCreateBrowserRouter(createBrowserRouter)([
     {
@@ -59,6 +62,16 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
         {
           path: '/',
           element: <SafeController />,
+          // @dev handles redirect when dao address query is missing from URL
+          loader: ({ request }: LoaderFunctionArgs) => {
+            const url = new URL(request.url);
+            const searchParams = new URLSearchParams(url.search);
+            const daoAddressWithPrefix = searchParams.get('daoAddress');
+            if (!daoAddressWithPrefix) {
+              return redirect(BASE_ROUTES.landing);
+            }
+            return null;
+          },
           children: [
             {
               path: DAO_ROUTES.dao.path,
