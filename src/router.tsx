@@ -4,6 +4,7 @@ import { ModalProvider } from './components/ui/modals/ModalProvider';
 import { Global } from './components/ui/page/Global';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
+import LoadingProblem from './pages/LoadingProblem';
 import { SafeCreatePage } from './pages/create/SafeCreatePage';
 import { SafeController } from './pages/dao/SafeController';
 import { SafeDashboardPage } from './pages/dao/SafeDashboardPage';
@@ -68,7 +69,7 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
             const searchParams = new URLSearchParams(url.search);
             const daoAddressWithPrefix = searchParams.get('dao');
             if (!daoAddressWithPrefix) {
-              return redirect(BASE_ROUTES.landing);
+              return <LoadingProblem type="badQueryParam" />;
             }
             return null;
           },
