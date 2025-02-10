@@ -67,9 +67,10 @@ function GaslessVotingToggleContent({
 
 export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoCreate');
-  const { chain } = useNetworkConfigStore();
+  const { chain, gaslessVotingSupported } = useNetworkConfigStore();
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
+  if (!gaslessVotingSupported) return null;
 
   return (
     <Box
@@ -117,6 +118,7 @@ export function GaslessVotingToggleDAOSettings(
   },
 ) {
   const { t } = useTranslation('daoEdit');
+  const { chain, gaslessVotingSupported } = useNetworkConfigStore();
   const { safe } = useDaoInfoStore();
   const { chain } = useNetworkConfigStore();
 
@@ -124,7 +126,7 @@ export function GaslessVotingToggleDAOSettings(
   const { data: balance } = useBalance({ address: safe?.address, chainId: chain.id });
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
-  if (!safe) return null;
+  if (!gaslessVotingSupported) return null;
 
   const formattedNativeTokenBalance =
     balance && formatCoin(balance.value, true, balance.decimals, balance.symbol);
