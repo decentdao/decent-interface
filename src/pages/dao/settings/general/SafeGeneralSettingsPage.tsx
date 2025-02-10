@@ -32,17 +32,15 @@ export function SafeGeneralSettingsPage() {
 
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const {
-    subgraphInfo,
-    safe,
-    gaslessVotingEnabled: currentIsGaslessVotingEnabled,
-  } = useDaoInfoStore();
+  const { subgraphInfo, safe } = useDaoInfoStore();
   const {
     addressPrefix,
     contracts: { keyValuePairs },
   } = useNetworkConfigStore();
 
   const safeAddress = safe?.address;
+
+  const currentIsGaslessVotingEnabled = subgraphInfo?.gaslessVotingEnabled ?? false;
 
   useEffect(() => {
     if (
