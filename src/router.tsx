@@ -66,7 +66,7 @@ export const router = (addressPrefix: string, daoAddress: string | undefined) =>
           loader: ({ request }: LoaderFunctionArgs) => {
             const url = new URL(request.url);
             const searchParams = new URLSearchParams(url.search);
-            const daoAddressWithPrefix = searchParams.get('daoAddress');
+            const daoAddressWithPrefix = searchParams.get('dao');
             if (!daoAddressWithPrefix) {
               return redirect(BASE_ROUTES.landing);
             }
