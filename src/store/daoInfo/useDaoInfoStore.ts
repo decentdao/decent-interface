@@ -49,28 +49,18 @@ export const useDaoInfoStore = create<DaoInfoStore>()(set => ({
   },
   updateDAOInfo: ({ daoName, gaslessVotingEnabled, gasTankAddress }: UpdateDAOInfoParams) => {
     set(state => {
-      const updates: Partial<IDAO> = {};
-
-      if (daoName !== undefined) {
-        if (!state.subgraphInfo) {
-          throw new Error('Subgraph info is not set');
-        }
-        updates.subgraphInfo = { ...state.subgraphInfo, daoName };
+      if (!state.subgraphInfo) {
+        throw new Error('Subgraph info is not set');
       }
 
-      if (gaslessVotingEnabled !== undefined) {
-        if (!state.subgraphInfo) {
-          throw new Error('Subgraph info is not set');
-        }
-        updates.subgraphInfo = { ...state.subgraphInfo, gaslessVotingEnabled };
-      }
-
-      if (gasTankAddress !== undefined) {
-        if (!state.subgraphInfo) {
-          throw new Error('Subgraph info is not set');
-        }
-        updates.subgraphInfo = { ...state.subgraphInfo, gasTankAddress };
-      }
+      const updates: Partial<IDAO> = {
+        subgraphInfo: {
+          ...state.subgraphInfo,
+          ...(daoName !== undefined && { daoName }),
+          ...(gaslessVotingEnabled !== undefined && { gaslessVotingEnabled }),
+          ...(gasTankAddress !== undefined && { gasTankAddress }),
+        },
+      };
 
       return updates;
     });
