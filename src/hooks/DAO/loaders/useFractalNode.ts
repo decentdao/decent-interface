@@ -1,7 +1,7 @@
-import { useLazyQuery } from '@apollo/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Address, getAddress, isAddress } from 'viem';
-import { DAOQueryDocument } from '../../../../.graphclient';
+import { createDecentSubgraphClient } from '../../../graphql';
+import { DAOQuery, DAOQueryResponse } from '../../../graphql/DAOQueries';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
@@ -22,14 +22,7 @@ export const useFractalNode = ({
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
-  const { subgraph } = useNetworkConfigStore();
-  const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
-    context: {
-      subgraphSpace: subgraph.space,
-      subgraphSlug: subgraph.slug,
-      subgraphVersion: subgraph.version,
-    },
-  });
+  const { getConfigByChainId, chain } = useNetworkConfigStore();
 
   const { action } = useFractal();
 
@@ -55,7 +48,13 @@ export const useFractalNode = ({
 
         const modules = await lookupModules(safeInfo.modules);
 
-        const graphRawNodeData = await getDAOInfo({ variables: { safeAddress } });
+        const client = createDecentSubgraphClient(getConfigByChainId(chain.id));
+        const graphRawNodeData = await client.query<DAOQueryResponse>(DAOQuery, { safeAddress });
+
+        if (graphRawNodeData.error) {
+          throw new Error('Failed to fetch DAO data');
+        }
+
         const graphDAOData = graphRawNodeData.data?.daos[0];
 
         if (!graphRawNodeData || !graphDAOData) {
@@ -65,10 +64,14 @@ export const useFractalNode = ({
         setDecentModules(modules);
 
         setDaoInfo({
-          parentAddress: isAddress(graphDAOData?.parentAddress)
-            ? getAddress(graphDAOData.parentAddress)
-            : null,
-          childAddresses: graphDAOData?.hierarchy.map(child => getAddress(child.address)) ?? [],
+          parentAddress:
+            graphDAOData?.parentAddress && isAddress(graphDAOData.parentAddress)
+              ? getAddress(graphDAOData.parentAddress)
+              : null,
+          childAddresses:
+            graphDAOData?.hierarchy?.map((child: { address: string }) =>
+              getAddress(child.address),
+            ) ?? [],
           daoName: graphDAOData?.name ?? null,
           daoSnapshotENS: graphDAOData?.snapshotENS ?? null,
           proposalTemplatesHash: graphDAOData?.proposalTemplatesHash ?? null,
@@ -85,7 +88,8 @@ export const useFractalNode = ({
     safeApi,
     setSafeInfo,
     lookupModules,
-    getDAOInfo,
+    getConfigByChainId,
+    chain.id,
     setDecentModules,
     setDaoInfo,
     reset,
