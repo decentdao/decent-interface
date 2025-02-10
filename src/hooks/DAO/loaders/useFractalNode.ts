@@ -12,10 +12,12 @@ export const useFractalNode = ({
   addressPrefix,
   safeAddress,
   wrongNetwork,
+  invalidQuery,
 }: {
   addressPrefix?: string;
   safeAddress?: Address;
   wrongNetwork?: boolean;
+  invalidQuery?: boolean;
 }) => {
   const safeApi = useSafeAPI();
   const lookupModules = useDecentModules();
@@ -96,11 +98,15 @@ export const useFractalNode = ({
   ]);
 
   useEffect(() => {
-    if (`${addressPrefix}${safeAddress}` !== currentValidSafe.current && !wrongNetwork) {
+    if (
+      `${addressPrefix}${safeAddress}` !== currentValidSafe.current &&
+      !wrongNetwork &&
+      !invalidQuery
+    ) {
       reset({ error: false });
       setDAO();
     }
-  }, [addressPrefix, safeAddress, setDAO, reset, wrongNetwork]);
+  }, [addressPrefix, safeAddress, setDAO, reset, wrongNetwork, invalidQuery]);
 
   return { errorLoading };
 };
