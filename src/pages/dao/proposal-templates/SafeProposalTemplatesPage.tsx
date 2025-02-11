@@ -47,16 +47,7 @@ export function SafeProposalTemplatesPage() {
   const handleAirdropSubmit = (data: AirdropData) => {
     if (!safeAddress) return;
 
-    const recipientsMap = new Map<string, bigint>();
-
-    for (const recipient of data.recipients) {
-      const existingAmount = recipientsMap.get(recipient.address) ?? 0n;
-      recipientsMap.set(recipient.address, existingAmount + recipient.amount);
-    }
-
-    const uniqueRecipients = [...recipientsMap].map(([address, amount]) => ({ address, amount }));
-
-    const totalAmount = uniqueRecipients.reduce((acc, recipient) => acc + recipient.amount, 0n);
+    const totalAmount = data.recipients.reduce((acc, recipient) => acc + recipient.amount, 0n);
 
     addAction({
       actionType: ProposalActionType.AIRDROP,
@@ -85,11 +76,11 @@ export function SafeProposalTemplatesPage() {
             { signature: 'address', value: data.asset.tokenAddress },
             {
               signature: 'address[]',
-              value: `[${uniqueRecipients.map(recipient => recipient.address).join(',')}]`,
+              value: `[${data.recipients.map(recipient => recipient.address).join(',')}]`,
             },
             {
               signature: 'uint256[]',
-              value: `[${uniqueRecipients.map(recipient => recipient.amount.toString()).join(',')}]`,
+              value: `[${data.recipients.map(recipient => recipient.amount.toString()).join(',')}]`,
             },
           ],
         },
