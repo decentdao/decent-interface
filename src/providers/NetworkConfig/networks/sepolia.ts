@@ -111,6 +111,7 @@ export const sepoliaConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC20,
     GovernanceType.AZORIUS_ERC721,
   ],
+  gaslessVotingSupported: true,
 };
 
 export default sepoliaConfig;
