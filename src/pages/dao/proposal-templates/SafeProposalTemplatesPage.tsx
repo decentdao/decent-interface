@@ -65,7 +65,7 @@ export function SafeProposalTemplatesPage() {
           ],
         },
         {
-          targetAddress: data.asset.tokenAddress,
+          targetAddress: disperse,
           ethValue: {
             bigintValue: 0n,
             value: '0',
