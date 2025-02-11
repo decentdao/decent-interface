@@ -58,6 +58,7 @@ export enum ProposalActionType {
   EDIT = 'edit',
   DELETE = 'delete',
   TRANSFER = 'transfer',
+  TRANSFER_NATIVE = 'transfer_native',
   AIRDROP = 'airdrop',
 }
 
