@@ -1,7 +1,7 @@
 import { Button, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { ArrowsDownUp, CheckSquare, Trash } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { formatUnits, getAddress, zeroAddress } from 'viem';
+import { Address, formatUnits, getAddress } from 'viem';
 import PencilWithLineIcon from '../../assets/theme/custom/icons/PencilWithLineIcon';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
@@ -19,21 +19,27 @@ export function SendAssetsAction({
   const {
     treasury: { assetsFungible },
   } = useFractal();
-  const destinationAddress = action.transactions[0].parameters[0].value
-    ? getAddress(action.transactions[0].parameters[0].value)
-    : zeroAddress;
-  const transferAmount = BigInt(action.transactions[0].parameters[1].value || '0');
+  let destinationAddress: Address | undefined;
+  let transferAmount: bigint | undefined;
 
-  if (!destinationAddress || !transferAmount) {
-    return null;
+  if (action.actionType === ProposalActionType.TRANSFER_NATIVE) {
+    destinationAddress = getAddress(action.transactions[0].targetAddress);
+    transferAmount = BigInt(action.transactions[0].ethValue.value);
+  }
+  if (action.transactions[0].parameters[1]?.value && action.transactions[0].parameters[0]?.value) {
+    destinationAddress = getAddress(action.transactions[0].parameters[0].value);
+    transferAmount = BigInt(action.transactions[0].parameters[1].value);
   }
 
-  // @todo: This does not work for native asset
   const actionAsset = assetsFungible.find(
     asset => getAddress(asset.tokenAddress) === getAddress(action.transactions[0].targetAddress),
   );
 
-  if (!actionAsset) {
+  if (
+    destinationAddress === undefined ||
+    transferAmount === undefined ||
+    actionAsset === undefined
+  ) {
     return null;
   }
 
@@ -122,7 +128,10 @@ export function ProposalActionCard({
   canBeDeleted: boolean;
 }) {
   const { removeAction } = useProposalActionsStore();
-  if (action.actionType === ProposalActionType.TRANSFER) {
+  if (
+    action.actionType === ProposalActionType.TRANSFER ||
+    action.actionType === ProposalActionType.TRANSFER_NATIVE
+  ) {
     return (
       <SendAssetsAction
         action={action}
