@@ -3,21 +3,14 @@ import { Center } from '@chakra-ui/react';
 import groupBy from 'lodash.groupby';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Route, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Address, encodeFunctionData, erc20Abi, getAddress, Hash, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../../../../assets/abi/SablierV2Batch';
-import {
-  ProposalBuilder,
-  ShowNonceInputOnMultisig,
-} from '../../../../../components/ProposalBuilder/ProposalBuilder';
+import { ProposalBuilder } from '../../../../../components/ProposalBuilder/ProposalBuilder';
 import { StreamsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import { ProposalStreams } from '../../../../../components/ProposalBuilder/ProposalStreams';
-import StepButtons, {
-  CreateProposalButton,
-  NextButton,
-  PreviousButton,
-} from '../../../../../components/ProposalBuilder/StepButtons';
+import { GoToTransactionsStepButton } from '../../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_SABLIER_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { useHeaderHeight } from '../../../../../constants/common';
@@ -118,7 +111,6 @@ export function SafeSablierProposalCreatePage() {
   );
 
   const HEADER_HEIGHT = useHeaderHeight();
-  const location = useLocation();
 
   if (!type || !safe?.address || !safe) {
     return (
@@ -127,9 +119,6 @@ export function SafeSablierProposalCreatePage() {
       </Center>
     );
   }
-
-  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
-  const nextStepUrl = `${location.pathname.replace(CreateProposalSteps.METADATA, CreateProposalSteps.TRANSACTIONS)}${location.search}`;
 
   const pageHeaderBreadcrumbs = [
     {
@@ -148,28 +137,17 @@ export function SafeSablierProposalCreatePage() {
 
   const stepButtons = ({
     formErrors,
-    createProposalBlocked,
+    onStepChange,
   }: {
     formErrors: boolean;
     createProposalBlocked: boolean;
-  }) => {
-    return (
-      <StepButtons
-        metadataStepButtons={
-          <NextButton
-            nextStepUrl={nextStepUrl}
-            isDisabled={formErrors}
-          />
-        }
-        transactionsStepButtons={
-          <>
-            <PreviousButton prevStepUrl={prevStepUrl} />
-            <CreateProposalButton isDisabled={createProposalBlocked} />
-          </>
-        }
-      />
-    );
-  };
+    onStepChange: (step: CreateProposalSteps) => void;
+  }) => (
+    <GoToTransactionsStepButton
+      isDisabled={formErrors}
+      onStepChange={onStepChange}
+    />
+  );
 
   return (
     <ProposalBuilder
@@ -184,23 +162,13 @@ export function SafeSablierProposalCreatePage() {
       templateDetails={null}
       streamsDetails={streams => <StreamsDetails streams={streams} />}
       prepareProposalData={prepareProposalData}
-      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+      mainContent={(formikProps, pendingCreateTx, nonce, currentStep) => {
+        if (currentStep !== CreateProposalSteps.TRANSACTIONS) return null;
         return (
-          <Route
-            path={CreateProposalSteps.TRANSACTIONS}
-            element={
-              <>
-                <ProposalStreams
-                  pendingTransaction={pendingCreateTx}
-                  {...formikProps}
-                  values={formikProps.values as CreateSablierProposalForm}
-                />
-                <ShowNonceInputOnMultisig
-                  nonce={nonce}
-                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                />
-              </>
-            }
+          <ProposalStreams
+            pendingTransaction={pendingCreateTx}
+            {...formikProps}
+            values={formikProps.values as CreateSablierProposalForm}
           />
         );
       }}
