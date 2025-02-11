@@ -28,7 +28,7 @@ export const polygonConfig: NetworkConfig = {
   isENSSupported: false,
   decentSubgraph: {
     space: 71032,
-    slug: 'fractal-base-polygon',
+    slug: 'fractal-polygon',
     id: 'E7GsrUKtVS2sd5DUaAF29JasYWF81gjmFUWndNf4jYqr',
   },
   sablierSubgraph: {
