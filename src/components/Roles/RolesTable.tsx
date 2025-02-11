@@ -107,7 +107,7 @@ function MemberColumn({
   const { t } = useTranslation('roles');
 
   // @dev undefined = not termed
-  const memberTextColor = !isCurrentTermActive ? 'neutral-6' : 'white-0';
+  const memberTextColor = isCurrentTermActive === false ? 'neutral-6' : 'white-0';
   const isPendingText = isMemberTermPending ? t('wearerPending') : '';
 
   const wearerAddressText = wearerAddress

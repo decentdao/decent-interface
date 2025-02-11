@@ -26,14 +26,15 @@ export const optimismConfig: NetworkConfig = {
   addressPrefix: 'oeth',
   nativeTokenIcon: '/images/coin-icon-op.svg',
   isENSSupported: false,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-optimism',
-    version: 'v0.1.2',
+    id: 'HUiUhcR6A3BTjw7VoeLj5n2pAPPJ51K5DBD8Q2Uu94MH',
   },
   sablierSubgraph: {
     space: 57079,
     slug: 'sablier-v2-optimism',
+    id: 'NZHzd2JNFKhHP5EWUiDxa5TaxGCFbSD4g6YnYr8JGi6',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
@@ -110,6 +111,7 @@ export const optimismConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC20,
     GovernanceType.AZORIUS_ERC721,
   ],
+  gaslessVotingSupported: false,
 };
 
 export default optimismConfig;

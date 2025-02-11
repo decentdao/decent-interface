@@ -2,19 +2,13 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Center, Flex, Text } from '@chakra-ui/react';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Route, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ProposalActionCard } from '../../../../../components/ProposalBuilder/ProposalActionCard';
-import {
-  ProposalBuilder,
-  ShowNonceInputOnMultisig,
-} from '../../../../../components/ProposalBuilder/ProposalBuilder';
+import { ProposalBuilder } from '../../../../../components/ProposalBuilder/ProposalBuilder';
 import { TransactionsDetails } from '../../../../../components/ProposalBuilder/ProposalDetails';
 import { DEFAULT_PROPOSAL_METADATA_TYPE_PROPS } from '../../../../../components/ProposalBuilder/ProposalMetadata';
 import ProposalTransactionsForm from '../../../../../components/ProposalBuilder/ProposalTransactionsForm';
-import StepButtons, {
-  CreateProposalButton,
-  PreviousButton,
-} from '../../../../../components/ProposalBuilder/StepButtons';
+import { CreateProposalButton } from '../../../../../components/ProposalBuilder/StepButtons';
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { AddActions } from '../../../../../components/ui/modals/AddActions';
@@ -103,7 +97,6 @@ export function SafeProposalWithActionsCreatePage() {
   const { addressPrefix } = useNetworkConfigStore();
 
   const HEADER_HEIGHT = useHeaderHeight();
-  const location = useLocation();
   const { t } = useTranslation('proposal');
   const navigate = useNavigate();
   const { resetActions } = useProposalActionsStore();
@@ -115,8 +108,6 @@ export function SafeProposalWithActionsCreatePage() {
       </Center>
     );
   }
-
-  const prevStepUrl = `${location.pathname.replace(CreateProposalSteps.TRANSACTIONS, CreateProposalSteps.METADATA)}${location.search}`;
 
   const pageHeaderBreadcrumbs = [
     {
@@ -134,19 +125,12 @@ export function SafeProposalWithActionsCreatePage() {
     navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
   };
 
-  const stepButtons = ({ createProposalBlocked }: { createProposalBlocked: boolean }) => {
-    return (
-      <StepButtons
-        metadataStepButtons={<CreateProposalButton isDisabled={createProposalBlocked} />}
-        transactionsStepButtons={
-          <>
-            <PreviousButton prevStepUrl={prevStepUrl} />
-            <CreateProposalButton isDisabled={createProposalBlocked} />
-          </>
-        }
-      />
-    );
-  };
+  const stepButtons = ({
+    createProposalBlocked,
+  }: {
+    createProposalBlocked: boolean;
+    onStepChange: (step: CreateProposalSteps) => void;
+  }) => <CreateProposalButton isDisabled={createProposalBlocked} />;
 
   return (
     <ProposalBuilder
@@ -165,24 +149,14 @@ export function SafeProposalWithActionsCreatePage() {
       streamsDetails={null}
       proposalMetadataTypeProps={DEFAULT_PROPOSAL_METADATA_TYPE_PROPS(t)}
       prepareProposalData={prepareProposal}
-      contentRoute={(formikProps, pendingCreateTx, nonce) => {
+      mainContent={(formikProps, pendingCreateTx, nonce, currentStep) => {
+        if (currentStep !== CreateProposalSteps.TRANSACTIONS) return null;
         return (
-          <Route
-            path={CreateProposalSteps.TRANSACTIONS}
-            element={
-              <>
-                <ProposalTransactionsForm
-                  pendingTransaction={pendingCreateTx}
-                  safeNonce={safe?.nextNonce}
-                  isProposalMode={true}
-                  {...formikProps}
-                />
-                <ShowNonceInputOnMultisig
-                  nonce={nonce}
-                  nonceOnChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                />
-              </>
-            }
+          <ProposalTransactionsForm
+            pendingTransaction={pendingCreateTx}
+            safeNonce={safe?.nextNonce}
+            isProposalMode={true}
+            {...formikProps}
           />
         );
       }}
