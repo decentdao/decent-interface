@@ -30,7 +30,7 @@ export default function useSendAssetsActionModal() {
     const isNative = isNativeAsset(sendAssetsData.asset);
     const transactionData = prepareSendAssetsActionData(sendAssetsData);
     addAction({
-      actionType: ProposalActionType.TRANSFER,
+      actionType: isNative ? ProposalActionType.TRANSFER_NATIVE : ProposalActionType.TRANSFER,
       content: <></>,
       transactions: [
         {
