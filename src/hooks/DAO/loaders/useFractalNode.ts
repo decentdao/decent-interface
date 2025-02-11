@@ -54,7 +54,7 @@ export const useFractalNode = ({
         const graphRawNodeData = await client.query<DAOQueryResponse>(DAOQuery, { safeAddress });
 
         if (graphRawNodeData.error) {
-          throw new Error('Failed to fetch DAO data');
+          console.error('Failed to fetch DAO data', graphRawNodeData.error);
         }
 
         const graphDAOData = graphRawNodeData.data?.daos[0];

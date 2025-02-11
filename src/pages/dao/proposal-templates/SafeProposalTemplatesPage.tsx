@@ -48,6 +48,7 @@ export function SafeProposalTemplatesPage() {
     if (!safeAddress) return;
 
     const totalAmount = data.recipients.reduce((acc, recipient) => acc + recipient.amount, 0n);
+
     addAction({
       actionType: ProposalActionType.AIRDROP,
       content: <></>,
@@ -65,7 +66,7 @@ export function SafeProposalTemplatesPage() {
           ],
         },
         {
-          targetAddress: data.asset.tokenAddress,
+          targetAddress: disperse,
           ethValue: {
             bigintValue: 0n,
             value: '0',
