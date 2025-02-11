@@ -22,7 +22,7 @@ export const parseRecipients = (csvText: string, decimals: number) => {
       address,
       amount: {
         value: amount,
-        bigintValue: BigInt(parseFloat(amount)) * BigInt(10 ** decimals),
+        bigintValue: BigInt(parseFloat(amount) * 10 ** decimals),
       },
     };
   });
