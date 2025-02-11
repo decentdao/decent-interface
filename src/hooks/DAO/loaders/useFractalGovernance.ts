@@ -44,7 +44,7 @@ export const useFractalGovernance = () => {
         const result = await client.query<DAOQueryResponse>(DAOQuery, { safeAddress });
 
         if (result.error) {
-          throw new Error('Query failed');
+          console.error('Failed to fetch DAO data', result.error);
         }
 
         if (!result.data) {
