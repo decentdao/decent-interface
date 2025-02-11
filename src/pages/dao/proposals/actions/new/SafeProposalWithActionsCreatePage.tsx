@@ -28,27 +28,35 @@ import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/us
 import { useProposalActionsStore } from '../../../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
 import { CreateProposalSteps, ProposalActionType } from '../../../../../types';
+import {
+  isNativeAsset,
+  prepareSendAssetsActionData,
+} from '../../../../../utils/dao/prepareSendAssetsActionData';
 
 function ActionsExperience() {
   const { t } = useTranslation('actions');
   const { actions, addAction } = useProposalActionsStore();
 
   const handleAddSendAssetsAction = (data: SendAssetsData) => {
+    const isNative = isNativeAsset(data.asset);
+    const transactionData = prepareSendAssetsActionData(data);
     addAction({
-      actionType: ProposalActionType.TRANSFER,
+      actionType: isNative ? ProposalActionType.TRANSFER_NATIVE : ProposalActionType.TRANSFER,
       content: <></>,
       transactions: [
         {
-          targetAddress: data.asset.tokenAddress,
+          targetAddress: transactionData.target,
           ethValue: {
-            bigintValue: 0n,
-            value: '0',
+            bigintValue: transactionData.value,
+            value: transactionData.value.toString(),
           },
-          functionName: 'transfer',
-          parameters: [
-            { signature: 'address', value: data.destinationAddress },
-            { signature: 'uint256', value: data.transferAmount.toString() },
-          ],
+          functionName: isNative ? '' : 'transfer',
+          parameters: isNative
+            ? []
+            : [
+                { signature: 'address', value: data.destinationAddress },
+                { signature: 'uint256', value: data.transferAmount.toString() },
+              ],
         },
       ],
     });
