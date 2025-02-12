@@ -8,7 +8,7 @@ import ExampleTemplateCard from '../../../components/ProposalTemplates/ExampleTe
 import ProposalTemplateCard from '../../../components/ProposalTemplates/ProposalTemplateCard';
 import NoDataCard from '../../../components/ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import { AirdropData } from '../../../components/ui/modals/AirdropModal';
+import { AirdropData } from '../../../components/ui/modals/AirdropModal/AirdropModal';
 import { ModalType } from '../../../components/ui/modals/ModalProvider';
 import { useDecentModal } from '../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
@@ -48,6 +48,7 @@ export function SafeProposalTemplatesPage() {
     if (!safeAddress) return;
 
     const totalAmount = data.recipients.reduce((acc, recipient) => acc + recipient.amount, 0n);
+
     addAction({
       actionType: ProposalActionType.AIRDROP,
       content: <></>,
@@ -65,7 +66,7 @@ export function SafeProposalTemplatesPage() {
           ],
         },
         {
-          targetAddress: data.asset.tokenAddress,
+          targetAddress: disperse,
           ethValue: {
             bigintValue: 0n,
             value: '0',

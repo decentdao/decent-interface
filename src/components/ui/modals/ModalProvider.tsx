@@ -7,7 +7,7 @@ import AddSignerModal from '../../SafeSettings/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../SafeSettings/Signers/modals/RemoveSignerModal';
 import DraggableDrawer from '../containers/DraggableDrawer';
 import AddStrategyPermissionModal from './AddStrategyPermissionModal';
-import { AirdropData, AirdropModal } from './AirdropModal';
+import { AirdropData, AirdropModal } from './AirdropModal/AirdropModal';
 import { ConfirmDeleteStrategyModal } from './ConfirmDeleteStrategyModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';

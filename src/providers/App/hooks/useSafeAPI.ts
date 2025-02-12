@@ -50,9 +50,18 @@ class EnhancedSafeApiKit extends SafeApiKit {
         call = endpoint();
         this.requestMap.set(cacheKey, call);
       }
-      value = await call;
-      this.requestMap.set(cacheKey, null);
-      await this.setCache(cacheKey, value, cacheMinutes);
+      try {
+        value = await call;
+        this.requestMap.set(cacheKey, null);
+        await this.setCache(cacheKey, value, cacheMinutes);
+      } catch (error) {
+        /*
+        await call can throw an exception with the Promise being rejected
+        Without resetting the cache, the same promise will be used in retrials and always throw an exception
+        */
+        this.requestMap.set(cacheKey, null);
+        throw error;
+      }
     }
     return value;
   }
@@ -89,6 +98,8 @@ class EnhancedSafeApiKit extends SafeApiKit {
     const nextNonce = await this.getNextNonce(checksummedSafeAddress);
     const safeInfo = {
       ...safeInfoResponse,
+      // @dev response from safe; nonce is string, typed as number
+      nonce: Number(safeInfoResponse.nonce),
       nextNonce,
     };
     return safeInfo;

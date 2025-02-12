@@ -131,7 +131,7 @@ export function SafeRolesEditPage() {
             const existingRole = getHat(hat.id);
             const isCurrentTermActive = existingRole?.roleTerms.currentTerm?.isActive;
             const isMemberTermPending =
-              !isCurrentTermActive && existingRole?.wearerAddress !== hat.roleTerms?.[0].nominee;
+              !isCurrentTermActive && existingRole?.wearerAddress !== hat.roleTerms?.[0]?.nominee;
             return (
               <RoleCardEdit
                 key={hat.id}

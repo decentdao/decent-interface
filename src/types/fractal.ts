@@ -142,6 +142,8 @@ export interface DAOSubgraph {
   childAddresses: Address[];
   daoSnapshotENS: string | null;
   proposalTemplatesHash: string | null;
+  gaslessVotingEnabled?: boolean;
+  gasTankAddress?: Address;
 }
 
 // @todo should we add other Decent Module types here?
@@ -221,21 +223,6 @@ export interface FractalGovernanceContracts {
 
 export type SafeWithNextNonce = SafeInfoResponseWithGuard & { nextNonce: number };
 
-// @dev Information retreived from subgraph
-interface SubgraphDAOInfo {
-  daoName: string | null;
-  nodeHierarchy: NodeHierarchy;
-  isHierarchyLoaded?: boolean;
-  daoSnapshotENS?: string;
-  proposalTemplatesHash?: string;
-}
-
-// @dev Information retreived from Safe
-export interface DaoInfo extends SubgraphDAOInfo {
-  safe: SafeWithNextNonce | null;
-  fractalModules: DecentModule[];
-  isModulesLoaded?: boolean;
-}
 export type DaoHierarchyStrategyType = 'ERC-20' | 'ERC-721' | 'MULTISIG';
 export interface DaoHierarchyInfo {
   safeAddress: Address;
@@ -334,11 +321,6 @@ export enum VotingStrategyType {
   LINEAR_ERC20_HATS_WHITELISTING = 'labelLinearErc20WithWhitelisting',
   LINEAR_ERC721 = 'labelLinearErc721',
   LINEAR_ERC721_HATS_WHITELISTING = 'labelLinearErc721WithWhitelisting',
-}
-
-export interface NodeHierarchy {
-  parentAddress: Address | null;
-  childNodes: Omit<DaoInfo, 'isHierarchyLoaded' | 'isModulesLoaded' | 'fractalModules'>[];
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;

@@ -1,4 +1,4 @@
-import { Box, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Select, Text } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -12,6 +12,7 @@ import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair, TokenBalance } from '../../../types';
 import { formatCoinFromAsset, formatCoinUnits } from '../../../utils/numberFormats';
 import { validateENSName } from '../../../utils/url';
+import NoDataCard from '../containers/NoDataCard';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { AddressInput } from '../forms/EthAddressInput';
@@ -92,6 +93,16 @@ export function SendAssetsModal({
 
     close();
   };
+
+  if (!fungibleAssetsWithBalance.length) {
+    return (
+      <NoDataCard
+        emptyText="noAssetsWithBalance"
+        emptyTextNotProposer="noAssetsWithBalanceNotProposer"
+        translationNameSpace="modals"
+      />
+    );
+  }
 
   return (
     <Box>

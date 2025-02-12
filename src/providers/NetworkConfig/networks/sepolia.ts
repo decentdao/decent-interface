@@ -26,14 +26,15 @@ export const sepoliaConfig: NetworkConfig = {
   addressPrefix: 'sep',
   nativeTokenIcon: '/images/coin-icon-sep.svg',
   isENSSupported: true,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
-    version: 'v0.1.2',
+    id: 'GNsEo1grZ1dUyyPbPnAutkDtx51t1XN8DhgMHThgo7b2',
   },
   sablierSubgraph: {
     space: 57079,
     slug: 'sablier-v2-sepolia',
+    id: '5yDtFSxyRuqyjvGJyyuQhMEW3Uah7Ddy2KFSKVhy9VMa',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
@@ -110,6 +111,7 @@ export const sepoliaConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC20,
     GovernanceType.AZORIUS_ERC721,
   ],
+  gaslessVotingSupported: true,
 };
 
 export default sepoliaConfig;

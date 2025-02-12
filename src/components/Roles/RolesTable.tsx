@@ -107,7 +107,7 @@ function MemberColumn({
   const { t } = useTranslation('roles');
 
   // @dev undefined = not termed
-  const memberTextColor = !isCurrentTermActive ? 'neutral-6' : 'white-0';
+  const memberTextColor = isCurrentTermActive === false ? 'neutral-6' : 'white-0';
   const isPendingText = isMemberTermPending ? t('wearerPending') : '';
 
   const wearerAddressText = wearerAddress
@@ -342,7 +342,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
           {values.hats.map(role => {
             const existingRole = getHat(role.id);
             const isCurrentTermActive = existingRole?.roleTerms.currentTerm?.isActive;
-            const roleTermNominee = role.roleTerms?.[0].nominee;
+            const roleTermNominee = role.roleTerms?.[0]?.nominee;
             const isMemberTermPending =
               !isCurrentTermActive && existingRole?.wearerAddress !== roleTermNominee;
             return (
