@@ -26,32 +26,19 @@ import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useProposalActionsStore } from '../../../../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../../../../store/daoInfo/useDaoInfoStore';
-import { CreateProposalSteps, ProposalActionType } from '../../../../../types';
-import { SendAssetsData } from '../../../../../utils/dao/prepareSendAssetsActionData';
+import { CreateProposalSteps } from '../../../../../types';
+import {
+  prepareSendAssetsActionData,
+  SendAssetsData,
+} from '../../../../../utils/dao/prepareSendAssetsActionData';
 
 function ActionsExperience() {
   const { t } = useTranslation('actions');
   const { actions, addAction } = useProposalActionsStore();
 
-  const handleAddSendAssetsAction = (data: SendAssetsData) => {
-    addAction({
-      actionType: ProposalActionType.TRANSFER,
-      content: <></>,
-      transactions: [
-        {
-          targetAddress: data.asset.tokenAddress,
-          ethValue: {
-            bigintValue: 0n,
-            value: '0',
-          },
-          functionName: 'transfer',
-          parameters: [
-            { signature: 'address', value: data.recipientAddress },
-            { signature: 'uint256', value: data.transferAmount.toString() },
-          ],
-        },
-      ],
-    });
+  const handleAddSendAssetsAction = (sendAssetsData: SendAssetsData) => {
+    const { action } = prepareSendAssetsActionData(sendAssetsData);
+    addAction(action);
   };
 
   return (

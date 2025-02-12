@@ -7,8 +7,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
-import { ProposalActionType } from '../../types/proposalBuilder';
-import { formatCoin } from '../../utils';
+
 import {
   prepareSendAssetsActionData,
   SendAssetsData,
@@ -28,48 +27,8 @@ export default function useSendAssetsActionModal() {
       return;
     }
 
-    const { tokenAddress, transferAmount } = prepareSendAssetsActionData(sendAssetsData);
-
-    const isNativeTransfer = tokenAddress === null;
-
-    const formattedNativeTokenValue = formatCoin(
-      transferAmount,
-      true,
-      sendAssetsData.asset.decimals,
-      sendAssetsData.asset.symbol,
-      false,
-    );
-
-    // Don't transfer native tokens if this is not a native token transfer.
-    // Amount to transfer will be the 2nd parameter of the transfer function.
-    const ethValue = isNativeTransfer
-      ? {
-          bigintValue: transferAmount,
-          value: formattedNativeTokenValue,
-        }
-      : { bigintValue: 0n, value: '0' };
-
-    // If the transfer is a native token transfer, we use the destination address as the target address
-    // Otherwise, the target is the token address, on which transfer function is called
-    const targetAddress = isNativeTransfer ? sendAssetsData.recipientAddress : tokenAddress;
-
-    addAction({
-      actionType: ProposalActionType.TRANSFER,
-      content: <></>,
-      transactions: [
-        {
-          targetAddress,
-          ethValue,
-          functionName: isNativeTransfer ? '' : 'transfer',
-          parameters: isNativeTransfer
-            ? []
-            : [
-                { signature: 'address', value: sendAssetsData.recipientAddress },
-                { signature: 'uint256', value: sendAssetsData.transferAmount.toString() },
-              ],
-        },
-      ],
-    });
+    const { action } = prepareSendAssetsActionData(sendAssetsData);
+    addAction(action);
 
     navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safe.address));
   };
