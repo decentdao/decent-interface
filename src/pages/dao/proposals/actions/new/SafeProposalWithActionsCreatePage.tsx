@@ -38,7 +38,7 @@ function ActionsExperience() {
 
   const handleAddSendAssetsAction = (sendAssetsData: SendAssetsData) => {
     const { action } = prepareSendAssetsActionData(sendAssetsData);
-    addAction(action);
+    addAction({ ...action, content: <></> });
   };
 
   return (

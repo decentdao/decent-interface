@@ -28,7 +28,7 @@ export default function useSendAssetsActionModal() {
     }
 
     const { action } = prepareSendAssetsActionData(sendAssetsData);
-    addAction(action);
+    addAction({ ...action, content: <></> });
 
     navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safe.address));
   };

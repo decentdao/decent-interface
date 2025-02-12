@@ -1,5 +1,5 @@
 import { Address, encodeFunctionData, erc20Abi, Hex } from 'viem';
-import { CreateProposalAction, ProposalActionType, TokenBalance } from '../../types';
+import { CreateProposalActionData, ProposalActionType, TokenBalance } from '../../types';
 import { formatCoin } from '../numberFormats';
 
 export interface SendAssetsData {
@@ -10,7 +10,7 @@ export interface SendAssetsData {
 }
 
 interface ActionData {
-  action: CreateProposalAction;
+  action: CreateProposalActionData;
   tokenAddress: Address | null;
   transferAmount: bigint;
   calldata: Hex;
@@ -65,7 +65,7 @@ export const prepareSendAssetsActionData = ({
       }
     : { bigintValue: 0n, value: '0' };
 
-  const action: CreateProposalAction = {
+  const action: CreateProposalActionData = {
     actionType: ProposalActionType.TRANSFER,
     transactions: [
       {
