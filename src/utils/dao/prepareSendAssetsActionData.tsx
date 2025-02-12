@@ -1,5 +1,5 @@
 import { Address, encodeFunctionData, erc20Abi, Hex } from 'viem';
-import { ProposalActionType, TokenBalance } from '../../types';
+import { CreateProposalAction, ProposalActionType, TokenBalance } from '../../types';
 import { formatCoin } from '../numberFormats';
 
 export interface SendAssetsData {
@@ -9,22 +9,26 @@ export interface SendAssetsData {
   nonceInput: number | undefined; // this is only releveant when the caller action results in a proposal
 }
 
+interface ActionData {
+  action: CreateProposalAction;
+  tokenAddress: Address | null;
+  transferAmount: bigint;
+  calldata: Hex;
+}
+
 /**
  * Prepare the data for a send assets action.
  *
  * @returns Returns a `SendAssetsActionData` object.
- *
  * `.tokenAddress` is `null` if this is a native token transfer.
- *
  * `.transferAmount` is the amount of tokens being transferred.
- *
  * `.calldata` is the calldata for the transfer function. `0x` if this is a native token transfer.
  */
 export const prepareSendAssetsActionData = ({
   transferAmount,
   asset,
   recipientAddress,
-}: SendAssetsData) => {
+}: SendAssetsData): ActionData => {
   let calldata: Hex = '0x';
   if (!asset.nativeToken) {
     calldata = encodeFunctionData({
@@ -34,14 +38,11 @@ export const prepareSendAssetsActionData = ({
     });
   }
 
-  const tokenAddress = asset.nativeToken ? null : asset.tokenAddress;
   const actionData = {
-    tokenAddress,
+    tokenAddress: asset.nativeToken ? null : asset.tokenAddress,
     transferAmount,
     calldata,
   };
-
-  const isNativeTransfer = tokenAddress === null;
 
   const formattedNativeTokenValue = formatCoin(
     transferAmount,
@@ -51,28 +52,27 @@ export const prepareSendAssetsActionData = ({
     false,
   );
 
+  // If the transfer is a native token transfer, we use the destination address as the target address
+  // Otherwise, the target is the token address, on which transfer function is called
+  const targetAddress = asset.nativeToken ? recipientAddress : asset.tokenAddress;
+
   // Don't transfer native tokens if this is not a native token transfer.
   // Amount to transfer will be the 2nd parameter of the transfer function.
-  const ethValue = isNativeTransfer
+  const ethValue = asset.nativeToken
     ? {
         bigintValue: transferAmount,
         value: formattedNativeTokenValue,
       }
     : { bigintValue: 0n, value: '0' };
 
-  // If the transfer is a native token transfer, we use the destination address as the target address
-  // Otherwise, the target is the token address, on which transfer function is called
-  const targetAddress = isNativeTransfer ? recipientAddress : tokenAddress;
-
-  const action = {
+  const action: CreateProposalAction = {
     actionType: ProposalActionType.TRANSFER,
-    content: <></>,
     transactions: [
       {
         targetAddress,
         ethValue,
-        functionName: isNativeTransfer ? '' : 'transfer',
-        parameters: isNativeTransfer
+        functionName: asset.nativeToken ? '' : 'transfer',
+        parameters: asset.nativeToken
           ? []
           : [
               { signature: 'address', value: recipientAddress },

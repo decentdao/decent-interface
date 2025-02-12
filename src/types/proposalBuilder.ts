@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { BigIntValuePair } from './common';
 
 export enum CreateProposalSteps {
@@ -63,6 +62,5 @@ export enum ProposalActionType {
 
 export type CreateProposalAction<T = BigIntValuePair> = {
   actionType: ProposalActionType;
-  content: ReactNode;
   transactions: CreateProposalTransaction<T>[];
 };
