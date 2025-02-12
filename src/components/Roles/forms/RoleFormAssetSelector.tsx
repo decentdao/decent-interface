@@ -25,7 +25,9 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
     treasury: { assetsFungible },
   } = useFractal();
 
-  const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
+  const fungibleAssetsWithBalance = assetsFungible.filter(
+    asset => parseFloat(asset.balance) > 0 && !asset.nativeToken,
+  );
 
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
