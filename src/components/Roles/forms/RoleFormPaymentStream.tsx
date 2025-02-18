@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
-import { Set10MinPaymentStreamButton } from '../../../utils/dev/Set10MinPaymentStreamButton';
+import { DevSet10MinPaymentStream } from '../../../utils/dev/DevSet10MinPaymentStream';
 import { DatePicker } from '../../ui/forms/DatePicker';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
@@ -199,7 +199,7 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
           disabled={!!streamId}
         />
 
-        <Set10MinPaymentStreamButton formIndex={formIndex} />
+        <DevSet10MinPaymentStream formIndex={formIndex} />
 
         {canBeCancelled && (
           <Show above="md">

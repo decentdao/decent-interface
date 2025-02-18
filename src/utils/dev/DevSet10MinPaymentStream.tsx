@@ -3,7 +3,7 @@ import { useFormikContext } from 'formik';
 import { isFeatureEnabled } from '../../helpers/featureFlags';
 import { RoleFormValues } from '../../types/roles';
 
-export function Set10MinPaymentStreamButton({ formIndex }: { formIndex: number }) {
+export function DevSet10MinPaymentStream({ formIndex }: { formIndex: number }) {
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
 
   return isFeatureEnabled('flag_dev') ? (
