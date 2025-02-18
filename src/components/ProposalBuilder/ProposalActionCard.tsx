@@ -22,7 +22,9 @@ function SendAssetsAction({
 
   // `action` will have at this point been configured to have an empty function name and no parameters for native asset transfers
   const isNativeAssetTransfer =
-    action.transactions[0].functionName === '' && action.transactions[0].parameters.length === 0;
+    action.transactions[0].functionName === '' &&
+    action.transactions[0].parameters.length === 0 &&
+    action.actionType === ProposalActionType.NATIVE_TRANSFER;
 
   // If the transfer is a native asset transfer, `targetAddress` is the recipient address, and `parameters` is an empty array.
   // Otherwise, the first parameter to the call to `transfer` is the recipient address.
@@ -143,7 +145,10 @@ export function ProposalActionCard({
   canBeDeleted: boolean;
 }) {
   const { removeAction } = useProposalActionsStore();
-  if (action.actionType === ProposalActionType.TRANSFER) {
+  if (
+    action.actionType === ProposalActionType.TRANSFER ||
+    action.actionType === ProposalActionType.NATIVE_TRANSFER
+  ) {
     return (
       <SendAssetsAction
         action={action}

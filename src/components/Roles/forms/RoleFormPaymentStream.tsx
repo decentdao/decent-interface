@@ -169,8 +169,6 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
     );
   }
 
-  console.log({ devMode: isFeatureEnabled('flag_dev') });
-
   return (
     <>
       <Box

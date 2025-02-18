@@ -66,7 +66,9 @@ export const prepareSendAssetsActionData = ({
     : { bigintValue: 0n, value: '0' };
 
   const action: CreateProposalActionData = {
-    actionType: ProposalActionType.TRANSFER,
+    actionType: asset.nativeToken
+      ? ProposalActionType.NATIVE_TRANSFER
+      : ProposalActionType.TRANSFER,
     transactions: [
       {
         targetAddress,
