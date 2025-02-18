@@ -54,7 +54,7 @@ export function transformDefiResponse(defi: DefiResponse): DefiBalance {
         usdValue: token.usd_value,
         nativeToken: false,
         portfolioPercentage: 0,
-        tokenAddress: token.contract_address || '',
+        tokenAddress: token.contract_address ? getAddress(token.contract_address) : '0x',
         verifiedContract: true,
       })),
       address: defi.position.address,
