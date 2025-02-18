@@ -26,14 +26,15 @@ export const mainnetConfig: NetworkConfig = {
   addressPrefix: 'eth',
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   isENSSupported: true,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-mainnet',
-    version: 'v0.1.2',
+    id: 'EwAjJixmcVMcxoj1qt1o2oae1rbvvZNdfshkfovLrbxp',
   },
   sablierSubgraph: {
     space: 57079,
     slug: 'sablier-v2',
+    id: 'AvDAMYYHGaEwn9F9585uqq6MM5CfvRtYcb7KjK7LKPCt',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(

@@ -67,9 +67,10 @@ function GaslessVotingToggleContent({
 
 export function GaslessVotingToggleDAOCreate(props: GaslessVotingToggleProps) {
   const { t } = useTranslation('daoCreate');
-  const { chain } = useNetworkConfigStore();
+  const { chain, gaslessVotingSupported } = useNetworkConfigStore();
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
+  if (!gaslessVotingSupported) return null;
 
   return (
     <Box
@@ -117,20 +118,19 @@ export function GaslessVotingToggleDAOSettings(
   },
 ) {
   const { t } = useTranslation('daoEdit');
-  const { safe } = useDaoInfoStore();
-  const { chain } = useNetworkConfigStore();
+  const { chain, gaslessVotingSupported } = useNetworkConfigStore();
 
-  // @todo: Use the paymaster address here.
-  const { data: balance } = useBalance({ address: safe?.address, chainId: chain.id });
+  // @todo: Retrieve and use the paymaster address here for `gasTankAddress`. Replace safe.address with the paymaster address. Remove use of `useDaoInfoStore`.
+  const { safe } = useDaoInfoStore();
+  const gasTankAddress = safe?.address;
+
+  const { data: balance } = useBalance({ address: gasTankAddress, chainId: chain.id });
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
-  if (!safe) return null;
+  if (!gaslessVotingSupported) return null;
 
   const formattedNativeTokenBalance =
     balance && formatCoin(balance.value, true, balance.decimals, balance.symbol);
-
-  // @todo: Retrieve the paymaster address here. Replace safe.address with the paymaster address.
-  const gasTankAddress = safe.address;
 
   return (
     <Box

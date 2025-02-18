@@ -51,8 +51,8 @@
   "proposalSummaryTitle": "Details",
   "proposalSummaryStartDate": "Start Date",
   "proposalSummaryEndDate": "End Date",
-  "snapshotTaken": "Snapshot taken",
-  "votingPower": "Voting power",
+  "snapshotTaken": "Snapshot Taken",
+  "votingPower": "Voting Power",
   "votingPowerTooltip": "This is your voting power at the time the snapshot was taken, which occurs at the moment of proposal creation.",
   "show": "Show",
   "proposalSupportERC20SummaryHelper": "Minimum {{quorum}}% required out of {{total}}",
@@ -126,7 +126,7 @@
   "noTimeDifference": "0 seconds",
   "functionNameError": "The function name can contain only numbers and letters.",
   "labelOrValueRequired": "Parameter Label or Parameter Value is required",
-  "votingSystem": "Voting system",
+  "votingSystem": "Voting System",
   "basicSnapshotVotingSystem": "Basic voting",
   "singleSnapshotVotingSystem": "Single choice voting",
   "weightedSnapshotVotingSystem": "Weighted voting",
@@ -175,5 +175,7 @@
   "labelTrancheAmount": "Tranche Amount",
   "labelTrancheDuration": "Tranche Duration",
   "streamCancelableHelper": "If enabled, the stream can be canceled by the owner of the Safe",
-  "streamTransferableHelper": "If enabled, the stream can be transferred to another address by the stream's recipient"
+  "streamTransferableHelper": "If enabled, the stream can be transferred to another address by the stream's recipient",
+  "proposalSummaryNotEnoughVotingPower": "Your voting power did not meet requirements to vote on this proposal when it was created.",
+  "proposalSummaryNotEnoughVotingPowerSecondary": "Delegate voting tokens to your address to be eligible to vote on future proposals."
 }

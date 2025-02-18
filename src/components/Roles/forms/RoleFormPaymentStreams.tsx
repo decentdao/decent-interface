@@ -9,8 +9,6 @@ import {
   paymentSorterByWithdrawAmount,
 } from '../../../store/roles/rolesStoreUtils';
 import { RoleFormValues, SablierPaymentFormValues } from '../../../types/roles';
-import { ModalType } from '../../ui/modals/ModalProvider';
-import { useDecentModal } from '../../ui/modals/useDecentModal';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from '../RolePaymentDetails';
 import { RoleFormPaymentStream } from './RoleFormPaymentStream';
@@ -35,7 +33,6 @@ export function RoleFormPaymentRenderer() {
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue, validateForm } = useFormikContext<RoleFormValues>();
-  const cancelModal = useDecentModal(ModalType.NONE);
   const payments = values.roleEditing?.payments;
 
   const sortedPayments = useMemo(
@@ -130,20 +127,11 @@ export function RoleFormPaymentStreams() {
               return (
                 <RolePaymentDetails
                   key={thisPaymentIndex}
-                  showCancel={canBeCancelled || !payment.isCancelling}
                   onClick={
                     canBeCancelled
                       ? () => setFieldValue('roleEditing.roleEditingPaymentIndex', thisPaymentIndex)
                       : undefined
                   }
-                  onCancel={() => {
-                    setFieldValue(`roleEditing.payments.${thisPaymentIndex}`, {
-                      ...payment,
-                      isCancelling: true,
-                    });
-                    cancelModal();
-                    setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
-                  }}
                   roleTerms={roleTerms}
                   payment={{
                     streamId: payment.streamId,

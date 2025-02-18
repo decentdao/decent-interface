@@ -6,18 +6,20 @@ import { useTranslation } from 'react-i18next';
 import { Address, getAddress, isAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
-import { useFractal } from '../../../providers/App/AppProvider';
-import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
-import { BigIntValuePair, TokenBalance } from '../../../types';
-import { formatCoinFromAsset } from '../../../utils';
-import { validateENSName } from '../../../utils/url';
-import { BigIntInput } from '../forms/BigIntInput';
-import { CustomNonceInput } from '../forms/CustomNonceInput';
-import { AddressInput } from '../forms/EthAddressInput';
-import LabelWrapper from '../forms/LabelWrapper';
-import Divider from '../utils/Divider';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { useDaoInfoStore } from '../../../../store/daoInfo/useDaoInfoStore';
+import { BigIntValuePair, TokenBalance } from '../../../../types';
+import { formatCoinFromAsset } from '../../../../utils';
+import { validateENSName } from '../../../../utils/url';
+import NoDataCard from '../../containers/NoDataCard';
+import { BigIntInput } from '../../forms/BigIntInput';
+import { CustomNonceInput } from '../../forms/CustomNonceInput';
+import { AddressInput } from '../../forms/EthAddressInput';
+import LabelWrapper from '../../forms/LabelWrapper';
+import Divider from '../../utils/Divider';
+import { DnDFileInput, parseRecipients } from './DnDFileInput';
 
-interface AirdropFormValues {
+export interface AirdropFormValues {
   selectedAsset: TokenBalance;
   recipients: {
     address: string;
@@ -106,6 +108,7 @@ export function AirdropModal({
 
     close();
   };
+
   return (
     <Box>
       <Formik<AirdropFormValues>
@@ -117,6 +120,16 @@ export function AirdropModal({
         validationSchema={airdropValidationSchema}
       >
         {({ errors, values, setFieldValue, handleSubmit }) => {
+          if (!fungibleAssetsWithBalance.length) {
+            return (
+              <NoDataCard
+                emptyText="noAssetsWithBalance"
+                emptyTextNotProposer="noAssetsWithBalanceNotProposer"
+                translationNameSpace="modals"
+              />
+            );
+          }
+
           const totalAmount = values.recipients.reduce(
             (acc, recipient) => acc + (recipient.amount.bigintValue || 0n),
             0n,
@@ -126,6 +139,48 @@ export function AirdropModal({
           const selectedAssetIndex = fungibleAssetsWithBalance.findIndex(
             asset => asset.tokenAddress === values.selectedAsset.tokenAddress,
           );
+
+          const handleAddressInputPaste = (
+            e: React.ClipboardEvent,
+            index: number,
+            currentRecipients: AirdropFormValues['recipients'],
+          ) => {
+            e.preventDefault();
+            const pastedText = e.clipboardData.getData('text');
+
+            if (!pastedText || !pastedText.includes(',')) {
+              setFieldValue(
+                'recipients',
+                currentRecipients.map((r, i) => {
+                  if (i === index) {
+                    return { ...r, address: pastedText };
+                  }
+                  return r;
+                }),
+              );
+            }
+
+            try {
+              const newRecipients = parseRecipients(pastedText, values.selectedAsset.decimals);
+
+              if (newRecipients.length > 0) {
+                // Replace the current empty recipient and add the rest
+                const updatedRecipients = [...currentRecipients];
+
+                // Replace the current recipient with the first new one
+                updatedRecipients[index] = newRecipients[0];
+
+                // Add the rest of the recipients
+                if (newRecipients.length > 1) {
+                  updatedRecipients.push(...newRecipients.slice(1));
+                }
+
+                setFieldValue('recipients', updatedRecipients);
+              }
+            } catch (error) {
+              console.error('Error processing pasted text:', error);
+            }
+          };
 
           return (
             <Form onSubmit={handleSubmit}>
@@ -184,6 +239,11 @@ export function AirdropModal({
 
               <Divider my="1.5rem" />
 
+              {/* CSV INPUT */}
+              <DnDFileInput />
+
+              <Divider my="1.5rem" />
+
               {/* RECIPIENTS INPUTS */}
               <Field name="recipients">
                 {({
@@ -199,6 +259,9 @@ export function AirdropModal({
                         mb="2.5rem"
                       >
                         <LabelWrapper
+                          tooltipContent={
+                            index === 0 ? <Text>{t('pasteMultipleRecipients')}</Text> : undefined
+                          }
                           label={t('recipientsLabel')}
                           subLabel={t('recipientsSublabel')}
                           errorMessage={
@@ -223,6 +286,7 @@ export function AirdropModal({
                               );
                             }}
                             value={recipient.address}
+                            onPaste={e => handleAddressInputPaste(e, index, field.value)}
                           />
                         </LabelWrapper>
                         <LabelWrapper
