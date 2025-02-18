@@ -26,14 +26,15 @@ export const baseConfig: NetworkConfig = {
   addressPrefix: 'base',
   nativeTokenIcon: '/images/coin-icon-base.svg',
   isENSSupported: false,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
     slug: 'fractal-base',
-    version: 'v0.1.2',
+    id: 'BWv5n6PPqv99y6vAez5M9jNvmKagpSpKprYPoKMb8z4o',
   },
   sablierSubgraph: {
     space: 57079,
     slug: 'sablier-v2-base',
+    id: '778GfecD9tsyB4xNnz4wfuAyfHU6rqGr79VCPZKu3t2F',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(

@@ -155,6 +155,8 @@ export function SafePermissionsSettingsPage() {
                         })
                       : t('permissionsErc721CreateProposalsDescription', {
                           proposerThreshold,
+                          symbol: erc721Tokens?.[0]?.symbol,
+                          count: erc721Tokens?.length,
                         })}
                   </Text>
                 </Box>

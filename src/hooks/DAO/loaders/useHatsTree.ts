@@ -1,8 +1,8 @@
-import { useApolloClient } from '@apollo/client';
 import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { createSablierSubgraphClient } from '../../../graphql';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
@@ -28,7 +28,8 @@ const useHatsTree = () => {
 
   const ipfsClient = useIPFSClient();
   const {
-    sablierSubgraph,
+    chain,
+    getConfigByChainId,
     contracts: {
       hatsProtocol,
       erc6551Registry,
@@ -37,7 +38,6 @@ const useHatsTree = () => {
     },
   } = useNetworkConfigStore();
   const publicClient = useNetworkPublicClient();
-  const apolloClient = useApolloClient();
 
   const getHatsTree = useCallback(
     async (params: { hatsTreeId: number; contextChainId: number }) => {
@@ -94,6 +94,8 @@ const useHatsTree = () => {
 
         const treeWithFetchedDetails: Tree = { ...tree, hats: hatsWithFetchedDetails };
         try {
+          const config = getConfigByChainId(chain.id);
+          const sablierSubgraphClient = createSablierSubgraphClient(config);
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
             chainId: BigInt(params.contextChainId),
@@ -105,8 +107,7 @@ const useHatsTree = () => {
             whitelistingVotingStrategy:
               linearVotingErc20WithHatsWhitelistingAddress ||
               linearVotingErc721WithHatsWhitelistingAddress,
-            apolloClient,
-            sablierSubgraph,
+            sablierSubgraphClient,
           });
         } catch (e) {
           if (e instanceof DecentHatsError) {
@@ -114,6 +115,8 @@ const useHatsTree = () => {
           }
         }
       } catch (e) {
+        const config = getConfigByChainId(chain.id);
+        const sablierSubgraphClient = createSablierSubgraphClient(config);
         setHatsTree({
           hatsTree: null,
           chainId: BigInt(params.contextChainId),
@@ -122,8 +125,7 @@ const useHatsTree = () => {
           hatsAccountImplementation,
           hatsElectionsImplementation,
           publicClient,
-          apolloClient,
-          sablierSubgraph,
+          sablierSubgraphClient,
         });
         const message = t('invalidHatsTreeIdMessage');
         toast.error(message);
@@ -137,7 +139,8 @@ const useHatsTree = () => {
       }
     },
     [
-      apolloClient,
+      chain.id,
+      getConfigByChainId,
       erc6551Registry,
       hatsAccountImplementation,
       hatsElectionsImplementation,
@@ -145,12 +148,12 @@ const useHatsTree = () => {
       ipfsClient,
       linearVotingErc20WithHatsWhitelistingAddress,
       linearVotingErc721WithHatsWhitelistingAddress,
-      sablierSubgraph,
       setHatsTree,
       publicClient,
       t,
     ],
   );
+
   const node = useDaoInfoStore();
   const safeAddress = node.safe?.address;
   const daoHatTreeloadKey = useRef<string | null>();

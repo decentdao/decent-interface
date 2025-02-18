@@ -1,5 +1,5 @@
-import { ApolloClient } from '@apollo/client';
 import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
+import { Client } from 'urql';
 import { Address, Hex, PublicClient } from 'viem';
 import { SendAssetsData } from '../utils/dao/prepareSendAssetsActionData';
 import { BigIntValuePair } from './common';
@@ -254,11 +254,7 @@ export interface RolesStore extends RolesStoreData {
     hatsAccountImplementation: Address;
     hatsElectionsImplementation: Address;
     publicClient: PublicClient;
-    apolloClient: ApolloClient<object>;
-    sablierSubgraph?: {
-      space: number;
-      slug: string;
-    };
+    sablierSubgraphClient: Client;
     whitelistingVotingStrategy?: Address;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;

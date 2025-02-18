@@ -35,6 +35,7 @@ const useUserTracking = () => {
 const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
   const { favoritesList } = useAccountFavorites();
   const { getEnsName } = useNetworkEnsNameAsync();
+
   useEffect(() => {
     (async () => {
       const favoriteNames = await Promise.all(
@@ -55,10 +56,7 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
 
           const networkConfig = getNetworkConfig(favoriteChain.id);
 
-          return Promise.all([
-            favorite,
-            getSafeName(networkConfig.subgraph, favorite.address, getEnsName),
-          ]);
+          return Promise.all([favorite, getSafeName(networkConfig, favorite.address, getEnsName)]);
         }),
       );
 
@@ -91,6 +89,8 @@ const useUpdateFavoritesCache = (onFavoritesUpdated: () => void) => {
       }
     })();
   }, [favoritesList, getEnsName, onFavoritesUpdated]);
+
+  return null;
 };
 
 export function Global() {

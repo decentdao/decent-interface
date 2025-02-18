@@ -26,14 +26,15 @@ export const polygonConfig: NetworkConfig = {
   addressPrefix: 'matic',
   nativeTokenIcon: '/images/coin-icon-pol.svg',
   isENSSupported: false,
-  subgraph: {
+  decentSubgraph: {
     space: 71032,
-    slug: 'fractal-base-polygon',
-    version: 'v0.1.2',
+    slug: 'fractal-polygon',
+    id: 'E7GsrUKtVS2sd5DUaAF29JasYWF81gjmFUWndNf4jYqr',
   },
   sablierSubgraph: {
     space: 57079,
     slug: 'sablier-v2-polygon',
+    id: '8fgeQMEQ8sskVeWE5nvtsVL2VpezDrAkx2d1VeiHiheu',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
