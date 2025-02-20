@@ -1,0 +1,8 @@
+{
+  "gaslessVotingLabel": "Gasless Voting",
+  "gaslessVotingDescription": "Sponsor gas for votes and proposals.",
+  "gaslessVotingGettingStarted": "To get you started, we're covering your first 0.1 {{symbol}} of gas fees. You can top up your balance in your DAO settings, or by sending {{symbol}} to this address directly in your wallet.",
+  "gaslessVotingLabelSettings": "Sponsored Votes",
+  "gaslessVotingDescriptionSettings": "Create a paymaster to sponsor network fees for proposal votes.",
+  "addGas": "Add Gas"
+}

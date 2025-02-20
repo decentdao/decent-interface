@@ -1,6 +1,3 @@
 {
-  "cannotModifyGovernance": "You do not have permissions to modify this Safe's governance.",
-  "gaslessVotingLabelSettings": "Sponsored Votes",
-  "gaslessVotingDescriptionSettings": "Create a paymaster to sponsor network fees for proposal votes.",
-  "addGas": "Add Gas"
+  "cannotModifyGovernance": "You do not have permissions to modify this Safe's governance."
 }

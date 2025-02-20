@@ -21,7 +21,7 @@ function GaslessVotingToggleContent({
   onToggle,
   isSettings,
 }: GaslessVotingToggleProps & { isSettings?: boolean }) {
-  const { t } = useTranslation('daoCreate');
+  const { t } = useTranslation('gaslessVoting');
 
   return (
     <Box
@@ -40,17 +40,13 @@ function GaslessVotingToggleContent({
           gap="0.25rem"
         >
           <Text textStyle={isSettings ? 'heading-small' : 'helper-text'}>
-            {isSettings
-              ? t('gaslessVotingLabelSettings', { ns: 'daoEdit' })
-              : t('gaslessVotingLabel')}
+            {isSettings ? t('gaslessVotingLabelSettings') : t('gaslessVotingLabel')}
           </Text>
           <Text
             textStyle={isSettings ? 'label-large' : 'helper-text'}
             color="neutral-7"
           >
-            {isSettings
-              ? t('gaslessVotingDescriptionSettings', { ns: 'daoEdit' })
-              : t('gaslessVotingDescription')}
+            {isSettings ? t('gaslessVotingDescriptionSettings') : t('gaslessVotingDescription')}
           </Text>
         </Flex>
         <Switch
@@ -116,7 +112,7 @@ export function GaslessVotingToggleDAOSettings(
     onGasTankTopupAmountChange: (amount: BigIntValuePair) => void;
   },
 ) {
-  const { t } = useTranslation('daoEdit');
+  const { t } = useTranslation('gaslessVoting');
   const { chain, gaslessVotingSupported } = useNetworkConfigStore();
 
   // @todo: Retrieve and use the paymaster address here for `gasTankAddress`. Replace safe.address with the paymaster address. Remove use of `useDaoInfoStore`.
