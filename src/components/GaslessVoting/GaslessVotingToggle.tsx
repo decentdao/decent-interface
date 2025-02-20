@@ -8,8 +8,8 @@ import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkC
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair } from '../../types';
 import { formatCoin } from '../../utils';
-import EtherscanLink from './links/EtherscanLink';
-import Divider from './utils/Divider';
+import EtherscanLink from '../ui/links/EtherscanLink';
+import Divider from '../ui/utils/Divider';
 
 interface GaslessVotingToggleProps {
   isEnabled: boolean;
