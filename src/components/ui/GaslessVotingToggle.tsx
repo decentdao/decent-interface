@@ -47,7 +47,6 @@ function GaslessVotingToggleContent({
           <Text
             textStyle={isSettings ? 'label-large' : 'helper-text'}
             color="neutral-7"
-            w="17.25rem"
           >
             {isSettings
               ? t('gaslessVotingDescriptionSettings', { ns: 'daoEdit' })
