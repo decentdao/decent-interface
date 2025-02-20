@@ -5,6 +5,7 @@ import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
+import { isFeatureEnabled } from '../../../helpers/featureFlags';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { RoleFormValues, RoleHatFormValue } from '../../../types/roles';
 import { DatePicker } from '../../ui/forms/DatePicker';
@@ -197,6 +198,23 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
           formIndex={formIndex}
           disabled={!!streamId}
         />
+        {isFeatureEnabled('flag_dev') && (
+          <Button
+            size="sm"
+            onClick={() => {
+              const startDate = new Date();
+              const endDate = new Date(startDate.getTime() + 10 * 60 * 1000); // Add 10 minutes
+              setFieldValue(`roleEditing.payments.${formIndex}`, {
+                ...values.roleEditing?.payments?.[formIndex],
+                startDate,
+                endDate,
+              });
+            }}
+            mb={4}
+          >
+            Set 10 min stream
+          </Button>
+        )}
         {canBeCancelled && (
           <Show above="md">
             <PaymentCancelHint />
