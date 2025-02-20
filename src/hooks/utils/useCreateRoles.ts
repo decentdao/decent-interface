@@ -1691,18 +1691,19 @@ export default function useCreateRoles() {
 
           const isNativeTokenTransfer = actionType === ProposalActionType.NATIVE_TRANSFER;
 
-          // For native token transfers:
-          //  - `target` is the recipient address
-          //  - `value` is the amount of native tokens to transfer
-          //  - `calldata` is '0x'
-          // For non-native token transfers:
-          //  - `target` is the token address
-          //  - `value` is 0n
-          //  - `calldata` is the encoded function call data for transferring `transferAmount` to `action.recipientAddress`
-          proposalData.targets.push(
-            isNativeTokenTransfer ? action.recipientAddress : tokenAddress!,
-          );
-          proposalData.values.push(isNativeTokenTransfer ? transferAmount : 0n);
+          // Add transaction details based on transfer type
+          const target = isNativeTokenTransfer
+            ? action.recipientAddress // For native: recipient gets tokens directly
+            : tokenAddress!; // For tokens: token contract handles transfer
+
+          const value = isNativeTokenTransfer
+            ? transferAmount // For native: specify amount of native tokens
+            : 0n; // For tokens: no native tokens needed
+
+          // calldata is either empty for native transfers
+          // or encoded token transfer function call
+          proposalData.targets.push(target);
+          proposalData.values.push(value);
           proposalData.calldatas.push(calldata);
         });
 
