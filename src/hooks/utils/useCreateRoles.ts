@@ -41,6 +41,7 @@ import {
   AzoriusGovernance,
   CreateProposalMetadata,
   GovernanceType,
+  ProposalActionType,
   ProposalExecuteData,
 } from '../../types';
 import {
@@ -1681,9 +1682,14 @@ export default function useCreateRoles() {
 
         // Add "send assets" actions to the proposal data
         values.actions.forEach(action => {
-          const { tokenAddress, transferAmount, calldata } = prepareSendAssetsActionData(action);
+          const {
+            tokenAddress,
+            transferAmount,
+            calldata,
+            action: { actionType },
+          } = prepareSendAssetsActionData(action);
 
-          const isNativeTokenTransfer = tokenAddress === null;
+          const isNativeTokenTransfer = actionType === ProposalActionType.NATIVE_TRANSFER;
 
           // For native token transfers:
           //  - `target` is the recipient address
@@ -1693,7 +1699,9 @@ export default function useCreateRoles() {
           //  - `target` is the token address
           //  - `value` is 0n
           //  - `calldata` is the encoded function call data for transferring `transferAmount` to `action.recipientAddress`
-          proposalData.targets.push(isNativeTokenTransfer ? action.recipientAddress : tokenAddress);
+          proposalData.targets.push(
+            isNativeTokenTransfer ? action.recipientAddress : tokenAddress!,
+          );
           proposalData.values.push(isNativeTokenTransfer ? transferAmount : 0n);
           proposalData.calldatas.push(calldata);
         });
