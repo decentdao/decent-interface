@@ -39,11 +39,11 @@ function GaslessVotingToggleContent({
           flexDirection="column"
           gap="0.25rem"
         >
-          <Text textStyle={isSettings ? 'heading-small' : 'helper-text'}>
+          <Text textStyle={isSettings ? 'body-small' : 'helper-text'}>
             {isSettings ? t('gaslessVotingLabelSettings') : t('gaslessVotingLabel')}
           </Text>
           <Text
-            textStyle={isSettings ? 'label-large' : 'helper-text'}
+            textStyle={isSettings ? 'labels-large' : 'helper-text'}
             color="neutral-7"
           >
             {isSettings ? t('gaslessVotingDescriptionSettings') : t('gaslessVotingDescription')}

@@ -21,10 +21,7 @@ export function StarterPromoBanner() {
         width="3.7165rem"
         height="3.7165rem"
       />
-      <Flex
-        direction="column"
-        gap="0.5rem"
-      >
+      <Flex direction="column">
         <Text
           textStyle="labels-large"
           color="cosmic-nebula--1"
