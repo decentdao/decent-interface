@@ -1,5 +1,5 @@
 import { Box, Text, HStack, Switch, Flex, Icon, Button, Image } from '@chakra-ui/react';
-import { GasPump, WarningCircle } from '@phosphor-icons/react';
+import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useBalance } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
@@ -167,11 +167,11 @@ export function GaslessVotingToggleDAOSettings(
       )} */}
 
       {isEnabled && (
-        <Flex
-          mt="-0.55rem"
-          justifyContent="space-between"
-        >
-          <Flex direction="column">
+        <Flex justifyContent="space-between">
+          <Flex
+            direction="column"
+            justifyContent="space-between"
+          >
             <Text
               textStyle="labels-small"
               color="neutral-7"
@@ -199,7 +199,7 @@ export function GaslessVotingToggleDAOSettings(
 
           <Button
             variant="secondary"
-            leftIcon={<Icon as={GasPump} />}
+            size="sm"
             onClick={() => {
               console.log(
                 'addGas. Add this action to the proposal, to be submitted via propose changes button.',
