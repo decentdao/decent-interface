@@ -63,6 +63,7 @@ export interface SablierPayment {
   startDate: Date;
   endDate: Date;
   cliffDate: Date | undefined;
+  cancelable: boolean;
   isStreaming: () => boolean;
   isCancellable: () => boolean;
   withdrawableAmount: bigint;
@@ -220,6 +221,7 @@ export type PreparedNewStreamData = {
   cliffDateTs: number;
   totalAmount: bigint;
   assetAddress: Address;
+  cancelable: boolean;
 };
 
 export interface RoleDetailsDrawerProps {

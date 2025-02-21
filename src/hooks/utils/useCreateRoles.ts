@@ -772,6 +772,7 @@ export default function useCreateRoles() {
           cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
           totalAmount: stream.amount.bigintValue,
           assetAddress: stream.asset.address,
+          cancelable: stream.cancelable || true,
         };
       });
 
