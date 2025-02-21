@@ -10,6 +10,7 @@ import { BigIntValuePair } from '../../types';
 import { formatCoin } from '../../utils';
 import EtherscanLink from '../ui/links/EtherscanLink';
 import Divider from '../ui/utils/Divider';
+import { StarterPromoBanner } from './StarterPromoBanner';
 
 interface GaslessVotingToggleProps {
   isEnabled: boolean;
@@ -143,6 +144,8 @@ export function GaslessVotingToggleDAOSettings(
         {...props}
         isSettings
       />
+
+      <StarterPromoBanner />
 
       {gasTankAddress && (
         <Box
