@@ -1,4 +1,4 @@
-import { Box, Text, HStack, Switch, Flex, Icon, Button } from '@chakra-ui/react';
+import { Box, Text, HStack, Switch, Flex, Icon, Button, Image } from '@chakra-ui/react';
 import { GasPump, WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useBalance } from 'wagmi';
@@ -125,7 +125,7 @@ export function GaslessVotingToggleDAOSettings(
   if (!gaslessVotingSupported) return null;
 
   const formattedNativeTokenBalance =
-    balance && formatCoin(balance.value, true, balance.decimals, balance.symbol);
+    balance && formatCoin(balance.value, true, balance.decimals, balance.symbol, false);
 
   const { isEnabled } = props;
 
@@ -171,15 +171,32 @@ export function GaslessVotingToggleDAOSettings(
           mt="-0.55rem"
           justifyContent="space-between"
         >
-          <Text textStyle="body-small">
-            {t('titleBalance', { ns: 'modals' })}:{' '}
+          <Flex direction="column">
             <Text
-              as="span"
+              textStyle="labels-small"
               color="neutral-7"
             >
-              {formattedNativeTokenBalance}
+              {t('paymasterBalance')}
             </Text>
-          </Text>
+            <Text
+              textStyle="labels-large"
+              display="flex"
+              alignItems="center"
+            >
+              {formattedNativeTokenBalance}
+              <Image
+                src={'/images/coin-icon-default.svg'} // @todo: Use the correct image for the token.
+                fallbackSrc={'/images/coin-icon-default.svg'}
+                alt={balance?.symbol}
+                w="1.25rem"
+                h="1.25rem"
+                ml="0.5rem"
+                mr="0.25rem"
+              />
+              {balance?.symbol}
+            </Text>
+          </Flex>
+
           <Button
             variant="secondary"
             leftIcon={<Icon as={GasPump} />}
