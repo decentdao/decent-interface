@@ -8,7 +8,6 @@ import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkC
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair } from '../../types';
 import { formatCoin } from '../../utils';
-import EtherscanLink from '../ui/links/EtherscanLink';
 import Divider from '../ui/utils/Divider';
 import { StarterPromoBanner } from './StarterPromoBanner';
 
@@ -128,6 +127,8 @@ export function GaslessVotingToggleDAOSettings(
   const formattedNativeTokenBalance =
     balance && formatCoin(balance.value, true, balance.decimals, balance.symbol);
 
+  const { isEnabled } = props;
+
   return (
     <Box
       gap="1.5rem"
@@ -145,9 +146,9 @@ export function GaslessVotingToggleDAOSettings(
         isSettings
       />
 
-      <StarterPromoBanner />
+      {!isEnabled && <StarterPromoBanner />}
 
-      {gasTankAddress && (
+      {/* {isEnabled && gasTankAddress && (
         <Box
           borderRadius="0.75rem"
           border="1px solid"
@@ -163,39 +164,41 @@ export function GaslessVotingToggleDAOSettings(
             <Text as="span">{gasTankAddress}</Text>
           </EtherscanLink>
         </Box>
-      )}
+      )} */}
 
-      <Flex
-        mt="-0.55rem"
-        justifyContent="space-between"
-      >
-        <Text textStyle="body-small">
-          {t('titleBalance', { ns: 'modals' })}:{' '}
-          <Text
-            as="span"
-            color="neutral-7"
-          >
-            {formattedNativeTokenBalance}
-          </Text>
-        </Text>
-        <Button
-          variant="secondary"
-          leftIcon={<Icon as={GasPump} />}
-          onClick={() => {
-            console.log(
-              'addGas. Add this action to the proposal, to be submitted via propose changes button.',
-            );
-
-            // @todo: Add UI to set the amount, then call onGasTankTopupAmountChange.
-            props.onGasTankTopupAmountChange({
-              value: '1',
-              bigintValue: 1n,
-            });
-          }}
+      {isEnabled && (
+        <Flex
+          mt="-0.55rem"
+          justifyContent="space-between"
         >
-          {t('addGas')}
-        </Button>
-      </Flex>
+          <Text textStyle="body-small">
+            {t('titleBalance', { ns: 'modals' })}:{' '}
+            <Text
+              as="span"
+              color="neutral-7"
+            >
+              {formattedNativeTokenBalance}
+            </Text>
+          </Text>
+          <Button
+            variant="secondary"
+            leftIcon={<Icon as={GasPump} />}
+            onClick={() => {
+              console.log(
+                'addGas. Add this action to the proposal, to be submitted via propose changes button.',
+              );
+
+              // @todo: Add UI to set the amount, then call onGasTankTopupAmountChange.
+              props.onGasTankTopupAmountChange({
+                value: '1',
+                bigintValue: 1n,
+              });
+            }}
+          >
+            {t('addGas')}
+          </Button>
+        </Flex>
+      )}
     </Box>
   );
 }
