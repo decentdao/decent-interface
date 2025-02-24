@@ -1,4 +1,4 @@
-import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
+import { Box, Container, Grid, GridItem, Show, Text, keyframes } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import {
@@ -15,6 +15,15 @@ import { Footer } from '../Footer';
 import Header from '../Header';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
+const slideDownAnim = `${keyframes`
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+`} 0.5s ease-out`;
+
 export function Layout() {
   const headerContainerRef = useRef<HTMLDivElement>(null);
 
@@ -27,19 +36,36 @@ export function Layout() {
   return (
     <Grid
       templateAreas={{
-        base: `"header header"
+        base: `"banner banner"
+               "header header"
                "main main"`,
-        md: `"header header"
+        md: `"banner banner"
+             "header header"
              "nav main"
              "footer footer"`,
       }}
       gridTemplateColumns={`${SIDEBAR_WIDTH} 1fr`}
       gridTemplateRows={{
-        base: `${HEADER_HEIGHT} 100%`,
-        md: `${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%) ${FOOTER_HEIGHT}`,
+        base: `auto ${HEADER_HEIGHT} 100%`,
+        md: `auto ${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%) ${FOOTER_HEIGHT}`,
       }}
       position="relative"
     >
+      <GridItem area="banner">
+        <Box
+          bg="lilac--2"
+          textAlign="center"
+          py={3}
+          position="fixed"
+          w="full"
+          zIndex="2"
+          fontWeight="bold"
+          transformOrigin="top"
+          animation={slideDownAnim}
+        >
+          <Text>decent is currently down. We are working to restore services soon.</Text>
+        </Box>
+      </GridItem>
       <GridItem
         area="header"
         ref={headerContainerRef}
@@ -51,6 +77,8 @@ export function Layout() {
           w="full"
           maxW="100vw"
           zIndex="1"
+          mt="40px"
+          animation={slideDownAnim}
         >
           <Header headerContainerRef={headerContainerRef} />
         </Box>
@@ -63,8 +91,8 @@ export function Layout() {
           flexDirection="column"
           position="fixed"
           ml={6}
-          top={HEADER_HEIGHT}
-          minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
+          top={`calc(${HEADER_HEIGHT} + 40px)`}
+          minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT} - 40px)` }}
         >
           <NavigationLinks />
         </GridItem>
@@ -72,6 +100,7 @@ export function Layout() {
       <GridItem
         area="main"
         mx={{ base: '0.5rem', md: '1.5rem' }}
+        mt="40px"
       >
         <Container
           maxWidth={MAX_CONTENT_WIDTH}
