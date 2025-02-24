@@ -1,6 +1,6 @@
-import { Box, Container, Grid, GridItem, Show, Text, keyframes } from '@chakra-ui/react';
+import { Box, Container, Grid, GridItem, Show, Text } from '@chakra-ui/react';
 import { useRef } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useMatches } from 'react-router-dom';
 import {
   MAX_CONTENT_WIDTH,
   SIDEBAR_WIDTH,
@@ -15,15 +15,6 @@ import { Footer } from '../Footer';
 import Header from '../Header';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
-const slideDownAnim = `${keyframes`
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(0);
-  }
-`} 0.5s ease-out`;
-
 export function Layout() {
   const headerContainerRef = useRef<HTMLDivElement>(null);
 
@@ -32,6 +23,14 @@ export function Layout() {
   const FOOTER_HEIGHT = useFooterHeight();
 
   useNavigationScrollReset();
+
+  const isReindexing = true;
+  const matches = useMatches();
+  const onDao = matches.some(
+    _match => _match.pathname !== '/' && !_match.pathname.startsWith('/create'),
+  );
+
+  const showReindexingBanner = isReindexing && onDao;
 
   return (
     <Grid
@@ -52,19 +51,20 @@ export function Layout() {
       position="relative"
     >
       <GridItem area="banner">
-        <Box
-          bg="lilac--2"
-          textAlign="center"
-          py={3}
-          position="fixed"
-          w="full"
-          zIndex="2"
-          fontWeight="bold"
-          transformOrigin="top"
-          animation={slideDownAnim}
-        >
-          <Text>decent is currently down. We are working to restore services soon.</Text>
-        </Box>
+        {showReindexingBanner ? (
+          <Box
+            bg="lilac--2"
+            textAlign="center"
+            py={3}
+            position="fixed"
+            w="full"
+            zIndex="2"
+            fontWeight="bold"
+            transformOrigin="top"
+          >
+            <Text>decent is currently down. We are working to restore services soon.</Text>
+          </Box>
+        ) : null}
       </GridItem>
       <GridItem
         area="header"
@@ -77,8 +77,7 @@ export function Layout() {
           w="full"
           maxW="100vw"
           zIndex="1"
-          mt="40px"
-          animation={slideDownAnim}
+          mt={showReindexingBanner ? '48px' : '0px'}
         >
           <Header headerContainerRef={headerContainerRef} />
         </Box>
@@ -91,8 +90,11 @@ export function Layout() {
           flexDirection="column"
           position="fixed"
           ml={6}
-          top={`calc(${HEADER_HEIGHT} + 40px)`}
-          minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT} - 40px)` }}
+          top={showReindexingBanner ? `calc(${HEADER_HEIGHT} + 48px)` : HEADER_HEIGHT}
+          minHeight={{
+            base: undefined,
+            md: `calc(100vh - ${HEADER_HEIGHT} - ${showReindexingBanner ? '48px' : '0px'})`,
+          }}
         >
           <NavigationLinks />
         </GridItem>
@@ -100,7 +102,7 @@ export function Layout() {
       <GridItem
         area="main"
         mx={{ base: '0.5rem', md: '1.5rem' }}
-        mt="40px"
+        mt={showReindexingBanner ? '48px' : '0px'}
       >
         <Container
           maxWidth={MAX_CONTENT_WIDTH}
