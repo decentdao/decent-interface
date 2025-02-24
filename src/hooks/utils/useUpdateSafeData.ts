@@ -3,12 +3,14 @@ import { useLocation } from 'react-router-dom';
 import { Address } from 'viem';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
+import useNetworkPublicClient from '../useNetworkPublicClient';
 
 export const useUpdateSafeData = (safeAddress?: Address) => {
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
   const { setSafeInfo, setDecentModules } = useDaoInfoStore();
+  const publicClient = useNetworkPublicClient();
 
   useEffect(() => {
     if (!safeAPI || !safeAddress) {
@@ -19,11 +21,11 @@ export const useUpdateSafeData = (safeAddress?: Address) => {
     // @todo - do we need to check if the safeAddress has changed?
     if (prevPathname.current !== location.pathname) {
       (async () => {
-        const safeInfo = await safeAPI.getSafeData(safeAddress);
+        const safeInfo = await safeAPI.getSafeData(safeAddress, publicClient);
 
         setSafeInfo(safeInfo);
       })();
       prevPathname.current = location.pathname;
     }
-  }, [safeAddress, safeAPI, location, setSafeInfo, setDecentModules]);
+  }, [safeAddress, safeAPI, location, setSafeInfo, setDecentModules, publicClient]);
 };

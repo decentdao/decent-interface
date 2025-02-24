@@ -68,14 +68,14 @@ const useDeployAzorius = () => {
         if (!safeApi) {
           throw new Error('Safe API not ready');
         }
-        const safeInfo = await safeApi.getSafeData(address);
+        const safeInfo = await safeApi.getSafeData(address, publicClient);
         const modules = await lookupModules(safeInfo.modules);
         return modules;
       } catch {
         return;
       }
     },
-    [lookupModules, safeApi],
+    [lookupModules, safeApi, publicClient],
   );
   const safeAddress = safe?.address;
 

@@ -6,6 +6,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
+import useNetworkPublicClient from '../../useNetworkPublicClient';
 import { useDecentModules } from './useDecentModules';
 
 export const useFractalNode = ({
@@ -25,7 +26,7 @@ export const useFractalNode = ({
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
   const { getConfigByChainId, chain } = useNetworkConfigStore();
-
+  const publicClient = useNetworkPublicClient();
   const { action } = useFractal();
 
   const { setDaoInfo, setSafeInfo, setDecentModules } = useDaoInfoStore();
@@ -45,7 +46,7 @@ export const useFractalNode = ({
       setErrorLoading(false);
 
       try {
-        const safeInfo = await safeApi.getSafeData(safeAddress);
+        const safeInfo = await safeApi.getSafeData(safeAddress, publicClient);
         setSafeInfo(safeInfo);
 
         const modules = await lookupModules(safeInfo.modules);
@@ -86,6 +87,7 @@ export const useFractalNode = ({
     }
   }, [
     addressPrefix,
+    publicClient,
     safeAddress,
     safeApi,
     setSafeInfo,
