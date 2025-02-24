@@ -31,7 +31,7 @@ export const useSearchDao = () => {
       for await (const resolved of resolvedAddressesWithChainId) {
         const safeAPI = new SafeApiKit({
           chainId: BigInt(resolved.chainId),
-          txServiceUrl: resolved.safeBaseURL,
+          txServiceUrl: `${resolved.safeBaseURL}/api`,
         });
         safeAPI.getSafeCreationInfo(resolved.address);
         try {

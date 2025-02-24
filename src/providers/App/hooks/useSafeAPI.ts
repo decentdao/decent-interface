@@ -117,7 +117,10 @@ export function useSafeAPI() {
   const { chain, safeBaseURL } = useNetworkConfigStore();
 
   const safeAPI = useMemo(() => {
-    return new EnhancedSafeApiKit({ chainId: BigInt(chain.id), txServiceUrl: safeBaseURL });
+    return new EnhancedSafeApiKit({
+      chainId: BigInt(chain.id),
+      txServiceUrl: `${safeBaseURL}/api`,
+    });
   }, [chain, safeBaseURL]);
 
   return safeAPI;
