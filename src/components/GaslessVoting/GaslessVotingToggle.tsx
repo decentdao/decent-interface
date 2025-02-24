@@ -8,6 +8,8 @@ import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkC
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair } from '../../types';
 import { formatCoin } from '../../utils';
+import { ModalType } from '../ui/modals/ModalProvider';
+import { useDecentModal } from '../ui/modals/useDecentModal';
 import Divider from '../ui/utils/Divider';
 import { StarterPromoBanner } from './StarterPromoBanner';
 
@@ -115,6 +117,8 @@ export function GaslessVotingToggleDAOSettings(
   const { t } = useTranslation('gaslessVoting');
   const { chain, gaslessVotingSupported } = useNetworkConfigStore();
 
+  const refillGas = useDecentModal(ModalType.REFILL_GAS);
+
   // @todo: Retrieve and use the paymaster address here for `gasTankAddress`. Replace safe.address with the paymaster address. Remove use of `useDaoInfoStore`.
   const { safe } = useDaoInfoStore();
   const gasTankAddress = safe?.address;
@@ -204,6 +208,7 @@ export function GaslessVotingToggleDAOSettings(
               console.log(
                 'addGas. Add this action to the proposal, to be submitted via propose changes button.',
               );
+              refillGas();
 
               // @todo: Add UI to set the amount, then call onGasTankTopupAmountChange.
               props.onGasTankTopupAmountChange({
