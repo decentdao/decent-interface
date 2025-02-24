@@ -55,14 +55,16 @@ export function Layout() {
           <Box
             bg="lilac--2"
             textAlign="center"
-            py={3}
+            p={3}
             position="fixed"
             w="full"
             zIndex="2"
             fontWeight="bold"
             transformOrigin="top"
           >
-            <Text>decent is currently down. We are working to restore services soon.</Text>
+            <Text>
+              Decent&apos;s indexers are rebuilding. We are working to restore services soon.
+            </Text>
           </Box>
         ) : null}
       </GridItem>
