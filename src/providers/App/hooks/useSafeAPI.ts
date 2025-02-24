@@ -24,8 +24,8 @@ class EnhancedSafeApiKit extends SafeApiKit {
   // endpoint more than once
   requestMap = new Map<string, Promise<any> | null>();
 
-  constructor({ chainId }: SafeApiKitConfig) {
-    super({ chainId });
+  constructor({ chainId, txServiceUrl }: SafeApiKitConfig) {
+    super({ chainId, txServiceUrl });
     this.CHAINID = Number(chainId);
   }
 
@@ -114,11 +114,14 @@ class EnhancedSafeApiKit extends SafeApiKit {
 }
 
 export function useSafeAPI() {
-  const { chain } = useNetworkConfigStore();
+  const { chain, safeBaseURL } = useNetworkConfigStore();
 
   const safeAPI = useMemo(() => {
-    return new EnhancedSafeApiKit({ chainId: BigInt(chain.id) });
-  }, [chain]);
+    return new EnhancedSafeApiKit({
+      chainId: BigInt(chain.id),
+      txServiceUrl: `${safeBaseURL}/api`,
+    });
+  }, [chain, safeBaseURL]);
 
   return safeAPI;
 }

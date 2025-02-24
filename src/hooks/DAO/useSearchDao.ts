@@ -11,6 +11,7 @@ import { useResolveENSName } from '../utils/useResolveENSName';
 type ResolvedAddressWithChainId = {
   address: Address;
   chainId: number;
+  safeBaseURL: string;
 };
 export const useSearchDao = () => {
   const { t } = useTranslation('dashboard');
@@ -24,9 +25,14 @@ export const useSearchDao = () => {
   >([]);
 
   const findSafes = useCallback(
-    async (resolvedAddressesWithChainId: { address: Address; chainId: number }[]) => {
+    async (
+      resolvedAddressesWithChainId: { address: Address; chainId: number; safeBaseURL: string }[],
+    ) => {
       for await (const resolved of resolvedAddressesWithChainId) {
-        const safeAPI = new SafeApiKit({ chainId: BigInt(resolved.chainId) });
+        const safeAPI = new SafeApiKit({
+          chainId: BigInt(resolved.chainId),
+          txServiceUrl: `${resolved.safeBaseURL}/api`,
+        });
         safeAPI.getSafeCreationInfo(resolved.address);
         try {
           await safeAPI.getSafeCreationInfo(resolved.address);
@@ -64,7 +70,11 @@ export const useSearchDao = () => {
 
         for (const network of supportedNetworks) {
           for (const address of resolvedAddressesSet) {
-            mappedAddressesWithChainIds.push({ address, chainId: network.chain.id });
+            mappedAddressesWithChainIds.push({
+              address,
+              chainId: network.chain.id,
+              safeBaseURL: network.safeBaseURL,
+            });
           }
         }
 
