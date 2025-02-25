@@ -178,14 +178,15 @@ class EnhancedSafeApiKit extends SafeApiKit {
     safeAddress: Address,
     options?: AllTransactionsOptions,
   ): Promise<AllTransactionsListResponse> {
-    const value = await this.request(
-      'getAllTransactions' + safeAddress + options?.toString(),
-      1,
-      () => {
-        return super.getAllTransactions(safeAddress, options);
-      },
-    );
-    return value;
+    try {
+      return await super.getAllTransactions(safeAddress, options);
+    } catch (error) {
+      console.error('Error fetching getAllTransactions from safeAPI:', error);
+      return {
+        count: 0,
+        results: [],
+      };
+    }
   }
 
   override async getNextNonce(safeAddress: Address): Promise<number> {
