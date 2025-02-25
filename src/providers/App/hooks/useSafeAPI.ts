@@ -7,10 +7,17 @@ import SafeApiKit, {
 } from '@safe-global/api-kit';
 import axios from 'axios';
 import { useMemo } from 'react';
-import { Address, createPublicClient, getAddress, http, PublicClient, zeroAddress } from 'viem';
+import {
+  Address,
+  createPublicClient,
+  erc20Abi,
+  getAddress,
+  http,
+  PublicClient,
+  zeroAddress,
+} from 'viem';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
-import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
   DBObjectKeys,
   getIndexedDBValue,
@@ -212,11 +219,28 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return { ...safeInfoResponse, nextNonce };
   }
 
-  override async getToken(tokenAddress: string): Promise<TokenInfoResponse> {
-    const value = await this.request('getTokenData' + tokenAddress, CacheExpiry.NEVER, () => {
-      return super.getToken(tokenAddress);
-    });
-    return value;
+  override async getToken(tokenAddress: Address): Promise<TokenInfoResponse> {
+    try {
+      return await super.getToken(tokenAddress);
+    } catch (error) {
+      console.error('Error fetching getToken from safeAPI:', error);
+
+      const [name, symbol, decimals] = await this.publicClient.multicall({
+        contracts: [
+          { address: tokenAddress, abi: erc20Abi, functionName: 'name' },
+          { address: tokenAddress, abi: erc20Abi, functionName: 'symbol' },
+          { address: tokenAddress, abi: erc20Abi, functionName: 'decimals' },
+        ],
+        allowFailure: false,
+      });
+
+      return {
+        address: tokenAddress,
+        name,
+        symbol,
+        decimals,
+      };
+    }
   }
 }
 
