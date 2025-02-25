@@ -1,15 +1,14 @@
 import SafeApiKit, {
   AllTransactionsListResponse,
   AllTransactionsOptions,
-  SafeApiKitConfig,
   SafeCreationInfoResponse,
   SafeInfoResponse,
   TokenInfoResponse,
 } from '@safe-global/api-kit';
+import axios from 'axios';
 import { useMemo } from 'react';
-import { Address, getAddress, PublicClient, zeroAddress } from 'viem';
+import { Address, createPublicClient, getAddress, http, PublicClient, zeroAddress } from 'viem';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
-import GnosisSafeProxyFactoryAbi from '../../../assets/abi/GnosisSafeProxyFactory';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
 import useNetworkPublicClient from '../../../hooks/useNetworkPublicClient';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
@@ -19,27 +18,39 @@ import {
   setIndexedDBValue,
 } from '../../../hooks/utils/cache/useLocalDB';
 import { SafeWithNextNonce } from '../../../types';
+import { NetworkConfig } from '../../../types/network';
 import { useNetworkConfigStore } from '../../NetworkConfig/useNetworkConfigStore';
 
 class EnhancedSafeApiKit extends SafeApiKit {
-  readonly CHAINID: number;
   readonly publicClient: PublicClient;
+  readonly networkConfig: NetworkConfig;
+
   // holds requests that have yet to return, to avoid calling the same
   // endpoint more than once
   requestMap = new Map<string, Promise<any> | null>();
 
-  constructor({ chainId }: SafeApiKitConfig, publicClient: PublicClient) {
-    super({ chainId });
-    this.CHAINID = Number(chainId);
+  constructor(publicClient: PublicClient, networkConfig: NetworkConfig) {
+    super({ chainId: BigInt(networkConfig.chain.id) });
     this.publicClient = publicClient;
+    this.networkConfig = networkConfig;
   }
 
   private async setCache(key: string, value: any, cacheMinutes: number): Promise<void> {
-    await setIndexedDBValue(DBObjectKeys.SAFE_API, key, value, this.CHAINID, cacheMinutes);
+    await setIndexedDBValue(
+      DBObjectKeys.SAFE_API,
+      key,
+      value,
+      this.networkConfig.chain.id,
+      cacheMinutes,
+    );
   }
 
   private async getCache<T>(key: string): Promise<T> {
-    const value: T = await getIndexedDBValue(DBObjectKeys.SAFE_API, key, this.CHAINID);
+    const value: T = await getIndexedDBValue(
+      DBObjectKeys.SAFE_API,
+      key,
+      this.networkConfig.chain.id,
+    );
     return value;
   }
 
@@ -132,61 +143,22 @@ class EnhancedSafeApiKit extends SafeApiKit {
     }
   }
 
-  // TODO
-  // kellar, start here plz!
-
-  // for context,
-  // the intention of the code changes in this file is to
-  // remove the dependency on the Safe API. we want to implement
-  // fallback onchain calls if the API call throws an error.
-
-  // there will probably be some functions that we can't implement
-  // without the Safe API, so for those, we can throw an error
-  // and not implement the fallback.
-
-  // for the functions that we can implement, we can use the chain
-  // data to populate the return type.
-
-  // so the work here is to:
-  // 1. identify which functions can be implemented onchain
-  // 2. implement the fallback onchain calls
-  // 3. throw an error if the function can't be implemented onchain
-
-  // Then, or maybe first to better contextualize your work, search
-  // around the codebase for when these various functions are used.
-  // also please search for any places where the safeApi object from
-  // this class is calling functions that we have NOT overridden here.
-  // in those cases, we will probably need to override them as well.
-  // see 'getNextNonce' for an example of how to implement a simple
-  // fallback.
-
-  // also, there are some places in the app where calls to the
-  // safe transactions service api are being made directly through fetch
-  // or axios or something. i'm not exactly sure why those are bypassing
-  // this file, but we can implement some functions for those api
-  // calls in here as well, they just won't "override" anything.
-
-  // start here by finishing the implementation of this function.
   override async getSafeCreationInfo(safeAddress: Address): Promise<SafeCreationInfoResponse> {
     try {
       return await super.getSafeCreationInfo(safeAddress);
     } catch (error) {
       console.error('Error fetching getSafeCreationInfo from safeAPI:', error);
 
-      const safeCreationEvent = await this.publicClient.getContractEvents({
-        abi: GnosisSafeProxyFactoryAbi,
-        address: safeAddress, // todo: this should be the proxy factory address
-        eventName: 'ProxyCreation',
-        args: [safeAddress],
-      });
+      const value = await axios.get(
+        `https://safe-client.safe.global/v1/chains/${this.networkConfig.chain.id}/safes/${safeAddress}/transactions/creation`,
+        {
+          headers: {
+            accept: 'application/json',
+          },
+        },
+      );
 
-      // if this event doesn't exist, then i'm not sure what to return
-      // maybe undefined? we can't change the return type of this function.
-
-      // get everything else you can from the chain to populate the return type
-
-      // see "getSafeInfo" for an example of how to get a bunch of data from the chain.
-      // in this function's case though, you'll need to use data from the event log too.
+      return value.data as SafeCreationInfoResponse;
     }
   }
 
@@ -244,12 +216,22 @@ class EnhancedSafeApiKit extends SafeApiKit {
 }
 
 export function useSafeAPI() {
-  const { chain } = useNetworkConfigStore();
+  const { getConfigByChainId, chain } = useNetworkConfigStore();
   const publicClient = useNetworkPublicClient();
 
+  const networkConfig = getConfigByChainId(chain.id);
+
   const safeAPI = useMemo(() => {
-    return new EnhancedSafeApiKit({ chainId: BigInt(chain.id) }, publicClient);
-  }, [chain, publicClient]);
+    return new EnhancedSafeApiKit(publicClient, networkConfig);
+  }, [networkConfig, publicClient]);
 
   return safeAPI;
+}
+
+export function getSafeAPI(networkConfig: NetworkConfig) {
+  const publicClient = createPublicClient({
+    chain: networkConfig.chain,
+    transport: http(networkConfig.rpcEndpoint),
+  });
+  return new EnhancedSafeApiKit(publicClient, networkConfig);
 }

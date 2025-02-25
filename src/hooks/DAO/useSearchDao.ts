@@ -1,10 +1,11 @@
-import SafeApiKit from '@safe-global/api-kit';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
+import { getSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import {
   supportedEnsNetworks,
   supportedNetworks,
+  useNetworkConfigStore,
 } from '../../providers/NetworkConfig/useNetworkConfigStore';
 import { useResolveENSName } from '../utils/useResolveENSName';
 
@@ -23,6 +24,8 @@ export const useSearchDao = () => {
     ResolvedAddressWithChainId[]
   >([]);
 
+  const { getConfigByChainId } = useNetworkConfigStore();
+
   const findSafes = useCallback(
     async (resolvedAddressesWithChainId: { address: Address; chainId: number }[]) => {
       /*
@@ -32,10 +35,8 @@ export const useSearchDao = () => {
       Changes requested inside getSafeCreationInfo
       */
       for await (const resolved of resolvedAddressesWithChainId) {
-        const safeAPI = new SafeApiKit({ chainId: BigInt(resolved.chainId) });
-        // Get rid of this line
-        safeAPI.getSafeCreationInfo(resolved.address);
         try {
+          const safeAPI = getSafeAPI(getConfigByChainId(resolved.chainId));
           await safeAPI.getSafeCreationInfo(resolved.address);
 
           setSafeResolvedAddressesWithPrefix(prevState => [...prevState, resolved]);
@@ -45,19 +46,19 @@ export const useSearchDao = () => {
         }
       }
     },
-    [],
+    [getConfigByChainId],
   );
 
   const resolveInput = useCallback(
     async (input: string) => {
       setIsSafeLookupLoading(true);
       try {
-        const resolvePromises = supportedEnsNetworks.map(async chainId => {
+        const resolvedAddressPromises = supportedEnsNetworks.map(async chainId => {
           const { resolvedAddress, isValid } = await resolveENSName(input, chainId);
           return isValid ? resolvedAddress : null;
         });
 
-        const resolvedAddresses = (await Promise.all(resolvePromises)).filter(
+        const resolvedAddresses = (await Promise.all(resolvedAddressPromises)).filter(
           address => address !== null,
         );
 
