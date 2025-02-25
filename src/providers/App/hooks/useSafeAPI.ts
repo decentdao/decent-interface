@@ -18,11 +18,6 @@ import {
 } from 'viem';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
-import {
-  DBObjectKeys,
-  getIndexedDBValue,
-  setIndexedDBValue,
-} from '../../../hooks/utils/cache/useLocalDB';
 import { SafeWithNextNonce } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 import { useNetworkConfigStore } from '../../NetworkConfig/useNetworkConfigStore';
@@ -42,56 +37,6 @@ class EnhancedSafeApiKit extends SafeApiKit {
       chain: networkConfig.chain,
       transport: http(networkConfig.rpcEndpoint),
     });
-  }
-
-  private async setCache(key: string, value: any, cacheMinutes: number): Promise<void> {
-    await setIndexedDBValue(
-      DBObjectKeys.SAFE_API,
-      key,
-      value,
-      this.networkConfig.chain.id,
-      cacheMinutes,
-    );
-  }
-
-  private async getCache<T>(key: string): Promise<T> {
-    const value: T = await getIndexedDBValue(
-      DBObjectKeys.SAFE_API,
-      key,
-      this.networkConfig.chain.id,
-    );
-    return value;
-  }
-
-  private async request<T>(
-    cacheKey: string,
-    cacheMinutes: number,
-    endpointCall: () => Promise<T>,
-  ): Promise<T> {
-    const cachedValue = await this.getCache<T>(cacheKey);
-    if (cachedValue) {
-      return cachedValue;
-    }
-
-    let endpointPromise = this.requestMap.get(cacheKey);
-    if (!endpointPromise) {
-      endpointPromise = endpointCall();
-      this.requestMap.set(cacheKey, endpointPromise);
-    }
-
-    try {
-      const result = await endpointPromise;
-      this.requestMap.set(cacheKey, null);
-      await this.setCache(cacheKey, result, cacheMinutes);
-      return result;
-    } catch (error) {
-      /*
-        await call can throw an exception with the Promise being rejected
-        Without resetting the cache, the same promise will be used in retrials and always throw an exception
-        */
-      this.requestMap.set(cacheKey, null);
-      throw error;
-    }
   }
 
   override async getSafeInfo(safeAddress: Address): Promise<SafeInfoResponse> {
