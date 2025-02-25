@@ -1,15 +1,16 @@
 import SafeApiKit, {
   AllTransactionsListResponse,
   AllTransactionsOptions,
+  SafeApiKitConfig,
   SafeCreationInfoResponse,
   SafeInfoResponse,
-  SafeApiKitConfig,
   TokenInfoResponse,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
 import { Address, getAddress, PublicClient, zeroAddress } from 'viem';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
+import useNetworkPublicClient from '../../../hooks/useNetworkPublicClient';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
   DBObjectKeys,
@@ -18,18 +19,18 @@ import {
 } from '../../../hooks/utils/cache/useLocalDB';
 import { SafeWithNextNonce } from '../../../types';
 import { useNetworkConfigStore } from '../../NetworkConfig/useNetworkConfigStore';
-type Mutable<T> = { -readonly [K in keyof T]: T[K] };
-type SafeInfo = Mutable<SafeWithNextNonce>;
+
 class EnhancedSafeApiKit extends SafeApiKit {
   readonly CHAINID: number;
-
+  readonly publicClient: PublicClient;
   // holds requests that have yet to return, to avoid calling the same
   // endpoint more than once
   requestMap = new Map<string, Promise<any> | null>();
 
-  constructor({ chainId }: SafeApiKitConfig) {
+  constructor({ chainId }: SafeApiKitConfig, publicClient: PublicClient) {
     super({ chainId });
     this.CHAINID = Number(chainId);
+    this.publicClient = publicClient;
   }
 
   private async setCache(key: string, value: any, cacheMinutes: number): Promise<void> {
@@ -98,38 +99,17 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value;
   }
 
-  async getSafeData(safeAddress: Address, viemClient: PublicClient): Promise<SafeWithNextNonce> {
+  async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
     const checksummedSafeAddress = getAddress(safeAddress);
-    const safeInfoWithNonce: SafeInfo = {
-      address: checksummedSafeAddress,
-      nonce: 0,
-      threshold: 0,
-      owners: [],
-      modules: [],
-      fallbackHandler: '',
-      guard: '',
-      version: '',
-      nextNonce: 0,
-      singleton: '',
-    };
     try {
       const safeInfoResponse = await this.getSafeInfo(checksummedSafeAddress);
       const nextNonce = await this.getNextNonce(checksummedSafeAddress);
-
-      safeInfoWithNonce.nonce = safeInfoResponse.nonce;
-      safeInfoWithNonce.threshold = safeInfoResponse.threshold;
-      safeInfoWithNonce.owners = safeInfoResponse.owners;
-      safeInfoWithNonce.modules = safeInfoResponse.modules;
-      safeInfoWithNonce.fallbackHandler = safeInfoResponse.fallbackHandler;
-      safeInfoWithNonce.guard = safeInfoResponse.guard;
-      safeInfoWithNonce.version = safeInfoResponse.version;
-      safeInfoWithNonce.nextNonce = nextNonce;
-      safeInfoWithNonce.singleton = safeInfoResponse.singleton;
+      return { ...safeInfoResponse, nextNonce };
     } catch (_) {
       try {
         // Fetch necessary details from the contract
 
-        const [nonce, threshold, modules, owners, version] = await viemClient.multicall({
+        const [nonce, threshold, modules, owners, version] = await this.publicClient.multicall({
           contracts: [
             {
               abi: GnosisSafeL2Abi,
@@ -161,36 +141,30 @@ class EnhancedSafeApiKit extends SafeApiKit {
           allowFailure: false,
         });
 
-        safeInfoWithNonce.nonce = Number(nonce ? nonce : 0);
-        safeInfoWithNonce.threshold = Number(threshold ? threshold : 0);
-        safeInfoWithNonce.owners = owners as string[];
-        safeInfoWithNonce.modules = [...modules[0], modules[1]] as Address[];
-        safeInfoWithNonce.fallbackHandler = zeroAddress; // WE don't use this
-
         // Fetch guard using getStorageAt
         const GUARD_STORAGE_SLOT = '0x3a'; // Slot defined in Safe contracts (could vary)
-        const guardStorageValue = await viemClient.getStorageAt({
+        const guardStorageValue = await this.publicClient.getStorageAt({
           address: checksummedSafeAddress,
           slot: GUARD_STORAGE_SLOT,
         });
 
-        // Format and set the guard address
-        safeInfoWithNonce.guard = guardStorageValue
-          ? getAddress(`0x${guardStorageValue.slice(-40)}`)
-          : zeroAddress;
-
-        safeInfoWithNonce.version = version;
-        safeInfoWithNonce.singleton = zeroAddress; // WE don't use this
-
-        // Compute next nonce as it's not directly available
-        safeInfoWithNonce.nextNonce = safeInfoWithNonce.nonce + 1;
+        return {
+          address: checksummedSafeAddress,
+          nonce: Number(nonce ? nonce : 0),
+          threshold: Number(threshold ? threshold : 0),
+          owners: owners as string[],
+          modules: [...modules[0], modules[1]],
+          fallbackHandler: zeroAddress, // not used
+          guard: guardStorageValue ? getAddress(`0x${guardStorageValue.slice(-40)}`) : zeroAddress,
+          version: version,
+          singleton: zeroAddress, // not used
+          nextNonce: Number(nonce ? nonce : 0) + 1,
+        };
       } catch (error) {
         console.error('Error fetching safe data:', error);
         throw new Error('Failed to fetch safe data');
       }
     }
-
-    return safeInfoWithNonce;
   }
 
   override async getToken(tokenAddress: string): Promise<TokenInfoResponse> {
@@ -203,10 +177,11 @@ class EnhancedSafeApiKit extends SafeApiKit {
 
 export function useSafeAPI() {
   const { chain } = useNetworkConfigStore();
+  const publicClient = useNetworkPublicClient();
 
   const safeAPI = useMemo(() => {
-    return new EnhancedSafeApiKit({ chainId: BigInt(chain.id) });
-  }, [chain]);
+    return new EnhancedSafeApiKit({ chainId: BigInt(chain.id) }, publicClient);
+  }, [chain, publicClient]);
 
   return safeAPI;
 }

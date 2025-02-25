@@ -15,7 +15,6 @@ import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { FractalModuleType, DecentModule } from '../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../utils/address';
-import useNetworkPublicClient from '../useNetworkPublicClient';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -30,7 +29,6 @@ interface IUseClawBack {
 export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {
   const { t } = useTranslation(['proposal', 'proposalMetadata']);
   const safeAPI = useSafeAPI();
-  const publicClient = useNetworkPublicClient();
   const { submitProposal } = useSubmitProposal();
   const { getCanUserCreateProposal } = useCanUserCreateProposal();
   const { getTokenBalances } = useBalancesAPI();
@@ -50,7 +48,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
           return;
         }
 
-        const parentSafeInfo = await safeAPI.getSafeData(parentAddress, publicClient);
+        const parentSafeInfo = await safeAPI.getSafeData(parentAddress);
         const canUserCreateProposal = await getCanUserCreateProposal(parentAddress);
 
         if (canUserCreateProposal && parentAddress && parentSafeInfo && childSafeInfo.modules) {
@@ -157,7 +155,6 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
     t,
     safeAPI,
     getTokenBalances,
-    publicClient,
   ]);
 
   return { handleClawBack };
