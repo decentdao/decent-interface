@@ -10,7 +10,6 @@ import { useMemo } from 'react';
 import { Address, createPublicClient, getAddress, http, PublicClient, zeroAddress } from 'viem';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
-import useNetworkPublicClient from '../../../hooks/useNetworkPublicClient';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
   DBObjectKeys,
@@ -29,10 +28,13 @@ class EnhancedSafeApiKit extends SafeApiKit {
   // endpoint more than once
   requestMap = new Map<string, Promise<any> | null>();
 
-  constructor(publicClient: PublicClient, networkConfig: NetworkConfig) {
+  constructor(networkConfig: NetworkConfig) {
     super({ chainId: BigInt(networkConfig.chain.id) });
-    this.publicClient = publicClient;
     this.networkConfig = networkConfig;
+    this.publicClient = createPublicClient({
+      chain: networkConfig.chain,
+      transport: http(networkConfig.rpcEndpoint),
+    });
   }
 
   private async setCache(key: string, value: any, cacheMinutes: number): Promise<void> {
@@ -220,21 +222,15 @@ class EnhancedSafeApiKit extends SafeApiKit {
 
 export function useSafeAPI() {
   const { getConfigByChainId, chain } = useNetworkConfigStore();
-  const publicClient = useNetworkPublicClient();
-
   const networkConfig = getConfigByChainId(chain.id);
 
   const safeAPI = useMemo(() => {
-    return new EnhancedSafeApiKit(publicClient, networkConfig);
-  }, [networkConfig, publicClient]);
+    return new EnhancedSafeApiKit(networkConfig);
+  }, [networkConfig]);
 
   return safeAPI;
 }
 
 export function getSafeAPI(networkConfig: NetworkConfig) {
-  const publicClient = createPublicClient({
-    chain: networkConfig.chain,
-    transport: http(networkConfig.rpcEndpoint),
-  });
-  return new EnhancedSafeApiKit(publicClient, networkConfig);
+  return new EnhancedSafeApiKit(networkConfig);
 }
