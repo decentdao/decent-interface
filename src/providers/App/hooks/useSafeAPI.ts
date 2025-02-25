@@ -7,7 +7,7 @@ import SafeApiKit, {
   TokenInfoResponse,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
-import { Address, getAddress, getContract, PublicClient, zeroAddress } from 'viem';
+import { Address, getAddress, PublicClient, zeroAddress } from 'viem';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
@@ -123,24 +123,47 @@ class EnhancedSafeApiKit extends SafeApiKit {
       safeInfoWithNonce.nextNonce = nextNonce;
       safeInfoWithNonce.singleton = safeInfoResponse.singleton;
     } catch (_) {
-      const safeContract = getContract({
-        address: checksummedSafeAddress,
-        abi: GnosisSafeL2Abi,
-        client: viemClient,
-      });
       try {
         // Fetch necessary details from the contract
-        const nonce = await safeContract.read.nonce();
+
+        const [nonce, threshold, modules, owners, version] = await viemClient.multicall({
+          contracts: [
+            {
+              abi: GnosisSafeL2Abi,
+              address: checksummedSafeAddress,
+              functionName: 'nonce',
+            },
+            {
+              abi: GnosisSafeL2Abi,
+              address: checksummedSafeAddress,
+              functionName: 'getThreshold',
+            },
+            {
+              abi: GnosisSafeL2Abi,
+              address: checksummedSafeAddress,
+              functionName: 'getModulesPaginated',
+              args: [SENTINEL_ADDRESS, 10n],
+            },
+            {
+              abi: GnosisSafeL2Abi,
+              address: checksummedSafeAddress,
+              functionName: 'getOwners',
+            },
+            {
+              abi: GnosisSafeL2Abi,
+              address: checksummedSafeAddress,
+              functionName: 'VERSION',
+            },
+          ],
+          allowFailure: false,
+        });
+
         safeInfoWithNonce.nonce = Number(nonce ? nonce : 0);
-        const threshold = await safeContract.read.getThreshold();
         safeInfoWithNonce.threshold = Number(threshold ? threshold : 0);
-        safeInfoWithNonce.owners = (await safeContract.read.getOwners()) as Address[];
-        const [modules, ...nextModules] = await safeContract.read.getModulesPaginated([
-          SENTINEL_ADDRESS,
-          3n,
-        ]);
-        safeInfoWithNonce.modules = [...modules, ...nextModules] as Address[];
+        safeInfoWithNonce.owners = owners as string[];
+        safeInfoWithNonce.modules = [...modules[0], modules[1]] as Address[];
         safeInfoWithNonce.fallbackHandler = zeroAddress; // WE don't use this
+
         // Fetch guard using getStorageAt
         const GUARD_STORAGE_SLOT = '0x3a'; // Slot defined in Safe contracts (could vary)
         const guardStorageValue = await viemClient.getStorageAt({
@@ -153,7 +176,7 @@ class EnhancedSafeApiKit extends SafeApiKit {
           ? getAddress(`0x${guardStorageValue.slice(-40)}`)
           : zeroAddress;
 
-        safeInfoWithNonce.version = await safeContract.read.VERSION();
+        safeInfoWithNonce.version = version;
         safeInfoWithNonce.singleton = zeroAddress; // WE don't use this
 
         // Compute next nonce as it's not directly available
