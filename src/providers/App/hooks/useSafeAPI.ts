@@ -9,6 +9,7 @@ import SafeApiKit, {
 import { useMemo } from 'react';
 import { Address, getAddress, PublicClient, zeroAddress } from 'viem';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
+import GnosisSafeProxyFactoryAbi from '../../../assets/abi/GnosisSafeProxyFactory';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
 import useNetworkPublicClient from '../../../hooks/useNetworkPublicClient';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
@@ -131,14 +132,62 @@ class EnhancedSafeApiKit extends SafeApiKit {
     }
   }
 
+  // TODO
+  // kellar, start here plz!
+
+  // for context,
+  // the intention of the code changes in this file is to
+  // remove the dependency on the Safe API. we want to implement
+  // fallback onchain calls if the API call throws an error.
+
+  // there will probably be some functions that we can't implement
+  // without the Safe API, so for those, we can throw an error
+  // and not implement the fallback.
+
+  // for the functions that we can implement, we can use the chain
+  // data to populate the return type.
+
+  // so the work here is to:
+  // 1. identify which functions can be implemented onchain
+  // 2. implement the fallback onchain calls
+  // 3. throw an error if the function can't be implemented onchain
+
+  // Then, or maybe first to better contextualize your work, search
+  // around the codebase for when these various functions are used.
+  // also please search for any places where the safeApi object from
+  // this class is calling functions that we have NOT overridden here.
+  // in those cases, we will probably need to override them as well.
+  // see 'getNextNonce' for an example of how to implement a simple
+  // fallback.
+
+  // also, there are some places in the app where calls to the
+  // safe transactions service api are being made directly through fetch
+  // or axios or something. i'm not exactly sure why those are bypassing
+  // this file, but we can implement some functions for those api
+  // calls in here as well, they just won't "override" anything.
+
+  // start here by finishing the implementation of this function.
   override async getSafeCreationInfo(safeAddress: Address): Promise<SafeCreationInfoResponse> {
-    /*
-      To replace this, we only need to search for the Safe Created Event, filtered by the address. No need to call Safe API
-    */
-    const value = await this.request('getSafeCreationInfo' + safeAddress, CacheExpiry.NEVER, () => {
-      return super.getSafeCreationInfo(safeAddress);
-    });
-    return value;
+    try {
+      return await super.getSafeCreationInfo(safeAddress);
+    } catch (error) {
+      console.error('Error fetching getSafeCreationInfo from safeAPI:', error);
+
+      const safeCreationEvent = await this.publicClient.getContractEvents({
+        abi: GnosisSafeProxyFactoryAbi,
+        address: safeAddress, // todo: this should be the proxy factory address
+        eventName: 'ProxyCreation',
+        args: [safeAddress],
+      });
+
+      // if this event doesn't exist, then i'm not sure what to return
+      // maybe undefined? we can't change the return type of this function.
+
+      // get everything else you can from the chain to populate the return type
+
+      // see "getSafeInfo" for an example of how to get a bunch of data from the chain.
+      // in this function's case though, you'll need to use data from the event log too.
+    }
   }
 
   override async getAllTransactions(
@@ -162,6 +211,10 @@ class EnhancedSafeApiKit extends SafeApiKit {
       nextNonce = await super.getNextNonce(safeAddress);
     } catch (error) {
       console.error('Error fetching getNextNonce from safeAPI:', error);
+
+      // the safe-transactions-service is where any pending transactions
+      // are stored. if we can't get them, the only data we have available
+      // is the nonce from the contract.
 
       const nonce = await this.publicClient.readContract({
         address: safeAddress,
