@@ -69,13 +69,68 @@ class EnhancedSafeApiKit extends SafeApiKit {
     }
     return value;
   }
+
   override async getSafeInfo(safeAddress: Address): Promise<SafeInfoResponse> {
     const checksummedSafeAddress = getAddress(safeAddress);
-    const value = await this.request('getSafeInfo' + checksummedSafeAddress, 5, () => {
-      return super.getSafeInfo(checksummedSafeAddress);
-    });
-    return value;
+
+    try {
+      return await super.getSafeInfo(checksummedSafeAddress);
+    } catch (error) {
+      console.error('Error fetching getSafeInfo from safeAPI:', error);
+      // Fetch necessary details from the contract
+      const [nonce, threshold, modules, owners, version] = await this.publicClient.multicall({
+        contracts: [
+          {
+            abi: GnosisSafeL2Abi,
+            address: checksummedSafeAddress,
+            functionName: 'nonce',
+          },
+          {
+            abi: GnosisSafeL2Abi,
+            address: checksummedSafeAddress,
+            functionName: 'getThreshold',
+          },
+          {
+            abi: GnosisSafeL2Abi,
+            address: checksummedSafeAddress,
+            functionName: 'getModulesPaginated',
+            args: [SENTINEL_ADDRESS, 10n],
+          },
+          {
+            abi: GnosisSafeL2Abi,
+            address: checksummedSafeAddress,
+            functionName: 'getOwners',
+          },
+          {
+            abi: GnosisSafeL2Abi,
+            address: checksummedSafeAddress,
+            functionName: 'VERSION',
+          },
+        ],
+        allowFailure: false,
+      });
+
+      // Fetch guard using getStorageAt
+      const GUARD_STORAGE_SLOT = '0x3a'; // Slot defined in Safe contracts (could vary)
+      const guardStorageValue = await this.publicClient.getStorageAt({
+        address: checksummedSafeAddress,
+        slot: GUARD_STORAGE_SLOT,
+      });
+
+      return {
+        address: checksummedSafeAddress,
+        nonce: Number(nonce ? nonce : 0),
+        threshold: Number(threshold ? threshold : 0),
+        owners: owners as string[],
+        modules: [...modules[0], modules[1]],
+        fallbackHandler: zeroAddress, // not used
+        guard: guardStorageValue ? getAddress(`0x${guardStorageValue.slice(-40)}`) : zeroAddress,
+        version: version,
+        singleton: zeroAddress, // not used
+      };
+    }
   }
+
   override async getSafeCreationInfo(safeAddress: Address): Promise<SafeCreationInfoResponse> {
     /*
       To replace this, we only need to search for the Safe Created Event, filtered by the address. No need to call Safe API
@@ -85,6 +140,7 @@ class EnhancedSafeApiKit extends SafeApiKit {
     });
     return value;
   }
+
   override async getAllTransactions(
     safeAddress: Address,
     options?: AllTransactionsOptions,
@@ -99,72 +155,31 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value;
   }
 
+  override async getNextNonce(safeAddress: Address): Promise<number> {
+    let nextNonce = 0;
+
+    try {
+      nextNonce = await super.getNextNonce(safeAddress);
+    } catch (error) {
+      console.error('Error fetching getNextNonce from safeAPI:', error);
+
+      const nonce = await this.publicClient.readContract({
+        address: safeAddress,
+        abi: GnosisSafeL2Abi,
+        functionName: 'nonce',
+      });
+
+      nextNonce = Number(nonce.toString());
+    }
+
+    return nextNonce;
+  }
+
   async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
     const checksummedSafeAddress = getAddress(safeAddress);
-    try {
-      const safeInfoResponse = await this.getSafeInfo(checksummedSafeAddress);
-      const nextNonce = await this.getNextNonce(checksummedSafeAddress);
-      return { ...safeInfoResponse, nextNonce };
-    } catch (_) {
-      try {
-        // Fetch necessary details from the contract
-
-        const [nonce, threshold, modules, owners, version] = await this.publicClient.multicall({
-          contracts: [
-            {
-              abi: GnosisSafeL2Abi,
-              address: checksummedSafeAddress,
-              functionName: 'nonce',
-            },
-            {
-              abi: GnosisSafeL2Abi,
-              address: checksummedSafeAddress,
-              functionName: 'getThreshold',
-            },
-            {
-              abi: GnosisSafeL2Abi,
-              address: checksummedSafeAddress,
-              functionName: 'getModulesPaginated',
-              args: [SENTINEL_ADDRESS, 10n],
-            },
-            {
-              abi: GnosisSafeL2Abi,
-              address: checksummedSafeAddress,
-              functionName: 'getOwners',
-            },
-            {
-              abi: GnosisSafeL2Abi,
-              address: checksummedSafeAddress,
-              functionName: 'VERSION',
-            },
-          ],
-          allowFailure: false,
-        });
-
-        // Fetch guard using getStorageAt
-        const GUARD_STORAGE_SLOT = '0x3a'; // Slot defined in Safe contracts (could vary)
-        const guardStorageValue = await this.publicClient.getStorageAt({
-          address: checksummedSafeAddress,
-          slot: GUARD_STORAGE_SLOT,
-        });
-
-        return {
-          address: checksummedSafeAddress,
-          nonce: Number(nonce ? nonce : 0),
-          threshold: Number(threshold ? threshold : 0),
-          owners: owners as string[],
-          modules: [...modules[0], modules[1]],
-          fallbackHandler: zeroAddress, // not used
-          guard: guardStorageValue ? getAddress(`0x${guardStorageValue.slice(-40)}`) : zeroAddress,
-          version: version,
-          singleton: zeroAddress, // not used
-          nextNonce: Number(nonce ? nonce : 0) + 1,
-        };
-      } catch (error) {
-        console.error('Error fetching safe data:', error);
-        throw new Error('Failed to fetch safe data');
-      }
-    }
+    const safeInfoResponse = await this.getSafeInfo(checksummedSafeAddress);
+    const nextNonce = await this.getNextNonce(checksummedSafeAddress);
+    return { ...safeInfoResponse, nextNonce };
   }
 
   override async getToken(tokenAddress: string): Promise<TokenInfoResponse> {
