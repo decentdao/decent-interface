@@ -25,8 +25,15 @@ export const useSearchDao = () => {
 
   const findSafes = useCallback(
     async (resolvedAddressesWithChainId: { address: Address; chainId: number }[]) => {
+      /*
+      This function only checks if the address is on any of the EVM networks. 
+      The same safe could of on multiple networks
+      
+      Changes requested inside getSafeCreationInfo
+      */
       for await (const resolved of resolvedAddressesWithChainId) {
         const safeAPI = new SafeApiKit({ chainId: BigInt(resolved.chainId) });
+        // Get rid of this line
         safeAPI.getSafeCreationInfo(resolved.address);
         try {
           await safeAPI.getSafeCreationInfo(resolved.address);

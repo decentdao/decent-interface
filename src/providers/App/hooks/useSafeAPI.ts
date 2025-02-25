@@ -76,6 +76,9 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value;
   }
   override async getSafeCreationInfo(safeAddress: Address): Promise<SafeCreationInfoResponse> {
+    /*
+      To replace this, we only need to search for the Safe Created Event, filtered by the address. No need to call Safe API
+    */
     const value = await this.request('getSafeCreationInfo' + safeAddress, CacheExpiry.NEVER, () => {
       return super.getSafeCreationInfo(safeAddress);
     });
