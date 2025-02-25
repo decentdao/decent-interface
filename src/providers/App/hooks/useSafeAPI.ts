@@ -57,29 +57,32 @@ class EnhancedSafeApiKit extends SafeApiKit {
   private async request<T>(
     cacheKey: string,
     cacheMinutes: number,
-    endpoint: () => Promise<T>,
+    endpointCall: () => Promise<T>,
   ): Promise<T> {
-    let value: T = await this.getCache<T>(cacheKey);
-    if (!value) {
-      let call = this.requestMap.get(cacheKey);
-      if (!call) {
-        call = endpoint();
-        this.requestMap.set(cacheKey, call);
-      }
-      try {
-        value = await call;
-        this.requestMap.set(cacheKey, null);
-        await this.setCache(cacheKey, value, cacheMinutes);
-      } catch (error) {
-        /*
+    const cachedValue = await this.getCache<T>(cacheKey);
+    if (cachedValue) {
+      return cachedValue;
+    }
+
+    let endpointPromise = this.requestMap.get(cacheKey);
+    if (!endpointPromise) {
+      endpointPromise = endpointCall();
+      this.requestMap.set(cacheKey, endpointPromise);
+    }
+
+    try {
+      const result = await endpointPromise;
+      this.requestMap.set(cacheKey, null);
+      await this.setCache(cacheKey, result, cacheMinutes);
+      return result;
+    } catch (error) {
+      /*
         await call can throw an exception with the Promise being rejected
         Without resetting the cache, the same promise will be used in retrials and always throw an exception
         */
-        this.requestMap.set(cacheKey, null);
-        throw error;
-      }
+      this.requestMap.set(cacheKey, null);
+      throw error;
     }
-    return value;
   }
 
   override async getSafeInfo(safeAddress: Address): Promise<SafeInfoResponse> {
