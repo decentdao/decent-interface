@@ -25,6 +25,7 @@ export const useFractalNode = ({
   const currentValidSafe = useRef<string>();
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
   const { getConfigByChainId, chain } = useNetworkConfigStore();
+
   const { action } = useFractal();
 
   const { setDaoInfo, setSafeInfo, setDecentModules } = useDaoInfoStore();
