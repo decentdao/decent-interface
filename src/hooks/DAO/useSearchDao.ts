@@ -28,23 +28,31 @@ export const useSearchDao = () => {
 
   const findSafes = useCallback(
     async (resolvedAddressesWithChainId: { address: Address; chainId: number }[]) => {
-      /*
-      This function only checks if the address is on any of the EVM networks. 
-      The same safe could of on multiple networks
-      
-      Changes requested inside getSafeCreationInfo
-      */
-      for await (const resolved of resolvedAddressesWithChainId) {
-        try {
-          const safeAPI = getSafeAPI(getConfigByChainId(resolved.chainId));
-          await safeAPI.getSafeCreationInfo(resolved.address);
+      // We're going to call getSafeCreationInfo for each resolved address
+      // If it throws, we don't have a Safe at that address
+      // If it doesn't throw, we add the resolved address and chainId to our list
+      const creationInfos = (
+        await Promise.all(
+          resolvedAddressesWithChainId.map(async resolved => {
+            try {
+              const safeAPI = getSafeAPI(getConfigByChainId(resolved.chainId));
 
-          setSafeResolvedAddressesWithPrefix(prevState => [...prevState, resolved]);
-        } catch (e) {
-          // Safe not found
-          continue;
-        }
-      }
+              // if this throws, we don't have a Safe
+              await safeAPI.getSafeCreationInfo(resolved.address);
+
+              // We actually only care about returning the resolved address and chainId
+              return resolved;
+            } catch (e) {
+              // Safe not found
+              return null;
+            }
+          }),
+        )
+      ).filter(creationInfo => creationInfo !== null);
+
+      // We're left with a list of chains and addresses
+      // (all the same address) that have a Safe at that address.
+      setSafeResolvedAddressesWithPrefix(creationInfos);
     },
     [getConfigByChainId],
   );
