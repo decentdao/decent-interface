@@ -180,6 +180,20 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value.data;
   }
 
+  /*
+  TODO: Handle the request body
+  private async _safeClientPost(safeAddress: Address, path: string, data: string): Promise<any> {
+    const value = await axios.post(`${this.safeClientUrlPrefix}${safeAddress}${path}`, {
+      headers: {
+        accept: 'application/json',
+      },
+      body: data,
+    });
+
+    return value.data;
+  }
+    */
+
   override async getAllTransactions(
     safeAddress: Address,
     options?: AllTransactionsOptions,
@@ -210,24 +224,18 @@ class EnhancedSafeApiKit extends SafeApiKit {
       console.error('Error fetching getNextNonce from safeAPI:', error);
     }
 
-    /*
-    ENG-293
     try {
       type SafeClientNonceResponse = {
-        readonly current: number;
-        readonly recommended: number;
+        readonly currentNonce: number;
+        readonly recommendedNonce: number;
       };
 
-      const response: SafeClientNonceResponse = await this._safeClientGet(
-        safeAddress,
-        '/transactions/nonce',
-      );
+      const response: SafeClientNonceResponse = await this._safeClientGet(safeAddress, '/nonces');
 
-      return response.recommended;
+      return response.recommendedNonce;
     } catch (error) {
       console.error('Error fetching getNextNonce from safe-client:', error);
     }
-      */
 
     try {
       const nonce = await this.publicClient.readContract({
