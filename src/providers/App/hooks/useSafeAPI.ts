@@ -1,8 +1,11 @@
 import SafeApiKit, {
   AllTransactionsListResponse,
   AllTransactionsOptions,
+  ProposeTransactionProps,
   SafeCreationInfoResponse,
   SafeInfoResponse,
+  SafeMultisigTransactionListResponse,
+  SignatureResponse,
   TokenInfoResponse,
 } from '@safe-global/api-kit';
 import axios from 'axios';
@@ -30,8 +33,27 @@ class EnhancedSafeApiKit extends SafeApiKit {
   // endpoint more than once
   requestMap = new Map<string, Promise<any> | null>();
 
+  // # Safe API function calls
+  //
+  // - overridden functions
+  //   - getSafeInfo ✅
+  //   - getSafeCreationInfo 🟨 ENG-291
+  //   - getAllTransactions 🟨 ENG-292
+  //   - getNextNonce 🟨 ENG-293
+  //   - getToken ✅
+  //   - confirmTransaction 🟨 ENG-294
+  //   - getMultisigTransactions 🟨 ENG-295
+  //   - proposeTransaction 🟨 ENG-296
+  //   - decodeData 🟨 ENG-297
+  // - custom functions
+  //   - getSafeData ✅ (this is actually not an overriden function of SafeApiKit, but a custom function)
+
+  // other file todos:
+  //   - /multisig-transactions/ in useSubmitProposal.ts
+  //   - /data-decoder/ in useSafeDecoder.ts
+
   constructor(networkConfig: NetworkConfig) {
-    super({ chainId: BigInt(networkConfig.chain.id) });
+    super({ chainId: BigInt(networkConfig.chain.id), txServiceUrl: networkConfig.safeBaseURL });
     this.networkConfig = networkConfig;
     this.publicClient = createPublicClient({
       chain: networkConfig.chain,
@@ -46,6 +68,9 @@ class EnhancedSafeApiKit extends SafeApiKit {
       return await super.getSafeInfo(checksummedSafeAddress);
     } catch (error) {
       console.error('Error fetching getSafeInfo from safeAPI:', error);
+    }
+
+    try {
       // Fetch necessary details from the contract
       const [nonce, threshold, modules, owners, version] = await this.publicClient.multicall({
         contracts: [
@@ -97,7 +122,11 @@ class EnhancedSafeApiKit extends SafeApiKit {
         version: version,
         singleton: zeroAddress, // not used
       };
+    } catch (error) {
+      console.error('Error fetching getSafeInfo from contract:', error);
     }
+
+    throw new Error('Failed to getSafeInfo()');
   }
 
   override async getSafeCreationInfo(safeAddress: Address): Promise<SafeCreationInfoResponse> {
@@ -105,8 +134,10 @@ class EnhancedSafeApiKit extends SafeApiKit {
       return await super.getSafeCreationInfo(safeAddress);
     } catch (error) {
       console.error('Error fetching getSafeCreationInfo from safeAPI:', error);
+    }
 
-      const value = await axios.get(
+    try {
+      const value = await axios.get<SafeCreationInfoResponse>(
         `https://safe-client.safe.global/v1/chains/${this.networkConfig.chain.id}/safes/${safeAddress}/transactions/creation`,
         {
           headers: {
@@ -115,8 +146,20 @@ class EnhancedSafeApiKit extends SafeApiKit {
         },
       );
 
-      return value.data as SafeCreationInfoResponse;
+      return value.data;
+    } catch (error) {
+      console.error('Error fetching getSafeCreationInfo from safe-client:', error);
     }
+
+    try {
+      // TODO ENG-291
+      // add another layer of onchain fallback here
+      // use subgraph to get this data
+    } catch (error) {
+      console.error('Error fetching getSafeCreationInfo from subgraph:', error);
+    }
+
+    throw new Error('Failed to getSafeCreationInfo()');
   }
 
   override async getAllTransactions(
@@ -127,42 +170,48 @@ class EnhancedSafeApiKit extends SafeApiKit {
       return await super.getAllTransactions(safeAddress, options);
     } catch (error) {
       console.error('Error fetching getAllTransactions from safeAPI:', error);
-      return {
-        count: 0,
-        results: [],
-      };
     }
+
+    try {
+      // TODO ENG-292
+      // implement safe-client fallback
+    } catch (error) {
+      console.error('Error fetching getAllTransactions from safe-client:', error);
+    }
+
+    return {
+      count: 0,
+      results: [],
+    };
   }
 
   override async getNextNonce(safeAddress: Address): Promise<number> {
-    let nextNonce = 0;
-
     try {
-      nextNonce = await super.getNextNonce(safeAddress);
+      return await super.getNextNonce(safeAddress);
     } catch (error) {
       console.error('Error fetching getNextNonce from safeAPI:', error);
+    }
 
-      // the safe-transactions-service is where any pending transactions
-      // are stored. if we can't get them, the only data we have available
-      // is the nonce from the contract.
+    try {
+      // TODO ENG-293
+      // try safe-client nonces.recommendedNonce
+    } catch (error) {
+      console.error('Error fetching getNextNonce from safe-client:', error);
+    }
 
+    try {
       const nonce = await this.publicClient.readContract({
         address: safeAddress,
         abi: GnosisSafeL2Abi,
         functionName: 'nonce',
       });
 
-      nextNonce = Number(nonce.toString());
+      return Number(nonce.toString());
+    } catch (error) {
+      console.error('Error fetching getNextNonce from contract:', error);
     }
 
-    return nextNonce;
-  }
-
-  async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
-    const checksummedSafeAddress = getAddress(safeAddress);
-    const safeInfoResponse = await this.getSafeInfo(checksummedSafeAddress);
-    const nextNonce = await this.getNextNonce(checksummedSafeAddress);
-    return { ...safeInfoResponse, nextNonce };
+    throw new Error('Failed to getNextNonce()');
   }
 
   override async getToken(tokenAddress: Address): Promise<TokenInfoResponse> {
@@ -187,6 +236,105 @@ class EnhancedSafeApiKit extends SafeApiKit {
         decimals,
       };
     }
+  }
+
+  override async confirmTransaction(
+    safeTxHash: string,
+    signature: string,
+  ): Promise<SignatureResponse> {
+    try {
+      return await super.confirmTransaction(safeTxHash, signature);
+    } catch (error) {
+      console.error('Error posting confirmTransaction from safeAPI:', error);
+    }
+
+    try {
+      // TODO ENG-294
+      // implement safe-client fallback
+    } catch (error) {
+      console.error('Error posting confirmTransaction from safe-client:', error);
+    }
+
+    // Note: because Safe requires all necessary signatures to be provided
+    // at the time of the transaction, we can't implement an onchain fallback here.
+
+    throw new Error('Failed to confirmTransaction()');
+  }
+
+  override async getMultisigTransactions(
+    safeAddress: Address,
+  ): Promise<SafeMultisigTransactionListResponse> {
+    try {
+      return await super.getMultisigTransactions(safeAddress);
+    } catch (error) {
+      console.error('Error fetching getMultisigTransactions from safeAPI:', error);
+    }
+
+    try {
+      // TODO ENG-295
+      // implement safe-client fallback
+    } catch (error) {
+      console.error('Error fetching getMultisigTransactions from safe-client:', error);
+    }
+
+    throw new Error('Failed to getMultisigTransactions()');
+  }
+
+  override async proposeTransaction({
+    safeAddress,
+    safeTransactionData,
+    safeTxHash,
+    senderAddress,
+    senderSignature,
+    origin,
+  }: ProposeTransactionProps): Promise<void> {
+    try {
+      return await super.proposeTransaction({
+        safeAddress,
+        safeTransactionData,
+        safeTxHash,
+        senderAddress,
+        senderSignature,
+        origin,
+      });
+    } catch (error) {
+      console.error('Error posting proposeTransaction from safeAPI:', error);
+    }
+
+    try {
+      // TODO ENG-29
+      // implement safe-client fallback
+      // transactions/{address}/propose
+    } catch (error) {
+      console.error('Error posting proposeTransaction from safe-client:', error);
+    }
+
+    throw new Error('Failed to proposeTransaction()');
+  }
+
+  override async decodeData(data: string): Promise<any> {
+    try {
+      return await super.decodeData(data);
+    } catch (error) {
+      console.error('Error decoding data from safeAPI:', error);
+    }
+
+    try {
+      // TODO ENG-297
+      // implement safe-client fallback
+      // /data-decoder/
+    } catch (error) {
+      console.error('Error decoding data from safe-client:', error);
+    }
+
+    throw new Error('Failed to decodeData()');
+  }
+
+  async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
+    const checksummedSafeAddress = getAddress(safeAddress);
+    const safeInfoResponse = await this.getSafeInfo(checksummedSafeAddress);
+    const nextNonce = await this.getNextNonce(checksummedSafeAddress);
+    return { ...safeInfoResponse, nextNonce };
   }
 }
 
