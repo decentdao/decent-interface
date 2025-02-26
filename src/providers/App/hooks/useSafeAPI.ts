@@ -143,37 +143,35 @@ class EnhancedSafeApiKit extends SafeApiKit {
       console.error('Error fetching getSafeCreationInfo from safeAPI:', error);
     }
 
-    // TODO: uncomment this out once subgraph testing is completed and working
-    // try {
-    //   type SafeClientCreationInfoResponse = {
-    //     readonly created: string;
-    //     readonly creator: string;
-    //     readonly transactionHash: string;
-    //     readonly factoryAddress: string;
+    try {
+      type SafeClientCreationInfoResponse = {
+        readonly created: string;
+        readonly creator: string;
+        readonly transactionHash: string;
+        readonly factoryAddress: string;
 
-    //     readonly masterCopy: string;
-    //     readonly setupData: string;
-    //   };
+        readonly masterCopy: string;
+        readonly setupData: string;
+      };
 
-    //   const response: SafeClientCreationInfoResponse = await this._safeClientGet(
-    //     safeAddress,
-    //     '/transactions/creation',
-    //   );
+      const response: SafeClientCreationInfoResponse = await this._safeClientGet(
+        safeAddress,
+        '/transactions/creation',
+      );
 
-    //   return { ...response, singleton: response.masterCopy };
-    // } catch (error) {
-    //   console.error('Error fetching getSafeCreationInfo from safe-client:', error);
-    // }
+      return { ...response, singleton: response.masterCopy };
+    } catch (error) {
+      console.error('Error fetching getSafeCreationInfo from safe-client:', error);
+    }
 
-    // TODO: this is what needs to be tested
     try {
       const client = createDecentSubgraphClient(this.networkConfig);
       const queryResult = await client.query<any>(SafeQuery, { safeAddress });
 
-      console.log('queryResult', queryResult);
-
       const safeCreationInfo = queryResult.data?.safes[0];
       if (safeCreationInfo) {
+        // setupData is 0x from the subgraph, so it's good that it's the final fallback.
+        // Not that it's ever used anywhere currently anyway.
         return safeCreationInfo;
       }
       console.log('Safe creation info not found');
