@@ -21,6 +21,8 @@ import {
 } from 'viem';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
+import { createDecentSubgraphClient } from '../../../graphql';
+import { SafeQuery } from '../../../graphql/SafeQueries';
 import { SafeWithNextNonce } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 import { useNetworkConfigStore } from '../../NetworkConfig/useNetworkConfigStore';
@@ -141,31 +143,40 @@ class EnhancedSafeApiKit extends SafeApiKit {
       console.error('Error fetching getSafeCreationInfo from safeAPI:', error);
     }
 
+    // TODO: uncomment this out once subgraph testing is completed and working
+    // try {
+    //   type SafeClientCreationInfoResponse = {
+    //     readonly created: string;
+    //     readonly creator: string;
+    //     readonly transactionHash: string;
+    //     readonly factoryAddress: string;
+
+    //     readonly masterCopy: string;
+    //     readonly setupData: string;
+    //   };
+
+    //   const response: SafeClientCreationInfoResponse = await this._safeClientGet(
+    //     safeAddress,
+    //     '/transactions/creation',
+    //   );
+
+    //   return { ...response, singleton: response.masterCopy };
+    // } catch (error) {
+    //   console.error('Error fetching getSafeCreationInfo from safe-client:', error);
+    // }
+
+    // TODO: this is what needs to be tested
     try {
-      type SafeClientCreationInfoResponse = {
-        readonly created: string;
-        readonly creator: string;
-        readonly transactionHash: string;
-        readonly factoryAddress: string;
+      const client = createDecentSubgraphClient(this.networkConfig);
+      const queryResult = await client.query<any>(SafeQuery, { safeAddress });
 
-        readonly masterCopy: string;
-        readonly setupData: string;
-      };
+      console.log('queryResult', queryResult);
 
-      const response: SafeClientCreationInfoResponse = await this._safeClientGet(
-        safeAddress,
-        '/transactions/creation',
-      );
-
-      return { ...response, singleton: response.masterCopy };
-    } catch (error) {
-      console.error('Error fetching getSafeCreationInfo from safe-client:', error);
-    }
-
-    try {
-      // TODO ENG-291
-      // add another layer of onchain fallback here
-      // use subgraph to get this data
+      const safeCreationInfo = queryResult.data?.safes[0];
+      if (safeCreationInfo) {
+        return safeCreationInfo;
+      }
+      console.log('Safe creation info not found');
     } catch (error) {
       console.error('Error fetching getSafeCreationInfo from subgraph:', error);
     }
