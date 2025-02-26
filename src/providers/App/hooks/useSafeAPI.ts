@@ -28,6 +28,7 @@ import { useNetworkConfigStore } from '../../NetworkConfig/useNetworkConfigStore
 class EnhancedSafeApiKit extends SafeApiKit {
   readonly publicClient: PublicClient;
   readonly networkConfig: NetworkConfig;
+  readonly safeClientUrlPrefix: string;
 
   // holds requests that have yet to return, to avoid calling the same
   // endpoint more than once
@@ -62,6 +63,7 @@ class EnhancedSafeApiKit extends SafeApiKit {
       chain: networkConfig.chain,
       transport: http(networkConfig.rpcEndpoint),
     });
+    this.safeClientUrlPrefix = `https://safe-client.safe.global/v1/chains/${networkConfig.chain.id}/safes/`;
   }
 
   override async getSafeInfo(safeAddress: Address): Promise<SafeInfoResponse> {
@@ -140,16 +142,22 @@ class EnhancedSafeApiKit extends SafeApiKit {
     }
 
     try {
-      const value = await axios.get<SafeCreationInfoResponse>(
-        `https://safe-client.safe.global/v1/chains/${this.networkConfig.chain.id}/safes/${safeAddress}/transactions/creation`,
-        {
-          headers: {
-            accept: 'application/json',
-          },
-        },
+      type SafeClientCreationInfoResponse = {
+        readonly created: string;
+        readonly creator: string;
+        readonly transactionHash: string;
+        readonly factoryAddress: string;
+
+        readonly masterCopy: string;
+        readonly setupData: string;
+      };
+
+      const response: SafeClientCreationInfoResponse = await this._safeClientGet(
+        safeAddress,
+        '/transactions/creation',
       );
 
-      return value.data;
+      return { ...response, singleton: response.masterCopy };
     } catch (error) {
       console.error('Error fetching getSafeCreationInfo from safe-client:', error);
     }
@@ -164,6 +172,30 @@ class EnhancedSafeApiKit extends SafeApiKit {
 
     throw new Error('Failed to getSafeCreationInfo()');
   }
+
+  private async _safeClientGet(safeAddress: Address, path: string): Promise<any> {
+    const value = await axios.get(`${this.safeClientUrlPrefix}${safeAddress}${path}`, {
+      headers: {
+        accept: 'application/json',
+      },
+    });
+
+    return value.data;
+  }
+
+  /*
+  TODO: Handle the request body
+  private async _safeClientPost(safeAddress: Address, path: string, data: string): Promise<any> {
+    const value = await axios.post(`${this.safeClientUrlPrefix}${safeAddress}${path}`, {
+      headers: {
+        accept: 'application/json',
+      },
+      body: data,
+    });
+
+    return value.data;
+  }
+    */
 
   override async getAllTransactions(
     safeAddress: Address,
@@ -196,8 +228,14 @@ class EnhancedSafeApiKit extends SafeApiKit {
     }
 
     try {
-      // TODO ENG-293
-      // try safe-client nonces.recommendedNonce
+      type SafeClientNonceResponse = {
+        readonly currentNonce: number;
+        readonly recommendedNonce: number;
+      };
+
+      const response: SafeClientNonceResponse = await this._safeClientGet(safeAddress, '/nonces');
+
+      return response.recommendedNonce;
     } catch (error) {
       console.error('Error fetching getNextNonce from safe-client:', error);
     }
