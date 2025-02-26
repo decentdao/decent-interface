@@ -53,7 +53,10 @@ class EnhancedSafeApiKit extends SafeApiKit {
   //   - /data-decoder/ in useSafeDecoder.ts
 
   constructor(networkConfig: NetworkConfig) {
-    super({ chainId: BigInt(networkConfig.chain.id), txServiceUrl: networkConfig.safeBaseURL });
+    super({
+      chainId: BigInt(networkConfig.chain.id),
+      txServiceUrl: `${networkConfig.safeBaseURL}/api`,
+    });
     this.networkConfig = networkConfig;
     this.publicClient = createPublicClient({
       chain: networkConfig.chain,
