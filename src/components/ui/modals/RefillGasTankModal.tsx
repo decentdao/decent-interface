@@ -79,7 +79,7 @@ export function RefillGasTankModal({
             );
 
           const inputBigint = values.inputAmount?.bigintValue;
-          const inputBigintIsZero = inputBigint ? inputBigint === 0n : undefined;
+          const inputBigintIsZero = inputBigint !== undefined ? inputBigint === 0n : undefined;
           const isSubmitDisabled = !values.inputAmount || inputBigintIsZero || overDraft;
 
           return (
