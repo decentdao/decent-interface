@@ -23,19 +23,23 @@ export function AzoriusOrSnapshotProposalAction({
   proposal: AzoriusProposal | SnapshotProposal;
 }) {
   const { snapshotProposal } = useSnapshotProposal(proposal);
-  const { canVote } = useVoteContext();
+  const { canVote, hasVoted } = useVoteContext();
 
   const isActiveProposal = useMemo(
     () => proposal.state === FractalProposalState.ACTIVE,
     [proposal.state],
   );
 
-  const showActionButton =
-    (snapshotProposal && canVote && isActiveProposal) ||
-    isActiveProposal ||
-    proposal.state === FractalProposalState.EXECUTABLE ||
-    proposal.state === FractalProposalState.TIMELOCKABLE ||
-    proposal.state === FractalProposalState.TIMELOCKED;
+  const showActionButton = useMemo(() => {
+    const isSnapshotProposal = snapshotProposal && canVote && isActiveProposal && !hasVoted;
+    const isAzoriusProposal = canVote && isActiveProposal && !hasVoted;
+    const isOtherProposalStates =
+      proposal.state === FractalProposalState.EXECUTABLE ||
+      proposal.state === FractalProposalState.TIMELOCKABLE ||
+      proposal.state === FractalProposalState.TIMELOCKED;
+
+    return isSnapshotProposal || isAzoriusProposal || isOtherProposalStates;
+  }, [snapshotProposal, canVote, hasVoted, isActiveProposal, proposal.state]);
 
   if (!showActionButton) {
     return null;
