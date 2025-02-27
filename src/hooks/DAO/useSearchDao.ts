@@ -32,13 +32,24 @@ export const useSearchDao = () => {
       This function only checks if the address is a Safe on any of the EVM networks. 
       The same Safe could of on multiple networks
       */
-      for await (const resolved of resolvedAddressesWithChainId) {
-        const networkConfig = getConfigByChainId(resolved.chainId);
-        const isSafe = await getIsSafe(resolved.address, networkConfig);
-        if (isSafe) {
-          setSafeResolvedAddressesWithPrefix(prevState => [...prevState, resolved]);
-        }
-      }
+
+      const realSafes = (
+        await Promise.all(
+          resolvedAddressesWithChainId.map(async resolved => {
+            const networkConfig = getConfigByChainId(resolved.chainId);
+            const isSafe = await getIsSafe(resolved.address, networkConfig);
+            if (isSafe) {
+              return resolved;
+            } else {
+              return null;
+            }
+          }),
+        )
+      ).filter(safe => safe !== null);
+
+      // We're left with a list of chains and addresses
+      // (all the same address) that have a Safe at that address.
+      setSafeResolvedAddressesWithPrefix(realSafes);
     },
     [getConfigByChainId],
   );
