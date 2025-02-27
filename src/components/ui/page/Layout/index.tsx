@@ -35,8 +35,8 @@ export function Layout() {
       }}
       gridTemplateColumns={`${SIDEBAR_WIDTH} 1fr`}
       gridTemplateRows={{
-        base: `auto ${HEADER_HEIGHT} 100%`,
-        md: `auto ${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%) ${FOOTER_HEIGHT}`,
+        base: `${HEADER_HEIGHT} 100%`,
+        md: `${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%) ${FOOTER_HEIGHT}`,
       }}
       position="relative"
     >
