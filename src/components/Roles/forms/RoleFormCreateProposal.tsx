@@ -13,11 +13,11 @@ import {
   RoleDetailsDrawerEditingRoleHatProp,
   RoleFormValues,
 } from '../../../types/roles';
+import { SendAssetsData } from '../../../utils/dao/prepareSendAssetsActionData';
 import { SendAssetsActionCard } from '../../ui/cards/SendAssetsActionCard';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../ui/forms/InputComponent';
 import { AddActions } from '../../ui/modals/AddActions';
-import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
