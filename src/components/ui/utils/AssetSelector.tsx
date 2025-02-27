@@ -10,13 +10,26 @@ import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { formatCoin, formatUSD } from '../../../utils';
 import { DropdownMenu } from '../menus/DropdownMenu';
 
+interface Asset {
+  name: string;
+  symbol: string;
+  decimals: number;
+  address: Address;
+  logo: string;
+}
+
+interface AssetSelectorProps {
+  disabled?: boolean;
+  includeNativeToken?: boolean;
+  onlyNativeToken?: boolean;
+  onSelect?: (asset: Asset) => void;
+}
+
 export function AssetSelector({
   disabled,
   includeNativeToken,
-}: {
-  disabled?: boolean;
-  includeNativeToken?: boolean;
-}) {
+  onlyNativeToken,
+}: AssetSelectorProps) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
   const { safe } = useDaoInfoStore();
 
@@ -31,25 +44,20 @@ export function AssetSelector({
     treasury: { assetsFungible },
   } = useFractal();
 
-  const fungibleAssets = assetsFungible.filter(
+  const [selectedAssetIndex, setSelectedAssetIndex] = useState<number | null>(
+    onlyNativeToken ? 0 : null,
+  );
+
+  const nonNativeFungibleAssets = assetsFungible.filter(
     asset => parseFloat(asset.balance) > 0 && !asset.nativeToken,
   );
 
-  const [selectedAsset, setSelectedAsset] = useState<{
-    name: string;
-    symbol: string;
-    decimals: number;
-    address: Address;
-    logo: string;
-  } | null>(null);
-
   const nativeTokenId = '0x0000000000000000000000000000000000000000';
-
   const nativeTokenItem = {
     value: nativeTokenId,
     label: nativeTokenBalance?.symbol ?? 'Native Token',
     icon: networkConfig.nativeTokenIcon,
-    selected: selectedAsset?.address === nativeTokenId,
+    selected: selectedAssetIndex === 0,
     assetData: {
       name: nativeTokenBalance?.symbol ?? 'Native Token',
       balance: nativeTokenBalance?.value.toString() ?? '0',
@@ -58,22 +66,24 @@ export function AssetSelector({
     },
   };
 
-  const dropdownItems = [
-    ...fungibleAssets.map(asset => ({
-      value: asset.tokenAddress,
-      label: asset.symbol,
-      icon: asset.logo ?? asset.thumbnail ?? '/images/coin-icon-default.svg',
-      selected: selectedAsset?.address === asset.tokenAddress,
-      assetData: {
-        name: asset.name,
-        balance: asset.balance,
-        decimals: asset.decimals,
-        usdValue: asset.usdValue,
-        symbol: asset.symbol,
-      },
-    })),
-    ...(includeNativeToken ? [nativeTokenItem] : []),
-  ];
+  const dropdownItems = onlyNativeToken
+    ? [nativeTokenItem]
+    : [
+        ...(includeNativeToken ? [nativeTokenItem] : []),
+        ...nonNativeFungibleAssets.map((asset, index) => ({
+          value: asset.tokenAddress,
+          label: asset.symbol,
+          icon: asset.logo ?? asset.thumbnail ?? '/images/coin-icon-default.svg',
+          selected: selectedAssetIndex === index + 1,
+          assetData: {
+            name: asset.name,
+            balance: asset.balance,
+            decimals: asset.decimals,
+            usdValue: asset.usdValue,
+            symbol: asset.symbol,
+          },
+        })),
+      ];
 
   return (
     <DropdownMenu<{
@@ -88,24 +98,13 @@ export function AssetSelector({
       items={dropdownItems}
       selectedItem={dropdownItems.find(item => item.selected)}
       onSelect={item => {
-        const chosenAsset = fungibleAssets.find(
-          asset => asset.tokenAddress === getAddress(item.value),
-        );
-
         if (item.value === nativeTokenId) {
-          setSelectedAsset({
-            ...nativeTokenItem.assetData,
-            address: nativeTokenId,
-            logo: networkConfig.nativeTokenIcon,
-          });
-        } else if (chosenAsset) {
-          setSelectedAsset({
-            ...chosenAsset,
-            logo: chosenAsset.logo ?? '',
-            address: chosenAsset.tokenAddress,
-          });
+          setSelectedAssetIndex(0);
         } else {
-          setSelectedAsset(null);
+          const index = nonNativeFungibleAssets.findIndex(
+            asset => asset.tokenAddress === getAddress(item.value),
+          );
+          setSelectedAssetIndex(index >= 0 ? index + 1 : null);
         }
       }}
       title={t('titleAssets', { ns: 'treasury' })}
