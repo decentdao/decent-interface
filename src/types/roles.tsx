@@ -1,7 +1,7 @@
 import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { Client } from 'urql';
 import { Address, Hex, PublicClient } from 'viem';
-import { SendAssetsData } from '../components/ui/modals/SendAssetsModal';
+import { SendAssetsData } from '../utils/dao/prepareSendAssetsActionData';
 import { BigIntValuePair } from './common';
 import { CreateProposalMetadata } from './proposalBuilder';
 

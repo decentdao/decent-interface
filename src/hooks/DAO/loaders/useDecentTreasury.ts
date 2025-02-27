@@ -20,7 +20,6 @@ import {
   TransferWithTokenInfo,
 } from '../../../types';
 import { formatCoin } from '../../../utils';
-import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { setValue } from '../../utils/cache/useLocalStorage';
 
@@ -201,13 +200,13 @@ export const useDecentTreasury = () => {
           return fallbackTokenInfo;
         }
 
-        const onchainTokenInfo = await safeAPI.getToken(address);
+        const tokenInfo = await safeAPI.getToken(address);
         setValue(
           { cacheName: CacheKeys.TOKEN_INFO, tokenAddress: address },
-          onchainTokenInfo,
+          tokenInfo,
           CacheExpiry.NEVER,
         );
-        return onchainTokenInfo;
+        return tokenInfo;
       }),
     );
 
@@ -220,7 +219,7 @@ export const useDecentTreasury = () => {
       .forEach(async (transfer, index, _transfers) => {
         // @note assume native token if no token address
         let tokenInfo: TokenInfoResponse = {
-          address: MOCK_MORALIS_ETH_ADDRESS,
+          address: '',
           name: chain.nativeCurrency.name,
           symbol: chain.nativeCurrency.symbol,
           decimals: chain.nativeCurrency.decimals,
@@ -248,17 +247,17 @@ export const useDecentTreasury = () => {
         }
       });
   }, [
+    safeAddress,
+    safeAPI,
+    getTokenBalances,
+    getNFTBalances,
+    getDeFiBalances,
     action,
-    chain.nativeCurrency.decimals,
     chain.nativeCurrency.name,
     chain.nativeCurrency.symbol,
-    safeAddress,
-    formatTransfer,
-    getDeFiBalances,
-    getNFTBalances,
-    getTokenBalances,
+    chain.nativeCurrency.decimals,
     nativeTokenIcon,
-    safeAPI,
+    formatTransfer,
   ]);
 
   useEffect(() => {

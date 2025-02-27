@@ -41,6 +41,7 @@ import {
   AzoriusGovernance,
   CreateProposalMetadata,
   GovernanceType,
+  ProposalActionType,
   ProposalExecuteData,
 } from '../../types';
 import {
@@ -1681,10 +1682,29 @@ export default function useCreateRoles() {
 
         // Add "send assets" actions to the proposal data
         values.actions.forEach(action => {
-          const actionData = prepareSendAssetsActionData(action);
-          proposalData.targets.push(actionData.target);
-          proposalData.values.push(actionData.value);
-          proposalData.calldatas.push(actionData.calldata);
+          const {
+            tokenAddress,
+            transferAmount,
+            calldata,
+            action: { actionType },
+          } = prepareSendAssetsActionData(action);
+
+          const isNativeTokenTransfer = actionType === ProposalActionType.NATIVE_TRANSFER;
+
+          // Add transaction details based on transfer type
+          const target = isNativeTokenTransfer
+            ? action.recipientAddress // For native: recipient gets tokens directly
+            : tokenAddress!; // For tokens: token contract handles transfer
+
+          const value = isNativeTokenTransfer
+            ? transferAmount // For native: specify amount of native tokens
+            : 0n; // For tokens: no native tokens needed
+
+          // calldata is either empty for native transfers
+          // or encoded token transfer function call
+          proposalData.targets.push(target);
+          proposalData.values.push(value);
+          proposalData.calldatas.push(calldata);
         });
 
         // All done, submit the proposal!
@@ -1708,16 +1728,16 @@ export default function useCreateRoles() {
       }
     },
     [
-      addressPrefix,
-      safeAddress,
-      hatsTree,
-      hatsTreeId,
-      navigate,
-      prepareCreateRolesModificationsProposalData,
-      prepareCreateTopHatProposalData,
       safe,
+      hatsTreeId,
       submitProposal,
       t,
+      prepareCreateTopHatProposalData,
+      hatsTree,
+      prepareCreateRolesModificationsProposalData,
+      safeAddress,
+      navigate,
+      addressPrefix,
     ],
   );
 
