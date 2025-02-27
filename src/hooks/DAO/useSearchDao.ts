@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
-import { getSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import {
   supportedEnsNetworks,
   supportedNetworks,
   useNetworkConfigStore,
 } from '../../providers/NetworkConfig/useNetworkConfigStore';
+import { getIsSafe } from '../safe/useIsSafe';
 import { useResolveENSName } from '../utils/useResolveENSName';
 
 type ResolvedAddressWithChainId = {
@@ -29,22 +29,27 @@ export const useSearchDao = () => {
   const findSafes = useCallback(
     async (resolvedAddressesWithChainId: { address: Address; chainId: number }[]) => {
       /*
-      This function only checks if the address is on any of the EVM networks. 
-      The same safe could of on multiple networks
-      
-      Changes requested inside getSafeCreationInfo
+      This function only checks if the address is a Safe on any of the EVM networks. 
+      The same Safe could of on multiple networks
       */
-      for await (const resolved of resolvedAddressesWithChainId) {
-        try {
-          const safeAPI = getSafeAPI(getConfigByChainId(resolved.chainId));
-          await safeAPI.getSafeCreationInfo(resolved.address);
 
-          setSafeResolvedAddressesWithPrefix(prevState => [...prevState, resolved]);
-        } catch (e) {
-          // Safe not found
-          continue;
-        }
-      }
+      const realSafes = (
+        await Promise.all(
+          resolvedAddressesWithChainId.map(async resolved => {
+            const networkConfig = getConfigByChainId(resolved.chainId);
+            const isSafe = await getIsSafe(resolved.address, networkConfig);
+            if (isSafe) {
+              return resolved;
+            } else {
+              return null;
+            }
+          }),
+        )
+      ).filter(safe => safe !== null);
+
+      // We're left with a list of chains and addresses
+      // (all the same address) that have a Safe at that address.
+      setSafeResolvedAddressesWithPrefix(realSafes);
     },
     [getConfigByChainId],
   );
