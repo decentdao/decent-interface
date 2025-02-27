@@ -143,7 +143,7 @@ export function GaslessVotingToggleDAOSettings(
       const action = prepareRefillPaymasterActionData({
         refillAmount: refillGasData.transferAmount,
         paymasterAddress,
-        nonceInput: 0,
+        nonceInput: refillGasData.nonceInput,
         nativeToken: {
           decimals: nativeTokenBalance?.decimals ?? 18,
           symbol: nativeTokenBalance?.symbol ?? 'Native Token',
