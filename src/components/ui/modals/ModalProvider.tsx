@@ -281,7 +281,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       case ModalType.REFILL_GAS:
         modalContent = (
           <RefillGasTankModal
-            submitButtonText={current.props.submitButtonText}
             showNonceInput={current.props.showNonceInput}
             close={closeModal}
             refillGasData={(data: RefillGasData) => {

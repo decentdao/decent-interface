@@ -8,5 +8,9 @@
   "refillTank": "Refill Paymaster",
   "starterPromoTitle": "STARTER PROMO",
   "starterPromoDescription": "Join our Telegram and reach out to our team to learn how to get your network fees covered by Decent: ",
-  "paymasterBalance": "Paymaster Balance"
+  "paymasterBalance": "Paymaster Balance",
+  "submitRefillAmount": "Send Now",
+  "amountLabel": "You're sending",
+  "usdValue": "${{value}}",
+  "availableBalance": "{{balance}}"
 }

@@ -1,72 +1,50 @@
-import { Box, Button, CloseButton, Flex, HStack, Select, Text } from '@chakra-ui/react';
-import { CaretDown } from '@phosphor-icons/react';
+import { Box, Button, CloseButton, Flex, Text } from '@chakra-ui/react';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress } from 'viem';
+import { Address } from 'viem';
+import { useBalance } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
-import { useNetworkEnsAddressAsync } from '../../../hooks/useNetworkEnsAddress';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
-import { BigIntValuePair, TokenBalance } from '../../../types';
-import { formatCoinFromAsset, formatCoinUnits } from '../../../utils/numberFormats';
-import { validateENSName } from '../../../utils/url';
-import NoDataCard from '../containers/NoDataCard';
+import { BigIntValuePair } from '../../../types';
+import { formatCoinUnits } from '../../../utils/numberFormats';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
-import { AddressInput } from '../forms/EthAddressInput';
 import LabelWrapper from '../forms/LabelWrapper';
-import Divider from '../utils/Divider';
+import { AssetSelector } from '../utils/AssetSelector';
 
 interface RefillGasFormValues {
-  destinationAddress: string;
-  selectedAsset: TokenBalance;
   inputAmount?: BigIntValuePair;
 }
 
 export interface RefillGasData {
-  destinationAddress: Address;
+  paymasterAddress: Address;
   transferAmount: bigint;
-  asset: TokenBalance;
   nonceInput: number | undefined;
 }
 
 export function RefillGasTankModal({
-  submitButtonText,
   showNonceInput,
   close,
   refillGasData,
 }: {
-  submitButtonText: string;
   showNonceInput: boolean;
   close: () => void;
   refillGasData: (refillData: RefillGasData) => void;
 }) {
-  const {
-    treasury: { assetsFungible },
-  } = useFractal();
   const { safe } = useDaoInfoStore();
+  const { data: nativeTokenBalance } = useBalance({
+    address: safe?.address,
+  });
 
-  const { getEnsAddress } = useNetworkEnsAddressAsync();
-  const { t } = useTranslation(['modals', 'common', 'gaslessVoting']);
+  const { t } = useTranslation('gaslessVoting');
 
-  const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nextNonce);
 
-  const { addressValidationTest, isValidating } = useValidationAddress();
+  const { isValidating } = useValidationAddress();
 
   const refillGasValidationSchema = Yup.object().shape({
-    destinationAddress: Yup.string().test(addressValidationTest),
-    selectedAsset: Yup.object()
-      .shape({
-        tokenAddress: Yup.string().required(),
-        name: Yup.string().required(),
-        symbol: Yup.string().required(),
-        decimals: Yup.number().required(),
-        balance: Yup.string().required(),
-      })
-      .required(),
     inputAmount: Yup.object()
       .shape({
         value: Yup.string().required(),
@@ -75,43 +53,19 @@ export function RefillGasTankModal({
   });
 
   const handleRefillGasSubmit = async (values: RefillGasFormValues) => {
-    let destAddress = values.destinationAddress;
-    if (validateENSName(values.destinationAddress)) {
-      const ensAddress = await getEnsAddress({ name: values.destinationAddress });
-      if (ensAddress === null) {
-        throw new Error('Invalid ENS name');
-      }
-      destAddress = ensAddress;
-    }
-
     refillGasData({
       transferAmount: values.inputAmount?.bigintValue || 0n,
-      asset: values.selectedAsset,
-      destinationAddress: getAddress(destAddress),
+      paymasterAddress: '0x',
       nonceInput,
     });
 
     close();
   };
 
-  if (!fungibleAssetsWithBalance.length) {
-    return (
-      <NoDataCard
-        emptyText="noAssetsWithBalance"
-        emptyTextNotProposer="noAssetsWithBalanceNotProposer"
-        translationNameSpace="modals"
-      />
-    );
-  }
-
   return (
     <Box>
       <Formik<RefillGasFormValues>
-        initialValues={{
-          destinationAddress: '',
-          selectedAsset: fungibleAssetsWithBalance[0],
-          inputAmount: undefined,
-        }}
+        initialValues={{ inputAmount: undefined }}
         onSubmit={handleRefillGasSubmit}
         validationSchema={refillGasValidationSchema}
       >
@@ -119,73 +73,50 @@ export function RefillGasTankModal({
           const overDraft =
             Number(values.inputAmount?.value || '0') >
             formatCoinUnits(
-              values.selectedAsset.balance,
-              values.selectedAsset.decimals,
-              values.selectedAsset.symbol,
+              nativeTokenBalance?.value || 0n,
+              nativeTokenBalance?.decimals || 0,
+              nativeTokenBalance?.symbol || '',
             );
 
           const inputBigint = values.inputAmount?.bigintValue;
           const inputBigintIsZero = inputBigint ? inputBigint === 0n : undefined;
           const isSubmitDisabled = !values.inputAmount || inputBigintIsZero || overDraft;
 
-          const selectedAssetIndex = fungibleAssetsWithBalance.findIndex(
-            asset => asset.tokenAddress === values.selectedAsset.tokenAddress,
-          );
-
           return (
             <Form onSubmit={handleSubmit}>
               <Flex
                 justify="space-between"
                 align="center"
-                mb="1.5rem"
               >
-                <Text textStyle="heading-small">{t('refillTank', { ns: 'gaslessVoting' })}</Text>
-                {/* <CloseButton onClick={close} /> */}
+                <Text textStyle="heading-small">{t('refillTank')}</Text>
+                <CloseButton onClick={close} />
               </Flex>
-              <Flex>
-                <Field name="selectedAsset">
-                  {({ field }: FieldAttributes<FieldProps<TokenBalance>>) => (
-                    <Box
-                      width="40%"
-                      marginEnd="0.75rem"
-                    >
-                      <LabelWrapper label={t('selectLabel')}>
-                        <Select
-                          {...field}
-                          bgColor="neutral-1"
-                          borderColor="neutral-3"
-                          rounded="sm"
-                          cursor="pointer"
-                          iconSize="1.5rem"
-                          icon={<CaretDown />}
-                          onChange={e => {
-                            setFieldValue('inputAmount', undefined);
-                            setFieldValue(
-                              'selectedAsset',
-                              fungibleAssetsWithBalance[Number(e.target.value)],
-                            );
-                          }}
-                          value={selectedAssetIndex}
-                        >
-                          {fungibleAssetsWithBalance.map((asset, index) => (
-                            <option
-                              key={index}
-                              value={index}
-                            >
-                              {asset.symbol}
-                            </option>
-                          ))}
-                        </Select>
-                      </LabelWrapper>
-                    </Box>
-                  )}
-                </Field>
 
-                {/* REFILL AMOUNT INPUT */}
-                <Field name="inputAmount">
-                  {({ field }: FieldAttributes<FieldProps<BigIntValuePair | undefined>>) => (
-                    <Box width="60%">
-                      <LabelWrapper label={t('amountLabel')}>
+              <Flex
+                flexDirection="column"
+                justify="space-between"
+                border="1px solid"
+                borderColor="neutral-3"
+                borderRadius="0.75rem"
+                mt={4}
+                px={4}
+                py={3}
+                gap={2}
+              >
+                <Text
+                  textStyle="labels-large"
+                  color="neutral-7"
+                >
+                  {t('amountLabel')}
+                </Text>
+
+                <Flex
+                  justify="space-between"
+                  align="flex-start"
+                >
+                  <Field name="inputAmount">
+                    {({ field }: FieldAttributes<FieldProps<BigIntValuePair | undefined>>) => (
+                      <LabelWrapper>
                         <BigIntInput
                           {...field}
                           value={field.value?.bigintValue}
@@ -193,52 +124,40 @@ export function RefillGasTankModal({
                             setFieldValue('inputAmount', value);
                           }}
                           parentFormikValue={values.inputAmount}
-                          decimalPlaces={values.selectedAsset.decimals}
+                          decimalPlaces={nativeTokenBalance?.decimals || 0}
                           placeholder="0"
-                          maxValue={BigInt(values.selectedAsset.balance)}
+                          maxValue={nativeTokenBalance?.value || 0n}
                           isInvalid={overDraft}
                           errorBorderColor="red-0"
                         />
                       </LabelWrapper>
-                    </Box>
-                  )}
-                </Field>
-              </Flex>
+                    )}
+                  </Field>
 
-              {/* AVAILABLE BALANCE HINT */}
-              <HStack
-                justify="space-between"
-                textStyle="neutral-7"
-                color="white-0"
-                marginTop="0.75rem"
-              >
-                <Text
-                  color={overDraft ? 'red-0' : 'neutral-7'}
-                  textStyle="labels-large"
-                  as="span"
-                >
-                  {t('selectSublabel', {
-                    balance: formatCoinFromAsset(values.selectedAsset, false),
-                  })}
-                </Text>
-              </HStack>
-
-              <Divider my="1.5rem" />
-
-              {/* PAYMASTER ADDRESS INPUT */}
-              <Field name={'destinationAddress'}>
-                {({ field }: FieldAttributes<FieldProps<string>>) => (
-                  <LabelWrapper
-                    label={t('gaslessVoting:paymasterBalance')}
-                    subLabel={t('destinationSublabel')}
-                    errorMessage={field.value && errors.destinationAddress}
+                  <Flex
+                    flexDirection="column"
+                    alignItems="flex-end"
+                    gap="0.5rem"
+                    mt="0.25rem"
                   >
-                    <AddressInput {...field} />
-                  </LabelWrapper>
-                )}
-              </Field>
-
-              <Divider my="1.5rem" />
+                    <AssetSelector />
+                    <Text
+                      color={overDraft ? 'red-0' : 'neutral-7'}
+                      textStyle="labels-small"
+                      px="0.25rem"
+                    >
+                      {`${t('availableBalance', {
+                        balance: formatCoinUnits(
+                          nativeTokenBalance?.value || 0n,
+                          nativeTokenBalance?.decimals || 0,
+                          nativeTokenBalance?.symbol || '',
+                        ),
+                      })} `}
+                      Available
+                    </Text>
+                  </Flex>
+                </Flex>
+              </Flex>
 
               {showNonceInput && (
                 <CustomNonceInput
@@ -247,20 +166,24 @@ export function RefillGasTankModal({
                 />
               )}
 
-              <Button
+              <Flex
                 marginTop="2rem"
-                width="100%"
-                type="submit"
-                isDisabled={
-                  isValidating ||
-                  !!errors.destinationAddress ||
-                  !!errors.selectedAsset ||
-                  !!errors.inputAmount ||
-                  isSubmitDisabled
-                }
+                justifyContent="flex-end"
+                gap={2}
               >
-                {t('addGas')}
-              </Button>
+                <Button
+                  variant="secondary"
+                  onClick={close}
+                >
+                  {t('cancel', { ns: 'common' })}
+                </Button>
+                <Button
+                  type="submit"
+                  isDisabled={isValidating || !!errors.inputAmount || isSubmitDisabled}
+                >
+                  {t('submitRefillAmount')}
+                </Button>
+              </Flex>
             </Form>
           );
         }}
