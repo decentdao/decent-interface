@@ -1,5 +1,6 @@
 import { Flex, Image, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { URL_TELEGRAM } from '../../constants/url';
 
 export function StarterPromoBanner() {
   const { t } = useTranslation('gaslessVoting');
@@ -33,7 +34,15 @@ export function StarterPromoBanner() {
           textStyle="labels-large"
           color="cosmic-nebula--1"
         >
-          {t('starterPromoDescription')}
+          <Text as="span">{t('starterPromoDescription')}</Text>
+          <Text
+            as="span"
+            textDecoration="underline"
+            cursor="pointer"
+            onClick={() => window.open(URL_TELEGRAM, '_blank')}
+          >
+            {URL_TELEGRAM}
+          </Text>
         </Text>
       </Flex>
     </Flex>

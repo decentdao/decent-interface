@@ -3,6 +3,7 @@ import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { ProposalTemplate } from '../../../types';
+import { SendAssetsData } from '../../../utils/dao/prepareSendAssetsActionData';
 import AddSignerModal from '../../SafeSettings/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../SafeSettings/Signers/modals/RemoveSignerModal';
 import DraggableDrawer from '../containers/DraggableDrawer';
@@ -18,7 +19,7 @@ import PaymentCancelConfirmModal from './PaymentCancelConfirmModal';
 import { PaymentWithdrawModal } from './PaymentWithdrawModal';
 import ProposalTemplateModal from './ProposalTemplateModal';
 import { RefillGasData, RefillGasTankModal } from './RefillGasTankModal';
-import { SendAssetsData, SendAssetsModal } from './SendAssetsModal';
+import { SendAssetsModal } from './SendAssetsModal';
 import StakeModal from './Stake';
 import { UnsavedChangesWarningContent } from './UnsavedChangesWarningContent';
 
