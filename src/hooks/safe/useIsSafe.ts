@@ -5,17 +5,16 @@ import {
 import { useEffect, useState } from 'react';
 
 import { Address, isAddress, PublicClient, toHex } from 'viem';
-import { usePublicClient } from 'wagmi';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { getSafeContractDeploymentAddress } from '../../providers/NetworkConfig/networks/utils';
-import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
 
 const safeVersions = ['1.0.0', '1.1.1', '1.2.0', '1.3.0', '1.4.1'];
 // const safeVersions = ['1.3.0'];
 
 const safe130bytecode =
   '0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e0000000000000000000000000000000000000000000000000000000060003514156050578060005260206000f35b3660008037600080366000845af43d6000803e60008114156070573d6000fd5b3d6000f3fea2646970667358221220d1429297349653a4918076d650332de1a1068c5f3e07c5c82360c277770b955264736f6c63430007060033';
-
+const safe141bytecode =
+  '0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e0000000000000000000000000000000000000000000000000000000060003514156050578060005260206000f35b3660008037600080366000845af43d6000803e60008114156070573d6000fd5b3d6000f3fea264697066735822122003d1488ee65e08fa41e58e888a9865554c535f2c77126a82cb4c0f917f31441364736f6c63430007060033';
 /**
  * A hook which determines whether the provided Ethereum address is a Safe
  * smart contract address on the currently connected chain (chainId).
@@ -96,7 +95,7 @@ export async function getIsSafe(
   try {
     console.log(`Public client chain id ${publicClient.getChainId()}`);
     const bytecode = (await publicClient.getBytecode({ address: address }))?.toLowerCase();
-    if (bytecode != safe130bytecode) {
+    if (bytecode != safe130bytecode && bytecode != safe141bytecode) {
       return false;
     }
 
