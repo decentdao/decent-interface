@@ -2,7 +2,6 @@ import SafeApiKit, {
   AllTransactionsListResponse,
   AllTransactionsOptions,
   ProposeTransactionProps,
-  SafeCreationInfoResponse,
   SafeInfoResponse,
   SafeMultisigTransactionListResponse,
   SignatureResponse,
@@ -38,7 +37,6 @@ class EnhancedSafeApiKit extends SafeApiKit {
   //
   // - overridden functions
   //   - getSafeInfo ✅
-  //   - getSafeCreationInfo 🟨 ENG-291
   //   - getAllTransactions 🟨 ENG-292
   //   - getNextNonce 🟨 ENG-293
   //   - getToken ✅
@@ -132,45 +130,6 @@ class EnhancedSafeApiKit extends SafeApiKit {
     }
 
     throw new Error('Failed to getSafeInfo()');
-  }
-
-  override async getSafeCreationInfo(safeAddress: Address): Promise<SafeCreationInfoResponse> {
-    try {
-      return await super.getSafeCreationInfo(safeAddress);
-    } catch (error) {
-      console.error('Error fetching getSafeCreationInfo from safeAPI:', error);
-    }
-
-    try {
-      type SafeClientCreationInfoResponse = {
-        readonly created: string;
-        readonly creator: string;
-        readonly transactionHash: string;
-        readonly factoryAddress: string;
-
-        readonly masterCopy: string;
-        readonly setupData: string;
-      };
-
-      const response: SafeClientCreationInfoResponse = await this._safeClientGet(
-        safeAddress,
-        '/transactions/creation',
-      );
-
-      return { ...response, singleton: response.masterCopy };
-    } catch (error) {
-      console.error('Error fetching getSafeCreationInfo from safe-client:', error);
-    }
-
-    try {
-      // TODO ENG-291
-      // add another layer of onchain fallback here
-      // use subgraph to get this data
-    } catch (error) {
-      console.error('Error fetching getSafeCreationInfo from subgraph:', error);
-    }
-
-    throw new Error('Failed to getSafeCreationInfo()');
   }
 
   private async _safeClientGet(safeAddress: Address, path: string): Promise<any> {
