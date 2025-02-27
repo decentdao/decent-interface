@@ -3,12 +3,29 @@ import { CheckCircle } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
+import { useBalance } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfigStore } from '../../../providers/NetworkConfig/useNetworkConfigStore';
+import { useDaoInfoStore } from '../../../store/daoInfo/useDaoInfoStore';
 import { formatCoin, formatUSD } from '../../../utils';
 import { DropdownMenu } from '../menus/DropdownMenu';
 
-export function AssetSelector({ disabled }: { disabled?: boolean }) {
+export function AssetSelector({
+  disabled,
+  includeNativeToken,
+}: {
+  disabled?: boolean;
+  includeNativeToken?: boolean;
+}) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
+  const { safe } = useDaoInfoStore();
+
+  const { data: nativeTokenBalance } = useBalance({
+    address: safe?.address,
+  });
+
+  const { getConfigByChainId, chain } = useNetworkConfigStore();
+  const networkConfig = getConfigByChainId(chain.id);
 
   const {
     treasury: { assetsFungible },
@@ -26,19 +43,37 @@ export function AssetSelector({ disabled }: { disabled?: boolean }) {
     logo: string;
   } | null>(null);
 
-  const dropdownItems = fungibleAssets.map(asset => ({
-    value: asset.tokenAddress,
-    label: asset.symbol,
-    icon: asset.logo ?? asset.thumbnail ?? '/images/coin-icon-default.svg',
-    selected: selectedAsset?.address === asset.tokenAddress,
+  const nativeTokenId = '0x0000000000000000000000000000000000000000';
+
+  const nativeTokenItem = {
+    value: nativeTokenId,
+    label: nativeTokenBalance?.symbol ?? 'Native Token',
+    icon: networkConfig.nativeTokenIcon,
+    selected: selectedAsset?.address === nativeTokenId,
     assetData: {
-      name: asset.name,
-      balance: asset.balance,
-      decimals: asset.decimals,
-      usdValue: asset.usdValue,
-      symbol: asset.symbol,
+      name: nativeTokenBalance?.symbol ?? 'Native Token',
+      balance: nativeTokenBalance?.value.toString() ?? '0',
+      decimals: nativeTokenBalance?.decimals ?? 18,
+      symbol: nativeTokenBalance?.symbol ?? 'Native Token',
     },
-  }));
+  };
+
+  const dropdownItems = [
+    ...fungibleAssets.map(asset => ({
+      value: asset.tokenAddress,
+      label: asset.symbol,
+      icon: asset.logo ?? asset.thumbnail ?? '/images/coin-icon-default.svg',
+      selected: selectedAsset?.address === asset.tokenAddress,
+      assetData: {
+        name: asset.name,
+        balance: asset.balance,
+        decimals: asset.decimals,
+        usdValue: asset.usdValue,
+        symbol: asset.symbol,
+      },
+    })),
+    ...(includeNativeToken ? [nativeTokenItem] : []),
+  ];
 
   return (
     <DropdownMenu<{
@@ -56,7 +91,14 @@ export function AssetSelector({ disabled }: { disabled?: boolean }) {
         const chosenAsset = fungibleAssets.find(
           asset => asset.tokenAddress === getAddress(item.value),
         );
-        if (chosenAsset) {
+
+        if (item.value === nativeTokenId) {
+          setSelectedAsset({
+            ...nativeTokenItem.assetData,
+            address: nativeTokenId,
+            logo: networkConfig.nativeTokenIcon,
+          });
+        } else if (chosenAsset) {
           setSelectedAsset({
             ...chosenAsset,
             logo: chosenAsset.logo ?? '',

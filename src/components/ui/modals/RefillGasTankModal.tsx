@@ -140,7 +140,7 @@ export function RefillGasTankModal({
                     gap="0.5rem"
                     mt="0.25rem"
                   >
-                    <AssetSelector />
+                    <AssetSelector includeNativeToken />
                     <Text
                       color={overDraft ? 'red-0' : 'neutral-7'}
                       textStyle="labels-small"
