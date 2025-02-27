@@ -1,14 +1,19 @@
 import { Box, Text, HStack, Switch, Flex, Icon, Button, Image } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useBalance } from 'wagmi';
 import { DETAILS_BOX_SHADOW } from '../../constants/common';
+import { DAO_ROUTES } from '../../constants/routes';
 import { isFeatureEnabled } from '../../helpers/featureFlags';
 import { useNetworkConfigStore } from '../../providers/NetworkConfig/useNetworkConfigStore';
+import { useProposalActionsStore } from '../../store/actions/useProposalActionsStore';
 import { useDaoInfoStore } from '../../store/daoInfo/useDaoInfoStore';
 import { BigIntValuePair } from '../../types';
 import { formatCoin } from '../../utils';
+import { prepareRefillPaymasterActionData } from '../../utils/dao/prepareRefillPaymasterActionData';
 import { ModalType } from '../ui/modals/ModalProvider';
+import { RefillGasData } from '../ui/modals/RefillGasTankModal';
 import { useDecentModal } from '../ui/modals/useDecentModal';
 import Divider from '../ui/utils/Divider';
 import { StarterPromoBanner } from './StarterPromoBanner';
@@ -115,15 +120,44 @@ export function GaslessVotingToggleDAOSettings(
   },
 ) {
   const { t } = useTranslation('gaslessVoting');
-  const { chain, gaslessVotingSupported } = useNetworkConfigStore();
+  const { chain, gaslessVotingSupported, addressPrefix } = useNetworkConfigStore();
 
-  const refillGas = useDecentModal(ModalType.REFILL_GAS);
+  const navigate = useNavigate();
 
-  // @todo: Retrieve and use the paymaster address here for `gasTankAddress`. Replace safe.address with the paymaster address. Remove use of `useDaoInfoStore`.
+  // @todo: Retrieve and use the paymaster address here for `gasTankAddress`. Replace safe.address with the paymaster address.
   const { safe } = useDaoInfoStore();
-  const gasTankAddress = safe?.address;
+  const paymasterAddress = safe?.address;
 
-  const { data: balance } = useBalance({ address: gasTankAddress, chainId: chain.id });
+  const { data: nativeTokenBalance } = useBalance({
+    address: safe?.address,
+  });
+
+  const { addAction } = useProposalActionsStore();
+
+  const refillGas = useDecentModal(ModalType.REFILL_GAS, {
+    onSubmit: async (refillGasData: RefillGasData) => {
+      if (!safe?.address || !paymasterAddress) {
+        return;
+      }
+
+      const action = prepareRefillPaymasterActionData({
+        refillAmount: refillGasData.transferAmount,
+        paymasterAddress,
+        nonceInput: 0,
+        nativeToken: {
+          decimals: nativeTokenBalance?.decimals ?? 18,
+          symbol: nativeTokenBalance?.symbol ?? 'Native Token',
+        },
+      });
+
+      addAction({ ...action, content: <></> });
+
+      navigate(DAO_ROUTES.proposalWithActionsNew.relative(addressPrefix, safe.address));
+    },
+    showNonceInput: true,
+  });
+
+  const { data: balance } = useBalance({ address: paymasterAddress, chainId: chain.id });
 
   if (!isFeatureEnabled('flag_gasless_voting')) return null;
   if (!gaslessVotingSupported) return null;

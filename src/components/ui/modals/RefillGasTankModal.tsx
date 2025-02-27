@@ -2,7 +2,6 @@ import { Box, Button, CloseButton, Flex, Text } from '@chakra-ui/react';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address } from 'viem';
 import { useBalance } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
@@ -19,7 +18,6 @@ interface RefillGasFormValues {
 }
 
 export interface RefillGasData {
-  paymasterAddress: Address;
   transferAmount: bigint;
   nonceInput: number | undefined;
 }
@@ -55,7 +53,6 @@ export function RefillGasTankModal({
   const handleRefillGasSubmit = async (values: RefillGasFormValues) => {
     refillGasData({
       transferAmount: values.inputAmount?.bigintValue || 0n,
-      paymasterAddress: '0x',
       nonceInput,
     });
 

@@ -98,7 +98,6 @@ export type ModalPropsTypes = {
   };
   [ModalType.REFILL_GAS]: {
     onSubmit: (refillGasData: RefillGasData) => void;
-    submitButtonText: string;
     showNonceInput: boolean;
   };
 };
