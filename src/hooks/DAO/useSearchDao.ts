@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, http, createPublicClient } from 'viem';
+import { Address } from 'viem';
 import {
   supportedEnsNetworks,
   supportedNetworks,
@@ -29,30 +29,15 @@ export const useSearchDao = () => {
   const findSafes = useCallback(
     async (resolvedAddressesWithChainId: { address: Address; chainId: number }[]) => {
       /*
-      This function only checks if the address is on any of the EVM networks. 
-      The same safe could of on multiple networks
-      
-      Changes requested inside getSafeCreationInfo
+      This function only checks if the address is a Safe on any of the EVM networks. 
+      The same Safe could of on multiple networks
       */
-
       for await (const resolved of resolvedAddressesWithChainId) {
         const networkConfig = getConfigByChainId(resolved.chainId);
-        const publicClient = createPublicClient({
-          chain: networkConfig.chain,
-          transport: http(networkConfig.rpcEndpoint),
-        });
-        const isSafe = await getIsSafe(resolved.address, resolved.chainId, publicClient);
+        const isSafe = await getIsSafe(resolved.address, networkConfig);
         if (isSafe) {
           setSafeResolvedAddressesWithPrefix(prevState => [...prevState, resolved]);
         }
-        // try {
-        //   const safeAPI = getSafeAPI(getConfigByChainId(resolved.chainId));
-        //   await safeAPI.getSafeCreationInfo(resolved.address);
-        //   setSafeResolvedAddressesWithPrefix(prevState => [...prevState, resolved]);
-        // } catch (e) {
-        //   // Safe not found
-        //   continue;
-        // }
       }
     },
     [getConfigByChainId],
