@@ -30,38 +30,6 @@ const safe130bytecode =
 export const useIsSafe = (address: string | undefined) => {
   const [isSafeLoading, setSafeLoading] = useState<boolean>(false);
   const [isSafe, setIsSafe] = useState<boolean | undefined>();
-  const publicClient = usePublicClient();
-  const { chain } = useNetworkConfigStore();
-
-  useEffect(() => {
-    setSafeLoading(true);
-    setIsSafe(undefined);
-
-    if (!address || !isAddress(address) || !publicClient) {
-      setIsSafe(false);
-      setSafeLoading(false);
-      return;
-    }
-
-    const gnosisSafeL2Singleton = getSafeContractDeploymentAddress(
-      getSafeL2SingletonDeployment,
-      '1.3.0',
-      chain.id.toString(),
-    );
-
-    publicClient
-      .getBytecode({ address: address })
-      .then(response => {
-        if (response) {
-          console.log(response);
-          setIsSafe(true);
-        } else {
-          setIsSafe(false);
-        }
-      })
-      .catch(() => setIsSafe(false))
-      .finally(() => setSafeLoading(false));
-  }, [address, publicClient]);
 
   const safeAPI = useSafeAPI();
   useEffect(() => {
