@@ -348,7 +348,10 @@ const getPaymentStreams = async (
         const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
           bigintStreamId,
         ]);
-        return { ...stream, withdrawableAmount: newWithdrawableAmount };
+        return {
+          ...stream,
+          withdrawableAmount: newWithdrawableAmount,
+        };
       }),
     );
     return streamsWithCurrentWithdrawableAmounts;
