@@ -143,7 +143,7 @@ export function RoleFormPaymentStreams() {
                     cliffDate: payment.cliffDate,
                     isCancelled: payment.isCancelled ?? false,
                     isStreaming: payment.isStreaming,
-                    isCancellable: payment.isCancellable,
+                    isCancellableStream: payment.cancelable,
                     isCancelling: payment.isCancelling,
                   }}
                 />
