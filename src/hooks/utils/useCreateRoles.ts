@@ -349,6 +349,7 @@ export default function useCreateRoles() {
         startTimestamp: number;
         cliffTimestamp: number;
         endTimestamp: number;
+        cancelable: boolean;
       }[],
       termEndDateTs: bigint,
     ) => {
@@ -366,7 +367,7 @@ export default function useCreateRoles() {
           sender: safeAddress,
           totalAmount: payment.totalAmount,
           asset: payment.asset,
-          cancelable: true,
+          cancelable: payment.cancelable,
           transferable: true,
           timestamps: {
             start: payment.startTimestamp,
@@ -400,6 +401,7 @@ export default function useCreateRoles() {
           startTimestamp: Math.floor(payment.startDate.getTime() / 1000),
           cliffTimestamp: payment.cliffDate ? Math.floor(payment.cliffDate.getTime() / 1000) : 0,
           endTimestamp: Math.floor(payment.endDate.getTime() / 1000),
+          cancelable: payment.cancelable,
         };
       });
     },
@@ -772,6 +774,7 @@ export default function useCreateRoles() {
           cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
           totalAmount: stream.amount.bigintValue,
           assetAddress: stream.asset.address,
+          cancelable: stream.cancelable,
         };
       });
 

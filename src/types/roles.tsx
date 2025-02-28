@@ -74,6 +74,7 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
   isCancellable: () => boolean;
   isCancelling?: boolean;
   isValidatedAndSaved?: boolean;
+  cancelable: boolean;
 }
 
 export interface RoleProps {
@@ -220,6 +221,7 @@ export type PreparedNewStreamData = {
   cliffDateTs: number;
   totalAmount: bigint;
   assetAddress: Address;
+  cancelable: boolean;
 };
 
 export interface RoleDetailsDrawerProps {

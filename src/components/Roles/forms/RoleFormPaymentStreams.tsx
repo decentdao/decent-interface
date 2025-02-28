@@ -86,6 +86,7 @@ export function RoleFormPaymentStreams() {
                 isCancellable: () => false,
                 isCancelling: false,
                 isValidatedAndSaved: false,
+                cancelable: true, // Newly added payments are cancelable by default
               });
               await validateForm();
               setFieldValue('roleEditing.roleEditingPaymentIndex', (payments ?? []).length);
@@ -122,7 +123,7 @@ export function RoleFormPaymentStreams() {
               if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
                 return null;
 
-              const canBeCancelled = payment.isCancellable();
+              const canBeCancelled = payment.isCancellable && payment.isCancellable();
               const thisPaymentIndex = payments?.findIndex(p => p.streamId === payment.streamId);
               return (
                 <RolePaymentDetails
@@ -141,8 +142,8 @@ export function RoleFormPaymentStreams() {
                     startDate: payment.startDate,
                     cliffDate: payment.cliffDate,
                     isCancelled: payment.isCancelled ?? false,
-                    isStreaming: payment.isStreaming ?? (() => false),
-                    isCancellable: payment.isCancellable ?? (() => false),
+                    isStreaming: payment.isStreaming,
+                    isCancellable: payment.isCancellable,
                     isCancelling: payment.isCancelling,
                   }}
                 />
