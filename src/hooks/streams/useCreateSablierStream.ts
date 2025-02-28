@@ -42,7 +42,7 @@ export default function useCreateSablierStream() {
       }
       return {
         sender: safeAddress, // Tokens sender. This address will be able to cancel the stream
-        cancelable: true, // Cancelable - is it possible to cancel this stream
+        cancelable: false, // Cancelable - is it possible to cancel this stream
         transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
         recipient, // Recipient of tokens through stream
         totalAmount: amountInTokenDecimals, // total amount of tokens sent

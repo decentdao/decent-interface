@@ -366,7 +366,7 @@ export default function useCreateRoles() {
           sender: safeAddress,
           totalAmount: payment.totalAmount,
           asset: payment.asset,
-          cancelable: true,
+          cancelable: false,
           transferable: true,
           timestamps: {
             start: payment.startTimestamp,
