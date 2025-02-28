@@ -436,7 +436,7 @@ export default function useCreateRoles() {
             throw new Error('Hat name or description of added hat is undefined.');
           }
 
-          const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments ?? []);
+          const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments);
 
           const [firstTerm] = parseRoleTermsFromFormRoleTerms(role.roleTerms ?? []);
           if (!firstTerm && role.isTermed) {
@@ -610,7 +610,7 @@ export default function useCreateRoles() {
         formRole.name,
         formRole.description,
         firstWearer,
-        parseSablierPaymentsFromFormRolePayments(formRole.payments ?? []),
+        parseSablierPaymentsFromFormRolePayments(formRole.payments),
         termEndDateTs,
       );
 
@@ -784,25 +784,25 @@ export default function useCreateRoles() {
   );
 
   const getMemberChangedStreamsWithFundsToClaim = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(
+    return formHat.payments.filter(
       payment => (payment?.withdrawableAmount ?? 0n) > 0n && !payment.isCancelling,
     );
   }, []);
 
   const getNewStreamsFromFormHat = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(payment => !payment.streamId);
+    return formHat.payments.filter(payment => !payment.streamId);
   }, []);
 
   const getCancelledStreamsFromFormHat = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(payment => payment.isCancelling && !!payment.streamId);
+    return formHat.payments.filter(payment => payment.isCancelling && !!payment.streamId);
   }, []);
 
   const getRoleRemovedStreamsWithFundsToClaim = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(payment => (payment?.withdrawableAmount ?? 0n) > 0n);
+    return formHat.payments.filter(payment => (payment?.withdrawableAmount ?? 0n) > 0n);
   }, []);
 
   const getActiveStreamsFromFormHat = useCallback((formHat: RoleHatFormValueEdited) => {
-    return (formHat.payments ?? []).filter(
+    return formHat.payments.filter(
       payment => !payment.isCancelled && !!payment.endDate && payment.endDate > new Date(),
     );
   }, []);

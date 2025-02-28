@@ -72,7 +72,7 @@ export interface SablierPayment {
 export interface SablierPaymentFormValues extends Partial<SablierPayment> {
   isStreaming: () => boolean;
   isCancellable: () => boolean;
-  isCancelling?: boolean;
+  isCancelling: boolean;
   isValidatedAndSaved?: boolean;
   cancelable: boolean;
 }
@@ -184,7 +184,7 @@ export interface RoleHatFormValue
   // Not a user-input field.
   // `resolvedWearer` is dynamically set from the resolved address of `wearer`, in case it's an ENS name.
   resolvedWearer?: Address;
-  payments?: SablierPaymentFormValues[];
+  payments: SablierPaymentFormValues[];
   // form specific state
   editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;
