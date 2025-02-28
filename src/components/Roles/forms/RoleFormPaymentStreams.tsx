@@ -74,26 +74,28 @@ export function RoleFormPaymentStreams() {
     <FieldArray name="roleEditing.payments">
       {({ push: pushPayment }: { push: (streamFormValue: SablierPaymentFormValues) => void }) => (
         <Box>
-          <Button
-            variant="secondary"
-            size="sm"
-            isDisabled={values.roleEditing?.isTermed ? !isTermsAvailable : false}
-            leftIcon={<Plus size="1rem" />}
-            iconSpacing={0}
-            onClick={async () => {
-              pushPayment({
-                isStreaming: () => false,
-                isCancellable: () => false,
-                isCancelling: false,
-                isValidatedAndSaved: false,
-                cancelable: true, // Newly added payments are cancelable by default
-              });
-              await validateForm();
-              setFieldValue('roleEditing.roleEditingPaymentIndex', (payments ?? []).length);
-            }}
-          >
-            {t('addPayment')}
-          </Button>
+          {values.roleEditing?.roleEditingPaymentIndex === undefined && (
+            <Button
+              variant="secondary"
+              size="sm"
+              isDisabled={values.roleEditing?.isTermed ? !isTermsAvailable : false}
+              leftIcon={<Plus size="1rem" />}
+              iconSpacing={0}
+              onClick={async () => {
+                pushPayment({
+                  isStreaming: () => false,
+                  isCancellable: () => false,
+                  isCancelling: false,
+                  isValidatedAndSaved: false,
+                  cancelable: true, // Newly added payments are cancelable by default
+                });
+                await validateForm();
+                setFieldValue('roleEditing.roleEditingPaymentIndex', (payments ?? []).length);
+              }}
+            >
+              {t('addPayment')}
+            </Button>
+          )}
           {sortedPayments.length === 0 && (
             <Flex
               bg="neutral-2"
