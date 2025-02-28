@@ -37,7 +37,7 @@ export interface DecentRoleHat extends Omit<DecentHat, 'smartAddress'> {
   smartAddress?: Address;
   roleTerms: DecentRoleHatTerms;
   canCreateProposals: boolean;
-  payments?: SablierPayment[];
+  payments: SablierPayment[];
   isTermed: boolean;
   eligibility?: Address;
 }
