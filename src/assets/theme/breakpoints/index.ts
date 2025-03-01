@@ -1,5 +1,5 @@
 // These breakpoints are used for creating responsive components
-// the w property can accept breaking point as an object or array corrosponding to the breakpoint
+// the w property can accept breaking point as an object or array corresponding to the breakpoint
 //  <Box bg='red.200' w={{ sm: 300, md: 400, base: 500}}>
 
 export default {
