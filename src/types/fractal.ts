@@ -83,7 +83,7 @@ export enum FractalProposalState {
    * Proposal fails due to a proposal being executed with the same nonce.
    * A multisig proposal is off-chain, and is signed with a specific nonce.
    * If a proposal with a nonce is executed, any proposal with the same or lesser
-   * nonce will be impossible to execute, reguardless of how many signers it has.
+   * nonce will be impossible to execute, regardless of how many signers it has.
    *
    * Multisig only.
    */
