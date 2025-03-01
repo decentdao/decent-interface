@@ -100,7 +100,7 @@ From then, the flag holds the value from the URL param until app is refreshed
 
 Deployment can ship with the flag turned off in .env file.
 
-Change the value in .env file after the feature is completed and thouroughly tested.
+Change the value in .env file after the feature is completed and thoroughly tested.
 
 Once code under the feature flag has been proven reliable, remove the feature flag and dead code from code base.
 
