@@ -64,14 +64,14 @@ export interface SablierPayment {
   endDate: Date;
   cliffDate: Date | undefined;
   isStreaming: () => boolean;
-  isCancellable: () => boolean;
+  canUserCancel: () => boolean;
   withdrawableAmount: bigint;
   isCancelled: boolean;
 }
 
 export interface SablierPaymentFormValues extends Partial<SablierPayment> {
   isStreaming: () => boolean;
-  isCancellable: () => boolean;
+  canUserCancel: () => boolean;
   isCancelling: boolean;
   isValidatedAndSaved?: boolean;
   cancelable: boolean;

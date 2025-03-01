@@ -128,7 +128,7 @@ export function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   );
 
   const canBeCancelled = existingPayment
-    ? existingPayment.isCancellable() && !payment?.isCancelling
+    ? existingPayment.canUserCancel() && !payment?.isCancelling
     : false;
 
   const cancelModal = useDecentModal(ModalType.NONE);

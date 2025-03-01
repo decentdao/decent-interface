@@ -332,7 +332,7 @@ const getPaymentStreams = async (
           return !cancelled && !!start && !!end && start <= now && end > now;
         },
         cancelable: lockupLinearStream.cancelable,
-        isCancellable: () =>
+        canUserCancel: () =>
           lockupLinearStream.cancelable &&
           !lockupLinearStream.canceled &&
           !!endDate &&
