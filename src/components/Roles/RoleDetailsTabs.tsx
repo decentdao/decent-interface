@@ -71,7 +71,7 @@ function RolesDetailsPayments({
             key={thisPaymentIndex}
             payment={{
               ...payment,
-              isCancellableStream: payment.cancelable ?? true,
+              isCancelableStream: payment.cancelable ?? true,
             }}
             roleHatSmartAccountAddress={roleHatSmartAccountAddress}
             roleHatId={roleHatId}
