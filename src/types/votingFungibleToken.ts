@@ -29,7 +29,7 @@ export interface ITokenData {
   totalSupply: bigint | undefined;
 }
 
-export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
+export interface IGovernanceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
   isLoading?: boolean;
 }
 
